@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../Arduino Test"
+		},
+		{
+			"name": "Hello World",
+			"path": "../Hello World"
+		},
+		{
+			"name": "240624-201306-arduino-blink",
+			"path": "../240624-201306-arduino-blink"
+		},
+		{
+			"name": "Test1",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
