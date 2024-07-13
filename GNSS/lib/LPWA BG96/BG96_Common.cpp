@@ -28,7 +28,6 @@ bool _BG96_Common::InitModule()
     digitalWrite(POWKEY_PIN, HIGH);
     delay(800);
     // digitalWrite(POWKEY_PIN, LOW);
-
     return true;
 }
 
