@@ -21,14 +21,15 @@ bool _BG96_Common::InitModule()
 {
     pinMode(ENABLE_PWR, OUTPUT);
     digitalWrite(ENABLE_PWR, HIGH);
+    pinMode(RESET_PIN, OUTPUT);
+	digitalWrite(RESET_PIN, LOW);
     delay(800);
     pinMode(POWKEY_PIN, OUTPUT);
     digitalWrite(POWKEY_PIN, LOW);
     delay(800);
     digitalWrite(POWKEY_PIN, HIGH);
     delay(800);
-    // digitalWrite(POWKEY_PIN, LOW);
-    return true;
+    sendATcommand(DEV_OUTPUTFORMAT);
 }
 
 bool _BG96_Common::ResetModule()

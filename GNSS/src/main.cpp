@@ -23,9 +23,9 @@ void setup()
     DSerial.println("\r\n_5GNBIoT.InitModule() OK!");
   }
   delay(1000);
-  // if(_5GNBIoT.SetGNSSOutputPort(UARTNMEA)){
-  //   DSerial.println("\r\nSet GNSSOutputPort OK!");
-  // }
+  if(_5GNBIoT.SetGNSSOutputPort(UARTNMEA)){
+    DSerial.println("\r\nSet GNSSOutputPort OK!");
+  }
   _5GNBIoT.SetDevCommandEcho(false);
   delay(100);
   if (_5GNBIoT.TurnOnGNSS(mode, WRITE_MODE))
