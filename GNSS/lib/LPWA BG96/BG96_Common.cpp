@@ -1,37 +1,43 @@
 #include "BG96_Common.h"
 
+// Standardkonstruktor
 _BG96_Common::_BG96_Common()
 {
 }
 
+// Destruktor
 _BG96_Common::~_BG96_Common()
 {
 }
 
+// Konstruktor mit Parametern für die seriellen Schnittstellen, der die Basisklasse _BG96_Serial initialisiert
 _BG96_Common::_BG96_Common(Stream &atserial, Stream &dserial) : _BG96_Serial(atserial, dserial)
 {
 }
 
+// Funktion zum Einschalten des Moduls
 bool _BG96_Common::TurnOnModule()
 {
     return InitModule();
 }
 
+// Funktion zur Initialisierung des Moduls
 bool _BG96_Common::InitModule()
 {
     pinMode(ENABLE_PWR, OUTPUT);
-    digitalWrite(ENABLE_PWR, HIGH);
+    digitalWrite(ENABLE_PWR, HIGH); // Modul einschalten
     pinMode(RESET_PIN, OUTPUT);
-	digitalWrite(RESET_PIN, LOW);
+    digitalWrite(RESET_PIN, LOW); // Reset-Pin auf LOW setzen
     delay(800);
     pinMode(POWKEY_PIN, OUTPUT);
-    digitalWrite(POWKEY_PIN, LOW);
+    digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf LOW setzen
     delay(800);
-    digitalWrite(POWKEY_PIN, HIGH);
+    digitalWrite(POWKEY_PIN, HIGH); // Powkey-Pin auf HIGH setzen
     delay(800);
-    sendATcommand(DEV_OUTPUTFORMAT);
+    sendATcommand(DEV_OUTPUTFORMAT); // AT-Befehl zum Setzen des Ausgabeformats senden
 }
 
+// Funktion zum Zurücksetzen des Moduls
 bool _BG96_Common::ResetModule()
 {
     digitalWrite(POWKEY_PIN, HIGH);
@@ -40,16 +46,17 @@ bool _BG96_Common::ResetModule()
     return true;
 }
 
+// Funktion zum Setzen des Befehlsechos
 bool _BG96_Common::SetDevCommandEcho(bool echo)
 {
     const char *cmd;
     if (echo == true)
     {
-        cmd = "E1";
+        cmd = "E1"; // Echo einschalten
     }
     else
     {
-        cmd = "E0";
+        cmd = "E0"; // Echo ausschalten
     }
     if (sendAndSearch(cmd, RESPONSE_OK, 2))
     {
@@ -58,42 +65,46 @@ bool _BG96_Common::SetDevCommandEcho(bool echo)
     return false;
 }
 
+// Funktion zum Abrufen der Geräteinformationen
 bool _BG96_Common::GetDevInformation(char *inf)
 {
     if (sendAndSearch(DEV_INFORMATION, RESPONSE_OK, 2))
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(inf, rxBuffer);
+        strcpy(inf, rxBuffer); // Informationen in inf kopieren
         return true;
     }
     return false;
 }
 
+// Funktion zum Abrufen der Geräteversion
 bool _BG96_Common::GetDevVersion(char *ver)
 {
     if (sendAndSearch(DEV_VERSION, RESPONSE_OK, 2))
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(ver, rxBuffer);
+        strcpy(ver, rxBuffer); // Version in ver kopieren
         return true;
     }
     return false;
 }
 
+// Funktion zum Abrufen der Geräte-IMEI
 bool _BG96_Common::GetDevIMEI(char *imei)
 {
     if (sendAndSearch(DEV_IMEI, RESPONSE_OK, 2))
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(imei, rxBuffer);
+        strcpy(imei, rxBuffer); // IMEI in imei kopieren
         return true;
     }
     return false;
 }
 
+// Funktion zum Setzen der Gerätefunktionalität
 Cmd_Response_t _BG96_Common::SetDevFunctionality(Functionality_t mode)
 {
     char cmd[16];
@@ -102,13 +113,13 @@ Cmd_Response_t _BG96_Common::SetDevFunctionality(Functionality_t mode)
     switch (mode)
     {
     case MINIMUM_FUNCTIONALITY:
-        strcat(cmd, "=0");
+        strcat(cmd, "=0"); // Minimale Funktionalität
         break;
     case FULL_FUNCTIONALITY:
-        strcat(cmd, "=1");
+        strcat(cmd, "=1"); // Volle Funktionalität
         break;
     case DISABLE_RF:
-        strcat(cmd, "=4");
+        strcat(cmd, "=4"); // RF deaktivieren
         break;
     default:
         return UNKNOWN_RESPONSE;
@@ -117,6 +128,7 @@ Cmd_Response_t _BG96_Common::SetDevFunctionality(Functionality_t mode)
     return fun_status;
 }
 
+// Funktion zum Setzen der lokalen Datenrate des Geräts
 bool _BG96_Common::DevLocalRate(unsigned long &rate, Cmd_Status_t status)
 {
     char cmd[16];
@@ -129,7 +141,7 @@ bool _BG96_Common::DevLocalRate(unsigned long &rate, Cmd_Status_t status)
             char *sta_buf = searchStrBuffer(": ");
             char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
             *end_buf = '\0';
-            rate = atol(sta_buf + 2);
+            rate = atol(sta_buf + 2); // Datenrate auslesen
             return true;
         }
     }
@@ -152,18 +164,20 @@ bool _BG96_Common::DevLocalRate(unsigned long &rate, Cmd_Status_t status)
     return false;
 }
 
+// Funktion zum Abrufen der SIM-IMSI des Geräts
 bool _BG96_Common::GetDevSimIMSI(char *imsi)
 {
     if (sendAndSearch(DEV_SIM_IMSI, RESPONSE_OK, 2))
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(imsi, rxBuffer);
+        strcpy(imsi, rxBuffer); // IMSI in imsi kopieren
         return true;
     }
     return false;
 }
 
+// Funktion zum Setzen der SIM-PIN
 bool _BG96_Common::DevSimPIN(char *pin, Cmd_Status_t status)
 {
     char cmd[16];
@@ -190,6 +204,7 @@ bool _BG96_Common::DevSimPIN(char *pin, Cmd_Status_t status)
     return false;
 }
 
+// Funktion zum Abrufen der SIM-ICCID
 bool _BG96_Common::GetDevSimICCID(char *iccid)
 {
     if (sendAndSearch(DEV_SIM_ICCID, RESPONSE_OK, 2))
@@ -197,12 +212,13 @@ bool _BG96_Common::GetDevSimICCID(char *iccid)
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
         char *sta_buf = searchStrBuffer(": ");
-        strcpy(iccid, sta_buf + 2);
+        strcpy(iccid, sta_buf + 2); // ICCID in iccid kopieren
         return true;
     }
     return false;
 }
 
+// Funktion zum Abrufen des Netzregistrierungsstatus
 Net_Status_t _BG96_Common::DevNetRegistrationStatus()
 {
     char cmd[16];
@@ -245,6 +261,7 @@ Net_Status_t _BG96_Common::DevNetRegistrationStatus()
     return n_status;
 }
 
+// Funktion zum Abrufen der Netzsignalqualität
 bool _BG96_Common::GetDevNetSignalQuality(unsigned int &rssi)
 {
     if (sendAndSearch(DEV_NET_RSSI, RESPONSE_OK, 2))
@@ -252,12 +269,13 @@ bool _BG96_Common::GetDevNetSignalQuality(unsigned int &rssi)
         char *sta_buf = searchStrBuffer(": ");
         char *end_buf = searchChrBuffer(',');
         *end_buf = '\0';
-        rssi = atoi(sta_buf + 2);
+        rssi = atoi(sta_buf + 2); // RSSI-Wert auslesen
         return true;
     }
     return false;
 }
 
+// Funktion zum Scannen des Netzbetreibers
 Cmd_Response_t _BG96_Common::ScanOperatorNetwork(char *net)
 {
     char cmd[16];
@@ -270,16 +288,17 @@ Cmd_Response_t _BG96_Common::ScanOperatorNetwork(char *net)
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
         char *sta_buf = searchStrBuffer(": ");
-        strcpy(net, sta_buf + 2);
+        strcpy(net, sta_buf + 2); // Netzbetreiber in net kopieren
     }
     else if (scan_status == FIAL_RESPONSE)
     {
         char *sta_buf = searchStrBuffer(": ");
-        strcpy(net, sta_buf + 2);
+        strcpy(net, sta_buf + 2); // Netzbetreiber in net kopieren
     }
     return scan_status;
 }
 
+// Funktion zum Konfigurieren des Netzbetreibers
 Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int &format, char *oper, Net_Type_t &act, Cmd_Status_t status)
 {
     char cmd[16];
@@ -304,7 +323,7 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
                 i++;
                 p[i] = strtok(NULL, ",");
             }
-            // Ensure the string is null-terminated
+            // Sicherstellen, dass die Zeichenkette nullterminiert ist
             if (i < 5)
             {
                 p[i] = NULL;
@@ -325,6 +344,7 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
     return oper_status;
 }
 
+// Funktion zum Abrufen der Netzwerkinformationen
 bool _BG96_Common::GetDevNetworkInformation(char *type, char *oper, char *band, char *channel)
 {
     if (sendAndSearch(DEV_NET_INFORMATION, RESPONSE_OK, 2))
@@ -342,16 +362,10 @@ bool _BG96_Common::GetDevNetworkInformation(char *type, char *oper, char *band, 
             i++;
             p[i] = strtok(NULL, ",");
         }
-        // The line below was incorrect and has been fixed
-        // p[i] = '\0'; // This line caused the error
-        // Corrected version:
         if (p[i] == NULL)
         {
-            // If p[i] is NULL, we should ensure the string ends correctly.
             message[strlen(message)] = '\0';
         }
-
-        // Assigning values to the output parameters
         strcpy(type, p[0]);
         strcpy(oper, p[1]);
         strcpy(band, p[2]);
@@ -361,6 +375,7 @@ bool _BG96_Common::GetDevNetworkInformation(char *type, char *oper, char *band, 
     return false;
 }
 
+// Funktion zum Abrufen des Netzpaketzählers
 bool _BG96_Common::DevNetPacketCounter(unsigned long &send_bytes, unsigned long &recv_bytes, bool clean)
 {
     char cmd[16];
@@ -394,6 +409,7 @@ bool _BG96_Common::DevNetPacketCounter(unsigned long &send_bytes, unsigned long 
     return false;
 }
 
+// Funktion zum Herunterfahren des Geräts
 bool _BG96_Common::DevPowerDown()
 {
     char cmd[16];
@@ -406,6 +422,7 @@ bool _BG96_Common::DevPowerDown()
     return false;
 }
 
+// Funktion zum Abrufen und Setzen der Geräteuhr
 bool _BG96_Common::DevClock(char *d_clock, Cmd_Status_t status)
 {
     char cmd[32];
@@ -434,12 +451,14 @@ bool _BG96_Common::DevClock(char *d_clock, Cmd_Status_t status)
     }
     return false;
 }
+
 #if 0
+// Funktion zum Konfigurieren eines Pins
 bool _BG96_Common::ConfigPin(int pin, int dir, int pull, int drv)
 {
     char cmd[32];
     sprintf(cmd,"+QCFG=\"gpio\",1,%d,%d,%d,%d", pin, dir, pull, drv);
-//    sprintf(cmd,"+QCFG=\�gpio\�");
+//    sprintf(cmd,"+QCFG=\"gpio\"");
 
     if(sendAndSearch(cmd,RESPONSE_OK,2)){
         return true;
@@ -447,6 +466,7 @@ bool _BG96_Common::ConfigPin(int pin, int dir, int pull, int drv)
     return false;
 }
 
+// Funktion zum Setzen des Zustands eines Pins
 bool _BG96_Common::PinWrite(int pin, int state)
 {
     char cmd[32];
@@ -458,7 +478,8 @@ bool _BG96_Common::PinWrite(int pin, int state)
     return false;
 }
 #endif
-// 0 Automatic, 1 GSM only, 3 LTE only
+
+// Funktion zum Konfigurieren des Scanmodus (0 Automatisch, 1 Nur GSM, 3 Nur LTE)
 bool _BG96_Common::ScanmodeConfig(int mode)
 {
     char cmd[32];

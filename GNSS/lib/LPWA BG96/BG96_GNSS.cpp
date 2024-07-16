@@ -1,20 +1,24 @@
 #include "BG96_GNSS.h"
 
+// Konstruktor ohne Parameter
 _BG96_GNSS::_BG96_GNSS()
 {
 
 }
 
+// Destruktor
 _BG96_GNSS::~_BG96_GNSS()
 {
 
 }
 
+// Konstruktor mit Parametern für die seriellen Schnittstellen, der die Basisklasse _BG96_Common initialisiert
 _BG96_GNSS::_BG96_GNSS(Stream &atserial, Stream &dserial) : _BG96_Common(atserial, dserial)
 {
 
 }
 
+// Funktion zum Setzen der GNSS-Konstellation
 bool _BG96_GNSS::SetGNSSConstellation(GNSS_Constellation_t constellation)
 {
     char cmd[32], buf[32];
@@ -27,6 +31,7 @@ bool _BG96_GNSS::SetGNSSConstellation(GNSS_Constellation_t constellation)
     return false;
 }
 
+// Funktion zum automatischen Starten des GNSS
 bool _BG96_GNSS::SetGNSSAutoRun(bool auto_run)
 {
     char cmd[32];
@@ -45,6 +50,7 @@ bool _BG96_GNSS::SetGNSSAutoRun(bool auto_run)
     return false;
 }
 
+// Funktion zum Aktivieren oder Deaktivieren der NMEA-Sätze
 bool _BG96_GNSS::SetGNSSEnableNMEASentences(bool enable)
 {
     char cmd[32];
@@ -60,6 +66,7 @@ bool _BG96_GNSS::SetGNSSEnableNMEASentences(bool enable)
     return false;
 }
 
+// Funktion zum Einschalten des GNSS
 bool _BG96_GNSS::TurnOnGNSS(GNSS_Work_Mode_t mode, Cmd_Status_t status)
 {
     char cmd[16],buf[8];
@@ -84,6 +91,7 @@ bool _BG96_GNSS::TurnOnGNSS(GNSS_Work_Mode_t mode, Cmd_Status_t status)
     return false;
 }
 
+// Funktion zum Ausschalten des GNSS
 bool _BG96_GNSS::TurnOffGNSS()
 {
     char cmd[16];
@@ -94,6 +102,7 @@ bool _BG96_GNSS::TurnOffGNSS()
     return false;
 }
 
+// Funktion zum Abrufen der GNSS-Positionsinformationen
 bool _BG96_GNSS::GetGNSSPositionInformation(char *position)
 {
     char cmd[16];
@@ -109,6 +118,7 @@ bool _BG96_GNSS::GetGNSSPositionInformation(char *position)
     return false;
 }
 
+// Funktion zum Abrufen der GNSS-NMEA-Sätze
 bool _BG96_GNSS::GetGNSSNMEASentences(NMEA_Type_t type, char *sentences)
 {
     char cmd[32];
@@ -143,22 +153,22 @@ bool _BG96_GNSS::GetGNSSNMEASentences(NMEA_Type_t type, char *sentences)
     return false;
 }
 
+// Funktion zum Setzen des GNSS-Ausgabeports
 bool _BG96_GNSS::SetGNSSOutputPort(GNSS_OutputPort_t outport)
 {
-	char cmd[32];
-	strcpy(cmd, GNSS_CONFIGURATION);
-	if (outport == NOPORT) {
-		strcat(cmd, "=\"outport\",\"none\"");
-	}
-	else if (outport == USBNMEA) {
-		strcat(cmd, "=\"outport\",\"usbnmea\"");
-	}
-	else if (outport == UARTNMEA) {
-		strcat(cmd, "=\"outport\",\"uartnmea\"");
-	}
-	if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2)) {
-		return true;
-	}
-	return false;
+    char cmd[32];
+    strcpy(cmd, GNSS_CONFIGURATION);
+    if (outport == NOPORT) {
+        strcat(cmd, "=\"outport\",\"none\"");
+    }
+    else if (outport == USBNMEA) {
+        strcat(cmd, "=\"outport\",\"usbnmea\"");
+    }
+    else if (outport == UARTNMEA) {
+        strcat(cmd, "=\"outport\",\"uartnmea\"");
+    }
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2)) {
+        return true;
+    }
+    return false;
 }
-
