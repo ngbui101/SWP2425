@@ -13,7 +13,7 @@ const toggleMenu = () => {
   <div class="box box1">
     <div class="dropdown">
       <div class="drop-down-button" @click="toggleMenu">
-        Username ☰ <!-- Burger-Menü Symbol -->
+        ☰ Username  <!-- Burger-Menü Symbol -->
       </div>
       <ul v-if="showMenu" class="dropdown-menu">
         <li>Daten ändern</li>
@@ -34,18 +34,19 @@ const toggleMenu = () => {
 }
 
 .drop-down-button {
+  height: 40px;
   cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.2);
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 5px;  
 }
 
 .dropdown-menu {
   list-style: none;
-  margin: 10px 0 0;
+  margin: 0;
   padding: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 5px 5px;
   position: absolute;
   top: 100%;
   left: 50%;
