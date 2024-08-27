@@ -6,7 +6,6 @@ export interface User {
     username: string;
     email: string;
     password: string;
-    role: number;
     created_at: Date;
     updated_at: Date;
     __v: number;
@@ -79,18 +78,20 @@ export interface User {
           }
         },
         async getUser() {
-            try {
-              const { data } = await useApiPrivate().get(`/api/auth/user`);
+          try {
+              const { data } = await useApiPrivate().get(`http://localhost:3500/api/auth/user`);
+              console.log('Fetched user:', data); // Debugging line
               this.user = data;
               return data;
-            } catch (error: any) {
+          } catch (error: any) {
               throw new Error(`Failed to fetch user: ${error.message}`);
-            }
-          },
+          }
+      },
+      
       
           async logout() {
             try {
-              const { data } = await useApiPrivate().post(`/api/auth/logout`);
+              const { data } = await useApiPrivate().post(`http://localhost:3500/api/auth/logout`);
               this.accessToken = "";
               this.user = {} as User;
               return data;
