@@ -1,21 +1,22 @@
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 
-// Props definieren, um Tracker-Daten von App.vue zu empfangen
 const props = defineProps({
-  trackers: {
-    type: Array,
-    required: true
-  }
+  trackers: { type: Array, required: true }
 })
+
+const emit = defineEmits(['update-tracker'])
+
+const selectTracker = (tracker) => {
+  emit('update-tracker', tracker)
+}
 </script>
 
 <template>
-  <div class="box box2">
-    <div class="list-header">
-      Mein Tracker</div>
+  <div class="box">
+    <div class="list-header">Mein Tracker</div>
     <ul class="tracker-list">
-      <li v-for="(tracker, index) in props.trackers" :key="index" class="tracker-item">
+      <li v-for="tracker in props.trackers" :key="tracker.name" class="tracker-item" @click="selectTracker(tracker)">
         <strong>{{ tracker.name }}</strong> - Modus: {{ tracker.mode }} - Standort: {{ tracker.location }}
       </li>
     </ul>
@@ -23,7 +24,7 @@ const props = defineProps({
 </template>
 
 <style scoped>
-.box2 {
+.box {
   flex: 2;
 }
 
@@ -46,5 +47,10 @@ const props = defineProps({
   border-radius: 5px;
   margin: 10px 0;
   font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.tracker-item:hover {
+  background-color: rgba(0, 0, 0, 0.2);
 }
 </style>
