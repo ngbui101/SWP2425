@@ -33,14 +33,18 @@ const loginData = reactive({
 const errorMessage = ref<string>('');
 
 async function submit() {
+  console.log('Submit function triggered'); // Debug log
   try {
-    await authStore.login(loginData);
+    console.log('Attempting to log in with:', loginData);
+    const response = await authStore.login(loginData);
+    console.log('Login successful, response:', response);
     router.replace({ name: 'main' }); // Always redirect to 'main' route after login
   } catch (err: any) {
-    errorMessage.value = err.message;
     console.error('Login failed:', err);
+    errorMessage.value = err.message;
   }
 }
+
 
 function goToSignup() {
   router.push({ name: 'register' }); // Assuming you have a signup route

@@ -5,6 +5,6 @@ import LoginComponent from './components/LoginComponent.vue';
 </script>
 <template>
     <div class="container">
-      <LoginComponent />
+      <RouterView />
     </div>
   </template>
