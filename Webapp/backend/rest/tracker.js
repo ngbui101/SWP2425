@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const trackerController = require('path-to-your-controller-folder/trackerController');
-const authenticate = require('../../middleware/auth');
+const trackerController = require('../controller/trackerController');
+const authenticate = require('../middleware/auth');
 
 // Route to get all trackers
 router.get('/', authenticate, trackerController.getAllTrackers);

@@ -1,4 +1,4 @@
-const Position = require('backend/models/Position.js');
+const Position = require('../models/Position');
 
 // Get all positions
 async function getAllPositions(req, res) {

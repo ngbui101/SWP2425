@@ -1,4 +1,4 @@
-const Tracker = require('backend/models/Tracker.js');
+const Tracker = require('../models/Tracker');
 
 // Get all trackers
 async function getAllTrackers(req, res) {
