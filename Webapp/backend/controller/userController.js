@@ -26,7 +26,7 @@ async function getUserById(req, res) {
 
 // Create a new user
 async function createUser(req, res) {
-  const { username, email, password, first_name, last_name, role } = req.body;
+  const { username, email, password, first_name, last_name} = req.body;
 
   try {
     const user = new User({
@@ -35,10 +35,7 @@ async function createUser(req, res) {
       password, // Ensure password is hashed in the User model before saving
       first_name,
       last_name,
-      role,
-      publicId: '',
-      imageUrl: '',
-     
+      tracker: [],
     });
 
     await user.save();
