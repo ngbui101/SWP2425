@@ -5,8 +5,6 @@ const Schema = mongoose.Schema
 // The UserSchema defines the structure of a user document with the following fields:
 const UserSchema = Schema(
   {
-
-
     email: {
       type: String,
       required: true,
