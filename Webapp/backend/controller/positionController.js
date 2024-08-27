@@ -1,4 +1,5 @@
 const Position = require('../models/Position');
+const Tracker = require('../models/Tracker');
 
 // Get all positions
 async function getAllPositions(req, res) {
@@ -28,23 +29,35 @@ async function getPositionById(req, res) {
 
 // Create a new position
 async function createPosition(req, res) {
-  const { latitude, longitude, altitude, mode } = req.body;
+  const { latitude, longitude, mode, trackerId } = req.body;
 
   try {
+    // Überprüfen, ob der Tracker existiert
+    const tracker = await Tracker.findById(trackerId);
+    if (!tracker) {
+      return res.status(404).json({ message: 'Tracker not found' });
+    }
+
+    // Position erstellen und dem Tracker zuweisen
     const position = new Position({
-     
       latitude,
       longitude,
-      altitude,
       mode,
+      tracker: trackerId // Verweis auf den Tracker
     });
 
     await position.save();
-    res.status(201).json({ message: 'Position created successfully', position });
+
+    // Position zum Tracker hinzufügen
+    tracker.positions.push({ position: position._id });
+    await tracker.save();
+
+    res.status(201).json({ message: 'Position created successfully and added to tracker', position });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
 }
+
 
 //  No Update Method since an updated Position is a new Position
 
