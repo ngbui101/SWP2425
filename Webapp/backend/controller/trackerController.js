@@ -1,4 +1,5 @@
-const Tracker = require('../models/Tracker');
+const Tracker = require('../models/Tracker')
+const User = require('../models/User');
 
 // Get all trackers
 async function getAllTrackers(req, res) {
@@ -17,7 +18,7 @@ async function getTrackerById(req, res) {
   try {
     const tracker = await Tracker.findById(id);
     if (!tracker) {
-      return res.status(404).json({ message: 'Tracker not found' });
+      return   res.status(404).json({ message: 'Tracker not found' });
     }
     res.status(200).json(tracker);
   } catch (error) {
@@ -27,15 +28,23 @@ async function getTrackerById(req, res) {
 
 // Create a new tracker
 async function createTracker(req, res) {
-  const { id, name} = req.body;
+  const {name} = req.body;
+  const userId = req.user.id;
 
   try {
     const tracker = new Tracker({
-      id,
+      
       name,
     });
 
     await tracker.save();
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.tracker.push(tracker._id);
+    await user.save();
     res.status(201).json({ message: 'Tracker created successfully', tracker });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
@@ -81,7 +90,7 @@ async function setTrackerMode(req, res) {
     const { mode } = req.body;
   
     // Ensure the mode is one of the allowed values
-    if (!['RT', 'LT', 'Test'].includes(mode)) {
+    if (!['RT', 'LT', 'Test', 'None'].includes(mode)) {
       return res.status(400).json({ message: 'Invalid mode. Mode should be one of "RT", "LT", or "Test".' });
     }
   

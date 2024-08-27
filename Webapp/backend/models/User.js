@@ -42,6 +42,11 @@ const UserSchema = Schema(
       type: String,
       required: false,
     },
+    tracker: [
+      {
+          tracker: {type: Schema.Types.ObjectId, ref: 'Tracker'}
+      }
+  ]
   },
   /* The second argument to the Schema constructor is an options object, which includes:
 

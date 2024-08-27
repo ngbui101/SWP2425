@@ -4,21 +4,21 @@ const trackerController = require('../controller/trackerController');
 const authenticate = require('../middleware/auth');
 
 // Route to get all trackers
-router.get('/', authenticate, trackerController.getAllTrackers);
+router.get('/',  trackerController.getAllTrackers);
 
 // Route to get a single tracker by ID
-router.get('/:id', authenticate, trackerController.getTrackerById);
+router.get('/:id',  trackerController.getTrackerById);
 
 // Route to create a new tracker
-router.post('/', authenticate, trackerController.createTracker);
+router.post('/', trackerController.createTracker);
 
 // Route to update a tracker by ID
-router.put('/:id', authenticate, trackerController.updateTrackerName);
+router.put('/:id',  trackerController.updateTrackerName);
 
 // Route to delete a tracker by ID
-router.delete('/:id', authenticate, trackerController.deleteTracker);
+router.delete('/:id',  trackerController.deleteTracker);
 
 // Route to set the mode of a tracker by ID
-router.put('/:id/mode', authenticate, trackerController.setTrackerMode);
+router.put('/:id/mode',  trackerController.setTrackerMode);
 
 module.exports = router;

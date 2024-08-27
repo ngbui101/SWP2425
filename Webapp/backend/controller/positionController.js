@@ -13,6 +13,7 @@ async function getAllPositions(req, res) {
 // Get a position by ID
 async function getPositionById(req, res) {
   const { id } = req.params;
+  
 
   try {
     const position = await Position.findById(id);
@@ -27,12 +28,11 @@ async function getPositionById(req, res) {
 
 // Create a new position
 async function createPosition(req, res) {
-  const { id, name, latitude, longitude, altitude, mode } = req.body;
+  const { latitude, longitude, altitude, mode } = req.body;
 
   try {
     const position = new Position({
-      id,
-      name,
+     
       latitude,
       longitude,
       altitude,

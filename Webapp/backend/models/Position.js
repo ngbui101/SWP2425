@@ -3,14 +3,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PositionSchema = new Schema ( {
-    id: {type: Number, required: true},
-    name : {type: String},
+   
     latitude : {type: Number},
     longitude : {type: Number},
     altitude : {type: Number},
     mode: {
         type: String,
-        enum: ['GPS','LTE','IOT'],
+        enum: ['GPS','LTE','IOT','None'],
         default: 'None'
     },
     
