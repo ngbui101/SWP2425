@@ -1,28 +1,51 @@
-
+require('dotenv').config({ path: './.env' });
 const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const app = express();
-const http = require('http');
-const server = http.createServer(app);
-
+const path = require('path');
+const connectDB = require('./config/database');
 const credentials = require('./middleware/credentials');
+
+
 const errorHandlerMiddleware = require('./middleware/error_handler');
 const authenticationMiddleware = require('./middleware/authentification');
 
-mongoose.connect('mongodb+srv://sop:1234@softwarepraktikum.iporc.mongodb.net/SOP', {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-  }).then(() => {
-    console.log('Connected to MongoDB');
-  }).catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
-  })
+const app = express();
+const PORT = process.env.PORT || 3500;
+connectDB()
+// Allow Credentials
+app.use(credentials);
+
+const corsOptions = {
+  origin: "http://localhost:5173",
+};
+// CORS
+app.use(cors({ credentials: true, origin: corsOptions }));
+
+// application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false }));
+
+// application/json response
+app.use(express.json());
+
+// Middleware for cookies
+app.use(cookieParser());
+
+app.use(authenticationMiddleware);
+
+// Static files
+app.use('/static', express.static(path.join(__dirname, 'public')));
+
+// Default error handler
+app.use(errorHandlerMiddleware);
+
 
 // Routes
 app.use('/api/position', require('../backend/rest/position'));
 app.use('/api/tracker', require('../backend/rest/tracker'));
 app.use('/api/users', require('../backend/rest/users')); 
-
+app.use('/api/auth', require('../backend/rest/auth'));
 // 404 route handler
 app.all('*', (req, res) => {
     res.status(404);
@@ -36,7 +59,7 @@ app.all('*', (req, res) => {
 
   mongoose.connection.once('open', () => {
     console.log('DB connected');
-    server.listen(9999, () => {
-      console.log(`Listening on port 9999`);
+    app.listen(PORT, () => {
+      console.log(`Listening on port ${PORT}`);
     });
   });
