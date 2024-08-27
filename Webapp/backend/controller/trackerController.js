@@ -28,23 +28,32 @@ async function getTrackerById(req, res) {
 
 // Create a new tracker
 async function createTracker(req, res) {
-  const {name} = req.body;
-  const userId = req.user.id;
+  const { name } = req.body;
+  const userId = req.user.id; // Annahme: `req.user` enthält die Benutzerinformationen (z.B. nach Authentifizierung).
 
   try {
+    // Überprüfen, ob ein Tracker mit demselben Namen bereits existiert
+    const existingTracker = await Tracker.findOne({ name }).exec();
+    if (existingTracker) {
+      return res.status(409).json({ message: 'Tracker with this name already exists' });
+    }
+
+    // Tracker erstellen
     const tracker = new Tracker({
-      
       name,
     });
 
     await tracker.save();
+
+    // Benutzer finden und den Tracker hinzufügen
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.tracker.push(tracker._id);
+    user.tracker.push(tracker._id); // Tracker-ID zum Tracker-Array des Benutzers hinzufügen
     await user.save();
+
     res.status(201).json({ message: 'Tracker created successfully', tracker });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
