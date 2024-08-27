@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const TrackerSchema = new Schema ( {
-    id: {typ: Number, required: true},
+    id: {type: Number, required: true},
     name : {type: String},
     mode: {
         type: String,

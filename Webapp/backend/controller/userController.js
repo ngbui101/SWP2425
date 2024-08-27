@@ -1,4 +1,4 @@
-const User = require('backend/models/User.js')
+const User = require('../models/User')
 // Get all users
 async function getAllUsers(req, res) {
   try {
