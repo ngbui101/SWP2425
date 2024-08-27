@@ -13,9 +13,9 @@ const bcrypt = require('bcrypt')
 */ 
 
 async function register(req, res){
-  const { username, email, first_name, last_name, password, password_confirm, address, phone_number, profile_picture, role } = req.body;
+  const { username, email, password, password_confirm, phone_number, role } = req.body;
 
-  if(!username || !email || !password || !password_confirm || !first_name || !last_name) {
+  if(!email || !password || !password_confirm) {
     return res.status(422).json({'message': 'Invalid fields'})
   }
 
@@ -30,14 +30,10 @@ async function register(req, res){
 
     await User.create({
       email,
-      username,
+      username: username || 'user',
       password: hashedPassword,
-      first_name,
-      last_name,
-      address,
-      phone_number,
-      profile_picture,
-      role: role || 0 // Default to 0 if no role is provided
+      phone_number: phone_number || 0,
+      role: role || 0
     })
 
     return res.sendStatus(201)
