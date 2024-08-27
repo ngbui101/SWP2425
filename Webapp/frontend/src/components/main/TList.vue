@@ -13,8 +13,7 @@ const props = defineProps({
 <template>
   <div class="box box2">
     <div class="list-header">
-      <h2>Mein Tracker</h2>
-    </div>
+      Mein Tracker</div>
     <ul class="tracker-list">
       <li v-for="(tracker, index) in props.trackers" :key="index" class="tracker-item">
         <strong>{{ tracker.name }}</strong> - Modus: {{ tracker.mode }} - Standort: {{ tracker.location }}
@@ -29,10 +28,10 @@ const props = defineProps({
 }
 
 .list-header {
+  height: 60px;
+  line-height: 60px;
   background-color: rgba(0, 0, 0, 0.2);
-  padding: 10px;
   border-radius: 5px;
-  margin-bottom: 10px;
   text-align: center;
 }
 

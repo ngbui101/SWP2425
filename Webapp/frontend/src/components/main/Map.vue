@@ -124,7 +124,6 @@ onUnmounted(() => {
 
 .flex-box {
     background-color: rgba(0, 0, 0, 0.2);
-    margin: 5px 0;
 }
 
 .box-small {

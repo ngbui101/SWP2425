@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import Box1 from './main/Box1.vue'
-import Box2 from './main/Box2.vue'
-import Box3 from './main/Box3.vue'
+import Menu from './main/Menu.vue'
+import TList from './main/TList.vue'
+import Map from './main/Map.vue'
 
 // Tracker-Daten in App.vue
 const trackers = ref([
@@ -17,9 +17,9 @@ const trackers = ref([
 
 <template>
   <div class="container">
-    <Box1 />
-    <Box2 :trackers="trackers" />
-    <Box3 :trackers="trackers" />
+    <Menu />
+    <TList :trackers="trackers" />
+    <Map :trackers="trackers" />
   </div>
 </template>
 
