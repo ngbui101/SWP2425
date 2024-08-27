@@ -1,11 +1,29 @@
-<!-- Box1.vue -->
 <script setup>
-import { ref } from 'vue'
+import { computed, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
-const showMenu = ref(false)
+const showMenu = ref(false);
+const router = useRouter();
+const authStore = useAuthStore();
+const user = computed(() => authStore.userDetail);
+
+onMounted(async () => {
+    await authStore.getUser();
+  });
 
 const toggleMenu = () => {
-  showMenu.value = !showMenu.value
+  showMenu.value = !showMenu.value;
+};
+
+// Logout function
+async function logout() {
+  try {
+    await authStore.logout();
+    router.replace({ name: 'login' }); // Redirect to the login page after logout
+  } catch (err) {
+    console.log(err.message);
+  }
 }
 </script>
 
@@ -13,11 +31,11 @@ const toggleMenu = () => {
   <div class="box box1">
     <div class="dropdown">
       <div class="drop-down-button" @click="toggleMenu">
-        ☰ Username  <!-- Burger-Menü Symbol -->
+        ☰ {{ user?.email }} <!-- Conditionally render the username if available, or fallback to 'User' -->
       </div>
       <ul v-if="showMenu" class="dropdown-menu">
         <li>Daten ändern</li>
-        <li>Logout</li>
+        <li @click="logout">Logout</li> <!-- Attach the logout function here -->
       </ul>
     </div>
   </div>
@@ -38,7 +56,7 @@ const toggleMenu = () => {
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.2);
   padding: 10px;
-  border-radius: 5px;  
+  border-radius: 5px;
 }
 
 .dropdown-menu {
@@ -64,4 +82,3 @@ const toggleMenu = () => {
   background-color: rgba(255, 255, 255, 0.2);
 }
 </style>
-^s

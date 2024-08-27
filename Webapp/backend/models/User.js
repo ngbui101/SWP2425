@@ -5,6 +5,11 @@ const Schema = mongoose.Schema
 // The UserSchema defines the structure of a user document with the following fields:
 const UserSchema = Schema(
   {
+    username: {
+      type: String,
+      required: false
+    },
+
     email: {
       type: String,
       required: true,
@@ -37,11 +42,7 @@ id: A virtual property that returns the document's _id.
 timestamps: An option to automatically manage created_at and updated_at fields. */
   {
     virtuals: {
-      full_name: {
-        get() {
-          return this.first_name + ' ' + this.last_name
-        }
-      },
+      
 
       id: {
         get() {
