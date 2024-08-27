@@ -27,9 +27,10 @@ const UserSchema = Schema(
     refresh_token: String,
     tracker: [
       {
-          tracker: {type: Schema.Types.ObjectId, ref: 'Tracker'}
+        type: Schema.Types.ObjectId,
+        ref: 'Tracker'
       }
-  ]
+    ]
   },
   /* The second argument to the Schema constructor is an options object, which includes:
 
