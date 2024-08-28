@@ -49,7 +49,8 @@ async function createPosition(req, res) {
     await position.save();
 
     // Position zum Tracker hinzufügen
-    tracker.positions.push({ position: position._id });
+    tracker.positions.push(position._id);
+
     await tracker.save();
 
     res.status(201).json({ message: 'Position created successfully and added to tracker', position });
@@ -67,10 +68,16 @@ async function deletePosition(req, res) {
   const { id } = req.params;
 
   try {
+    // Find and delete the position by ID
     const position = await Position.findByIdAndDelete(id);
     if (!position) {
       return res.status(404).json({ message: 'Position not found' });
     }
+
+    // Remove the position from the associated tracker's positions array
+    await Tracker.findByIdAndUpdate(position.tracker, {
+      $pull: { positions: id } // Correct usage of $pull to remove the ID
+    });
 
     res.status(200).json({ message: 'Position deleted successfully' });
   } catch (error) {

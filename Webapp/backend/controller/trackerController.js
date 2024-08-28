@@ -81,12 +81,17 @@ async function updateTrackerName(req, res) {
 // Delete a tracker by ID
 async function deleteTracker(req, res) {
   const { id } = req.params;
+  const userId = req.user.id;
 
   try {
     const tracker = await Tracker.findByIdAndDelete(id);
     if (!tracker) {
       return res.status(404).json({ message: 'Tracker not found' });
     }
+
+    await User.findByIdAndUpdate(userId, {
+      $pull: { tracker: tracker._id }
+    });
 
     res.status(200).json({ message: 'Tracker deleted successfully' });
   } catch (error) {

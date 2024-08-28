@@ -12,7 +12,8 @@ const TrackerSchema = new Schema ( {
     },
     positions: [
         {
-            position: {type: Schema.Types.ObjectId, ref: 'Position'}
+            type: Schema.Types.ObjectId,
+            ref: 'Position'
         }
     ]
   })
