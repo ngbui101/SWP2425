@@ -26,7 +26,6 @@ export interface User {
   }
 
   export interface RegisterData {
-    username: string;
     email: string;
     password: string;
     password_confirm: string;
@@ -71,9 +70,13 @@ export interface User {
     
         async register(payload: RegisterData) {
           try {
-            const { data } = await useApi().post(`/api/auth/register`, payload);
+            console.log('Payload being sent:', payload);
+            const { data } = await useApi().post('http://localhost:3500/api/auth/register', payload);
             return data;
           } catch (error: any) {
+            if (error.response) {
+              console.error('Server response:', error.response.data); // Detailed server error
+            }
             throw new Error(`Registration failed: ${error.message}`);
           }
         },

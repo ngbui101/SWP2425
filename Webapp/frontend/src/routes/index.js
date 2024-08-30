@@ -1,15 +1,15 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-const MainPage = () => import('../components/Main.vue');
-const LoginPage = () => import('../components/LoginComponent.vue');
-const RegisterPage = () => import('../components/RegisterComponent.vue');
+const MainView = () => import('../views/MainView.vue');
+const LoginView = () => import('../views/LoginView.vue');
+const RegisterView = () => import('../views/RegisterView.vue');
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
-    { path: '/', component: MainPage, name: 'main', meta: { requiresAuth: true } }, // Geschützte Route
-    { path: '/login', component: LoginPage, name: 'login', meta: { requiresGuest: true } },
-    { path: '/register', component: RegisterPage, name: 'register', meta: { requiresGuest: true } },
+    { path: '/', component: MainView, name: 'main', meta: { requiresAuth: true } }, // Geschützte Route
+    { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true } },
+    { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true } },
     // { path: '/unauthorized', name: 'unauthorized', component: ForbiddenPage, meta: { hideComponent:true}} // Falls benötigt
 ];
 

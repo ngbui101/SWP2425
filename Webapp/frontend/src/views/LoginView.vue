@@ -1,21 +1,38 @@
 <template>
-  <div class="container">
-    <div class="login form">
-      <header>BO-Tracker</header>
-      <form @submit.prevent="submit">
-        <input type="text" v-model="loginData.email" placeholder="Enter your email" required>
-        <input type="password" v-model="loginData.password" placeholder="Enter your password" required>
-        <a href="#">Forgot password?</a>
-        <input type="submit" class="button" value="Login">
-      </form>
-      <div class="signup">
-        <span class="signup">Don't have an account?
-          <label @click="goToSignup">Signup</label>
+  <div class="wrapper">
+    <div class="logo-container">
+      <img src="@/assets/logo-transparent.png" alt="Logo" class="logo">
+    </div>
+    <div class="container">
+      <div class="language-switch">
+        <span>
+          <a href="#" @click="setLanguage('de')">
+            <img src="@/assets/icons8-deutschland-emoji-48.png" alt="DE" class="language-icon">
+          </a>
+          <a href="#" @click="setLanguage('en')">
+            <img src="@/assets/icons8-großbritannien-emoji-48.png" alt="EN" class="language-icon">
+          </a>
         </span>
+      </div>
+      <div class="login form">
+        <header>Login to continue</header>
+        <form @submit.prevent="submit">
+          <input type="text" v-model="loginData.email" placeholder="Enter your email" required>
+          <input type="password" v-model="loginData.password" placeholder="Enter your password" required>
+          <a href="#">Forgot password?</a>
+          <input type="submit" class="button" value="Login">
+        </form>
+        <div class="signup">
+          <span class="signup">Don't have an account?
+            <RouterLink to="register">Sign Up</RouterLink>
+          </span>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
+
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
@@ -45,6 +62,10 @@ async function submit() {
   }
 }
 
+function setLanguage(language: string) {
+  console.log('Language switched to:', language);
+  // Handle the language switch logic here
+}
 
 function goToSignup() {
   router.push({ name: 'register' }); // Assuming you have a signup route
@@ -67,20 +88,51 @@ body {
   background: #009579;
 }
 
-.container {
+.wrapper {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 430px;
   width: 100%;
+  text-align: center;
+}
+
+.logo-container {
+  margin-bottom: 1rem;
+}
+
+.logo {
+  width: 100%;
+  max-width: 430px; /* Matches the max-width of the container */
+  height: auto;
+}
+
+.container {
+  position: relative; /* Make the container a relative positioned element */
   background: #fff;
   border-radius: 7px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 2rem;
 }
 
-.container .form {
-  padding: 2rem;
+.language-switch {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 16px;
+  color: black;
+}
+
+.language-switch a {
+  margin: 0 5px;
+  text-decoration: none;
+}
+
+.language-icon {
+  width: 24px; /* Adjust the size as needed */
+  height: 24px;
+  vertical-align: middle; /* Align icons vertically with the text */
 }
 
 .form header {
@@ -143,4 +195,5 @@ body {
 .signup label:hover {
   text-decoration: underline;
 }
+
 </style>
