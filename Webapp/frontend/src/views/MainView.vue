@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import Menu from './main/Menu.vue'
-import TList from './main/TList.vue'
-import Map from './main/Map.vue'
+import UserMenu from '../components/main/UserMenu.vue'
+import TrackerList from '../components/main/TrackerList.vue'
+import MapComponent from '../components/main/MapComponent.vue'
 
 const trackers = ref([
   { name: 'Tracker 1', mode: 'Langzeittracking', location: 'Berlin', lat: 52.52, lng: 13.405, temperature: 18 },
@@ -21,9 +21,9 @@ const updateTracker = (tracker) => {
 
 <template>
   <div class="container">
-    <Menu />
-    <TList :trackers="trackers" @update-tracker="updateTracker" />
-    <Map :trackers="trackers" :currentTracker="currentTracker" @update-tracker="updateTracker" />
+    <UserMenu />
+    <TrackerList :trackers="trackers" @update-tracker="updateTracker" />
+    <MapComponent :trackers="trackers" :currentTracker="currentTracker" @update-tracker="updateTracker" />
   </div>
 </template>
 

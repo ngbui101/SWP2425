@@ -1,34 +1,40 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-const MainPage = () => import('../components/Main.vue');
-const LoginPage = () => import('../components/LoginComponent.vue');
-const RegisterPage = () => import('../components/RegisterComponent.vue');
+const MainView = () => import('../views/MainView.vue');
+const LoginView = () => import('../views/LoginView.vue');
+const RegisterView = () => import('../views/RegisterView.vue');
+// const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
-    { path: '/', component: MainPage, name: 'main' },
-    { path: '/login', component: LoginPage, name: 'login', meta: { requiresGuest: true } },
-    { path: '/register', component: RegisterPage, name: 'register', meta: { requiresGuest: true } },
-  //  { path: '/unauthorized', name: 'unauthorized', component: ForbiddenPage, meta: { hideComponent:true}}
-  ];
+    { path: '/', component: MainView, name: 'main', meta: { requiresAuth: true } }, // Geschützte Route
+    { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true } },
+    { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true } },
+    // { path: '/unauthorized', name: 'unauthorized', component: ForbiddenPage, meta: { hideComponent:true}} // Falls benötigt
+];
 
-  const router = createRouter({
+const router = createRouter({
     history: createWebHistory(),
     routes
-  });
+});
 
-  // Global navigation guard for authentication and guest access
+// Global navigation guard for authentication and guest access
 router.beforeResolve(async (to, from, next) => {
     const authStore = useAuthStore();
   
+    // Überprüfen, ob die Route Authentifizierung erfordert und ob der Benutzer nicht authentifiziert ist
     if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+      // Umleitung zur Login-Seite
       return next({ name: 'login', query: { redirect: to.fullPath } });
-    } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    } 
+    // Überprüfen, ob die Route nur für Gäste ist und ob der Benutzer bereits authentifiziert ist
+    else if (to.meta.requiresGuest && authStore.isAuthenticated) {
+      // Umleitung zur Hauptseite
       return next({ name: 'main' });
-    } else {
+    } 
+    else {
       return next();
     }
-  });
+});
   
-  export default router;
-  
+export default router;
