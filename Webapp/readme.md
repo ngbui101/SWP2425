@@ -1,9 +1,13 @@
 ## Softwareprojekt Lokalisierung WebApp
----
+
 #### 1. Working with this repository
 #### 2. Installation / Setup
 #### 3. Additional information
 #### 4. Database information
+---
+
+---
+
 ---
 
 #### 1. Working with this repository
