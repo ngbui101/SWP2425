@@ -21,7 +21,9 @@ https://github.com/ngbui101/SWP2425
 
 ###### Branch Conventions
 **Master** is the productive, final branch of the project. Only working and finished code from develop shall be merged.
+
 **Develop** is the one we work on. When a feature or bugfix is done, merge your branch into develop.
+
 **custom** when working on a task, fork from develop and name your new branch like feature/XYZ or bugfix/XYZ. After merging into develop, delete it.
 
 ---
