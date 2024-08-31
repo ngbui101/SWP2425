@@ -8,8 +8,7 @@ import EN from './locale/en.json'
 import DE from './locale/de.json'
 import { createI18n } from 'vue-i18n'
 import './global.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'ionicons/dist/css/ionicons.min.css';
+
 
 const i18n = createI18n({
     legacy: false,
