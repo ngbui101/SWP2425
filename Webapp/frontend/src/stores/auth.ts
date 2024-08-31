@@ -6,6 +6,7 @@ export interface User {
     username: string;
     email: string;
     password: string;
+    number: string;
     created_at: Date;
     updated_at: Date;
     __v: number;
@@ -124,6 +125,18 @@ export interface User {
               return data;
             } catch (error: any) {
               throw new Error(`Failed to fetch users: ${error.message}`);
+            }
+          },
+
+          async updateEmail(newEmail: string) {
+            try {
+              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
+                email: newEmail
+              });
+              this.user.email = newEmail; // Update the email in the store
+              return data;
+            } catch (error: any) {
+              throw new Error(`Failed to update email: ${error.message}`);
             }
           },
 

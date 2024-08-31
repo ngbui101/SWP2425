@@ -9,6 +9,10 @@ const UserSchema = Schema(
       type: String,
       required: false
     },
+    number: {
+      type: String,
+      required: false
+    },
 
     email: {
       type: String,

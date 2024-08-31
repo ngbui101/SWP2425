@@ -1,15 +1,17 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-const MainView = () => import('../views/MainView.vue');
+const MapView = () => import('../views/MapView.vue');
 const LoginView = () => import('../views/LoginView.vue');
 const RegisterView = () => import('../views/RegisterView.vue');
+const SettingsView = () => import('../views/SettingsView.vue');
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
-    { path: '/', component: MainView, name: 'main', meta: { requiresAuth: true } }, // Geschützte Route
-    { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true } },
-    { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true } },
+    { path: '/map', component: MapView, name: 'main', meta: { requiresAuth: true } }, // Geschützte Route
+    { path: '/account', component: SettingsView, name: 'account', meta: { requiresAuth: true } }, // Geschützte Route
+    { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true, hideComponent: true } },
+    { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true, hideComponent: true} },
     // { path: '/unauthorized', name: 'unauthorized', component: ForbiddenPage, meta: { hideComponent:true}} // Falls benötigt
 ];
 
@@ -19,7 +21,7 @@ const router = createRouter({
 });
 
 // Global navigation guard for authentication and guest access
-router.beforeResolve(async (to, from, next) => {
+/* router.beforeResolve(async (to, from, next) => {
     const authStore = useAuthStore();
   
     // Überprüfen, ob die Route Authentifizierung erfordert und ob der Benutzer nicht authentifiziert ist
@@ -35,6 +37,6 @@ router.beforeResolve(async (to, from, next) => {
     else {
       return next();
     }
-});
+}); */
   
 export default router;

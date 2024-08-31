@@ -2,15 +2,17 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import SettingsPopup from '@/views/SettingsView.vue';
 
 const showMenu = ref(false);
+const showModal = ref(false); // Reactive property to control the modal visibility
 const router = useRouter();
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
 
 onMounted(async () => {
-    await authStore.getUser();
-  });
+  await authStore.getUser();
+});
 
 const toggleMenu = () => {
   showMenu.value = !showMenu.value;
@@ -25,6 +27,16 @@ async function logout() {
     console.log(err.message);
   }
 }
+
+// Open the modal
+const openModal = () => {
+  showModal.value = true;
+};
+
+// Close the modal
+const closeModal = () => {
+  showModal.value = false;
+};
 </script>
 
 <template>
@@ -34,10 +46,13 @@ async function logout() {
         ☰ {{ user?.email }} <!-- Conditionally render the username if available, or fallback to 'User' -->
       </div>
       <ul v-if="showMenu" class="dropdown-menu">
-        <li>Daten ändern</li>
+        <li @click="openModal">Daten ändern</li> <!-- Open the modal here -->
         <li @click="logout">Logout</li> <!-- Attach the logout function here -->
       </ul>
     </div>
+
+    <!-- Include the SettingsModal component and bind its visibility -->
+    <SettingsPopup :showModal="showModal" :user="user" @close-modal="closeModal" />
   </div>
 </template>
 

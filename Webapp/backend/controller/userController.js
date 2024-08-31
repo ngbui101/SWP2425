@@ -26,15 +26,13 @@ async function getUserById(req, res) {
 
 // Create a new user
 async function createUser(req, res) {
-  const { username, email, password, first_name, last_name} = req.body;
+  const { username, email, password} = req.body;
 
   try {
     const user = new User({
       username,
       email,
       password, // Ensure password is hashed in the User model before saving
-      first_name,
-      last_name,
       tracker: [],
     });
 
@@ -45,10 +43,9 @@ async function createUser(req, res) {
   }
 }
 
-// Update a user by ID
 async function updateUser(req, res) {
   const { id } = req.params;
-  const { username, email, first_name, last_name, role } = req.body;
+  const { email } = req.body;
 
   try {
     const user = await User.findById(id);
@@ -56,16 +53,15 @@ async function updateUser(req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.username = username || user.username;
-    user.email = email || user.email;
-    user.first_name = first_name || user.first_name;
-    user.last_name = last_name || user.last_name;
-    user.role = role !== undefined ? role : user.role;
+    if (email) {
+      user.email = email;
+    }
 
     await user.save();
     res.status(200).json({ message: 'User updated successfully', user });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    console.error('Error updating user:', error); // Log the error details
+    res.status(500).json({ message: 'Failed to update user', error });
   }
 }
 

@@ -11,9 +11,12 @@
   "dependencies": {
     "@fawmi/vue-google-maps": "^0.9.79",
     "axios": "^1.7.5",
+    "bootstrap": "^5.3.3",
+    "ionicons": "^7.4.0",
     "pinia": "^2.2.2",
     "typescript": "^5.5.4",
     "vue": "^3.4.29",
+    "vue-i18n": "^9.14.0",
     "vue-router": "^4.3.2"
   },
   "devDependencies": {

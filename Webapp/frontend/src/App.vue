@@ -1,11 +1,16 @@
 <script setup>
-import { ref } from 'vue'
-import Main from './views/MainView.vue'
-import LoginView from './views/LoginView.vue';
-import RegisterView from './views/RegisterView.vue';
+import NavBar from './components/main/NavBar.vue';
+import LogoHeader from './components/main/LogoHeader.vue';
 </script>
 <template>
-    <div class="container">
+    
+      <LogoHeader v-if="!$route.meta.hideComponent" />
+      <NavBar v-if="!$route.meta.hideComponent" />
       <RouterView />
-    </div>
+    
   </template>
+
+
+<style>
+
+</style>
