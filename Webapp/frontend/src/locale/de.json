@@ -1,0 +1,12 @@
+{
+    "LOGINVIEW-login_to_continue": "Anmelden um fortzufahren",
+    "LOGINVIEW-enter_email": "Email eingeben",
+    "LOGINVIEW-enter_password": "Passwort eingeben",
+    "LOGINVIEW-forgot_password": "Passwort vergessen?",
+    "LOGINVIEW-login": "Anmelden",
+    "LOGINVIEW-dont_have_account": "Noch kein Konto?",
+    "LOGINVIEW-sign_up": "Konto erstellen",
+    "REGISTERVIEW-password_confirm": "Passwort bestätigen",
+    "REGISTERVIEW-already_account": "Bereits registriert?",
+    "REGISTERVIEW-create_password": "Passwort eingeben"
+}
