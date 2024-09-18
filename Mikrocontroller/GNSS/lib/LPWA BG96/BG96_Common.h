@@ -82,6 +82,8 @@ class _BG96_Common : public _BG96_Serial
 
     bool GetDevInformation(char *inf);
 
+    bool GetLatestGMTTime(char *time);
+
     bool GetDevVersion(char *ver);
 
     bool GetDevIMEI(char *imei);
