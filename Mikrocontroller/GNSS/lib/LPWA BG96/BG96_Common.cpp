@@ -64,6 +64,18 @@ bool _BG96_Common::SetDevCommandEcho(bool echo)
     }
     return false;
 }
+//Obtain the Latest Time Synchronized Through Network
+bool _BG96_Common::GetLatestGMTTime(char *time)
+{
+    if (sendAndSearch(DEV_GMTTIME, RESPONSE_OK, 2))
+    {
+        char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
+        *end_buf = '\0';
+        strcpy(time, rxBuffer); 
+        return true;
+    }
+    return false;
+}
 
 // Funktion zum Abrufen der Geräteinformationen
 bool _BG96_Common::GetDevInformation(char *inf)
@@ -85,7 +97,7 @@ bool _BG96_Common::GetDevVersion(char *ver)
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(ver, rxBuffer); // Version in ver kopieren
+        strcpy(ver, rxBuffer); 
         return true;
     }
     return false;

@@ -44,6 +44,7 @@ const char RESPONSE_SEND_FAIL[] = "SEND FAIL";
 const char DEV_AT[] = "";
 const char DEV_INFORMATION[] = "I";
 const char DEV_OUTPUTFORMAT[] = "V1";
+const char DEV_GMTTIME[] = "+QLTS";
 const char DEV_VERSION[] = "+CGMR";
 const char DEV_IMEI[] = "+CGSN";
 const char DEV_FUN_LEVEL[] = "+CFUN";
