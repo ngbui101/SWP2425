@@ -80,6 +80,8 @@ class _BG96_Common : public _BG96_Serial
 
     bool SetDevCommandEcho(bool echo);
 
+    bool SetDevOutputformat(bool echo);
+
     bool GetDevInformation(char *inf);
 
     bool GetLatestGMTTime(char *time);

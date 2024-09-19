@@ -26,15 +26,15 @@ bool _BG96_Common::InitModule()
 {
     pinMode(ENABLE_PWR, OUTPUT);
     digitalWrite(ENABLE_PWR, HIGH); // Modul einschalten
-    pinMode(RESET_PIN, OUTPUT);
-    digitalWrite(RESET_PIN, LOW); // Reset-Pin auf LOW setzen
     delay(800);
+    pinMode(RESET_PIN, OUTPUT);
+    digitalWrite(RESET_PIN, LOW); 
     pinMode(POWKEY_PIN, OUTPUT);
     digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf LOW setzen
     delay(800);
     digitalWrite(POWKEY_PIN, HIGH); // Powkey-Pin auf HIGH setzen
     delay(800);
-    sendATcommand(DEV_OUTPUTFORMAT); // AT-Befehl zum Setzen des Ausgabeformats senden
+    return true;
 }
 
 // Funktion zum Zurücksetzen des Moduls
@@ -45,7 +45,19 @@ bool _BG96_Common::ResetModule()
     digitalWrite(POWKEY_PIN, LOW);
     return true;
 }
-
+bool _BG96_Common::SetDevOutputformat(bool format)
+{
+    char cmd[16];
+    if (format == true)
+    {
+        strcpy(cmd, DEV_OUTPUTFORMAT);
+        if (sendAndSearch(cmd, RESPONSE_OK, 2))
+        {
+            return true;
+        }
+        return false;
+    }
+}
 // Funktion zum Setzen des Befehlsechos
 bool _BG96_Common::SetDevCommandEcho(bool echo)
 {
@@ -64,14 +76,14 @@ bool _BG96_Common::SetDevCommandEcho(bool echo)
     }
     return false;
 }
-//Obtain the Latest Time Synchronized Through Network
+// Obtain the Latest Time Synchronized Through Network
 bool _BG96_Common::GetLatestGMTTime(char *time)
 {
     if (sendAndSearch(DEV_GMTTIME, RESPONSE_OK, 2))
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(time, rxBuffer); 
+        strcpy(time, rxBuffer);
         return true;
     }
     return false;
@@ -97,7 +109,7 @@ bool _BG96_Common::GetDevVersion(char *ver)
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(ver, rxBuffer); 
+        strcpy(ver, rxBuffer);
         return true;
     }
     return false;

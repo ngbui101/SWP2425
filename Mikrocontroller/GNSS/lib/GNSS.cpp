@@ -6,29 +6,29 @@
 #define UART_DEBUG
 
 GNSS_Work_Mode_t mode = STAND_ALONE;
-_BG96_GNSS _5GNBIoT(ATSerial, DSerial);
+_BG96_GNSS _BG96(ATSerial, DSerial);
 
 void setup()
 {
   DSerial.begin(115200);
   while (DSerial.read() >= 0)
     ;
-  DSerial.println("This is the _5GNBIoT Debug Serial!");
+  DSerial.println("This is the _BG96 Debug Serial!");
   ATSerial.begin(115200);
   while (ATSerial.read() >= 0)
     ;
   delay(1000);
-  if (_5GNBIoT.InitModule())
+  if (_BG96.InitModule())
   {
-    DSerial.println("\r\n_5GNBIoT.InitModule() OK!");
+    DSerial.println("\r\n_BG96.InitModule() OK!");
   }
   delay(1000);
-  // if(_5GNBIoT.SetGNSSOutputPort(UARTNMEA)){
+  // if(_BG96.SetGNSSOutputPort(UARTNMEA)){
   //   DSerial.println("\r\nSet GNSSOutputPort OK!");
   // }
-  _5GNBIoT.SetDevCommandEcho(false);
+  _BG96.SetDevCommandEcho(false);
   delay(100);
-  if (_5GNBIoT.TurnOnGNSS(mode, WRITE_MODE))
+  if (_BG96.TurnOnGNSS(mode, WRITE_MODE))
   {
     DSerial.println("\r\nOpen the GNSS Function Success!");
   }
@@ -40,7 +40,7 @@ void setup()
 void loop()
 {
   char gnss_posi[128];
-  if (_5GNBIoT.GetGNSSPositionInformation(gnss_posi))
+  if (_BG96.GetGNSSPositionInformation(gnss_posi))
   {
     DSerial.println("\r\nGet the GNSS Position Success!");
     DSerial.println(gnss_posi);
