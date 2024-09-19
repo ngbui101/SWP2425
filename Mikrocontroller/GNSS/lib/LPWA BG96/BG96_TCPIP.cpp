@@ -15,17 +15,20 @@ _BG96_TCPIP::_BG96_TCPIP(Stream &atserial, Stream &dserial):_BG96_Common(atseria
 
 }
 
-bool _BG96_TCPIP::SetDevAPNParameters(unsigned int pdp_index, Protocol_Type_t type, char *apn, char *usr, char *pwd, Authentication_Methods_t met)
+bool _BG96_TCPIP::SetDevAPNParameters(unsigned int pdp_index, Protocol_Type_t type, const char *apn, const char *usr, const char *pwd, Authentication_Methods_t met)
 {
     char cmd[64], buf[64];
-    strcpy(cmd,APN_PARAMETERS);
+    strcpy(cmd, APN_PARAMETERS);
     sprintf(buf, "=%d,%d,\"%s\",\"%s\",\"%s\",%d", pdp_index, type, apn, usr, pwd, met);
-    strcat(cmd,buf);
-    if(sendAndSearch(cmd,RESPONSE_OK,2)){
+    strcat(cmd, buf);
+    
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
         return true;
     }
     return false;
 }
+
 
 Cmd_Response_t _BG96_TCPIP::ActivateDevAPN(unsigned int pdp_index)
 {
@@ -82,7 +85,7 @@ bool _BG96_TCPIP::GetDevAPNIPAddress(unsigned int pdp_index, char *ip)
     return false;
 }
 
-bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, char *apn, char *usr, char *pwd, char *err_code)
+bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, const char* apn, const char* usr, const char* pwd, char* err_code)
 {
     // Statusvariablen
     Net_Status_t i_status = NOT_REGISTERED;
@@ -158,6 +161,7 @@ bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, char *apn, char *usr, char *pw
 }
 
 
+
 bool _BG96_TCPIP::OpenSocketService(unsigned int pdp_index, unsigned int socket_index, Socket_Type_t socket, char *ip, unsigned int port, unsigned int local_port, Access_Mode_t mode)
 {
     char cmd[128],buf[128];
@@ -222,31 +226,38 @@ bool _BG96_TCPIP::CloseSocketService(unsigned int socket_index)
     return false;
 }
 
-bool _BG96_TCPIP::SocketSendData(unsigned int socket_index, Socket_Type_t socket, char *data_buf, char *ip, unsigned int port)
+bool _BG96_TCPIP::SocketSendData(unsigned int socket_index, Socket_Type_t socket, const char *data_buf, const char *ip, unsigned int port)
 {
-    char cmd[64],buf[64];
+    char cmd[64], buf[64];
     strcpy(cmd, SOCKET_SEND_DATA);
-    switch(socket)
+    
+    switch (socket)
     {
         case TCP_CLIENT:
         case TCP_SEVER:
         case UDP_CLIENT:
-            sprintf(buf,"=%d,%d",socket_index,strlen(data_buf));
+            sprintf(buf, "=%d,%d", socket_index, strlen(data_buf));
             break;
         case UDP_SEVER:
-            sprintf(buf,"=%d,%d,\"%s\",%d",socket_index,strlen(data_buf),ip,port);
+            sprintf(buf, "=%d,%d,\"%s\",%d", socket_index, strlen(data_buf), ip, port);
             break;
         default:
-        return false;
+            return false;
     }
-    strcat(cmd,buf);
-    if(sendAndSearchChr(cmd, '>', 2)){
-        if(sendDataAndCheck(data_buf, RESPONSE_SEND_OK, RESPONSE_SEND_FAIL, 10)){
+    
+    strcat(cmd, buf);
+    
+    if (sendAndSearchChr(cmd, '>', 2))
+    {
+        if (sendDataAndCheck(data_buf, RESPONSE_SEND_OK, RESPONSE_SEND_FAIL, 10))
+        {
             return true;
         }
     }
+    
     return false;
 }
+
 
 bool _BG96_TCPIP::SocketRecvData(unsigned int socket_index, unsigned int recv_len, Socket_Type_t socket, char *recv_buf)
 {
@@ -306,64 +317,6 @@ bool _BG96_TCPIP::SwitchAccessModes(unsigned int socket_index, Access_Mode_t mod
     return false;
 }
 
-bool _BG96_TCPIP::DevPingFunction(unsigned int socket_index, char *host)
-{
-    char cmd[128],buf[64];
-    strcpy(cmd, PING_FUNCTION);
-    sprintf(buf, "=%d,\"%s\"", socket_index, host);
-    strcat(cmd,buf);
-    if(sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2)){
-        if(readResponseToBuffer(20)){
-            char *sta_buf = searchStrBuffer(PING_FUNCTION);
-	    if (*sta_buf == NULL)
-		return false;
-
-            for (int j = 0; j <= 3; j++)
-            {
-                char *cs_buf = strstr(sta_buf, ": ");
-                char *ce_buf = strchr(sta_buf, ',');
-                if(ce_buf == NULL) {
-                    errorCode = atoi(cs_buf + 2);
-                } else {
-                    *ce_buf = '\0';
-                    int code = atoi(cs_buf + 2);
-                    if (code == 0){
-                        return true;
-                    }
-                }
-
-		sta_buf = strstr((char *)sta_buf, PING_FUNCTION);
-		if (*sta_buf == NULL)
-		    return false;
-            }
-/*            char *sta_buf = searchStrBuffer(PING_FUNCTION);
-            char ping_data[256];
-            strcpy(ping_data, sta_buf);
-            char *p[6]; int i = 0;
-            p[0] = strtok(ping_data, "\r\n\r\n");
-            while(p[i] != NULL){
-                i++;
-                p[i] = strtok(NULL,"\r\n\r\n");
-            }
-            p[i] = '\0';
-            for (int j = 0; j <= 4; j++)
-            {
-                char *cs_buf = strstr(p[j],": ");
-                char *ce_buf = strchr(p[j],',');
-                if(ce_buf == NULL){
-                    errorCode = atoi(cs_buf + 2);
-                }else{
-                    *ce_buf = '\0';
-                    int code = atoi(cs_buf + 2);
-                    if (code == 0){
-                        return true;
-                    }
-                }
-            }*/
-        }
-    }
-    return false;
-}
 
 bool _BG96_TCPIP::DevNTPFunction(unsigned int socket_index, char *ntp_ip, unsigned int port, char *time)
 {

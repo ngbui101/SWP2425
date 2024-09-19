@@ -57,6 +57,7 @@ bool _BG96_Common::SetDevOutputformat(bool format)
         }
         return false;
     }
+    return false;
 }
 // Funktion zum Setzen des Befehlsechos
 bool _BG96_Common::SetDevCommandEcho(bool echo)
@@ -171,7 +172,7 @@ bool _BG96_Common::DevLocalRate(unsigned long &rate, Cmd_Status_t status)
     }
     else if (status == WRITE_MODE)
     {
-        for (int i = 0; i < sizeof(Band_list) / sizeof(Band_list[0]); i++)
+        for (unsigned int i = 0; i < sizeof(Band_list) / sizeof(Band_list[0]); i++)
         {
             if (rate == Band_list[i])
             {
@@ -202,16 +203,17 @@ bool _BG96_Common::GetDevSimIMSI(char *imsi)
 }
 
 // Funktion zum Setzen der SIM-PIN
-bool _BG96_Common::DevSimPIN(char *pin, Cmd_Status_t status)
+bool _BG96_Common::DevSimPIN(const char *pin, Cmd_Status_t status)
 {
     char cmd[16];
     strcpy(cmd, DEV_SIM_PIN);
+    
     if (status == READ_MODE)
     {
         strcat(cmd, "?");
         if (sendAndSearch(cmd, "READY", 2))
         {
-            // pin = "READY";
+            // pin = "READY"; // Diese Zeile ist nicht notwendig, da pin nicht geändert wird
             return true;
         }
     }
@@ -225,8 +227,10 @@ bool _BG96_Common::DevSimPIN(char *pin, Cmd_Status_t status)
             return true;
         }
     }
+    
     return false;
 }
+
 
 // Funktion zum Abrufen der SIM-ICCID
 bool _BG96_Common::GetDevSimICCID(char *iccid)
@@ -475,33 +479,6 @@ bool _BG96_Common::DevClock(char *d_clock, Cmd_Status_t status)
     }
     return false;
 }
-
-#if 0
-// Funktion zum Konfigurieren eines Pins
-bool _BG96_Common::ConfigPin(int pin, int dir, int pull, int drv)
-{
-    char cmd[32];
-    sprintf(cmd,"+QCFG=\"gpio\",1,%d,%d,%d,%d", pin, dir, pull, drv);
-//    sprintf(cmd,"+QCFG=\"gpio\"");
-
-    if(sendAndSearch(cmd,RESPONSE_OK,2)){
-        return true;
-    }
-    return false;
-}
-
-// Funktion zum Setzen des Zustands eines Pins
-bool _BG96_Common::PinWrite(int pin, int state)
-{
-    char cmd[32];
-    sprintf(cmd,"+QCFG=\"gpio\",3,%d,%d", pin, state);
-
-    if(sendAndSearch(cmd,RESPONSE_OK,2)){
-        return true;
-    }
-    return false;
-}
-#endif
 
 // Funktion zum Konfigurieren des Scanmodus (0 Automatisch, 1 Nur GSM, 3 Nur LTE)
 bool _BG96_Common::ScanmodeConfig(int mode)

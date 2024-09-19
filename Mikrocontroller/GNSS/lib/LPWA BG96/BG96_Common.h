@@ -96,7 +96,7 @@ class _BG96_Common : public _BG96_Serial
 
     bool GetDevSimIMSI(char *imsi);
 
-    bool DevSimPIN(char *pin, Cmd_Status_t status);
+    bool DevSimPIN(const char *pin, Cmd_Status_t status);
 
     bool GetDevSimICCID(char *iccid);
 

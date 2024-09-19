@@ -131,5 +131,8 @@ const char GNSS_TURN_ON[] = "+QGPS";
 const char GNSS_TURN_OFF[] = "+QGPSEND";
 const char GNSS_GET_POSITION[] = "+QGPSLOC";
 const char GNSS_ACQUIRE_NMEA[] = "+QGPSGNMEA";
+const char GNSS_ENABLE_GPSONEXTRA[] = "+QGPSXTRA";
+const char GNSS_INJECT_GPSONEXTRA_TIME[] = "+QGPSXTRATIME";
+const char GNSS_INJECT_GPSONEXTRA_DATA[] = "+QGPSXTRADATA";
 
 #endif
