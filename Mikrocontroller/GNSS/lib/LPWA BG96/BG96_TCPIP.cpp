@@ -84,52 +84,79 @@ bool _BG96_TCPIP::GetDevAPNIPAddress(unsigned int pdp_index, char *ip)
 
 bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, char *apn, char *usr, char *pwd, char *err_code)
 {
-    Net_Status_t i_status;
+    // Statusvariablen
+    Net_Status_t i_status = NOT_REGISTERED;
     Cmd_Response_t init_status;
     const char *e_str;
-    unsigned long start_time = millis();
-    while(!DevSimPIN("",READ_MODE)){
-         if (millis() - start_time >= 10*1000UL){
-             e_str = "\r\nAPN ERROR: No SIM card detected!\r\n";
-             strcpy(err_code, e_str);
-             return false;
-         }
-    }
+    char i_ip[16];  // Buffer für die IP-Adresse
 
-    start_time = millis();
-    while (i_status != REGISTERED && i_status != REGISTERED_ROAMING){
-        i_status = DevNetRegistrationStatus();
-        if (millis() - start_time >= 120*1000UL){
-            e_str = "\r\nAPN ERROR: Can't registered to the Operator network!\r\n";
+    // Schritt 1: SIM-Kartenprüfung
+    unsigned long start_time = millis();
+    while (!DevSimPIN("", READ_MODE))
+    {
+        if (millis() - start_time >= 10 * 1000UL)  // Timeout nach 10 Sekunden
+        {
+            e_str = "\r\nAPN ERROR: No SIM card detected!\r\n";
             strcpy(err_code, e_str);
             return false;
         }
-	
-  	delay(3000);
     }
 
+    // Schritt 2: Netzregistrierung prüfen
     start_time = millis();
-    while(millis() - start_time <= 300*1000UL){
-        if (SetDevAPNParameters(pdp_index, IPV4, apn, usr, pwd, PAP_OR_CHAP))
+    while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+    {
+        i_status = DevNetRegistrationStatus();
+        if (millis() - start_time >= 120 * 1000UL)  // Timeout nach 120 Sekunden
         {
-            char i_ip[16];
-            if(GetDevAPNIPAddress(pdp_index, i_ip)){
+            e_str = "\r\nAPN ERROR: Can't register to the operator network!\r\n";
+            strcpy(err_code, e_str);
+            return false;
+        }
+        delay(3000);  // Warte 3 Sekunden vor dem nächsten Registrierungsversuch
+    }
+
+    // Schritt 3: APN-Konfiguration setzen
+    if (!SetDevAPNParameters(pdp_index, IPV4, apn, usr, pwd, PAP_OR_CHAP))
+    {
+        e_str = "\r\nAPN ERROR: Failed to set APN parameters!\r\n";
+        strcpy(err_code, e_str);
+        return false;
+    }
+
+    // Schritt 4: APN aktivieren und IP-Adresse abrufen
+    start_time = millis();
+    while (millis() - start_time <= 300 * 1000UL)  // Timeout nach 5 Minuten
+    {
+        init_status = ActivateDevAPN(pdp_index);
+        if (init_status == SUCCESS_RESPONSE)
+        {
+            if (GetDevAPNIPAddress(pdp_index, i_ip))
+            {
                 sprintf(err_code, "\r\nAPN OK: The IP address is %s\r\n", i_ip);
                 return true;
-            }else{
-                init_status = ActivateDevAPN(pdp_index);
-                if (init_status == TIMEOUT_RESPONSE){
-                    e_str = "\r\nAPN ERROR: Please reset your device!\r\n";
-                    strcpy(err_code, e_str);
-                    return false;
-                }
+            }
+            else
+            {
+                e_str = "\r\nAPN ERROR: Failed to retrieve IP address!\r\n";
+                strcpy(err_code, e_str);
+                return false;
             }
         }
-        e_str = "\r\nAPN ERROR: Activate APN file!\r\n";
-        strcpy(err_code, e_str);
+        else if (init_status == TIMEOUT_RESPONSE)
+        {
+            e_str = "\r\nAPN ERROR: APN activation timeout. Please reset your device!\r\n";
+            strcpy(err_code, e_str);
+            return false;
+        }
     }
+
+    // Falls die APN-Aktivierung fehlschlägt
+    e_str = "\r\nAPN ERROR: Failed to activate APN!\r\n";
+    strcpy(err_code, e_str);
     return false;
 }
+
 
 bool _BG96_TCPIP::OpenSocketService(unsigned int pdp_index, unsigned int socket_index, Socket_Type_t socket, char *ip, unsigned int port, unsigned int local_port, Access_Mode_t mode)
 {
