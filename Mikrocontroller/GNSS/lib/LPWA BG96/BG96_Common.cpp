@@ -83,13 +83,26 @@ bool _BG96_Common::GetLatestGMTTime(char *time)
 {
     if (sendAndSearch(DEV_GMTTIME, RESPONSE_OK, 2))
     {
-        char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
-        *end_buf = '\0';
-        strcpy(time, rxBuffer);
-        return true;
+        char *start_buf = searchStrBuffer("\"");
+        if (start_buf != NULL)
+        {
+            char *end_buf = strchr(start_buf + 1, '\"');
+            if (end_buf != NULL)
+            {
+                *end_buf = '\0';
+                char *timestamp = start_buf + 1;
+                strncpy(time, timestamp, 19);
+                time[19] = '\0'; 
+                *end_buf = '\"';
+
+                return true;
+            }
+        }
     }
     return false;
 }
+
+
 
 // Funktion zum Abrufen der Geräteinformationen
 bool _BG96_Common::GetDevInformation(char *inf)

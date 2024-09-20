@@ -128,9 +128,9 @@ void initializeGNSSMode()
   if(_GNSS.EnableGpsOneXTRA()){
     DSerial.println("\r\nEnable GPSOneXtra.");
   }
-  if (_GNSS.TurnOnGNSS(STAND_ALONE, WRITE_MODE))
+  if (_GNSS.InitGpsOneXTRA())
   {
-    DSerial.println("\r\nGNSS is activated.");
+    DSerial.println("\r\nGNSS with GpsOneXTRA Assistance is activated.");
     startTime = millis();
   }
   else

@@ -30,7 +30,7 @@
 #ifndef __BG96_GNSS_H_
 #define __BG96_GNSS_H_
 
-#include "BG96_Common.h"
+#include "BG96_HTTP.h"
 
 typedef enum gnss_work_mode{
     STAND_ALONE = 1,
@@ -63,7 +63,7 @@ typedef enum nmea_sentences_type {
 	GPVTG = 16,
 }NMEA_Type_t;
 
-class _BG96_GNSS : public _BG96_Common
+class _BG96_GNSS : public _BG96_HTTP
 {
   public:
     _BG96_GNSS();
@@ -87,12 +87,25 @@ class _BG96_GNSS : public _BG96_Common
     bool GetGNSSNMEASentences(NMEA_Type_t type, char *sentences);
 	
     bool SetGNSSOutputPort(GNSS_OutputPort_t outport);
+
     bool EnableGpsOneXTRA();
-    bool InjectGpsOneXTRATime(const char* time, bool force, int uncertainty);
+
+    bool InjectGpsOneXTRATime(const char* timey);
+
     bool InjectGpsOneXTRAData(const char* filename);
 
-  private:
+    bool IsGpsOneXtraDataUptoDate();
 
+    bool UpdateGpsOneXtraData();
+
+    bool InitGpsOneXTRA();
+   private:
+   ///GPSOneXTRA Update Liste
+    const char* xtra_links[3] = {
+        "http://xtrapath1.izatcloud.net/xtra2.bin",
+        "http://xtrapath2.izatcloud.net/xtra2.bin",
+        "http://xtrapath3.izatcloud.net/xtra2.bin"
+    };
 };
 
 #endif
