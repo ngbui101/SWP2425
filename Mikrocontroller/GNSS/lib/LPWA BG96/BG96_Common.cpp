@@ -34,6 +34,7 @@ bool _BG96_Common::InitModule()
     delay(800);
     digitalWrite(POWKEY_PIN, HIGH); // Powkey-Pin auf HIGH setzen
     delay(800);
+    ResetModule();
     return true;
 }
 

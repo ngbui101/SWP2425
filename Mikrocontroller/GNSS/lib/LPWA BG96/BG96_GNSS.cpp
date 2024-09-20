@@ -172,3 +172,38 @@ bool _BG96_GNSS::SetGNSSOutputPort(GNSS_OutputPort_t outport)
     }
     return false;
 }
+
+bool _BG96_GNSS::EnableGpsOneXTRA()
+{
+    char cmd[16];
+    strcpy(cmd, GNSS_ENABLE_GPSONEXTRA);
+    strcat(cmd, "=1");  // Enable gpsOneXTRA assistance
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10)) {
+        return true;
+    }
+    return false;
+}
+
+bool _BG96_GNSS::InjectGpsOneXTRATime(const char* time, bool force, int uncertainty)
+{
+    char cmd[64], buf[64];
+    strcpy(cmd, GNSS_INJECT_GPSONEXTRA_TIME);
+    sprintf(buf, "=0,\"%s\",1,%d,%d", time, force ? 1 : 0, uncertainty);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10)) {
+        return true;
+    }
+    return false;
+}
+
+bool _BG96_GNSS::InjectGpsOneXTRAData(const char* filename)
+{
+    char cmd[64];
+    strcpy(cmd, GNSS_INJECT_GPSONEXTRA_DATA);
+    sprintf(cmd + strlen(cmd), "=\"%s\"", filename);  // Specify the filename
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10)) {
+        return true;
+    }
+    return false;
+}
+
