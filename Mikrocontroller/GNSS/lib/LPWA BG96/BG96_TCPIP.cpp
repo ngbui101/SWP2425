@@ -61,8 +61,6 @@ bool _BG96_TCPIP::GetDevAPNIPAddress(unsigned int pdp_index, char *ip)
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
         char *sta_buf = searchChrBuffer(',');
-		
-		//seacrh by , first and if not found search by ""
 		if (sta_buf) 
 		{
 			strcpy(ip, sta_buf + 1);

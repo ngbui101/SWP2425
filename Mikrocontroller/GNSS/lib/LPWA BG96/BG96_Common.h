@@ -119,6 +119,7 @@ class _BG96_Common : public _BG96_Serial
     //0 Automatic, 1 GSM only, 3 LTE only
     bool ScanmodeConfig(int mode);
 
+
   private:
 
 };
