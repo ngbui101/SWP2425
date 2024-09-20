@@ -87,6 +87,9 @@ class _BG96_GNSS : public _BG96_Common
     bool GetGNSSNMEASentences(NMEA_Type_t type, char *sentences);
 	
     bool SetGNSSOutputPort(GNSS_OutputPort_t outport);
+    bool EnableGpsOneXTRA();
+    bool InjectGpsOneXTRATime(const char* time, bool force, int uncertainty);
+    bool InjectGpsOneXTRAData(const char* filename);
 
   private:
 

@@ -15,12 +15,9 @@ void setup()
     _BG96.InitModule();
     DSerial.println("\r\n_BG96.InitModule() OK!");
     _BG96.SetDevCommandEcho(false);
-    // ATSerial.println("AT+QGPS=1");
-    // delay(1000);
 }
 void loop()
 {   
-    // ATSerial.println("AT+QGPSLOC?");
     if (ATSerial.available())
     {
         char at = ATSerial.read();
