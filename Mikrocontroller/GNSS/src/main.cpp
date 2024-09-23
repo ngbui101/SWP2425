@@ -16,8 +16,8 @@ unsigned int comm_socket_index = 0;
 
 Socket_Type_t socket = TCP_CLIENT;
 
-_BG96_TCPIP _BG96(ATSerial, DSerial);
-_BG96_GNSS _GNSS(ATSerial, DSerial);
+// Nur ein Objekt von Klasse _BG96_GNSS, jetzt umbenannt in _BG96
+_BG96_GNSS _BG96(ATSerial, DSerial);
 
 unsigned long startTime = millis();
 unsigned long endTime = 0;
@@ -48,12 +48,14 @@ void setup()
     ;
   delay(1000);
 
+  // Initialisiere das Modul über _BG96 (früher _GNSS)
   if (_BG96.TurnOnModule())
   {
     _BG96.SetDevOutputformat(true);
     _BG96.SetDevCommandEcho(false);
     DSerial.println("BG96 Module Initialized");
   }
+
   char apn_error[64];
   _BG96.InitAPN(comm_pdp_index, APN, "", "", apn_error);
   DSerial.println(apn_error);
@@ -116,6 +118,7 @@ void selectMode()
 
 void initializeGNSSMode()
 {
+  // Nutze _BG96, um Socket Service zu öffnen
   if (_BG96.OpenSocketService(comm_pdp_index, comm_socket_index, socket, tcp_ip, tcp_port, 0, BUFFER_MODE))
   {
     DSerial.println("\r\nOpen Socket Service Success!");
@@ -125,10 +128,13 @@ void initializeGNSSMode()
     DSerial.println("\r\nOpen Socket Service Failed!");
     return;
   }
-  if(_GNSS.EnableGpsOneXTRA()){
+
+  if (_BG96.EnableGpsOneXTRA())
+  {
     DSerial.println("\r\nEnable GPSOneXtra.");
   }
-  if (_GNSS.InitGpsOneXTRA())
+
+  if (_BG96.InitGpsOneXTRA())
   {
     DSerial.println("\r\nGNSS with GpsOneXTRA Assistance is activated.");
     startTime = millis();
@@ -139,14 +145,16 @@ void initializeGNSSMode()
     return;
   }
 }
+
 void processGNSSMode()
 {
   char gnss_pos[128];
+
   // GNSS-Position abrufen
   if (!gnssSuccess)
   {
     DSerial.println("Trying to get GNSS Position...");
-    if (_GNSS.GetGNSSPositionInformation(gnss_pos))
+    if (_BG96.GetGNSSPositionInformation(gnss_pos))
     {
       DSerial.println("\r\nGNSS Position:");
       DSerial.println(gnss_pos);
@@ -167,15 +175,13 @@ void processGNSSMode()
       unsigned long waitStart = millis();
       while (millis() - waitStart < 5000)
       {
-        // Überprüfung auf 'q' zum Zurückkehren zum Auswahlmenü
         if (DSerial.available())
         {
           char d = DSerial.read();
           if (d == 'q' || d == 'Q')
           {
             DSerial.println("\nZurück zum Auswahlmenü...");
-            // GNSS und Socket schließen
-            if (_GNSS.TurnOffGNSS())
+            if (_BG96.TurnOffGNSS())
             {
               DSerial.println("GNSS turned off.");
             }
@@ -188,10 +194,9 @@ void processGNSSMode()
             gnssSuccess = false;
             sendCounter = 0;
             currentState = STATE_SELECT_MODE;
-            return; // Funktion verlassen
+            return;
           }
         }
-        // Kurze Pause, um CPU-Last zu reduzieren
         delay(10);
       }
     }
@@ -216,7 +221,7 @@ void processGNSSMode()
   {
     DSerial.println("\r\n20 successful send attempts reached. Shutting down GNSS and socket...");
 
-    if (_GNSS.TurnOffGNSS())
+    if (_BG96.TurnOffGNSS())
     {
       DSerial.println("\r\nGNSS turned off.");
     }
@@ -226,51 +231,48 @@ void processGNSSMode()
       DSerial.println("\r\nSocket closed.");
     }
     currentState = STATE_SELECT_MODE;
+    sendCounter = 0;
+    gnssSuccess = false;
     DSerial.println("Wechsle zurück in den Serial Mode.");
   }
 }
 
 void processSerialMode()
 {
-  // Überprüfung der Eingabe vom Benutzer
   while (DSerial.available())
   {
     char d = DSerial.read();
-    ATSerial.write(d); // Weiterleiten an ATSerial
-    DSerial.write(d);  // Echo auf DSerial (optional)
+    ATSerial.write(d);
+    DSerial.write(d);
 
-    // Zeichen zum Eingabepuffer hinzufügen
-    if (d == '\n' || d == '\r') // Wenn Enter gedrückt wurde
+    if (d == '\n' || d == '\r')
     {
-      // Überprüfen, ob der Befehl "GNSS" eingegeben wurde
-      inputBuffer.trim(); // Entfernt führende und nachgestellte Leerzeichen
+      inputBuffer.trim();
       if (inputBuffer.equalsIgnoreCase("GNSS"))
       {
         DSerial.println("\nWechsle in den GNSS Mode...");
         currentState = STATE_GNSS_MODE;
         inputBuffer = "";
         initializeGNSSMode();
-        return; // Verlasse die Funktion
+        return;
       }
       else if (inputBuffer.equalsIgnoreCase("EXIT"))
       {
         DSerial.println("\nBeende das Programm.");
         while (true)
-          ; // Endlosschleife, um das Programm zu stoppen
+          ;
       }
       else
       {
-        // Eingabe an ATSerial senden (bereits geschehen)
-        inputBuffer = ""; // Eingabepuffer leeren
+        inputBuffer = "";
       }
     }
     else
     {
-      inputBuffer += d; // Zeichen zum Puffer hinzufügen
+      inputBuffer += d;
     }
   }
 
-  // Antwort vom ATSerial lesen und an DSerial weiterleiten
   while (ATSerial.available())
   {
     char at = ATSerial.read();
