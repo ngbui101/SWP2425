@@ -31,8 +31,8 @@
 
 #include "BG96_Serial.h"
 
-#define POWKEY_PIN  4
-#define RESET_PIN   5
+#define POWKEY_PIN 4
+#define RESET_PIN 5
 #define ENABLE_PWR 2
 #define STATUS_PIN 3
 

@@ -196,19 +196,9 @@ bool _BG96_GNSS::InitGpsOneXTRA()
 {
     if (EnableGpsOneXTRA())
     {
-        if (IsGpsOneXtraDataUptoDate())
+        if (!IsGpsOneXtraDataUptoDate())
         {
-            if (TurnOnGNSS(STAND_ALONE, WRITE_MODE))
-            {
-                return true;
-            };
-        }
-        else
-        {
-            if (UpdateGpsOneXtraData())
-            {
-                return true;
-            };
+            UpdateGpsOneXtraData();
         }
     }
 
@@ -258,9 +248,9 @@ bool _BG96_GNSS::IsGpsOneXtraDataUptoDate()
     strcat(cmd, "?");
     if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
     {
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }
 
 bool _BG96_GNSS::UpdateGpsOneXtraData()

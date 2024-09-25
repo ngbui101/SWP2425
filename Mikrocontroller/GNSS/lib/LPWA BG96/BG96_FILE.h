@@ -58,7 +58,7 @@ class _BG96_FILE : public _BG96_TCPIP
 
     bool GetFilesList(char *list);
 
-    bool DeleteFiles(char *filename);
+    bool DeleteFiles(const char *filename);
 
     bool UploadFiles(char *filename, char *u_file);
 

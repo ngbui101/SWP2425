@@ -48,7 +48,7 @@ bool _BG96_FILE::GetFilesList(char *list)
     return false;
 }
 
-bool _BG96_FILE::DeleteFiles(char *filename)
+bool _BG96_FILE::DeleteFiles(const char *filename)
 {
     char cmd[32],buf[32];
     strcpy(cmd, FILE_DELETE_FILES);
