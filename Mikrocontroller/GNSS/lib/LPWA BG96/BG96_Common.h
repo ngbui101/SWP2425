@@ -1,30 +1,9 @@
 /*
- * A library for BG96 Development board
- * This file is about the BG96 Common function
- * 
- * Copyright (c)
- * @Author       :
- * @Create time  :
- * 
- * The MIT License (MIT)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+*Die Klasse _BG96_Common erweitert die Funktionalitäten der Basisklasse _BG96_Serial, 
+*um erweiterte Funktionen des BG96-Moduls bereitzustellen. Sie bietet Methoden zur Steuerung 
+*und Konfiguration des Moduls, wie das Ein- und Ausschalten, das Setzen von 
+*Konfigurationsparametern, das Abrufen von Geräteinformationen und Netzstatus sowie 
+*das Verwalten von SIM-Karteninformationen.
  */
 #ifndef _BG96_H_
 #define _BG96_H_
@@ -71,6 +50,10 @@ class _BG96_Common : public _BG96_Serial
     ~_BG96_Common();
 
     _BG96_Common(Stream &atserial, Stream &dserial);
+    
+    bool PowOffModule();
+
+    bool PowOnModule();
 
     bool TurnOnModule();
 	

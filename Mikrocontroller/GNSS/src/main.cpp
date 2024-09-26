@@ -60,7 +60,7 @@ void setup()
     ;
   delay(1000);
 
-  _AWS.TurnOnModule();
+  _AWS.InitModule();
   _AWS.SetDevCommandEcho(false);
   _AWS.SetDevOutputformat(true);
 
