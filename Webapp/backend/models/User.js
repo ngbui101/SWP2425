@@ -13,6 +13,13 @@ const UserSchema = Schema(
       type: String,
       required: false
     },
+    language: {
+      type: String,
+      enum: [ 'EN', 'DE' ],
+      default: 'EN',
+      required: false
+
+    },
 
     email: {
       type: String,

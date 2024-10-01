@@ -3,67 +3,68 @@
     <div class="settings-content">
       <!-- Settings Header -->
       <div class="settings-header">
-        <h2 class="settings-title">Settings</h2>
+        <h2 class="settings-title">{{ $t('SETTINGSVIEW-settings') }}</h2>
       </div>
       <div class="settings-body">
         <!-- Email Settings Card -->
         <div class="settings-card">
-          <h3 class="card-title">Email Settings</h3>
-          <p>Your current email: {{ user.email }}</p>
+          <h3 class="card-title">{{ $t('SETTINGSVIEW-email_settings') }}</h3>
+          <p>{{ $t('SETTINGSVIEW-current_email') }}: {{ user.email }}</p>
           <form @submit.prevent="updateEmail" class="settings-form">
-            <label for="newEmail" class="form-label">New Email</label>
-            <input v-model="newEmail" id="newEmail" type="email" class="form-input" placeholder="New Email" required>
-            <label for="confirmNewEmail" class="form-label">Confirm New Email</label>
-            <input v-model="confirmNewEmail" id="confirmNewEmail" type="email" class="form-input" placeholder="Confirm New Email" required>
-            <button type="submit" class="form-submit-button">Save</button>
+            <label for="newEmail" class="form-label">{{ $t('SETTINGSVIEW-new_email') }}</label>
+            <input v-model="newEmail" id="newEmail" type="email" class="form-input" :placeholder=" $t('SETTINGSVIEW-new_email')" required>
+            <label for="confirmNewEmail" class="form-label">{{ $t('SETTINGSVIEW-confirm_email') }}</label>
+            <input v-model="confirmNewEmail" id="confirmNewEmail" type="email" class="form-input" :placeholder="$t('SETTINGSVIEW-confirm_email')" required>
+            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
 
         <!-- Password Settings Card -->
         <div class="settings-card">
-          <h3 class="card-title">Change Password --NOT IMPLEMENTED--</h3>
+          <h3 class="card-title">{{ $t('SETTINGSVIEW-password_settings') }}</h3>
           <form @submit.prevent="updatePassword" class="settings-form">
-            <label for="oldPassword" class="form-label">Old Password</label>
-            <input v-model="oldPassword" id="oldPassword" type="password" class="form-input" placeholder="Enter Old Password" required>
-            <label for="newPassword" class="form-label">New Password</label>
+            <label for="oldPassword" class="form-label">{{ $t('SETTINGSVIEW-current_password') }}</label>
+            <input v-model="oldPassword" id="oldPassword" type="password" class="form-input" :placeholder="$t('SETTINGSVIEW-current_password')" required>
+            <label for="newPassword" class="form-label">{{ $t('SETTINGSVIEW-new_password') }}</label>
             <input v-model="newPassword" id="newPassword" type="password" class="form-input" placeholder="New Password" required>
-            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+            <label for="confirmNewPassword" class="form-label">{{ $t('SETTINGSVIEW-confirm_new_password') }}</label>
             <input v-model="confirmNewPassword" id="confirmNewPassword" type="password" class="form-input" placeholder="Confirm New Password" required>
-            <button type="submit" class="form-submit-button">Save</button>
+            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
 
         <!-- Phone Number Settings Card -->
         <div class="settings-card">
-          <h3 class="card-title">Phone Number Settings --NOT IMPLEMENTED--</h3>
+          <h3 class="card-title">{{ $t('SETTINGSVIEW-phone_number_settings') }}</h3>
           <p>
-            {{ user.number
-              ? `Your current phone number: ${user.number}` 
-              : 'You did not add a phone number yet!' }}
-          </p>
+  {{ user.number
+    ? $t('SETTINGSVIEW-current_phone_number', { number: user.number })
+    : $t('SETTINGSVIEW-no_phone_number') }}
+</p>
+
           <form @submit.prevent="updatePhoneNumber" class="settings-form">
-            <label for="phoneNumber" class="form-label">Phone Number</label>
-            <input v-model="phoneNumber" id="phoneNumber" type="tel" class="form-input" placeholder="Enter Phone Number" required>
-            <button type="submit" class="form-submit-button">Save</button>
+            <label for="phoneNumber" class="form-label">{{ $t('SETTINGSVIEW-phone_number') }}</label>
+            <input v-model="phoneNumber" id="phoneNumber" type="tel" class="form-input" :placeholder="$t('SETTINGSVIEW-enter_phone_number')" required>
+            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
 
         <!-- Language Settings Card -->
         <div class="settings-card">
-          <h3 class="card-title">Language Settings --NOT IMPLEMENTED--</h3>
+          <h3 class="card-title">{{ $t('SETTINGSVIEW-language_settings') }}</h3>
           <form @submit.prevent="updateLanguage" class="settings-form">
-            <label for="language" class="form-label">Select Language</label>
+            <label for="language" class="form-label">{{ $t('SETTINGSVIEW-select_language') }}</label>
             <select v-model="selectedLanguage" id="language" class="form-input">
-              <option value="en">English</option>
-              <option value="de">German</option>
+              <option value="EN">{{ $t('SETTINGSVIEW-english') }}</option>
+              <option value="DE">{{ $t('SETTINGSVIEW-german') }}</option>
             </select>
             <!-- Theme Selection -->
-    <label for="theme" class="form-label">Select Color Theme</label>
+    <label for="theme" class="form-label">{{ $t('SETTINGSVIEW-select_color_scheme') }}</label>
     <select v-model="selectedTheme" id="theme" class="form-input">
-      <option value="light">Light</option>
-      <option value="dark">Dark</option>
+      <option value="light">{{ $t('SETTINGSVIEW-light') }}</option>
+      <option value="dark">{{ $t('SETTINGSVIEW-dark') }}</option>
     </select>
-            <button type="submit" class="form-submit-button">Save</button>
+            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
       </div>
@@ -74,13 +75,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth'; // Adjust the path as needed
-
+import { useI18n } from 'vue-i18n';
 // Initialize the auth store
 const authStore = useAuthStore();
 
 // Computed property for user details
 const user = computed(() => authStore.userDetail);
-
+const { locale } = useI18n();
 // Fetch the user details when the component is mounted
 onMounted(async () => {
   await authStore.getUser();
@@ -93,7 +94,7 @@ const oldPassword = ref('');
 const newPassword = ref('');
 const confirmNewPassword = ref('');
 const phoneNumber = ref('');
-const selectedLanguage = ref('en'); // Default to English
+const selectedLanguage = ref('EN'); // Default to English
 const selectedTheme = ref('light'); // Default to Light theme
 // Method to close the modal
 const emit = defineEmits(['close-modal']);
@@ -129,8 +130,17 @@ const updatePhoneNumber = async () => {
 };
 
 const updateLanguage = async () => {
-  // Handle language update logic
+  
+  try {
+    await authStore.updateLanguage(selectedLanguage.value);
+    alert('Language updated successfully');
+    locale.value = selectedLanguage.value;
+  } catch (error) {
+    alert(`Error updating Language: ${error.message}`);
+  }
 };
+
+
 </script>
 
 <style scoped>
@@ -149,8 +159,7 @@ const updateLanguage = async () => {
   justify-content: center; /* Center the settings container horizontally */
   padding: 20px;
   
-  min-height: 100vh;
-  background-color: #f4f4f4; /* Add a background color for contrast */
+  
 }
 
 .settings-content {
@@ -159,14 +168,14 @@ const updateLanguage = async () => {
   
   /* Set a max-width to control the container width */
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
   padding: 20px;
   margin: 20px; /* Add some margin around the content to ensure it doesn't touch the screen edges */
 }
 
 .settings-header {
   display: flex;
-  justify-content: space-between;
+  justify-content:center;
   align-items: center;
   margin-bottom: 20px;
 }

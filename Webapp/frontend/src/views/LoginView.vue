@@ -173,7 +173,7 @@ function goToSignup() {
 
 .form input.button {
   color: #fff;
-  background: #009579;
+  background: rgb(23, 102, 81);
   font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: 1px;

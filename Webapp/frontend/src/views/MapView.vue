@@ -111,10 +111,11 @@ watch(currentTracker, initializeMap);
 
 <style scoped>
 .outer-container {
-  width: 150vh;
-  height: 60vh;
+  width: 60%;
+  height: 40rem;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 1rem;
 }
 
 .map-container {
@@ -124,13 +125,14 @@ watch(currentTracker, initializeMap);
   margin: 0;
   padding: 0;
   overflow: hidden;
+  border-radius: 20px;
 }
 
 .details-panel {
   flex: 0.2;
   max-width: 250px;
   padding: 20px;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -166,58 +168,52 @@ watch(currentTracker, initializeMap);
   border-radius: 0;
 }
 
-.dropdown {
-  position: relative;
+/* Styles for Mobile View */
+@media (max-width: 768px) {
+  .outer-container {
+    width: 100%;
+    height: 100vh; /* Ensure it takes full height of the viewport */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .map-container {
+    flex-direction: column; /* Stack elements vertically */
+    width: 100%;
+    height: 100%; /* Full height */
+    margin: 0;
+    padding: 0;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .details-panel {
+    width: 100%;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: hidden;
+    flex: 1;
+    
+  }
+
+  .map-panel {
+    flex: 1; /* Allow the map to take up remaining space */
+    height: 50vh; /* Set a minimum height for the map */
+    background-color: transparent;
+    border: none;
+  }
+
+  .map {
+    width: 100%;
+    height: 100%; /* Ensure the map takes up the full height */
+    margin: 0;
+    padding: 0;
+  }
 }
 
-.dropdown-button {
-  padding: 10px;
-  background-color: #fff;
-  color: rgb(0, 0, 0);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  font-size: 16px;
-  position: relative;
-  font-family: 'Poppins', sans-serif;
-}
-
-.dropdown-arrow {
-  margin-left: 10px;
-  font-size: 12px;
-}
-
-.dropdown-divider {
-  width: 100%;
-  height: 3px;
-  background-color: #ddd;
-  margin-top: 10px;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  max-height: 150px;
-  overflow-y: auto;
-}
-
-.dropdown-item {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.dropdown-item:hover {
-  background-color: #f0f0f0;
-}
 </style>
