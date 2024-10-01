@@ -44,6 +44,7 @@ const char RESPONSE_SEND_FAIL[] = "SEND FAIL";
 const char DEV_AT[] = "";
 const char DEV_INFORMATION[] = "I";
 const char DEV_OUTPUTFORMAT[] = "V1";
+const char DEV_GMTTIME[] = "+QLTS";
 const char DEV_VERSION[] = "+CGMR";
 const char DEV_IMEI[] = "+CGSN";
 const char DEV_FUN_LEVEL[] = "+CFUN";
@@ -130,5 +131,8 @@ const char GNSS_TURN_ON[] = "+QGPS";
 const char GNSS_TURN_OFF[] = "+QGPSEND";
 const char GNSS_GET_POSITION[] = "+QGPSLOC";
 const char GNSS_ACQUIRE_NMEA[] = "+QGPSGNMEA";
+const char GNSS_ENABLE_GPSONEXTRA[] = "+QGPSXTRA";
+const char GNSS_INJECT_GPSONEXTRA_TIME[] = "+QGPSXTRATIME";
+const char GNSS_INJECT_GPSONEXTRA_DATA[] = "+QGPSXTRADATA";
 
 #endif

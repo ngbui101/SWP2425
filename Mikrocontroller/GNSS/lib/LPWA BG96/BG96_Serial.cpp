@@ -1,17 +1,14 @@
 #include "BG96_Serial.h"
 
-// Konstruktor initialisiert die seriellen Schnittstellen
 _BG96_Serial::_BG96_Serial() : _atserial(Serial), _dserial(Serial)
 {
 }
 
-// Destruktor bereinigt den Puffer
 _BG96_Serial::~_BG96_Serial()
 {
     cleanBuffer();
 }
 
-// Konstruktor mit Parametern für die seriellen Schnittstellen
 _BG96_Serial::_BG96_Serial(Stream &atserial, Stream &dserial) : _atserial(atserial), _dserial(dserial)
 {
     _atserial.setTimeout(2000);
@@ -19,7 +16,6 @@ _BG96_Serial::_BG96_Serial(Stream &atserial, Stream &dserial) : _atserial(atseri
     cleanBuffer();
 }
 
-// Funktion für den direkten Durchgang der AT-Befehle
 void _BG96_Serial::AT_bypass()
 {
     while(_atserial.available()){
@@ -30,7 +26,6 @@ void _BG96_Serial::AT_bypass()
     }
 }
 
-// Automatische Erkennung der AT-Serienbandbreite
 template <class T>
 bool _BG96_Serial::AutoATSerialBand(T &_atserial)
 {
@@ -52,7 +47,6 @@ bool _BG96_Serial::AutoATSerialBand(T &_atserial)
     return false;
 }
 
-// Senden von Daten und Überprüfung der Antwort
 bool _BG96_Serial::sendDataAndCheck(const char *data_buf, const char *ok_str, const char *err_str, unsigned int timeout)
 {
     delay(100);
@@ -75,7 +69,7 @@ bool _BG96_Serial::sendDataAndCheck(const char *data_buf, const char *ok_str, co
     return false;
 }
 
-// Senden eines AT-Befehls
+
 bool _BG96_Serial::sendATcommand(const char *command)
 {
     delay(100);
@@ -97,7 +91,7 @@ bool _BG96_Serial::sendATcommand(const char *command)
     return true;
 }
 
-// Lesen eines Antwort-Bytes in den Puffer
+
 unsigned int _BG96_Serial::readResponseByteToBuffer()
 {
     char c = _atserial.read();
@@ -114,7 +108,6 @@ unsigned int _BG96_Serial::readResponseByteToBuffer()
     return 1;
 }
 
-// Lesen der Antwort in den Puffer innerhalb eines Zeitlimits
 unsigned int _BG96_Serial::readResponseToBuffer(unsigned int timeout)
 {
     unsigned long start_time = millis();
@@ -128,7 +121,6 @@ unsigned int _BG96_Serial::readResponseToBuffer(unsigned int timeout)
     return recv_len;
 }
 
-// Lesen der Antwort und Suche nach einem Zeichen innerhalb eines Zeitlimits
 Cmd_Response_t _BG96_Serial::readResponseAndSearchChr(const char test_chr, unsigned int timeout)
 {
     unsigned long start_time = millis();
@@ -149,7 +141,6 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearchChr(const char test_chr, unsig
     }
 }
 
-// Lesen der Antwort und Suche nach einer Zeichenfolge innerhalb eines Zeitlimits
 Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, unsigned int timeout)
 {
     unsigned long start_time = millis();
@@ -170,7 +161,6 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, unsigne
     }
 }
 
-// Lesen der Antwort und Suche nach einer von zwei Zeichenfolgen innerhalb eines Zeitlimits
 Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const char *e_test_str, unsigned int timeout)
 {
     unsigned long start_time = millis();
@@ -208,7 +198,6 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const c
     }
 }
 
-// Senden eines Befehls und Suche nach einem Zeichen in der Antwort
 Cmd_Response_t _BG96_Serial::sendAndSearchChr(const char *command, const char test_chr, unsigned int timeout)
 {
     for (int i = 0; i < 3; i++){
@@ -221,7 +210,6 @@ Cmd_Response_t _BG96_Serial::sendAndSearchChr(const char *command, const char te
     return TIMEOUT_RESPONSE;
 }
 
-// Senden eines Befehls und Suche nach einer Zeichenfolge in der Antwort
 Cmd_Response_t _BG96_Serial::sendAndSearch(const char *command, const char *test_str, unsigned int timeout)
 {
     for (int i = 0; i < 3; i++){
@@ -234,7 +222,6 @@ Cmd_Response_t _BG96_Serial::sendAndSearch(const char *command, const char *test
     return TIMEOUT_RESPONSE;
 }
 
-// Senden eines Befehls und Suche nach einer von zwei Zeichenfolgen in der Antwort
 Cmd_Response_t _BG96_Serial::sendAndSearch(const char *command, const char *test_str, const char *e_test_str, unsigned int timeout)
 {
     Cmd_Response_t resp_status = UNKNOWN_RESPONSE;
@@ -247,7 +234,6 @@ Cmd_Response_t _BG96_Serial::sendAndSearch(const char *command, const char *test
     return resp_status;
 }
 
-// Suchen einer Zeichenfolge im Puffer
 char *_BG96_Serial::searchStrBuffer(const char *test_str)
 {
     int buf_len = strlen((const char *)rxBuffer);
@@ -258,7 +244,6 @@ char *_BG96_Serial::searchStrBuffer(const char *test_str)
     }
 }
 
-// Suchen eines Zeichens im Puffer
 char *_BG96_Serial::searchChrBuffer(const char test_chr)
 {
     int buf_len = strlen((const char *)rxBuffer);
@@ -269,7 +254,6 @@ char *_BG96_Serial::searchChrBuffer(const char test_chr)
     }
 }
 
-// Rückgabe des Fehlercodes
 bool _BG96_Serial::returnErrorCode(int &s_err_code)
 {
     s_err_code = -1;
@@ -280,14 +264,12 @@ bool _BG96_Serial::returnErrorCode(int &s_err_code)
     return false;
 }
 
-// Puffer bereinigen
 void _BG96_Serial::cleanBuffer()
 {
     memset(rxBuffer,'\0',RX_BUFFER_LENGTH);
     bufferHead = 0;
 }
 
-// Verfügbarkeit der seriellen Schnittstelle prüfen
 int _BG96_Serial::serialAvailable()
 {
     unsigned int ret;

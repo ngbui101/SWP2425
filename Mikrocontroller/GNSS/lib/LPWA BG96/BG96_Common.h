@@ -80,7 +80,11 @@ class _BG96_Common : public _BG96_Serial
 
     bool SetDevCommandEcho(bool echo);
 
+    bool SetDevOutputformat(bool echo);
+
     bool GetDevInformation(char *inf);
+
+    bool GetLatestGMTTime(char *time);
 
     bool GetDevVersion(char *ver);
 
@@ -92,7 +96,7 @@ class _BG96_Common : public _BG96_Serial
 
     bool GetDevSimIMSI(char *imsi);
 
-    bool DevSimPIN(char *pin, Cmd_Status_t status);
+    bool DevSimPIN(const char *pin, Cmd_Status_t status);
 
     bool GetDevSimICCID(char *iccid);
 
@@ -111,13 +115,10 @@ class _BG96_Common : public _BG96_Serial
     bool DevPowerDown();
 
     bool DevClock(char *d_clock, Cmd_Status_t status);
-#if 0
-    bool ConfigPin(int pin, int dir, int pull, int drv);
 
-    bool PinWrite(int pin, int state);
-#endif
     //0 Automatic, 1 GSM only, 3 LTE only
     bool ScanmodeConfig(int mode);
+
 
   private:
 

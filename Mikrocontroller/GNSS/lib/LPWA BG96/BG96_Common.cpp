@@ -26,15 +26,16 @@ bool _BG96_Common::InitModule()
 {
     pinMode(ENABLE_PWR, OUTPUT);
     digitalWrite(ENABLE_PWR, HIGH); // Modul einschalten
-    pinMode(RESET_PIN, OUTPUT);
-    digitalWrite(RESET_PIN, LOW); // Reset-Pin auf LOW setzen
     delay(800);
+    pinMode(RESET_PIN, OUTPUT);
+    digitalWrite(RESET_PIN, LOW); 
     pinMode(POWKEY_PIN, OUTPUT);
     digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf LOW setzen
     delay(800);
     digitalWrite(POWKEY_PIN, HIGH); // Powkey-Pin auf HIGH setzen
     delay(800);
-    sendATcommand(DEV_OUTPUTFORMAT); // AT-Befehl zum Setzen des Ausgabeformats senden
+    ResetModule();
+    return true;
 }
 
 // Funktion zum Zurücksetzen des Moduls
@@ -45,7 +46,20 @@ bool _BG96_Common::ResetModule()
     digitalWrite(POWKEY_PIN, LOW);
     return true;
 }
-
+bool _BG96_Common::SetDevOutputformat(bool format)
+{
+    char cmd[16];
+    if (format == true)
+    {
+        strcpy(cmd, DEV_OUTPUTFORMAT);
+        if (sendAndSearch(cmd, RESPONSE_OK, 2))
+        {
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
 // Funktion zum Setzen des Befehlsechos
 bool _BG96_Common::SetDevCommandEcho(bool echo)
 {
@@ -64,6 +78,31 @@ bool _BG96_Common::SetDevCommandEcho(bool echo)
     }
     return false;
 }
+// Obtain the Latest Time Synchronized Through Network
+bool _BG96_Common::GetLatestGMTTime(char *time)
+{
+    if (sendAndSearch(DEV_GMTTIME, RESPONSE_OK, 2))
+    {
+        char *start_buf = searchStrBuffer("\"");
+        if (start_buf != NULL)
+        {
+            char *end_buf = strchr(start_buf + 1, '\"');
+            if (end_buf != NULL)
+            {
+                *end_buf = '\0';
+                char *timestamp = start_buf + 1;
+                strncpy(time, timestamp, 19);
+                time[19] = '\0'; 
+                *end_buf = '\"';
+
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
 
 // Funktion zum Abrufen der Geräteinformationen
 bool _BG96_Common::GetDevInformation(char *inf)
@@ -85,7 +124,7 @@ bool _BG96_Common::GetDevVersion(char *ver)
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(ver, rxBuffer); // Version in ver kopieren
+        strcpy(ver, rxBuffer);
         return true;
     }
     return false;
@@ -147,7 +186,7 @@ bool _BG96_Common::DevLocalRate(unsigned long &rate, Cmd_Status_t status)
     }
     else if (status == WRITE_MODE)
     {
-        for (int i = 0; i < sizeof(Band_list) / sizeof(Band_list[0]); i++)
+        for (unsigned int i = 0; i < sizeof(Band_list) / sizeof(Band_list[0]); i++)
         {
             if (rate == Band_list[i])
             {
@@ -178,16 +217,17 @@ bool _BG96_Common::GetDevSimIMSI(char *imsi)
 }
 
 // Funktion zum Setzen der SIM-PIN
-bool _BG96_Common::DevSimPIN(char *pin, Cmd_Status_t status)
+bool _BG96_Common::DevSimPIN(const char *pin, Cmd_Status_t status)
 {
     char cmd[16];
     strcpy(cmd, DEV_SIM_PIN);
+    
     if (status == READ_MODE)
     {
         strcat(cmd, "?");
         if (sendAndSearch(cmd, "READY", 2))
         {
-            // pin = "READY";
+            // pin = "READY"; // Diese Zeile ist nicht notwendig, da pin nicht geändert wird
             return true;
         }
     }
@@ -201,8 +241,10 @@ bool _BG96_Common::DevSimPIN(char *pin, Cmd_Status_t status)
             return true;
         }
     }
+    
     return false;
 }
+
 
 // Funktion zum Abrufen der SIM-ICCID
 bool _BG96_Common::GetDevSimICCID(char *iccid)
@@ -451,33 +493,6 @@ bool _BG96_Common::DevClock(char *d_clock, Cmd_Status_t status)
     }
     return false;
 }
-
-#if 0
-// Funktion zum Konfigurieren eines Pins
-bool _BG96_Common::ConfigPin(int pin, int dir, int pull, int drv)
-{
-    char cmd[32];
-    sprintf(cmd,"+QCFG=\"gpio\",1,%d,%d,%d,%d", pin, dir, pull, drv);
-//    sprintf(cmd,"+QCFG=\"gpio\"");
-
-    if(sendAndSearch(cmd,RESPONSE_OK,2)){
-        return true;
-    }
-    return false;
-}
-
-// Funktion zum Setzen des Zustands eines Pins
-bool _BG96_Common::PinWrite(int pin, int state)
-{
-    char cmd[32];
-    sprintf(cmd,"+QCFG=\"gpio\",3,%d,%d", pin, state);
-
-    if(sendAndSearch(cmd,RESPONSE_OK,2)){
-        return true;
-    }
-    return false;
-}
-#endif
 
 // Funktion zum Konfigurieren des Scanmodus (0 Automatisch, 1 Nur GSM, 3 Nur LTE)
 bool _BG96_Common::ScanmodeConfig(int mode)

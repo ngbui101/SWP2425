@@ -74,7 +74,7 @@ class _BG96_TCPIP : public _BG96_Common
 
     _BG96_TCPIP(Stream &atserial, Stream &dserial); 
 
-    bool SetDevAPNParameters(unsigned int pdp_index, Protocol_Type_t type, char *apn, char *usr, char *pwd, Authentication_Methods_t met);
+    bool SetDevAPNParameters(unsigned int pdp_index, Protocol_Type_t type, const char *apn, const char *usr, const char *pwd, Authentication_Methods_t met);
 
     Cmd_Response_t ActivateDevAPN(unsigned int pdp_index);
 
@@ -82,13 +82,13 @@ class _BG96_TCPIP : public _BG96_Common
 
     bool GetDevAPNIPAddress(unsigned int pdp_index, char *ip);
 
-    bool InitAPN(unsigned int pdp_index, char *apn, char *usr, char *pwd, char *err_code);
+    bool InitAPN(unsigned int pdp_index, const char* apn, const char* usr, const char* pwd, char* err_code);
 
     bool OpenSocketService(unsigned int pdp_index, unsigned int socket_index, Socket_Type_t socket, char *ip, unsigned int port, unsigned int local_port, Access_Mode_t mode);
 
     bool CloseSocketService(unsigned int socket_index);
 
-    bool SocketSendData(unsigned int socket_index, Socket_Type_t socket, char *data_buf, char *ip, unsigned int port);
+    bool SocketSendData(unsigned int socket_index, Socket_Type_t socket, const char *data_buf, const char *ip, unsigned int port);
 
     bool SocketRecvData(unsigned int socket_index, unsigned int recv_len, Socket_Type_t socket, char *recv_buf);
 
