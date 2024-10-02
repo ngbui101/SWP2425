@@ -105,12 +105,12 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
                    char *MQTTClientId,
                    char *mqtt_topicName,
                    Mqtt_Qos_t MQTT_QoS = AT_MOST_ONCE,
-                   unsigned int MQTTIndex = 3,
+                   unsigned int MQTTIndex = 0,
                    unsigned int PDPIndex = 1,
                    unsigned int SSLIndex = 2,
                    char *ModemIMEI = NULL)
 {
-  Mqtt_Version_t version = MQTT_V3;
+  Mqtt_Version_t version = MQTT_V4;
 
   char imei_tmp[64];
   if (BG96.GetDevIMEI(imei_tmp))

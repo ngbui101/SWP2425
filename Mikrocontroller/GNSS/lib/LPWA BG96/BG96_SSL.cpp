@@ -1,17 +1,47 @@
 #include "BG96_SSL.h"
 
+/**
+ * @brief Konstruktor der Klasse _BG96_SSL.
+ *
+ * Initialisiert die Klasse _BG96_SSL ohne zusätzliche Konfiguration.
+ */
 _BG96_SSL::_BG96_SSL()
 {
 }
 
+/**
+ * @brief Destruktor der Klasse _BG96_SSL.
+ *
+ * Bereinigt den Puffer beim Zerstören des Objekts.
+ */
 _BG96_SSL::~_BG96_SSL()
 {
     cleanBuffer();
 }
 
+/**
+ * @brief Konstruktor mit seriellen Schnittstellen.
+ *
+ * @param atserial Stream für AT-Befehle
+ * @param dserial Stream für Debug-Ausgaben
+ */
 _BG96_SSL::_BG96_SSL(Stream &atserial, Stream &dserial) : _BG96_FILE(atserial, dserial)
 {
 }
+
+/**
+ * @brief Setzt die SSL-Parameter für die angegebene SSL-Instanz.
+ *
+ * Diese Methode basiert auf dem AT-Befehl AT+QSSLCFG, der zur Konfiguration der SSL-Parameter, wie SSL-Version, Cipher-Suites und Verhandlungstimeout verwendet wird.
+ *
+ * @param ssl_index Index des SSL-Kontexts
+ * @param s_version SSL-Version (z.B. TLS 1.2)
+ * @param s_cipher Verschlüsselungssuite (z.B. RSA mit AES)
+ * @param negotiation_time Verhandlungstimeout in Sekunden
+ * @return true bei Erfolg, sonst false
+ *
+ * @note Siehe "BG96 SSL Application Note", Abschnitt 2.1.1 AT+QSSLCFG, Seite 10.
+ */
 
 bool _BG96_SSL::SetSSLParameters(unsigned int ssl_index, SSL_Version_t s_version, SSL_Cipher_Suites_t s_ciper, unsigned int negotiation_time)
 {
@@ -86,6 +116,19 @@ bool _BG96_SSL::SetSSLParameters(unsigned int ssl_index, SSL_Version_t s_version
     return false;
 }
 
+/**
+ * @brief Konfiguriert die SSL-Zertifikate.
+ *
+ * @param ssl_index Index des SSL-Kontexts
+ * @param ca_cert_path Pfad zur CA-Zertifikatdatei
+ * @param client_cert_path Pfad zum Client-Zertifikat
+ * @param client_key_path Pfad zum Client-Schlüssel
+ * @param validity_check Überprüfung der Gültigkeit aktivieren
+ * @return true bei Erfolg, sonst false
+ *
+ * @note Siehe "BG96 SSL Application Note", Abschnitt 2.1.1 AT+QSSLCFG, Seite 10.
+ */
+
 bool _BG96_SSL::SetSSLCertificate(unsigned int ssl_index, const char *ca_cert_path, const char *client_cert_path, const char *client_key_path, bool validity_check)
 {
     char cmd[64], buf[64];
@@ -121,7 +164,7 @@ bool _BG96_SSL::SetSSLCertificate(unsigned int ssl_index, const char *ca_cert_pa
         strcpy(cmd, SSL_CONFIG_PARAMETER);
         if (validity_check)
         {
-            sprintf(buf, "=\"ignorelocaltime\",%d,1", ssl_index);
+            sprintf(buf, "=\"ignorelocaltime\",2,1");
             strcat(cmd, buf);
             if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 5))
             {
@@ -198,17 +241,23 @@ bool _BG96_SSL::SetSSLCertificate(unsigned int ssl_index, const char *ca_cert_pa
     return false;
 }
 
+/**
+ * @brief Initialisiert SSL, lädt Zertifikate und setzt Parameter.
+ *
+ * AT-Befehl: AT+QSSLCFG (siehe Seite 12–13 in der Dokumentation)
+ *
+ * @param ssl_index Index des SSL-Kontexts
+ * @param ca_cert Pfad zum CA-Zertifikat
+ * @param client_cert Pfad zum Client-Zertifikat
+ * @param client_key Pfad zum Client-Schlüssel
+ * @param err_code Puffer für eventuelle Fehlermeldungen
+ * @return true bei Erfolg, sonst false
+ */
+
 bool _BG96_SSL::InitSSL(unsigned int ssl_index, char *ca_cert, char *client_cert, char *client_key, char *err_code)
 {
     unsigned long start_time;
     int f_err_code;
-
-    // Set SSL parameters
-    if (!SetSSLParameters(ssl_index, TLS_1_2, TLS_RSA_WITH_AES_256_CBC_SHA, 300))
-    {
-        strcpy(err_code, "\r\nSSL ERROR: An error occurred while setting the SSL parameters.\r\n");
-        return false;
-    }
 
     // Case 1: No certificates provided (non-secure)
     if (strcmp(ca_cert, "") == 0 && strcmp(client_cert, "") == 0 && strcmp(client_key, "") == 0)
@@ -364,6 +413,14 @@ bool _BG96_SSL::InitSSL(unsigned int ssl_index, char *ca_cert, char *client_cert
             }
         }
 
+        // Set SSL parameters
+        // AWS IoT Cores Security policy TLS13_1_2_2022_10 only supports ECDHE-RSA-AES256-SHA384 for BG96
+        if (!SetSSLParameters(ssl_index, TLS_1_2, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384, 300))
+        {
+            strcpy(err_code, "\r\nSSL ERROR: An error occurred while setting the SSL parameters.\r\n");
+            return false;
+        }
+        
         // Set SSL Certificates
         start_time = millis();
         while (!SetSSLCertificate(ssl_index, (char *)ssl_ca_cert_name, (char *)ssl_client_cert_name, (char *)ssl_client_key_name, false))
@@ -374,6 +431,7 @@ bool _BG96_SSL::InitSSL(unsigned int ssl_index, char *ca_cert, char *client_cert
                 return false;
             }
         }
+
         strcpy(err_code, "\r\nSSL OK: The SSL was successfully initialized with CA certificate, client certificate, and client key.\r\n");
         return true;
     }
@@ -384,6 +442,19 @@ bool _BG96_SSL::InitSSL(unsigned int ssl_index, char *ca_cert, char *client_cert
     }
 }
 
+/**
+ * @brief Öffnet einen SSL-Socket.
+ *
+ * AT-Befehl: AT+QSSLOPEN (siehe Seite 15–16 in der Dokumentation)
+ *
+ * @param pdp_index Index des PDP-Kontexts
+ * @param ssl_index Index des SSL-Kontexts
+ * @param socket_index Index des Sockets
+ * @param ip Ziel-IP-Adresse
+ * @param port Zielport
+ * @param mode Zugriffsmodus (z.B. BUFFER_MODE)
+ * @return true bei Erfolg, sonst false
+ */
 
 bool _BG96_SSL::OpenSSLSocket(unsigned int pdp_index, unsigned int ssl_index, unsigned int socket_index, char *ip, unsigned int port, Access_Mode_t mode)
 {
@@ -429,6 +500,16 @@ bool _BG96_SSL::OpenSSLSocket(unsigned int pdp_index, unsigned int ssl_index, un
     return false;
 }
 
+/**
+ * @brief Sendet Daten über den SSL-Socket.
+ *
+ * AT-Befehl: AT+QSSLSEND (siehe Seite 17 in der Dokumentation)
+ *
+ * @param socket_index Index des Sockets
+ * @param ssl_send_data Zu sendende Daten
+ * @return true bei Erfolg, sonst false
+ */
+
 bool _BG96_SSL::SSLSocketSendData(unsigned int socket_index, char *ssl_send_data)
 {
     char cmd[16], buf[32]; // Increased buffer size
@@ -444,6 +525,17 @@ bool _BG96_SSL::SSLSocketSendData(unsigned int socket_index, char *ssl_send_data
     }
     return false;
 }
+
+/**
+ * @brief Empfängt Daten über den SSL-Socket.
+ *
+ * AT-Befehl: AT+QSSLRECV (siehe Seite 18 in der Dokumentation)
+ *
+ * @param socket_index Index des Sockets
+ * @param ssl_recv_len Anzahl der zu empfangenden Bytes
+ * @param ssl_recv_data Puffer für empfangene Daten
+ * @return true bei Erfolg, sonst false
+ */
 
 bool _BG96_SSL::SSLSocketRecvData(unsigned int socket_index, unsigned int ssl_recv_len, char *ssl_recv_data)
 {
@@ -462,6 +554,15 @@ bool _BG96_SSL::SSLSocketRecvData(unsigned int socket_index, unsigned int ssl_re
     return false;
 }
 
+/**
+ * @brief Schließt den SSL-Socket.
+ *
+ * AT-Befehl: AT+QSSLCLOSE (siehe Seite 19 in der Dokumentation)
+ *
+ * @param socket_index Index des Sockets
+ * @return true bei Erfolg, sonst false
+ */
+
 bool _BG96_SSL::CloseSSLSocket(unsigned int socket_index)
 {
     char cmd[16], buf[16];
@@ -474,6 +575,16 @@ bool _BG96_SSL::CloseSSLSocket(unsigned int socket_index)
     }
     return false;
 }
+
+/**
+ * @brief Fragt den Status des SSL-Sockets ab.
+ *
+ * AT-Befehl: AT+QSSLSTATE (siehe Seite 19–20 in der Dokumentation)
+ *
+ * @param socket_index Index des Sockets
+ * @param ssl_status Puffer für den Status
+ * @return true bei Erfolg, sonst false
+ */
 
 bool _BG96_SSL::QuerySSLSocketStatus(unsigned int socket_index, char *ssl_status)
 {
@@ -491,6 +602,16 @@ bool _BG96_SSL::QuerySSLSocketStatus(unsigned int socket_index, char *ssl_status
     }
     return false;
 }
+
+/**
+ * @brief Überwacht SSL-Socket-Ereignisse.
+ *
+ * AT-Befehl: +QSSLURC (siehe Seite 21–22 in der Dokumentation)
+ *
+ * @param event Puffer für das Ereignis
+ * @param timeout Timeout in Sekunden
+ * @return SSL_Socket_Event_t Typ des Ereignisses
+ */
 
 SSL_Socket_Event_t _BG96_SSL::WaitCheckSSLSocketEvent(char *event, unsigned int timeout)
 {

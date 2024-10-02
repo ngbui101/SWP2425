@@ -15,8 +15,8 @@ char PASSWORD[] = "";
 char mqtt_server[] = "a336z3b6pu6hdu-ats.iot.us-east-1.amazonaws.com";
 unsigned int mqtt_port = 8883;
 char mqtt_clientId[] = "BG96";
-char mqtt_topicName[] = "MyTopic";
-unsigned int mqtt_index = 3;
+char mqtt_topicName[] = "$aws/things/BG96/shadow/name/BG96";
+unsigned int mqtt_index = 0;
 Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
 unsigned long pub_time;
 
