@@ -1,5 +1,6 @@
 /*
-
+*Implementierung SSL
+*mehr: quectel_bg96_ssl_application_note_v1-1
  */
 #ifndef __BG96_SSL_H_
 #define __BG96_SSL_H_

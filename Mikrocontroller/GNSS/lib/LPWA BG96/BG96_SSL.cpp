@@ -415,7 +415,7 @@ bool _BG96_SSL::InitSSL(unsigned int ssl_index, char *ca_cert, char *client_cert
 
         // Set SSL parameters
         // AWS IoT Cores Security policy TLS13_1_2_2022_10 only supports ECDHE-RSA-AES256-SHA384 for BG96
-        if (!SetSSLParameters(ssl_index, TLS_1_2, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384, 300))
+        if (!SetSSLParameters(ssl_index, TLS_1_2, SUPPORT_ALL_ABOVE, 300))
         {
             strcpy(err_code, "\r\nSSL ERROR: An error occurred while setting the SSL parameters.\r\n");
             return false;

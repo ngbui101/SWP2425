@@ -15,7 +15,7 @@ char PASSWORD[] = "";
 char mqtt_server[] = "a336z3b6pu6hdu-ats.iot.us-east-1.amazonaws.com";
 unsigned int mqtt_port = 8883;
 char mqtt_clientId[] = "BG96";
-char mqtt_topicName[] = "$aws/things/BG96/shadow/name/BG96";
+char mqtt_topicName[] = "MyTopic";
 unsigned int mqtt_index = 0;
 Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
 unsigned long pub_time;
@@ -210,8 +210,6 @@ void processGNSSMode(){
   {
     pub_time = millis();
 
-    // ...... Previous code lines go here
-
     docInput["DeviceID"] = IMEI;
     docInput["Timestamp"] = millis();
     docInput["Device"] = "GPS";
@@ -219,8 +217,6 @@ void processGNSSMode(){
     docInput["Position"] = gnss_posi;
     serializeJsonPretty(docInput, payload);
 
-    // ..... Next code lines go here
-        
     res = _AWS.MQTTPublishMessages(mqtt_index, 1,
                                        AT_LEAST_ONCE,
                                        mqtt_topicName,

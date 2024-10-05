@@ -1,30 +1,14 @@
 /*
- * A library for BG96 Development board
- * This file is about the BG96 AT Command list
- * 
- * Copyright (c) 
- * @Author       :
- * @Create time  :
- * 
- * The MIT License (MIT)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+*AT Command List für Quectel BG96
+*Mehr: 
+*quectel_bg96_tcpip_at_commands_manual_v1-1
+*quectel_bg96_ssl_application_note_v1-1
+*quectel_bg96_queccell_at_commands_manual_v1-0
+*quectel_bg96_mqtt_application_note_v1-2
+*quectel_bg96_https_at_commands_manual_v1-0
+*Quectel_BG96_GNSS_AT_Commands_Manual_V1.1
+*quectel_bg96_file_at_commands_manual_v1-1
+*Quectel_BG96_AT_Commands_Manual_V2.3
  */
 
 #ifndef __BG96_ATCOMMAND_H_
@@ -134,5 +118,10 @@ const char GNSS_ACQUIRE_NMEA[] = "+QGPSGNMEA";
 const char GNSS_ENABLE_GPSONEXTRA[] = "+QGPSXTRA";
 const char GNSS_INJECT_GPSONEXTRA_TIME[] = "+QGPSXTRATIME";
 const char GNSS_INJECT_GPSONEXTRA_DATA[] = "+QGPSXTRADATA";
+const char GNSS_DELETE_ASSISTANCE_DATA[] = "+QGPSDEL";
+
+// Queccell AT Commands
+const char QUECCELL_ENGINEERING_MODE[] = "+QENG";
+const char QUECCELL_AVAILABLE_NETWORK[] = "+QCOPS";
 
 #endif
