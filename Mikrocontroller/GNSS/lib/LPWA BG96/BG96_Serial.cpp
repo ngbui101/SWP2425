@@ -1,14 +1,33 @@
 #include "BG96_Serial.h"
 
+/**
+ * @brief Standardkonstruktor der Klasse _BG96_Serial.
+ *
+ * Initialisiert die seriellen Schnittstellen _atserial und _dserial auf die Standard-Serial-Schnittstelle (Serial).
+ */
 _BG96_Serial::_BG96_Serial() : _atserial(Serial), _dserial(Serial)
 {
 }
 
+/**
+ * @brief Destruktor der Klasse _BG96_Serial.
+ *
+ * Bereinigt den Empfangspuffer, um verbleibende Daten zu löschen.
+ */
 _BG96_Serial::~_BG96_Serial()
 {
     cleanBuffer();
 }
 
+/**
+ * @brief Parametrisierter Konstruktor der Klasse _BG96_Serial.
+ *
+ * Initialisiert benutzerdefinierte serielle Schnittstellen für AT-Befehle (atserial) und Debugging (dserial).
+ * Setzt die Timeout-Werte und bereinigt den Empfangspuffer.
+ *
+ * @param atserial Referenz auf die serielle Schnittstelle für AT-Befehle.
+ * @param dserial Referenz auf die serielle Schnittstelle für Debugging.
+ */
 _BG96_Serial::_BG96_Serial(Stream &atserial, Stream &dserial) : _atserial(atserial), _dserial(dserial)
 {
     _atserial.setTimeout(2000);
@@ -16,6 +35,11 @@ _BG96_Serial::_BG96_Serial(Stream &atserial, Stream &dserial) : _atserial(atseri
     cleanBuffer();
 }
 
+/**
+ * @brief Leitet Daten zwischen den seriellen Schnittstellen _atserial und _dserial weiter.
+ *
+ * Ermöglicht eine direkte Kommunikation, indem empfangene Daten von einer Schnittstelle an die andere gesendet werden.
+ */
 void _BG96_Serial::AT_bypass()
 {
     while(_atserial.available()){
@@ -26,6 +50,16 @@ void _BG96_Serial::AT_bypass()
     }
 }
 
+/**
+ * @brief Versucht automatisch, die optimale Baudrate für die serielle AT-Schnittstelle zu bestimmen.
+ *
+ * Beginnt mit 115200 Baud und testet anschließend eine Liste vordefinierter Baudraten,
+ * bis eine erfolgreiche Kommunikation bestätigt wird.
+ *
+ * @tparam T Datentyp der seriellen Schnittstelle.
+ * @param _atserial Referenz auf die serielle Schnittstelle, deren Baudrate angepasst werden soll.
+ * @return true, wenn eine erfolgreiche Kommunikation hergestellt wurde, sonst false.
+ */
 template <class T>
 bool _BG96_Serial::AutoATSerialBand(T &_atserial)
 {
@@ -47,6 +81,17 @@ bool _BG96_Serial::AutoATSerialBand(T &_atserial)
     return false;
 }
 
+/**
+ * @brief Sendet einen Datenpuffer an das Modem und überprüft die Antwort auf vorgegebene Erfolg- oder Fehlermeldungen.
+ *
+ * Führt eine Verzögerung ein, löscht den Empfangspuffer und sendet die Daten. Bei aktivierter UART_DEBUG-Funktion werden Debug-Informationen ausgegeben.
+ *
+ * @param data_buf Zeiger auf den zu sendenden Datenpuffer.
+ * @param ok_str Erfolgszeichenkette zur Überprüfung der Antwort.
+ * @param err_str Fehlerzeichenkette zur Überprüfung der Antwort.
+ * @param timeout Timeout in Sekunden für die Antwortüberprüfung.
+ * @return true bei erfolgreicher Überprüfung, sonst false.
+ */
 bool _BG96_Serial::sendDataAndCheck(const char *data_buf, const char *ok_str, const char *err_str, unsigned int timeout)
 {
     delay(100);
@@ -69,7 +114,14 @@ bool _BG96_Serial::sendDataAndCheck(const char *data_buf, const char *ok_str, co
     return false;
 }
 
-
+/**
+ * @brief Sendet einen AT-Befehl an das Modem.
+ *
+ * Der Befehl wird mit dem Präfix „AT“ und einem abschließenden Zeilenumbruch gesendet. Bei aktivierter UART_DEBUG-Funktion werden Debug-Informationen ausgegeben.
+ *
+ * @param command Zeiger auf den AT-Befehl, der gesendet werden soll.
+ * @return true, wenn der Befehl vollständig gesendet wurde, sonst false.
+ */
 bool _BG96_Serial::sendATcommand(const char *command)
 {
     delay(100);
@@ -91,7 +143,13 @@ bool _BG96_Serial::sendATcommand(const char *command)
     return true;
 }
 
-
+/**
+ * @brief Liest ein Byte von der seriellen AT-Schnittstelle und speichert es im Empfangspuffer.
+ *
+ * Gibt die Anzahl der gelesenen Bytes zurück.
+ *
+ * @return Anzahl der gelesenen Bytes (immer 1).
+ */
 unsigned int _BG96_Serial::readResponseByteToBuffer()
 {
     char c = _atserial.read();
@@ -101,13 +159,21 @@ unsigned int _BG96_Serial::readResponseByteToBuffer()
     if (c == '\n'){
         _dserial.print(c);
         _dserial.print("<- ");
-    }else {
+    } else {
         _dserial.print(c);
     }
 #endif
     return 1;
 }
 
+/**
+ * @brief Liest die Antwort des Modems innerhalb eines bestimmten Timeouts und speichert sie im Empfangspuffer.
+ *
+ * Gibt die Anzahl der empfangenen Bytes zurück.
+ *
+ * @param timeout Timeout in Sekunden für das Lesen der Antwort.
+ * @return Anzahl der empfangenen Bytes.
+ */
 unsigned int _BG96_Serial::readResponseToBuffer(unsigned int timeout)
 {
     unsigned long start_time = millis();
@@ -121,6 +187,15 @@ unsigned int _BG96_Serial::readResponseToBuffer(unsigned int timeout)
     return recv_len;
 }
 
+/**
+ * @brief Liest die Antwort des Modems und sucht nach einem bestimmten Zeichen innerhalb eines Timeouts.
+ *
+ * Gibt den Status der Antwort zurück.
+ *
+ * @param test_chr Das zu suchende Zeichen.
+ * @param timeout Timeout in Sekunden für die Antwortüberprüfung.
+ * @return Status der Antwort (SUCCESS_RESPONSE, UNKNOWN_RESPONSE, TIMEOUT_RESPONSE).
+ */
 Cmd_Response_t _BG96_Serial::readResponseAndSearchChr(const char test_chr, unsigned int timeout)
 {
     unsigned long start_time = millis();
@@ -141,6 +216,15 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearchChr(const char test_chr, unsig
     }
 }
 
+/**
+ * @brief Liest die Antwort des Modems und sucht nach einer bestimmten Zeichenkette innerhalb eines Timeouts.
+ *
+ * Gibt den Status der Antwort zurück.
+ *
+ * @param test_str Die zu suchende Zeichenkette.
+ * @param timeout Timeout in Sekunden für die Antwortüberprüfung.
+ * @return Status der Antwort (SUCCESS_RESPONSE, UNKNOWN_RESPONSE, TIMEOUT_RESPONSE).
+ */
 Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, unsigned int timeout)
 {
     unsigned long start_time = millis();
@@ -161,6 +245,16 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, unsigne
     }
 }
 
+/**
+ * @brief Liest die Antwort des Modems und sucht nach einer Erfolgskette oder einer Fehlerkette innerhalb eines Timeouts.
+ *
+ * Bei einem Fehler werden der Fehlercode extrahiert und zurückgegeben.
+ *
+ * @param test_str Die zu suchende Erfolgskette.
+ * @param e_test_str Die zu suchende Fehlerkette.
+ * @param timeout Timeout in Sekunden für die Antwortüberprüfung.
+ * @return Status der Antwort (SUCCESS_RESPONSE, FIAL_RESPONSE, UNKNOWN_RESPONSE, TIMEOUT_RESPONSE).
+ */
 Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const char *e_test_str, unsigned int timeout)
 {
     unsigned long start_time = millis();
@@ -172,7 +266,7 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const c
             recv_len += readResponseByteToBuffer();
             if (searchStrBuffer(test_str)){
                 return SUCCESS_RESPONSE;
-            }else if (searchStrBuffer(e_test_str)){
+            } else if (searchStrBuffer(e_test_str)){
                 start_time = millis();
                 while(millis() - start_time < 100UL){
                     if(serialAvailable()){
@@ -198,6 +292,16 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const c
     }
 }
 
+/**
+ * @brief Sendet einen AT-Befehl und sucht in der Antwort nach einem bestimmten Zeichen innerhalb eines Timeouts.
+ *
+ * Wiederholt den Vorgang bis zu dreimal bei Misserfolg.
+ *
+ * @param command Der zu sendende AT-Befehl.
+ * @param test_chr Das zu suchende Zeichen.
+ * @param timeout Timeout in Sekunden für die Antwortüberprüfung.
+ * @return Status der Antwort (SUCCESS_RESPONSE, TIMEOUT_RESPONSE).
+ */
 Cmd_Response_t _BG96_Serial::sendAndSearchChr(const char *command, const char test_chr, unsigned int timeout)
 {
     for (int i = 0; i < 3; i++){
@@ -210,6 +314,16 @@ Cmd_Response_t _BG96_Serial::sendAndSearchChr(const char *command, const char te
     return TIMEOUT_RESPONSE;
 }
 
+/**
+ * @brief Sendet einen AT-Befehl und sucht in der Antwort nach einer bestimmten Zeichenkette innerhalb eines Timeouts.
+ *
+ * Wiederholt den Vorgang bis zu dreimal bei Misserfolg.
+ *
+ * @param command Der zu sendende AT-Befehl.
+ * @param test_str Die zu suchende Zeichenkette.
+ * @param timeout Timeout in Sekunden für die Antwortüberprüfung.
+ * @return Status der Antwort (SUCCESS_RESPONSE, TIMEOUT_RESPONSE).
+ */
 Cmd_Response_t _BG96_Serial::sendAndSearch(const char *command, const char *test_str, unsigned int timeout)
 {
     for (int i = 0; i < 3; i++){
@@ -222,6 +336,17 @@ Cmd_Response_t _BG96_Serial::sendAndSearch(const char *command, const char *test
     return TIMEOUT_RESPONSE;
 }
 
+/**
+ * @brief Sendet einen AT-Befehl und sucht in der Antwort nach einer Erfolgskette oder einer Fehlerkette innerhalb eines Timeouts.
+ *
+ * Gibt den entsprechenden Status zurück.
+ *
+ * @param command Der zu sendende AT-Befehl.
+ * @param test_str Die zu suchende Erfolgskette.
+ * @param e_test_str Die zu suchende Fehlerkette.
+ * @param timeout Timeout in Sekunden für die Antwortüberprüfung.
+ * @return Status der Antwort (SUCCESS_RESPONSE, FIAL_RESPONSE, UNKNOWN_RESPONSE, TIMEOUT_RESPONSE).
+ */
 Cmd_Response_t _BG96_Serial::sendAndSearch(const char *command, const char *test_str, const char *e_test_str, unsigned int timeout)
 {
     Cmd_Response_t resp_status = UNKNOWN_RESPONSE;
@@ -234,26 +359,44 @@ Cmd_Response_t _BG96_Serial::sendAndSearch(const char *command, const char *test
     return resp_status;
 }
 
+/**
+ * @brief Durchsucht den Empfangspuffer nach einer bestimmten Zeichenkette.
+ *
+ * @param test_str Die zu suchende Zeichenkette.
+ * @return Zeiger auf die gefundene Zeichenkette im Puffer oder NULL, wenn nicht gefunden.
+ */
 char *_BG96_Serial::searchStrBuffer(const char *test_str)
 {
     int buf_len = strlen((const char *)rxBuffer);
     if (buf_len < RX_BUFFER_LENGTH){
         return strstr((const char *)rxBuffer,test_str);
-    }else {
+    } else {
         return NULL;
     }
 }
 
+/**
+ * @brief Durchsucht den Empfangspuffer nach einem bestimmten Zeichen.
+ *
+ * @param test_chr Das zu suchende Zeichen.
+ * @return Zeiger auf das gefundene Zeichen im Puffer oder NULL, wenn nicht gefunden.
+ */
 char *_BG96_Serial::searchChrBuffer(const char test_chr)
 {
     int buf_len = strlen((const char *)rxBuffer);
     if (buf_len < RX_BUFFER_LENGTH){
         return strchr((const char *)rxBuffer, test_chr);
-    }else {
+    } else {
         return NULL;
     }
 }
 
+/**
+ * @brief Gibt den zuletzt erfassten Fehlercode zurück, falls vorhanden.
+ *
+ * @param s_err_code Referenz auf die Variable, in die der Fehlercode geschrieben wird.
+ * @return true, wenn ein Fehlercode vorhanden ist, sonst false.
+ */
 bool _BG96_Serial::returnErrorCode(int &s_err_code)
 {
     s_err_code = -1;
@@ -264,12 +407,20 @@ bool _BG96_Serial::returnErrorCode(int &s_err_code)
     return false;
 }
 
+/**
+ * @brief Bereinigt den Empfangspuffer, indem alle gespeicherten Daten gelöscht und der Pufferzeiger zurückgesetzt werden.
+ */
 void _BG96_Serial::cleanBuffer()
 {
     memset(rxBuffer,'\0',RX_BUFFER_LENGTH);
     bufferHead = 0;
 }
 
+/**
+ * @brief Überprüft, ob Daten auf der seriellen AT-Schnittstelle verfügbar sind.
+ *
+ * @return Anzahl der verfügbaren Bytes im Empfangspuffer.
+ */
 int _BG96_Serial::serialAvailable()
 {
     unsigned int ret;

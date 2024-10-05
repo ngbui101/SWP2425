@@ -1,22 +1,34 @@
 #include <board.h>
+#include <BG96_AWS.hpp>
+#include <ArduinoJson.h>
 
 #define DSerial SerialUSB
 #define ATSerial Serial1
 
+StaticJsonDocument<600> docInput;
+StaticJsonDocument<600> docOutput;
+
 char APN[] = "wm";
 char LOGIN[] = "";
 char PASSWORD[] = "";
-char tcp_ip[] = "13.237.19.148";
-int tcp_port = 3000;
+
+char mqtt_server[] = "a336z3b6pu6hdu-ats.iot.us-east-1.amazonaws.com";
+unsigned int mqtt_port = 8883;
+char mqtt_clientId[] = "BG96";
+char mqtt_topicName[] = "MyTopic";
+unsigned int mqtt_index = 0;
+Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
+unsigned long pub_time;
+
+// send
 char send_data[256];
 String inputBuffer = "";
+// IMEI of the modem
+char IMEI[20];
 
-unsigned int comm_pdp_index = 1;
-unsigned int comm_socket_index = 0;
+_BG96_MQTT _AWS(ATSerial, DSerial);
 
-Socket_Type_t socket = TCP_CLIENT;
-
-_BG96_TCPIP _BG96(ATSerial, DSerial);
+GNSS_Work_Mode_t mode = STAND_ALONE;
 _BG96_GNSS _GNSS(ATSerial, DSerial);
 
 unsigned long startTime = millis();
@@ -30,7 +42,7 @@ enum ProgramState
   STATE_GNSS_MODE
 };
 ProgramState currentState = STATE_SELECT_MODE;
-void initializeGNSSMode();
+
 void processGNSSMode();
 void processSerialMode();
 void selectMode();
@@ -48,15 +60,30 @@ void setup()
     ;
   delay(1000);
 
-  if (_BG96.TurnOnModule())
-  {
-    _BG96.SetDevOutputformat(true);
-    _BG96.SetDevCommandEcho(false);
-    DSerial.println("BG96 Module Initialized");
+  _AWS.InitModule();
+  _AWS.SetDevCommandEcho(false);
+  _AWS.SetDevOutputformat(true);
+
+  InitModemMQTT(_AWS, DSerial, APN, LOGIN, PASSWORD,
+                mqtt_server, mqtt_port,
+                mqtt_clientId, mqtt_topicName,
+                AT_MOST_ONCE, mqtt_index,
+                1, 2, IMEI);
+  
+  if(_GNSS.InitGpsOneXTRA()){
+    DSerial.println("\r\nInit GpsOneXTRA Success!");
   }
-  char apn_error[64];
-  _BG96.InitAPN(comm_pdp_index, APN, "", "", apn_error);
-  DSerial.println(apn_error);
+
+  while (!_GNSS.TurnOnGNSS(mode, WRITE_MODE))
+  {
+    DSerial.println("\r\nOpen the GNSS Function Fali!");
+    if (_GNSS.TurnOnGNSS(mode, READ_MODE))
+    {
+      DSerial.println("\r\nThe GNSS Function is Opened!");
+      _GNSS.TurnOffGNSS();
+    }
+  }
+  DSerial.println("\r\nOpen the GNSS Function Success!");
 }
 
 void loop()
@@ -102,7 +129,6 @@ void selectMode()
       {
         currentState = STATE_GNSS_MODE;
         DSerial.println("GNSS Mode ausgewählt.");
-        initializeGNSSMode();
         break;
       }
       else
@@ -113,164 +139,138 @@ void selectMode()
     }
   }
 }
+void processGNSSMode(){
+   char payload[256];
+  char *sta_buf;
+  int res;
+  DeserializationError error;
+  char gnss_posi[128];
 
-void initializeGNSSMode()
-{
-  if (_BG96.OpenSocketService(comm_pdp_index, comm_socket_index, socket, tcp_ip, tcp_port, 0, BUFFER_MODE))
+  if (!_GNSS.GetGNSSPositionInformation(gnss_posi)) 
   {
-    DSerial.println("\r\nOpen Socket Service Success!");
+    DSerial.println("\r\nGet the GNSS Position Fail!");
+    strcpy(gnss_posi, "no fix");
   }
-  else
+  else 
   {
-    DSerial.println("\r\nOpen Socket Service Failed!");
-    return;
+    DSerial.println("\r\nGet the GNSS Position Success!");
+    DSerial.println(gnss_posi);
   }
-  if(_GNSS.EnableGpsOneXTRA()){
-    DSerial.println("\r\nEnable GPSOneXtra.");
-  }
-  if (_GNSS.InitGpsOneXTRA())
-  {
-    DSerial.println("\r\nGNSS with GpsOneXTRA Assistance is activated.");
-    startTime = millis();
-  }
-  else
-  {
-    DSerial.println("\r\nFailed to activate GNSS.");
-    return;
-  }
-}
-void processGNSSMode()
-{
-  char gnss_pos[128];
-  // GNSS-Position abrufen
-  if (!gnssSuccess)
-  {
-    DSerial.println("Trying to get GNSS Position...");
-    if (_GNSS.GetGNSSPositionInformation(gnss_pos))
-    {
-      DSerial.println("\r\nGNSS Position:");
-      DSerial.println(gnss_pos);
 
-      endTime = millis();
-      unsigned long duration = (endTime - startTime) / 1000;
-      DSerial.print("Time to get GNSS Fix: ");
-      DSerial.print(duration);
-      DSerial.println(" seconds");
+ Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
+  switch (ret)
+  {
+    case MQTT_RECV_DATA_EVENT:
+      error = deserializeJson(docOutput, payload);
 
-      sprintf(send_data, "GNSS Position: %s", gnss_pos);
-      gnssSuccess = true;
-    }
-    else
-    {
-      DSerial.println("\r\nFailed to get GNSS Position. Retrying in 5 seconds. Press 'q+Enter' to quit.");
-
-      unsigned long waitStart = millis();
-      while (millis() - waitStart < 5000)
+      if (error == DeserializationError::Ok)
       {
-        // Überprüfung auf 'q' zum Zurückkehren zum Auswahlmenü
-        if (DSerial.available())
+        if (docOutput["Device"] == "GPS")
         {
-          char d = DSerial.read();
-          if (d == 'q' || d == 'Q')
-          {
-            DSerial.println("\nZurück zum Auswahlmenü...");
-            // GNSS und Socket schließen
-            if (_GNSS.TurnOffGNSS())
-            {
-              DSerial.println("GNSS turned off.");
-            }
-            delay(300);
-            if (_BG96.CloseSocketService(comm_socket_index))
-            {
-              DSerial.println("Socket closed.");
-            }
-            delay(300);
-            gnssSuccess = false;
-            sendCounter = 0;
-            currentState = STATE_SELECT_MODE;
-            return; // Funktion verlassen
-          }
-        }
-        // Kurze Pause, um CPU-Last zu reduzieren
-        delay(10);
-      }
-    }
-  }
+          DSerial.println("Device is a Sound sensor!");
 
-  if (gnssSuccess && sendCounter < 20)
+          DSerial.println(docOutput["DeviceID"].as<String>());
+          DSerial.println(docOutput["Timestamp"].as<double>(), 6);
+          DSerial.println(docOutput["Device"].as<String>());
+          DSerial.println(docOutput["OpCode"].as<String>());
+          DSerial.println(docOutput["Position"].as<String>());
+        }
+        else
+        {
+          DSerial.println("Device is not a GPS!");
+        }
+      }
+      else
+      {
+        DSerial.println("\r\n Error in  Deserialization!");
+        DSerial.println(error.c_str());
+      }      
+
+      break;
+
+    case MQTT_STATUS_EVENT:
+      sta_buf = strchr(payload, ',');
+      if (atoi(sta_buf + 1) == 1)
+      {
+        if (_AWS.CloseMQTTClient(mqtt_index))
+        {
+          DSerial.println("\r\nClose the MQTT Client Success!");
+        }
+      }
+      else
+      {
+        DSerial.print("\r\nStatus cade is :");
+        DSerial.println(atoi(sta_buf + 1));
+        DSerial.println("Please check the documentation for error details.");
+      }
+      break;
+  }
+  
+  if (millis() - pub_time >= 5000UL) 
   {
-    if (_BG96.SocketSendData(comm_socket_index, socket, send_data, "", tcp_port))
+    pub_time = millis();
+
+    docInput["DeviceID"] = IMEI;
+    docInput["Timestamp"] = millis();
+    docInput["Device"] = "GPS";
+    docInput["OpCode"] = "Read";
+    docInput["Position"] = gnss_posi;
+    serializeJsonPretty(docInput, payload);
+
+    res = _AWS.MQTTPublishMessages(mqtt_index, 1,
+                                       AT_LEAST_ONCE,
+                                       mqtt_topicName,
+                                       false,
+                                       payload);
+
+    if ((res == PACKET_SEND_SUCCESS_AND_RECV_ACK)
+        || (res == PACKET_RETRANSMISSION))
     {
-      DSerial.println("\r\nSocket Send Data Success!");
-      sendCounter++;
+      DSerial.println("Publish Success!");
     }
     else
     {
-      DSerial.println("\r\nSocket Send Data Failed!");
+      DSerial.println("Publish failed!");
     }
-
-    delay(1000);
   }
 
-  if (sendCounter >= 20)
-  {
-    DSerial.println("\r\n20 successful send attempts reached. Shutting down GNSS and socket...");
-
-    if (_GNSS.TurnOffGNSS())
-    {
-      DSerial.println("\r\nGNSS turned off.");
-    }
-
-    if (_BG96.CloseSocketService(comm_socket_index))
-    {
-      DSerial.println("\r\nSocket closed.");
-    }
-    currentState = STATE_SELECT_MODE;
-    DSerial.println("Wechsle zurück in den Serial Mode.");
-  }
+  delay(1000);
 }
-
 void processSerialMode()
 {
-  // Überprüfung der Eingabe vom Benutzer
   while (DSerial.available())
   {
     char d = DSerial.read();
-    ATSerial.write(d); // Weiterleiten an ATSerial
-    DSerial.write(d);  // Echo auf DSerial (optional)
+    ATSerial.write(d);
+    DSerial.write(d);
 
-    // Zeichen zum Eingabepuffer hinzufügen
-    if (d == '\n' || d == '\r') // Wenn Enter gedrückt wurde
+    if (d == '\n' || d == '\r')
     {
-      // Überprüfen, ob der Befehl "GNSS" eingegeben wurde
-      inputBuffer.trim(); // Entfernt führende und nachgestellte Leerzeichen
+      inputBuffer.trim();
       if (inputBuffer.equalsIgnoreCase("GNSS"))
       {
         DSerial.println("\nWechsle in den GNSS Mode...");
         currentState = STATE_GNSS_MODE;
         inputBuffer = "";
-        initializeGNSSMode();
-        return; // Verlasse die Funktion
+        return;
       }
       else if (inputBuffer.equalsIgnoreCase("EXIT"))
       {
         DSerial.println("\nBeende das Programm.");
         while (true)
-          ; // Endlosschleife, um das Programm zu stoppen
+          ;
       }
       else
       {
-        // Eingabe an ATSerial senden (bereits geschehen)
-        inputBuffer = ""; // Eingabepuffer leeren
+        inputBuffer = "";
       }
     }
     else
     {
-      inputBuffer += d; // Zeichen zum Puffer hinzufügen
+      inputBuffer += d;
     }
   }
 
-  // Antwort vom ATSerial lesen und an DSerial weiterleiten
   while (ATSerial.available())
   {
     char at = ATSerial.read();
