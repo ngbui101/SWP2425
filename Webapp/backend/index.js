@@ -42,7 +42,9 @@ app.use(errorHandlerMiddleware);
 
 
 // Routes
-app.use('/api/position', require('../backend/rest/position'));
+app.use('/api/event', require('../backend/rest/trainingevent'));
+app.use('/api/history', require('../backend/rest/trackerhistory'));
+app.use('/api/position', require('../backend/rest/measurement'));
 app.use('/api/tracker', require('../backend/rest/tracker'));
 app.use('/api/users', require('../backend/rest/users')); 
 app.use('/api/auth', require('../backend/rest/auth'));

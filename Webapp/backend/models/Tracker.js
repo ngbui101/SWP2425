@@ -10,12 +10,6 @@ const TrackerSchema = new Schema ( {
         enum: ['RT','LT','Test', 'None'],
         default: 'None'
     },
-    positions: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Position'
-        }
-    ]
   })
 
 module.exports = mongoose.model('Tracker', TrackerSchema);
