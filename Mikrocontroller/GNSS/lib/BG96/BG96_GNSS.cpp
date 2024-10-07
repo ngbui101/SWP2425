@@ -381,32 +381,29 @@ bool _BG96_GNSS::InjectGpsOneXTRAData(const char *filename, Cmd_Status_t status,
         strcat(cmd, "?");
         if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
         {
-            // Extrahiere die Antwort, z.B. "+QGPSXTRADATA: 10080,\"2024/10/05,08:00:00\""
-            char *sta_buf = searchStrBuffer(": ");         // Sucht den Beginn der Daten
-            char *time_start = strchr(sta_buf, '\"');      // Sucht nach dem ersten Anführungszeichen
-            char *time_end = strchr(time_start + 1, '\"'); // Sucht nach dem zweiten Anführungszeichen
-            *time_end = '\0';                              // Beendet den String nach dem Zeitstempel
-            // Extrahiere den Zeitstempel (z.B. "2024/10/05,08:00:00")
+            char *sta_buf = searchStrBuffer(": ");         
+            char *time_start = strchr(sta_buf, '\"');      
+            char *time_end = strchr(time_start + 1, '\"'); 
+            *time_end = '\0';                              
+  
             char gpsDataTimestamp[64];
-            strcpy(gpsDataTimestamp, time_start + 1); // Kopiert den Zeitstempel ohne Anführungszeichen
+            strcpy(gpsDataTimestamp, time_start + 1); 
 
-            // Berechne die Differenz zwischen dem gpsDataTimestamp und currentTimestamp
-            // Verwandle den String-Zeitstempel in ein Unix-Zeitformat
             time_t gpsTime = parseTimestamp(gpsDataTimestamp);
             time_t currentTime = parseTimestamp(currentTimestamp);
 
-            // Berechne den Unterschied in Tagen (7 Tage = 7 * 24 * 60 * 60 Sekunden)
+            
             double diffDays = difftime(currentTime, gpsTime) / (60 * 60 * 24);
 
             if (diffDays > 7)
             {
                 // Wenn der Zeitstempel älter als 7 Tage ist, gib false zurück
-                return true;
+                return false;
             }
             else
             {
                 // Wenn der Zeitstempel innerhalb von 7 Tagen liegt, gib true zurück
-                return false;
+                return true;
             }
         }
     }

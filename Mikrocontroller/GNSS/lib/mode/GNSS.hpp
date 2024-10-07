@@ -8,10 +8,7 @@ bool InitGNSS(_BG96_GNSS &GNSS,
               char *currentTimestamp)
 {
     GNSS_Work_Mode_t mode = STAND_ALONE;
-    if (GNSS.GetLatestGMTTime(currentTimestamp))
-    {
-        DSerial.println("\r\nGet current Timestamp Success!");
-    }
+
     if (GNSS.InitGpsOneXTRA(currentTimestamp))
     {
         DSerial.println("\r\nInit GpsOneXTRA Success!");

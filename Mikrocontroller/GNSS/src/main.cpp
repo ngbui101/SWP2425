@@ -33,13 +33,10 @@ _BG96_MQTT _AWS(ATSerial, DSerial);
 
 _BG96_GNSS _GNSS(ATSerial, DSerial);
 
-
-
 unsigned long startTime = millis();
 unsigned long endTime = 0;
 bool gnssSuccess = false;
 unsigned int sendCounter = 0;
-
 
 void setup()
 {
@@ -63,9 +60,11 @@ void setup()
                 mqtt_clientId, mqtt_topicName,
                 AT_MOST_ONCE, mqtt_index,
                 1, 2, IMEI);
+  _AWS.GetLatestGMTTime(currentTimestamp);
+
+  DSerial.println(currentTimestamp);
 
   InitGNSS(_GNSS, DSerial, currentTimestamp);
-
 }
 
 void loop()
@@ -73,6 +72,8 @@ void loop()
   char payload[256];
   char *sta_buf;
   int res;
+  char gnss_posi[128];
+
   DeserializationError error;
 
   Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
@@ -85,7 +86,6 @@ void loop()
     {
       if (docOutput["Device"] == "GNSS")
       {
-        char gnss_posi[128];
         if (!_GNSS.GetGNSSPositionInformation(gnss_posi))
         {
           DSerial.println("\r\nGet the GNSS Position Fail!");
@@ -99,10 +99,10 @@ void loop()
         DSerial.println("Public GNSS Position: ");
 
         DSerial.println(docOutput["DeviceID"].as<String>());
-        DSerial.println(docOutput["Timestamp"].as<double>(), 6);
+        DSerial.println(docOutput["Timestamp"].as<String>());
         DSerial.println(docOutput["Device"].as<String>());
         DSerial.println(docOutput["OpCode"].as<String>());
-        DSerial.println(docOutput["Position"].as<int>());
+        DSerial.println(docOutput["Position"].as<String>());
       }
       else
       {
@@ -135,8 +135,6 @@ void loop()
     break;
 
   default:
-    // DSerial.println("\r\nUnknown event from Recv is received");
-    //       DSerial.println(ret);
     break;
   }
 
@@ -145,10 +143,10 @@ void loop()
     pub_time = millis();
 
     docInput["DeviceID"] = IMEI;
-    docInput["Timestamp"] = millis();
+    docInput["Timestamp"] = currentTimestamp;
     docInput["Device"] = "BO-Tracker";
     docInput["OpCode"] = "Read";
-    docInput["Position"] = 30;
+    docInput["Position"] = gnss_posi;
     serializeJsonPretty(docInput, payload);
 
     res = _AWS.MQTTPublishMessages(mqtt_index, 1, AT_LEAST_ONCE, mqtt_topicName, false, payload);
