@@ -7,6 +7,7 @@ export interface User {
     email: string;
     password: string;
     number: string;
+    language: string;
     created_at: Date;
     updated_at: Date;
     __v: number;
@@ -134,6 +135,17 @@ export interface User {
                 email: newEmail
               });
               this.user.email = newEmail; // Update the email in the store
+              return data;
+            } catch (error: any) {
+              throw new Error(`Failed to update email: ${error.message}`);
+            }
+          },
+          async updateLanguage(newLanguage: string) {
+            try {
+              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
+                language: newLanguage
+              });
+              this.user.language = newLanguage; // Update the email in the store
               return data;
             } catch (error: any) {
               throw new Error(`Failed to update email: ${error.message}`);

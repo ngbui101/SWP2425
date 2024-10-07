@@ -46,7 +46,7 @@ async function createUser(req, res) {
 async function updateUser(req, res) {
   const { id } = req.params;
   const { email } = req.body;
-
+  const {language} = req.body;
   try {
     const user = await User.findById(id);
     if (!user) {
@@ -55,6 +55,10 @@ async function updateUser(req, res) {
 
     if (email) {
       user.email = email;
+    }
+
+    if (language) {
+      user.language = language;
     }
 
     await user.save();
