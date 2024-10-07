@@ -5,6 +5,8 @@ const MapView = () => import('../views/MapView.vue');
 const LoginView = () => import('../views/LoginView.vue');
 const RegisterView = () => import('../views/RegisterView.vue');
 const SettingsView = () => import('../views/SettingsView.vue');
+const TrackersVerwaltungView = () => import('../views/TrackersVerwaltungView.vue'); // Neue Seite importieren
+
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
@@ -12,6 +14,7 @@ const routes = [
     { path: '/account', component: SettingsView, name: 'account', meta: { requiresAuth: true } }, // Geschützte Route
     { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true, hideComponent: true } },
     { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true, hideComponent: true} },
+    { path: '/trackers', component: TrackersVerwaltungView, name: 'trackers', meta: { requiresAuth: true } }, // Neue Route hinzugefügt
     // { path: '/unauthorized', name: 'unauthorized', component: ForbiddenPage, meta: { hideComponent:true}} // Falls benötigt
 ];
 
