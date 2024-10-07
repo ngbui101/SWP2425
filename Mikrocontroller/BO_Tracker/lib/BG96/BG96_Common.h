@@ -5,8 +5,8 @@
 *Konfigurationsparametern, das Abrufen von Geräteinformationen und Netzstatus sowie 
 *das Verwalten von SIM-Karteninformationen.
  */
-#ifndef _BG96_H_
-#define _BG96_H_
+#ifndef _BG96_COMMEN_H_
+#define _BG96_COMMEN_H_
 
 #include "BG96_Serial.h"
 
@@ -69,6 +69,8 @@ class _BG96_Common : public _BG96_Serial
 
     bool GetLatestGMTTime(char *time);
 
+    char* GetCurrentTime();
+
     bool GetDevVersion(char *ver);
 
     bool GetDevIMEI(char *imei);
@@ -102,9 +104,13 @@ class _BG96_Common : public _BG96_Serial
     //0 Automatic, 1 GSM only, 3 LTE only
     bool ScanmodeConfig(int mode);
 
+    time_t parseTimestamp(const char *timestamp);
 
+    bool ReportCellInformation(char *celltype, char* infos);
+
+    bool ScanForCurrentAbaiableNetworks(char * scan_typ, char* scan_mode, char* infos);
   private:
-
+    char currenttime[64];
 };
 
 #endif

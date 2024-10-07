@@ -66,6 +66,8 @@ class _BG96_SSL : public _BG96_FILE
 
     bool QuerySSLSocketStatus(unsigned int socket_index, char *ssl_status);
 
+    bool DeleteCertificate(const char *filename);
+
     SSL_Socket_Event_t WaitCheckSSLSocketEvent(char *event, unsigned int timeout);
 
   private:

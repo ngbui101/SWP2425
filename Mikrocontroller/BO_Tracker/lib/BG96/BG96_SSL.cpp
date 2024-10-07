@@ -638,3 +638,36 @@ SSL_Socket_Event_t _BG96_SSL::WaitCheckSSLSocketEvent(char *event, unsigned int 
     }
     return (SSL_Socket_Event_t)0;
 }
+
+/**
+ * @brief  SSL Zertifikat löschen
+ * @param filename Name des Zertifikats, "all" falls alle Zertifikate gelöscht werden sollten  
+ * @return true bei Erfolg, sonst false
+ */
+
+bool _BG96_SSL::DeleteCertificate(const char *filename)
+{
+    if (strcmp(filename, "ca_cert.pem") == 0)
+    {
+        DeleteFiles("ca_cert.pem");
+        return true;
+    }
+    else if (strcmp(filename, "client_cert.pem") == 0)
+    {
+        DeleteFiles("client_cert.pem");
+        return true;
+    }
+    else if (strcmp(filename, "client_key.pem") == 0)  // Korrigierter Dateiname
+    {
+        DeleteFiles("client_key.pem");
+        return true;
+    }
+    else if (strcmp(filename, "all") == 0)
+    {
+        DeleteFiles("ca_cert.pem");
+        DeleteFiles("client_cert.pem");
+        DeleteFiles("client_key.pem");
+        return true;
+    }
+    return false;
+}
