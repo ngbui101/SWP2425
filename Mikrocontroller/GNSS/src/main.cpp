@@ -1,6 +1,7 @@
 #include <board.h>
 #include <MQTT_AWS.hpp>
 #include <GNSS.hpp>
+#include <Battery.h>
 #include <ArduinoJson.h>
 
 #define DSerial SerialUSB
@@ -32,21 +33,13 @@ _BG96_MQTT _AWS(ATSerial, DSerial);
 
 _BG96_GNSS _GNSS(ATSerial, DSerial);
 
+
+
 unsigned long startTime = millis();
 unsigned long endTime = 0;
 bool gnssSuccess = false;
 unsigned int sendCounter = 0;
-enum ProgramState
-{
-  STATE_SELECT_MODE,
-  STATE_SERIAL_MODE,
-  STATE_GNSS_MODE
-};
-ProgramState currentState = STATE_SELECT_MODE;
 
-void processGNSSMode();
-void processSerialMode();
-void selectMode();
 
 void setup()
 {
@@ -72,6 +65,7 @@ void setup()
                 1, 2, IMEI);
 
   InitGNSS(_GNSS, DSerial, currentTimestamp);
+
 }
 
 void loop()
@@ -90,7 +84,7 @@ void loop()
     if (error == DeserializationError::Ok)
     {
       if (docOutput["Device"] == "GNSS")
-      { 
+      {
         char gnss_posi[128];
         if (!_GNSS.GetGNSSPositionInformation(gnss_posi))
         {
@@ -171,4 +165,3 @@ void loop()
   }
   delay(1000); // publish to topic every 1 seconds
 }
-

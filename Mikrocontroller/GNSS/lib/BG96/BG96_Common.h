@@ -5,8 +5,8 @@
 *Konfigurationsparametern, das Abrufen von Geräteinformationen und Netzstatus sowie 
 *das Verwalten von SIM-Karteninformationen.
  */
-#ifndef _BG96_H_
-#define _BG96_H_
+#ifndef _BG96_COMMEN_H_
+#define _BG96_COMMEN_H_
 
 #include "BG96_Serial.h"
 

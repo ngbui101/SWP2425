@@ -107,7 +107,8 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
                    char *ModemIMEI = NULL)
 {
   Mqtt_Version_t version = MQTT_V4;
-
+  
+  //IMEI
   char imei_tmp[64];
   if (BG96.GetDevIMEI(imei_tmp))
   {
@@ -116,7 +117,8 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
     s.toCharArray(ModemIMEI, 64);
     DSerial.println(ModemIMEI);
   }
-
+  
+  //SSL Networking
   BG96.DeleteCertificate("all");
 
   char apn_error[64];
@@ -134,6 +136,7 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   DSerial.println(ssl_error);
   
 
+  //MQTT
   while (!BG96.SetMQTTEnableSSL(MQTTIndex, SSLIndex, true))
   {
     DSerial.println("\r\nSetMQTTEnableSSL the MQTT Parameter Fail!");
