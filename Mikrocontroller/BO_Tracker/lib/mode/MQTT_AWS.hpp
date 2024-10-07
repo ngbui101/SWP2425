@@ -135,7 +135,6 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   }
   DSerial.println(ssl_error);
   
-
   //MQTT
   while (!BG96.SetMQTTEnableSSL(MQTTIndex, SSLIndex, true))
   {

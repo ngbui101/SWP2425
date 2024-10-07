@@ -28,7 +28,8 @@ _BG96_Common::~_BG96_Common()
  * @param dserial Referenz auf die serielle Schnittstelle für Debugging.
  */
 _BG96_Common::_BG96_Common(Stream &atserial, Stream &dserial) : _BG96_Serial(atserial, dserial)
-{
+{   
+    
 }
 
 /**
@@ -172,7 +173,13 @@ bool _BG96_Common::GetLatestGMTTime(char *time)
     }
     return false;
 }
-
+char* _BG96_Common::GetCurrentTime(){
+    char time[64];
+    GetLatestGMTTime(time);
+    DevClock(time,WRITE_MODE);
+    DevClock(currenttime,READ_MODE);
+    return currenttime;
+};
 /**
  * @brief Holt die Geräteinformationen.
  *
@@ -728,4 +735,10 @@ time_t _BG96_Common::parseTimestamp(const char *timestamp)
     
     // Konvertiert den Zeitstempel in Unix-Zeit (Sekunden seit 1. Januar 1970)
     return mktime(&t);
+}
+
+bool _BG96_Common::ReportCellInformation(char *celltype, char* infos){
+    char cmd[32];
+    
+    return true;
 }

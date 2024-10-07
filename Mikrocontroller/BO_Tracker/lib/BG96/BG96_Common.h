@@ -69,6 +69,8 @@ class _BG96_Common : public _BG96_Serial
 
     bool GetLatestGMTTime(char *time);
 
+    char* GetCurrentTime();
+
     bool GetDevVersion(char *ver);
 
     bool GetDevIMEI(char *imei);
@@ -104,9 +106,11 @@ class _BG96_Common : public _BG96_Serial
 
     time_t parseTimestamp(const char *timestamp);
 
+    bool ReportCellInformation(char *celltype, char* infos);
 
+    bool ScanForCurrentAbaiableNetworks(char * scan_typ, char* scan_mode, char* infos);
   private:
-
+    char currenttime[64];
 };
 
 #endif

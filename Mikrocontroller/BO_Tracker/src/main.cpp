@@ -7,8 +7,8 @@
 #define DSerial SerialUSB
 #define ATSerial Serial1
 
-StaticJsonDocument<600> docInput;
-StaticJsonDocument<600> docOutput;
+DynamicJsonDocument docInput(600);
+DynamicJsonDocument docOutput(600);
 
 char APN[] = "wm";
 char LOGIN[] = "";
@@ -22,21 +22,12 @@ unsigned int mqtt_index = 0;
 Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
 unsigned long pub_time;
 
-// send
-char send_data[256];
-String inputBuffer = "";
 // IMEI of the modem
 char IMEI[20];
-char currentTimestamp[64];
 
 _BG96_MQTT _AWS(ATSerial, DSerial);
 
 _BG96_GNSS _GNSS(ATSerial, DSerial);
-
-unsigned long startTime = millis();
-unsigned long endTime = 0;
-bool gnssSuccess = false;
-unsigned int sendCounter = 0;
 
 void setup()
 {
@@ -60,11 +51,8 @@ void setup()
                 mqtt_clientId, mqtt_topicName,
                 AT_MOST_ONCE, mqtt_index,
                 1, 2, IMEI);
-  _AWS.GetLatestGMTTime(currentTimestamp);
 
-  DSerial.println(currentTimestamp);
-
-  InitGNSS(_GNSS, DSerial, currentTimestamp);
+  InitGNSS(_GNSS, DSerial, _GNSS.GetCurrentTime());
 }
 
 void loop()
@@ -75,6 +63,17 @@ void loop()
   char gnss_posi[128];
 
   DeserializationError error;
+  
+  if (!_GNSS.GetGNSSPositionInformation(gnss_posi))
+  {
+    DSerial.println("\r\nGet the GNSS Position Fail!");
+    strcpy(gnss_posi, "no fix");
+  }
+  else
+  {
+    DSerial.println("\r\nGet the GNSS Position Success!");
+    DSerial.println(gnss_posi);
+  }
 
   Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
   switch (ret)
@@ -86,18 +85,7 @@ void loop()
     {
       if (docOutput["Device"] == "GNSS")
       {
-        if (!_GNSS.GetGNSSPositionInformation(gnss_posi))
-        {
-          DSerial.println("\r\nGet the GNSS Position Fail!");
-          strcpy(gnss_posi, "no fix");
-        }
-        else
-        {
-          DSerial.println("\r\nGet the GNSS Position Success!");
-          DSerial.println(gnss_posi);
-        }
         DSerial.println("Public GNSS Position: ");
-
         DSerial.println(docOutput["DeviceID"].as<String>());
         DSerial.println(docOutput["Timestamp"].as<String>());
         DSerial.println(docOutput["Device"].as<String>());
@@ -141,9 +129,8 @@ void loop()
   if (millis() - pub_time >= 5000UL)
   {
     pub_time = millis();
-
     docInput["DeviceID"] = IMEI;
-    docInput["Timestamp"] = currentTimestamp;
+    docInput["Timestamp"] = _GNSS.GetCurrentTime();
     docInput["Device"] = "BO-Tracker";
     docInput["OpCode"] = "Read";
     docInput["Position"] = gnss_posi;
