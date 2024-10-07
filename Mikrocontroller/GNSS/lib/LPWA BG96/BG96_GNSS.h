@@ -15,6 +15,11 @@ typedef enum gnss_work_mode{
     SPEED_OPTIMAL = 4,
 }GNSS_Work_Mode_t;
 
+typedef enum xtraenable{
+    DISABLE = 0,
+    ENABLE = 1,
+}GNSS_Xtra_Enable_t;
+
 typedef enum gnss_constellation{
     GPS_ONLY = 0,
     GPS_GLONASS_BEIDOU_GALILEO = 1,
@@ -71,17 +76,17 @@ class _BG96_GNSS : public _BG96_HTTP
 	
     bool SetGNSSOutputPort(GNSS_OutputPort_t outport);
 
-    bool EnableGpsOneXTRA();
+    bool EnableGpsOneXTRA(GNSS_Xtra_Enable_t mode,Cmd_Status_t status);
 
     bool InjectGpsOneXTRATime(const char* timey);
 
-    bool InjectGpsOneXTRAData(const char* filename);
+    bool InjectGpsOneXTRAData(const char* filename,Cmd_Status_t status, char *currentTimestamp);
 
     bool IsGpsOneXtraDataUptoDate();
 
-    bool UpdateGpsOneXtraData();
+    bool UpdateGpsOneXtraData(char *currentTimestamp);
 
-    bool InitGpsOneXTRA();
+    bool InitGpsOneXTRA(char *currentTimestamp);
 
     bool DeleteAssistanceData(GNSS_Delete_t deletetype);
 

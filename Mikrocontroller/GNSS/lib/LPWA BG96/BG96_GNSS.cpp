@@ -282,19 +282,26 @@ bool _BG96_GNSS::SetGNSSOutputPort(GNSS_OutputPort_t outport)
  * @return true, wenn gpsOneXTRA erfolgreich initialisiert wurde, false bei Fehler.
  * @see Quectel BG96 GNSS AT Commands Manual, Abschnitt 2.8.1 (Seite 24)
  */
-bool _BG96_GNSS::InitGpsOneXTRA()
+bool _BG96_GNSS::InitGpsOneXTRA(char *currentTimestamp)
 {
-    if (EnableGpsOneXTRA())
-    {
-        if (!IsGpsOneXtraDataUptoDate())
-        {
-            UpdateGpsOneXtraData();
+    if(!EnableGpsOneXTRA(ENABLE,READ_MODE)){
+        if(!EnableGpsOneXTRA(ENABLE,WRITE_MODE)){
+            return false;
         }
     }
 
-    return false;
-}
+    ResetModule();
 
+    if(!InjectGpsOneXTRAData("UFS:xtra2.bin", READ_MODE, currentTimestamp)){
+        //delete GPSOneXtra data
+        TurnOffGNSS();
+        DeleteAssistanceData(XTRA);
+        if(!UpdateGpsOneXtraData(currentTimestamp)){
+            return false;
+        };
+    };
+    return true;
+}
 // Funktion zur Aktivierung von gpsOneXTRA
 /**
  * @brief Aktiviert gpsOneXTRA, um Unterstützung durch externe GNSS-Daten zu bieten.
@@ -303,14 +310,32 @@ bool _BG96_GNSS::InitGpsOneXTRA()
  * @return true bei erfolgreicher Aktivierung, false bei Fehler.
  * @see Quectel BG96 GNSS AT Commands Manual, Abschnitt 2.8.1 (Seite 24)
  */
-bool _BG96_GNSS::EnableGpsOneXTRA()
+bool _BG96_GNSS::EnableGpsOneXTRA(GNSS_Xtra_Enable_t mode, Cmd_Status_t status)
 {
-    char cmd[16];
+    char cmd[16], buf[8];
     strcpy(cmd, GNSS_ENABLE_GPSONEXTRA);
-    strcat(cmd, "=1"); // Enable gpsOneXTRA assistance
-    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
+    if (status == READ_MODE)
     {
-        return true;
+        strcat(cmd, "?");
+        if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
+        {
+            char *sta_buf = searchStrBuffer(": ");
+            char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
+            *end_buf = '\0';
+            if (atoi(sta_buf + 2) == 1)
+            {
+                return true;
+            }
+        }
+    }
+    else if (status == WRITE_MODE)
+    {
+        sprintf(buf, "=%d", mode);
+        strcat(cmd, buf);
+        if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
+        {
+            return true;
+        }
     }
     return false;
 }
@@ -346,36 +371,58 @@ bool _BG96_GNSS::InjectGpsOneXTRATime(const char *time)
  * @return true bei Erfolg, false bei Fehler.
  * @see Quectel BG96 GNSS AT Commands Manual, Abschnitt 2.8.3 (Seite 26)
  */
-bool _BG96_GNSS::InjectGpsOneXTRAData(const char *filename)
+bool _BG96_GNSS::InjectGpsOneXTRAData(const char *filename, Cmd_Status_t status, char *currentTimestamp)
 {
-    char cmd[64];
+    char cmd[16], buf[8];
     strcpy(cmd, GNSS_INJECT_GPSONEXTRA_DATA);
-    sprintf(cmd + strlen(cmd), "=\"%s\"", filename); // Specify the filename
-    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
-    {
-        return true;
-    }
-    return false;
-}
 
-// Funktion zur Überprüfung, ob die gpsOneXTRA-Daten aktuell sind
-/**
- * @brief Überprüft, ob die gpsOneXTRA-Daten aktuell sind.
- *
- * Verwendet den AT-Befehl AT+QGPSXTRADATA?, um zu überprüfen, ob die gpsOneXTRA-Daten auf dem aktuellen Stand sind.
- * @return true, wenn die Daten aktuell sind, false wenn nicht.
- * @see Quectel BG96 GNSS AT Commands Manual, Abschnitt 2.8.3 (Seite 26)
- */
-bool _BG96_GNSS::IsGpsOneXtraDataUptoDate()
-{
-    char cmd[64];
-    strcpy(cmd, GNSS_INJECT_GPSONEXTRA_DATA);
-    strcat(cmd, "?");
-    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
+    if (status == READ_MODE)
     {
-        return false;
+        strcat(cmd, "?");
+        if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
+        {
+            // Extrahiere die Antwort, z.B. "+QGPSXTRADATA: 10080,\"2024/10/05,08:00:00\""
+            char *sta_buf = searchStrBuffer(": ");         // Sucht den Beginn der Daten
+            char *time_start = strchr(sta_buf, '\"');      // Sucht nach dem ersten Anführungszeichen
+            char *time_end = strchr(time_start + 1, '\"'); // Sucht nach dem zweiten Anführungszeichen
+            *time_end = '\0';                              // Beendet den String nach dem Zeitstempel
+            // Extrahiere den Zeitstempel (z.B. "2024/10/05,08:00:00")
+            char gpsDataTimestamp[64];
+            strcpy(gpsDataTimestamp, time_start + 1); // Kopiert den Zeitstempel ohne Anführungszeichen
+
+            // Berechne die Differenz zwischen dem gpsDataTimestamp und currentTimestamp
+            // Verwandle den String-Zeitstempel in ein Unix-Zeitformat
+            time_t gpsTime = parseTimestamp(gpsDataTimestamp);
+            time_t currentTime = parseTimestamp(currentTimestamp);
+
+            // Berechne den Unterschied in Tagen (7 Tage = 7 * 24 * 60 * 60 Sekunden)
+            double diffDays = difftime(currentTime, gpsTime) / (60 * 60 * 24);
+
+            if (diffDays > 7)
+            {
+                // Wenn der Zeitstempel älter als 7 Tage ist, gib false zurück
+                return true;
+            }
+            else
+            {
+                // Wenn der Zeitstempel innerhalb von 7 Tagen liegt, gib true zurück
+                return false;
+            }
+        }
     }
-    return true;
+    else if (status == WRITE_MODE)
+    {
+        InjectGpsOneXTRATime(currentTimestamp); //Set Timestamp
+
+        sprintf(buf, "=\"%s\"", filename);
+        strcat(cmd, buf);
+        if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // Funktion zur Aktualisierung der gpsOneXTRA-Daten
@@ -388,18 +435,8 @@ bool _BG96_GNSS::IsGpsOneXtraDataUptoDate()
  * @see Quectel BG96 GNSS AT Commands Manual, Abschnitt 2.8.4 (Seite 27)
  */
 
-bool _BG96_GNSS::UpdateGpsOneXtraData()
+bool _BG96_GNSS::UpdateGpsOneXtraData(char *currentTimestamp)
 {
-    DeleteAssistanceData(XTRA);
-
-    char currentTimestamp[64];
-
-    if (!GetLatestGMTTime(currentTimestamp))
-    {
-        // Fehlerbehandlung: Konnte die aktuelle GMT-Zeit nicht abrufen
-        return false;
-    }
-
     const int link_count = sizeof(xtra_links) / sizeof(xtra_links[0]);
     // Versuch, jeden Link zu verwenden
     for (int i = 0; i < link_count; i++)
@@ -410,14 +447,11 @@ bool _BG96_GNSS::UpdateGpsOneXtraData()
             {
                 if (HTTPReadToFile("xtra2.bin", 80))
                 {
-                    if (EnableGpsOneXTRA())
+                    if (EnableGpsOneXTRA(ENABLE, WRITE_MODE))
                     {
-                        if (InjectGpsOneXTRATime(currentTimestamp))
+                        if (InjectGpsOneXTRAData("UFS:xtra2.bin", WRITE_MODE, currentTimestamp))
                         {
-                            if (InjectGpsOneXTRAData("UFS:xtra2.bin"))
-                            {
-                                return true; // Erfolgreich, Funktion beenden
-                            }
+                            return true; // Erfolgreich, Funktion beenden
                         }
                     }
                 }

@@ -7,7 +7,9 @@
 #include "string.h"
 #include "stdlib.h"
 #include "Arduino.h"
+#include <TimeLib.h>
 #include "BG96_ATCommand.h"
+#include <ctime>
 
 #define RX_BUFFER_LENGTH  1024
 #define UART_DEBUG

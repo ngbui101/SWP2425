@@ -1,6 +1,6 @@
 
-#ifndef __BG96_AWS_H
-#define __BG96_AWS_H
+#ifndef __MQTT_AWS_H
+#define __MQTT_AWS_H
 
 #include "BG96_MQTT.h"
 
@@ -117,7 +117,7 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
     DSerial.println(ModemIMEI);
   }
 
-  BG96.DeleteFiles("*");
+  BG96.DeleteCertificate("all");
 
   char apn_error[64];
   while (!BG96.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
@@ -214,7 +214,7 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
     }
   }
   DSerial.println("\r\nMQTT Subscribe Topic Success!");
-  BG96.DeleteFiles("*");
+  BG96.DeleteCertificate("all");
   return true;
 }
 

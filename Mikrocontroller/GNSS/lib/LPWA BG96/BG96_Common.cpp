@@ -705,3 +705,27 @@ bool _BG96_Common::ScanmodeConfig(int mode)
     }
     return false;
 }
+/**
+ * @brief Wandelt einen Zeitstempel im Format "YYYY/MM/DD,HH:MM:SS" in Unix-Zeit (time_t) um.
+ *
+ * @param timestamp Der Zeitstempel als Zeichenkette im Format "YYYY/MM/DD,HH:MM:SS".
+ * @return time_t Die entsprechende Unix-Zeit.
+ */
+time_t _BG96_Common::parseTimestamp(const char *timestamp)
+{
+    int year, month, day, hour, minute, second;
+    
+    // Der Zeitstempel wird zerlegt in Jahr, Monat, Tag, Stunde, Minute, Sekunde
+    sscanf(timestamp, "%d/%d/%d,%d:%d:%d", &year, &month, &day, &hour, &minute, &second);
+    
+    struct tm t = {};
+    t.tm_year = year - 1900;  // tm_year zählt ab 1900
+    t.tm_mon = month - 1;     // tm_mon ist 0-basiert
+    t.tm_mday = day;
+    t.tm_hour = hour;
+    t.tm_min = minute;
+    t.tm_sec = second;
+    
+    // Konvertiert den Zeitstempel in Unix-Zeit (Sekunden seit 1. Januar 1970)
+    return mktime(&t);
+}
