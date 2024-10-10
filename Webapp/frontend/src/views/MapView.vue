@@ -140,7 +140,7 @@ watch(currentTracker, initializeMap)
 
 .map {
   flex: 1;  
-  height: 500px;
+  height: 500px; 
 }
 
  
