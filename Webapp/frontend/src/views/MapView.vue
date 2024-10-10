@@ -129,14 +129,21 @@ watch(currentTracker, initializeMap)
 }
 
 .details-panel {
-  flex: 0.3;
+  flex: 0.25; /* Reduce the width of the details panel */
   max-width: 250px;
   padding: 20px;
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* To handle overflow of content */
 }
 
+.map {
+  flex: 1;  
+  height: 500px; 
+}
+
+ 
 .dropdown {
   margin-bottom: 20px;
 }
@@ -170,8 +177,5 @@ watch(currentTracker, initializeMap)
   margin-top: 20px;
 }
 
-.map {
-  flex: 1;
-  height: 400px;
-}
+
 </style>

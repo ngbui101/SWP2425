@@ -206,6 +206,7 @@ input[type="text"] {
   background-color: rgba(255, 255, 255, 0);
   padding: 10px;
   border-radius: 10px;
+  border: 1px solid #fafafa; /* 2px wide, solid style, and red color */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 47%; /* Gleiche Breite */
   margin: 0 auto; /* Zentriert den Container */
