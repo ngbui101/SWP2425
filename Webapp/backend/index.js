@@ -42,6 +42,7 @@ app.use(errorHandlerMiddleware);
 
 
 // Routes
+app.use('/api/geofence', require('../backend/rest/geofence'));
 app.use('/api/event', require('../backend/rest/trainingevent'));
 app.use('/api/history', require('../backend/rest/trackerhistory'));
 app.use('/api/position', require('../backend/rest/measurement'));

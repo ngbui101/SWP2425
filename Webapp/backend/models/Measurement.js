@@ -3,42 +3,17 @@ const Schema = mongoose.Schema;
 
 const MeasurementSchema = new Schema(
   {
-    type: {
-      type: String,
-      enum: ['Position', 'Temperature', 'Humidity', 'None'],
-      default: 'None',
-    },
-    latitude: {
-      type: Number,
-      required: function () {
-        return this.type === 'Position';
-      },
-    },
-    longitude: {
-      type: Number,
-      required: function () {
-        return this.type === 'Position';
-      },
-    },
-    temperature: {
-      type: Number,
-      required: function () {
-        return this.type === 'Temperature';
-      },
-    },
-    humidity: {
-      type: Number,
-      required: function () {
-        return this.type === 'Humidity';
-      },
-    },
+    imei: {type: String},
     mode: {
       type: String,
-      enum: ['GPS', 'LTE', 'IOT'],
-      required: function () {
-        return this.type === 'Position'; // mode ist nur erforderlich, wenn der Typ 'Position' ist
-      },
+      enum: ['GPS', 'GSM', 'LTE M', 'NBIOT'],
     },
+    latitude: {type: Number},
+    longitude: {type: Number},
+    temperature: {type: Number},
+    cellinfo: {type: String},
+    humidity: { type: Number},
+    battery: {type: Number},
     tracker: { type: Schema.Types.ObjectId, ref: 'Tracker', required: true }, // Verweis auf Tracker
   },
   { timestamps: true }
