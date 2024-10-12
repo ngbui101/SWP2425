@@ -28,8 +28,7 @@ _BG96_Common::~_BG96_Common()
  * @param dserial Referenz auf die serielle Schnittstelle für Debugging.
  */
 _BG96_Common::_BG96_Common(Stream &atserial, Stream &dserial) : _BG96_Serial(atserial, dserial)
-{   
-    
+{
 }
 
 /**
@@ -44,7 +43,7 @@ bool _BG96_Common::TurnOnModule()
     digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf LOW setzen
     delay(2000);
     digitalWrite(POWKEY_PIN, HIGH); // Powkey-Pin auf HIGH setzen
-    return true; 
+    return true;
 }
 
 /**
@@ -57,24 +56,26 @@ bool _BG96_Common::TurnOnModule()
  * @return true, wenn die Initialisierung erfolgreich war, sonst false.
  */
 bool _BG96_Common::InitModule()
-{   
+{
     pinMode(ENABLE_PWR, OUTPUT);
     pinMode(RESET_PIN, OUTPUT);
     pinMode(POWKEY_PIN, OUTPUT);
     delay(800);
     PowOnModule();
-    digitalWrite(RESET_PIN, LOW); 
+    digitalWrite(RESET_PIN, LOW);
     TurnOnModule();
     // ResetModule();
     return true;
 }
 
-bool _BG96_Common::PowOffModule() {
+bool _BG96_Common::PowOffModule()
+{
     digitalWrite(ENABLE_PWR, LOW);
-    return true; 
+    return true;
 }
-bool _BG96_Common::PowOnModule(){
-    digitalWrite(ENABLE_PWR,HIGH);
+bool _BG96_Common::PowOnModule()
+{
+    digitalWrite(ENABLE_PWR, HIGH);
     return true;
 }
 
@@ -164,7 +165,7 @@ bool _BG96_Common::GetLatestGMTTime(char *time)
                 *end_buf = '\0';
                 char *timestamp = start_buf + 1;
                 strncpy(time, timestamp, 19);
-                time[19] = '\0'; 
+                time[19] = '\0';
                 *end_buf = '\"';
 
                 return true;
@@ -173,11 +174,10 @@ bool _BG96_Common::GetLatestGMTTime(char *time)
     }
     return false;
 }
-char* _BG96_Common::GetCurrentTime(){
-    char time[64];
-    GetLatestGMTTime(time);
-    DevClock(time,WRITE_MODE);
-    DevClock(currenttime,READ_MODE);
+char *_BG96_Common::GetCurrentTime()
+{
+
+    DevClock(currenttime, READ_MODE);
     return currenttime;
 };
 /**
@@ -348,7 +348,7 @@ bool _BG96_Common::DevSimPIN(const char *pin, Cmd_Status_t status)
 {
     char cmd[16];
     strcpy(cmd, DEV_SIM_PIN);
-    
+
     if (status == READ_MODE)
     {
         strcat(cmd, "?");
@@ -368,7 +368,7 @@ bool _BG96_Common::DevSimPIN(const char *pin, Cmd_Status_t status)
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -677,6 +677,16 @@ bool _BG96_Common::DevClock(char *d_clock, Cmd_Status_t status)
             *end_buf = '\0';
             char *sta_buf = searchStrBuffer(": ");
             strcpy(d_clock, sta_buf + 2);
+            if (d_clock[0] == '\"')
+            {
+                memmove(d_clock, d_clock + 1, strlen(d_clock));
+                char *quote_pos = strchr(d_clock, '\"');
+                if (quote_pos)
+                {
+                    *quote_pos = '\0';
+                }
+            }
+
             return true;
         }
     }
@@ -721,24 +731,39 @@ bool _BG96_Common::ScanmodeConfig(int mode)
 time_t _BG96_Common::parseTimestamp(const char *timestamp)
 {
     int year, month, day, hour, minute, second;
-    
+
     // Der Zeitstempel wird zerlegt in Jahr, Monat, Tag, Stunde, Minute, Sekunde
     sscanf(timestamp, "%d/%d/%d,%d:%d:%d", &year, &month, &day, &hour, &minute, &second);
-    
+
     struct tm t = {};
-    t.tm_year = year - 1900;  // tm_year zählt ab 1900
-    t.tm_mon = month - 1;     // tm_mon ist 0-basiert
+    t.tm_year = year - 1900; // tm_year zählt ab 1900
+    t.tm_mon = month - 1;    // tm_mon ist 0-basiert
     t.tm_mday = day;
     t.tm_hour = hour;
     t.tm_min = minute;
     t.tm_sec = second;
-    
+
     // Konvertiert den Zeitstempel in Unix-Zeit (Sekunden seit 1. Januar 1970)
     return mktime(&t);
 }
 
-bool _BG96_Common::ReportCellInformation(char *celltype, char* infos){
+bool _BG96_Common::ReportCellInformation(char *celltype, char *infos)
+{
     char cmd[32];
+    strcpy(cmd, QUECCELL_ENGINEERING_MODE);
+    if (celltype == "neighbourcell")
+    {
+        strcat(cmd, "=\"neighbourcell\"");
+    } else if (celltype == "servingcell"){
+        strcat(cmd, "=\"servingcell\"");
+    }else return false;
     
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
+        char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
+        *end_buf = '\0';
+        strcpy(infos, rxBuffer); 
+        return true;
+    }
     return true;
 }

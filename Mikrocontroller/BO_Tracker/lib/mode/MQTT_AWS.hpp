@@ -47,7 +47,7 @@ HWPRYqKDSzUDkAZERZktYDcMtI7Gt+cnxuSQnCplPNGygxg9kzh6w7FLF7gjGwQi\n\
 I5rFRXQpcbV2AtWORxB3dvpf0pIFrA3L/yiO+DyRtNv3YDDxH2DJkwPEcvcd\n\
 -----END CERTIFICATE-----\n";
 
-// "The private key of the thing". 
+// "The private key of the thing".
 char private_pem_key[] = "-----BEGIN RSA PRIVATE KEY-----\n\
 MIIEpAIBAAKCAQEAylAXcAxLVJq/N4a6fvzEh1Zat8pNtDGXFRRYdNbtEQZ5a0B6\n\
 xC1MN8iEiOeKLNJrxMqYR3Yw7aOgU7sPRtRuJyaH5gGZBI+2TUs4z5blg6C2JMAt\n\
@@ -99,7 +99,8 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
                    char *MQTTServer,
                    unsigned int MQTTPort,
                    char *MQTTClientId,
-                   char *mqtt_topicName,
+                   char *mqtt_sub_topic,
+                   char *mqtt_pub_topic,
                    Mqtt_Qos_t MQTT_QoS = AT_MOST_ONCE,
                    unsigned int MQTTIndex = 0,
                    unsigned int PDPIndex = 1,
@@ -107,9 +108,10 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
                    char *ModemIMEI = NULL)
 {
   Mqtt_Version_t version = MQTT_V4;
-  
-  //IMEI
+
+  // IMEI
   char imei_tmp[64];
+
   if (BG96.GetDevIMEI(imei_tmp))
   {
     String s = String(imei_tmp);
@@ -117,8 +119,17 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
     s.toCharArray(ModemIMEI, 64);
     DSerial.println(ModemIMEI);
   }
-  
-  //SSL Networking
+  // MQTT Subscribe Topic zusammensetzen mit strcat
+  strcpy(mqtt_sub_topic, "tracker/"); // Basisteil des Topics
+  strcat(mqtt_sub_topic, ModemIMEI);  // IMEI anhängen
+  strcat(mqtt_sub_topic, "/sub");     // Suffix "/sub" anhängen
+
+  // MQTT Publish Topic zusammensetzen mit strcat
+  strcpy(mqtt_pub_topic, "tracker/"); // Basisteil des Topics
+  strcat(mqtt_pub_topic, ModemIMEI);  // IMEI anhängen
+  strcat(mqtt_pub_topic, "/pub");     // Suffix "/pub" anhängen
+
+  // SSL Networking
   BG96.DeleteCertificate("all");
 
   char apn_error[64];
@@ -134,8 +145,8 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
     DSerial.println(ssl_error);
   }
   DSerial.println(ssl_error);
-  
-  //MQTT
+
+  // MQTT
   while (!BG96.SetMQTTEnableSSL(MQTTIndex, SSLIndex, true))
   {
     DSerial.println("\r\nSetMQTTEnableSSL the MQTT Parameter Fail!");
@@ -204,7 +215,7 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   DSerial.println("\r\nCreate a MQTT Client Success!");
 
   DSerial.println("\r\nStart MQTT Subscribe Topic!");
-  while (BG96.MQTTSubscribeTopic(MQTTIndex, 1, mqtt_topicName, MQTT_QoS) != 0)
+  while (BG96.MQTTSubscribeTopic(MQTTIndex, 1, mqtt_sub_topic, MQTT_QoS) != 0)
   {
     DSerial.println("\r\nMQTT Subscribe Topic Fail!");
     int e_code;

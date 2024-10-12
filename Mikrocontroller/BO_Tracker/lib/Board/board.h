@@ -10,6 +10,5 @@
 #include "BG96_FILE.h"
 #include "BG96_SSL.h"
 #include "BG96_HTTP.h"
-#include "pindef.h"
 
 #endif
