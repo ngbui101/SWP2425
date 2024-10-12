@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const trackerHistoryController = require('../controller/trackerhistoryController');
+const trackerHistoryController = require('../controller/trackerHistoryController');
 const authenticate = require('../middleware/auth');
 
 // Route to get all tracker histories
