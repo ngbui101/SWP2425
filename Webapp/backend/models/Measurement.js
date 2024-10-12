@@ -8,12 +8,12 @@ const MeasurementSchema = new Schema(
       type: String,
       enum: ['GPS', 'GSM', 'LTE M', 'NBIOT'],
     },
-    latitude: {type: Number},
-    longitude: {type: Number},
-    temperature: {type: Number},
+    latitude: {type: String},
+    longitude: {type: String},
+    temperature: {type: String},
     cellinfo: {type: String},
-    humidity: { type: Number},
-    battery: {type: Number},
+    humidity: { type: String},
+    battery: {type: String},
     tracker: { type: Schema.Types.ObjectId, ref: 'Tracker', required: true }, // Verweis auf Tracker
   },
   { timestamps: true }
