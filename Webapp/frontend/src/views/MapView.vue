@@ -61,10 +61,10 @@
 
           <!-- Temperature and Humidity -->
           <div class="grid-item">
-            <strong>Temperature:</strong> -
+            <strong>Temperature:</strong> {{ selectedMeasurement.temperature || 'N/A' }} °C
           </div>
           <div class="grid-item">
-            <strong>Humidity:</strong> -
+            <strong>Humidity:</strong> {{ selectedMeasurement.humidity || 'N/A' }} %
           </div>
 
           <!-- Add/Remove Geofence button -->
@@ -114,7 +114,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useShepherd } from 'vue-shepherd'
 import axios from 'axios';
-
+import { useAuthStore } from "@/stores/auth";
 const el = ref(null);
 const tour = useShepherd({
   useModalOverlay: true
@@ -145,21 +145,36 @@ const trackerMode = computed(() => {
 
 // Fetch trackers and measurements for the user
 const fetchTrackersForUser = async () => {
-  const userId = '66ce5ccf63640a4596a9b45b';  // Replace with actual userId
+  const authStore = useAuthStore(); // Access the auth store
+
   try {
-    const response = await axios.get(`http://localhost:3500/api/tracker/users/${userId}/trackers`);
+    // Retrieve the access token from the auth store
+    const token = authStore.accessToken;
+
+    // Set up the configuration for Axios to include the Authorization header
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
+    // Fetch trackers for the authenticated user
+    const response = await axios.get('http://localhost:3500/api/tracker/user/', config);
     trackers.value = response.data;
 
+    // Fetch measurements for each tracker
     for (const tracker of trackers.value) {
-      const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`);
+      const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
       tracker.measurements = measurementsResponse.data;
 
+      // Set the first tracker as the selected tracker, if not already set
       if (!selectedTracker.value) {
         selectedTracker.value = tracker._id;
         selectedTrackerName.value = tracker.name;
       }
     }
 
+    // Update the selected tracker's measurements
     updateSelectedTrackerMeasurements(true);
   } catch (error) {
     console.error('Failed to fetch trackers or measurements:', error);
@@ -208,8 +223,8 @@ const initializeMap = () => {
   if (!selectedMeasurement.value || !mapElement.value) return;
 
   const position = {
-    lat: selectedMeasurement.value.latitude,
-    lng: selectedMeasurement.value.longitude
+    lat: Number(selectedMeasurement.value.latitude),
+    lng: Number(selectedMeasurement.value.longitude)
   };
 
   if (map) {
@@ -231,6 +246,7 @@ const initializeMap = () => {
     });
   }
 };
+
 
 // Add geofence when the button is clicked
 const addGeofence = () => {

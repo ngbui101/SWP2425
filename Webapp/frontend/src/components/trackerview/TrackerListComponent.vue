@@ -5,7 +5,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Mode</th>
-                    <th>Estimated Location</th>
+                    <th>Location</th>
                     <th>Latitude</th>
                     <th>Longitude</th>
                     <th>Temperature</th>
@@ -19,16 +19,13 @@
                 <tr v-for="tracker in trackers" :key="tracker._id">
                     <td>{{ tracker.name }}</td>
                     <td>{{ tracker.mode }}</td>
-                    <td>{{ tracker.location || 'Unknown' }}</td>
-                    <td>{{ tracker.latitude || 'N/A' }}</td>
-                    <td>{{ tracker.longitude || 'N/A' }}</td>
-                    <td>{{ tracker.temperature || 'N/A' }}°C</td>
-                    <td>{{ tracker.humidity || 'N/A' }}%</td>
-                    <td>{{ tracker.battery || 'N/A' }}</td>
-                    <td>{{ tracker.DeviceID || 'N/A' }}</td>
-
-
-
+                    <td>{{ tracker.location }}</td>
+                    <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.latitude || 'N/A' : 'N/A' }}</td>
+                    <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.longitude || 'N/A' : 'N/A' }}</td>
+                    <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.temperature || 'N/A' : 'N/A' }}°C</td>
+                    <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.humidity || 'N/A' : 'N/A' }}%</td>
+                    <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.battery || 'N/A' : 'N/A' }}</td>
+                    <td>{{ tracker.imei || 'N/A' }}</td>
                     <td>
                         <i class="fas fa-cog settings-icon"></i>
                     </td>
@@ -51,6 +48,7 @@ defineProps({
     addTracker: Function, // Function to add a tracker
 });
 </script>
+
 
 <style scoped>
 /* Include the styles for the tracker table */

@@ -9,10 +9,12 @@
             <!-- Battery Bar above the card title -->
             <div class="battery-wrapper">
                 <div class="battery-bar">
-                    <div class="battery-fill" :style="{ width: `${tracker.battery || 89}%` }"></div>
+                    <div class="battery-fill"
+                        :style="{ width: `${tracker.latestMeasurement ? tracker.latestMeasurement.battery || 89 : 89}%` }">
+                    </div>
                 </div>
                 <div class="battery-indicator">
-                    <span>{{ tracker.battery || '89' }}%</span>
+                    <span>{{ tracker.latestMeasurement ? tracker.latestMeasurement.battery || '89' : '89' }}%</span>
                 </div>
             </div>
 
@@ -23,12 +25,16 @@
             <div class="card-body">
                 <!-- Display each key-value pair on its own line -->
                 <p><strong>Mode:</strong> {{ tracker.mode }}</p>
-                <p><strong>Location:</strong> {{ tracker.location || 'Unknown' }}</p>
-                <p><strong>Latitude:</strong> {{ tracker.latitude || 'N/A' }}</p>
-                <p><strong>Longitude:</strong> {{ tracker.longitude || 'N/A' }}</p>
-                <p><strong>Temp:</strong> {{ tracker.temperature || 'N/A' }}°C</p>
-                <p><strong>Humidity:</strong> {{ tracker.humidity || 'N/A' }}%</p>
-                <p><strong>Device ID:</strong> {{ tracker.DeviceID || 'N/A' }}</p>
+                <p><strong>Location:</strong> {{ tracker.location }}</p>
+                <p><strong>Latitude:</strong> {{ tracker.latestMeasurement ? tracker.latestMeasurement.latitude || 'N/A'
+                    : 'N/A' }}</p>
+                <p><strong>Longitude:</strong> {{ tracker.latestMeasurement ? tracker.latestMeasurement.longitude ||
+                    'N/A' : 'N/A' }}</p>
+                <p><strong>Temp:</strong> {{ tracker.latestMeasurement ? tracker.latestMeasurement.temperature || 'N/A'
+                    : 'N/A' }}°C</p>
+                <p><strong>Humidity:</strong> {{ tracker.latestMeasurement ? tracker.latestMeasurement.humidity || 'N/A'
+                    : 'N/A' }}%</p>
+                <p><strong>Device ID:</strong> {{ tracker.imei }}</p>
             </div>
         </div>
 
@@ -47,6 +53,7 @@ defineProps({
     addTracker: Function, // Function to add a tracker
 });
 </script>
+
 
 <style scoped>
 .card-view {

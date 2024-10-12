@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const connectDB = require('./config/database');
 const credentials = require('./middleware/credentials');
-
+const axios = require('axios');
 
 const errorHandlerMiddleware = require('./middleware/error_handler');
 const authenticationMiddleware = require('./middleware/authentification');
@@ -39,7 +39,37 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 
 // Default error handler
 app.use(errorHandlerMiddleware);
+app.get('/api/geocode', async (req, res) => {
+  const { lat, lng } = req.query;
 
+  if (!lat || !lng) {
+    console.error("Latitude or Longitude missing from request");
+    return res.status(400).json({ error: 'Latitude and longitude are required' });
+  }
+
+  const googleApiKey = process.env.GOOGLE_API_KEY; // Use API key from your .env file
+  const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleApiKey}`;
+
+  try {
+    console.log(`Requesting geocode for lat: ${lat}, lng: ${lng}`);
+    const response = await axios.get(geocodingUrl);
+    console.log("Geocoding response received:", response.data);
+    const { results } = response.data;
+
+    if (results.length === 0) {
+      console.error("No address found for the provided coordinates");
+      return res.status(404).json({ error: 'No address found for the provided coordinates' });
+    }
+
+    // Return the formatted address
+    res.json({
+      address: results[0].formatted_address,
+    });
+  } catch (error) {
+    console.error('Error fetching geocode data:', error.response ? error.response.data : error.message);
+    res.status(500).json({ error: 'Failed to perform reverse geocoding' });
+  }
+});
 
 // Routes
 app.use('/api/geofence', require('../backend/rest/geofence'));

@@ -29,19 +29,73 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TrackerListComponent from '../components/trackerview/TrackerListComponent.vue';
 import TrackerCardComponent from '../components/trackerview/TrackerCardComponent.vue';
+import { useAuthStore } from "@/stores/auth";
 
-// Store trackers and current view
 const trackers = ref([]);
 const currentView = ref('card'); // Default view is now card view
 
-// Method to fetch trackers by user ID
+// Method to fetch trackers and their latest measurements
 const fetchTrackersForUser = async () => {
-    const userId = '66ce5ccf63640a4596a9b45b'; // Replace with actual userId
+    const authStore = useAuthStore();
+
     try {
-        const response = await axios.get(`http://localhost:3500/api/tracker/users/${userId}/trackers`);
-        trackers.value = response.data;
+        const token = authStore.accessToken;
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        // Fetch trackers for the authenticated user
+        const response = await axios.get('http://localhost:3500/api/tracker/user/', config);
+        const trackersWithLatestMeasurements = response.data;
+
+        // Fetch measurements for each tracker
+        for (const tracker of trackersWithLatestMeasurements) {
+            const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
+            const measurements = measurementsResponse.data;
+
+            // Filter out invalid measurements (latitude and longitude should not be null or NaN)
+            const validMeasurements = measurements.filter(measurement =>
+                measurement.latitude && measurement.longitude && !isNaN(measurement.latitude) && !isNaN(measurement.longitude)
+            );
+
+            // Sort measurements by date and find the latest one
+            validMeasurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            // Assign the latest valid measurement
+            tracker.latestMeasurement = validMeasurements.length > 0 ? validMeasurements[0] : null;
+
+            // If we have a valid measurement, perform reverse geocoding
+            if (tracker.latestMeasurement) {
+                tracker.location = await getReverseGeocodingAddress(tracker.latestMeasurement.latitude, tracker.latestMeasurement.longitude);
+            } else {
+                tracker.location = 'Unknown Location';
+            }
+        }
+
+        // Pass the trackers with the latest valid measurements and locations to the child components
+        trackers.value = trackersWithLatestMeasurements;
     } catch (error) {
-        console.error('Failed to fetch trackers:', error);
+        console.error('Failed to fetch trackers or measurements:', error);
+    }
+};
+
+// Perform reverse geocoding using your backend API
+const getReverseGeocodingAddress = async (lat, lng) => {
+    const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
+
+    try {
+        const response = await axios.get(geocodingUrl);
+        if (response.data && response.data.address) {
+            return response.data.address;
+        } else {
+            return 'Unknown Location';
+        }
+    } catch (error) {
+        console.error('Failed to perform reverse geocoding:', error);
+        return 'Unknown Location';
     }
 };
 
@@ -60,7 +114,6 @@ onMounted(() => {
     fetchTrackersForUser();
 });
 </script>
-
 
 <style scoped>
 .tracker-view {
