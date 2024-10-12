@@ -32,12 +32,13 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
 }
 
 .social {
-  color:#ffffff;
+  color: #ffffff;
 }
+
 .list-inline-item {
   color: #ffffff;
 }
@@ -51,10 +52,10 @@ export default {
 
 .footer-basic .social {
   text-align: center;
-     /* Space between icons and links */
+  /* Space between icons and links */
 }
 
-.footer-basic .social > a {
+.footer-basic .social>a {
   font-size: 24px;
   width: 40px;
   height: 40px;
@@ -66,7 +67,7 @@ export default {
   opacity: 0.75;
 }
 
-.footer-basic .social > a:hover {
+.footer-basic .social>a:hover {
   opacity: 0.9;
 }
 
@@ -76,7 +77,8 @@ export default {
   text-align: center;
   font-size: 18px;
   line-height: 1.6;
-  margin-bottom: 20px; /* Space between links and copyright */
+  margin-bottom: 20px;
+  /* Space between links and copyright */
 }
 
 .footer-basic ul a {
@@ -90,8 +92,10 @@ export default {
 }
 
 .footer-basic ul .list-inline-item {
-  display: inline-block; /* Ensure links are inline */
-  margin: 0 10px; /* Add spacing between the links */
+  display: inline-block;
+  /* Ensure links are inline */
+  margin: 0 10px;
+  /* Add spacing between the links */
 }
 
 .footer-basic p {

@@ -12,9 +12,11 @@
           <p>{{ $t('SETTINGSVIEW-current_email') }}: {{ user.email }}</p>
           <form @submit.prevent="updateEmail" class="settings-form">
             <label for="newEmail" class="form-label">{{ $t('SETTINGSVIEW-new_email') }}</label>
-            <input v-model="newEmail" id="newEmail" type="email" class="form-input" :placeholder=" $t('SETTINGSVIEW-new_email')" required>
+            <input v-model="newEmail" id="newEmail" type="email" class="form-input"
+              :placeholder="$t('SETTINGSVIEW-new_email')" required>
             <label for="confirmNewEmail" class="form-label">{{ $t('SETTINGSVIEW-confirm_email') }}</label>
-            <input v-model="confirmNewEmail" id="confirmNewEmail" type="email" class="form-input" :placeholder="$t('SETTINGSVIEW-confirm_email')" required>
+            <input v-model="confirmNewEmail" id="confirmNewEmail" type="email" class="form-input"
+              :placeholder="$t('SETTINGSVIEW-confirm_email')" required>
             <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
@@ -24,11 +26,14 @@
           <h3 class="card-title">{{ $t('SETTINGSVIEW-password_settings') }}</h3>
           <form @submit.prevent="updatePassword" class="settings-form">
             <label for="oldPassword" class="form-label">{{ $t('SETTINGSVIEW-current_password') }}</label>
-            <input v-model="oldPassword" id="oldPassword" type="password" class="form-input" :placeholder="$t('SETTINGSVIEW-current_password')" required>
+            <input v-model="oldPassword" id="oldPassword" type="password" class="form-input"
+              :placeholder="$t('SETTINGSVIEW-current_password')" required>
             <label for="newPassword" class="form-label">{{ $t('SETTINGSVIEW-new_password') }}</label>
-            <input v-model="newPassword" id="newPassword" type="password" class="form-input" placeholder="New Password" required>
+            <input v-model="newPassword" id="newPassword" type="password" class="form-input" placeholder="New Password"
+              required>
             <label for="confirmNewPassword" class="form-label">{{ $t('SETTINGSVIEW-confirm_new_password') }}</label>
-            <input v-model="confirmNewPassword" id="confirmNewPassword" type="password" class="form-input" placeholder="Confirm New Password" required>
+            <input v-model="confirmNewPassword" id="confirmNewPassword" type="password" class="form-input"
+              placeholder="Confirm New Password" required>
             <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
@@ -37,14 +42,15 @@
         <div class="settings-card">
           <h3 class="card-title">{{ $t('SETTINGSVIEW-phone_number_settings') }}</h3>
           <p>
-  {{ user.number
-    ? $t('SETTINGSVIEW-current_phone_number', { number: user.number })
-    : $t('SETTINGSVIEW-no_phone_number') }}
-</p>
+            {{ user.number
+              ? $t('SETTINGSVIEW-current_phone_number', { number: user.number })
+              : $t('SETTINGSVIEW-no_phone_number') }}
+          </p>
 
           <form @submit.prevent="updatePhoneNumber" class="settings-form">
             <label for="phoneNumber" class="form-label">{{ $t('SETTINGSVIEW-phone_number') }}</label>
-            <input v-model="phoneNumber" id="phoneNumber" type="tel" class="form-input" :placeholder="$t('SETTINGSVIEW-enter_phone_number')" required>
+            <input v-model="phoneNumber" id="phoneNumber" type="tel" class="form-input"
+              :placeholder="$t('SETTINGSVIEW-enter_phone_number')" required>
             <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
@@ -59,11 +65,35 @@
               <option value="DE">{{ $t('SETTINGSVIEW-german') }}</option>
             </select>
             <!-- Theme Selection -->
-    <label for="theme" class="form-label">{{ $t('SETTINGSVIEW-select_color_scheme') }}</label>
-    <select v-model="selectedTheme" id="theme" class="form-input">
-      <option value="light">{{ $t('SETTINGSVIEW-light') }}</option>
-      <option value="dark">{{ $t('SETTINGSVIEW-dark') }}</option>
-    </select>
+            <label for="theme" class="form-label">{{ $t('SETTINGSVIEW-select_color_scheme') }}</label>
+            <select v-model="selectedTheme" id="theme" class="form-input">
+              <option value="light">{{ $t('SETTINGSVIEW-light') }}</option>
+              <option value="dark">{{ $t('SETTINGSVIEW-dark') }}</option>
+            </select>
+            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
+          </form>
+        </div>
+
+        <!-- Notification Settings Card -->
+        <div class="settings-card">
+          <h3 class="card-title">{{ $t('SETTINGSVIEW-notification_settings') }}</h3>
+          <form @submit.prevent="updateNotificationSettings" class="settings-form">
+            <label class="form-label">
+              <input type="checkbox" v-model="notificationSettings.smsBatteryLow">
+              {{ $t('SETTINGSVIEW-sms_battery_low') }}
+            </label>
+            <label class="form-label">
+              <input type="checkbox" v-model="notificationSettings.smsGeofenceAlert">
+              {{ $t('SETTINGSVIEW-sms_geofence_alert') }}
+            </label>
+            <label class="form-label">
+              <input type="checkbox" v-model="notificationSettings.emailBatteryLow">
+              {{ $t('SETTINGSVIEW-email_battery_low') }}
+            </label>
+            <label class="form-label">
+              <input type="checkbox" v-model="notificationSettings.emailGeofenceAlert">
+              {{ $t('SETTINGSVIEW-email_geofence_alert') }}
+            </label>
             <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
@@ -71,38 +101,39 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth'; // Adjust the path as needed
 import { useI18n } from 'vue-i18n';
-// Initialize the auth store
-const authStore = useAuthStore();
 
-// Computed property for user details
-const user = computed(() => authStore.userDetail);
+const authStore = useAuthStore();
 const { locale } = useI18n();
-// Fetch the user details when the component is mounted
+const user = computed(() => authStore.userDetail);
+
 onMounted(async () => {
   await authStore.getUser();
 });
 
-// Form data refs
 const newEmail = ref('');
 const confirmNewEmail = ref('');
 const oldPassword = ref('');
 const newPassword = ref('');
 const confirmNewPassword = ref('');
 const phoneNumber = ref('');
-const selectedLanguage = ref('EN'); // Default to English
-const selectedTheme = ref('light'); // Default to Light theme
-// Method to close the modal
+const selectedLanguage = ref('EN');
+const selectedTheme = ref('light');
+const notificationSettings = ref({
+  smsBatteryLow: false,
+  smsGeofenceAlert: false,
+  emailBatteryLow: false,
+  emailGeofenceAlert: false,
+});
+
 const emit = defineEmits(['close-modal']);
 const closeModal = () => {
   emit('close-modal');
 };
 
-// Form submission handlers
 const updateEmail = async () => {
   if (newEmail.value !== confirmNewEmail.value) {
     alert('Emails do not match');
@@ -130,7 +161,6 @@ const updatePhoneNumber = async () => {
 };
 
 const updateLanguage = async () => {
-  
   try {
     await authStore.updateLanguage(selectedLanguage.value);
     alert('Language updated successfully');
@@ -140,13 +170,22 @@ const updateLanguage = async () => {
   }
 };
 
-
+const updateNotificationSettings = async () => {
+  // Handle the logic for saving the notification settings
+  try {
+    //await authStore.updateNotificationSettings(notificationSettings.value);
+    console.log("hi test")
+    alert('Notification settings updated successfully');
+  } catch (error) {
+    alert(`Error updating notification settings: ${error.message}`);
+  }
+};
 </script>
 
 <style scoped>
- @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
- body {
+body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
@@ -156,26 +195,26 @@ const updateLanguage = async () => {
 .settings-container {
   display: flex;
   align-items: flex-start;
-  justify-content: center; /* Center the settings container horizontally */
-  padding: 20px;
-  
-  
+  justify-content: center;
+  /* Center the settings container horizontally */
+  min-height: 600px;
+
+
 }
 
 .settings-content {
-  background-color: white;
-  
-  
-  /* Set a max-width to control the container width */
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-  padding: 20px;
-  margin: 20px; /* Add some margin around the content to ensure it doesn't touch the screen edges */
+  background: #f1e4cc;
+
+
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.);
+
+  /* Add some margin around the content to ensure it doesn't touch the screen edges */
 }
+
 
 .settings-header {
   display: flex;
-  justify-content:center;
+  justify-content: center;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -196,14 +235,14 @@ const updateLanguage = async () => {
 .settings-card {
   flex: 1;
   min-width: 250px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #000000;
   border-radius: 8px;
   padding: 20px;
   background: #fafafa;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
+
 }
 
 .card-title {
@@ -216,7 +255,7 @@ const updateLanguage = async () => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  
+
 }
 
 .form-label {
@@ -230,7 +269,8 @@ const updateLanguage = async () => {
   padding: 10px;
   font-size: 14px;
   width: 100%;
-  box-sizing: border-box; /* Ensure padding does not affect the width */
+  box-sizing: border-box;
+  /* Ensure padding does not affect the width */
 }
 
 .form-submit-button {
@@ -253,5 +293,4 @@ const updateLanguage = async () => {
     flex-direction: column;
   }
 }
-
 </style>

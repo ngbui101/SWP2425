@@ -1,166 +1,230 @@
 <template>
   <nav class="navbar">
-    <ul class="nav-list">
+    <div class="nav-container">
+      <!-- Centered Navigation Items -->
       <div class="nav-center">
-        <li class="nav-item">
-          <a href="#" @click.prevent="goToHome">Map</a>
-        </li>
-        <li class="nav-item">
-          <a href="#" @click.prevent="goToTrackers">Trackers</a>
-        </li>
-        <li class="nav-item">
-          <RouterLink to="account">Account</RouterLink>
-        </li>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#" @click.prevent="goToHome">Map</a>
+          </li>
+          <li class="nav-item">
+            <a ref="tour2" href="#" @click.prevent="goToTrackers">Trackers</a>
+          </li>
+          <li class="nav-item">
+            <RouterLink to="account">Account</RouterLink>
+          </li>
+
+          <!-- Help Dropdown -->
+          <li class="nav-item help-dropdown">
+            <span class="help-link">Help</span>
+            <ul class="dropdown-menu">
+              <li @click.prevent="startTour">Tour</li>
+              <li @click.prevent="contactSupport">Contact</li>
+            </ul>
+          </li>
+        </ul>
       </div>
-      <li class="nav-item logout-item">
+
+      <!-- Logout Button -->
+      <div class="nav-right">
         <button class="logout-button" @click="logout">
-          <img src="/src/assets/logout-icon.png" alt="Logout" class="logout-icon" />
           <span class="logout-text">Logout</span>
+          <img src="/src/assets/logout-icon.png" alt="Logout" class="logout-icon" />
         </button>
-      </li>
-    </ul>
+      </div>
+    </div>
   </nav>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-
-const router = useRouter()
-const authStore = useAuthStore()
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import { useTour } from '@/routes/TourController.js';  // Import useTour
+import { tour2 } from '@/routes/tourRefs.js';
+const router = useRouter();
+const authStore = useAuthStore();
 
 // Navigation functions
 const goToHome = () => {
-  router.push({ name: 'main' }) // Replace with your home route
-}
-
-const goToAccount = () => {
-  router.push({ name: 'account' }) // Replace with your account route
-}
+  router.push({ name: 'main' }); // Replace with your home route
+};
 
 const goToTrackers = () => {
-  router.push({ name: 'trackers' }) // Replace with your trackers route
-}
+  router.push({ name: 'trackers' }); // Replace with your trackers route
+};
+
+// Start the tour when "Tour" is clicked
+const startTour = () => {
+  useTour(router);  // Start the tour without passing a DOM element here
+};
+
+const contactSupport = () => {
+  router.push({ name: 'contact' }); // Replace with your contact route
+};
 
 // Logout function
 const logout = async () => {
   try {
-    await authStore.logout()
-    router.replace({ name: 'login' }) // Redirect to the login page after logout
+    await authStore.logout();
+    router.replace({ name: 'login' }); // Redirect to the login page after logout
   } catch (err) {
-    console.log(err.message)
+    console.log(err.message);
   }
-}
+};
 </script>
 
 <style scoped>
 /* Navbar Container */
 .navbar {
   position: sticky;
-  top: 0; /* Adjust this if you need it to stick below something */
+  top: 0;
   z-index: 999;
   background-color: #00543D;
-  padding: 10px 20px;
+  padding: 10px 0px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-family: 'Poppins', sans-serif; /* Ensure Poppins font is applied to all elements */
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Navbar Flexbox Container */
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 0px;
+}
+
+/* Centered Navigation Items */
+.nav-center {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
 }
 
 /* Navbar List */
 .nav-list {
   display: flex;
-  justify-content: space-between; /* Space between center items and logout button */
-  align-items: center;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-family: inherit; /* Inherit the font from the navbar */
-  width: 100%; /* Make the list take up the full width */
-}
-
-/* Centered Navbar Items */
-.nav-center {
-  display: flex;
   justify-content: center;
   align-items: center;
-  flex-grow: 1; /* Take up remaining space */
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
 }
 
 /* Navbar Items */
 .nav-item {
   margin: 0 20px;
+  /* Add spacing between items */
 }
 
-/* Logout Item */
-.logout-item {
-  margin-left: auto; /* Push the Logout button to the end */
-}
-
-/* Navbar Links and Buttons */
+/* Navbar Links */
 .nav-item a,
-.nav-item button {
+.nav-item button,
+.help-link {
   text-decoration: none;
   color: #ecf0f1;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 4px;
   transition: color 0.3s, text-decoration 0.3s;
   display: flex;
   align-items: center;
-  font-family: inherit; /* Inherit font from the parent */
+}
+
+/* Help Dropdown */
+.help-dropdown {
   position: relative;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  padding: 8px 0;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  border: 1px solid #00543D;
+
+}
+
+.help-dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Dropdown Items */
+.dropdown-menu li {
+  padding: 4px 16px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dropdown-menu li:hover {
+  background-color: #00543D;
+  color: #ffffff;
+}
+
+/* Logout Section - Moved to the Right */
+.nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+/* Logout Button */
+.logout-button {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ecf0f1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+/* Logout Text */
+.logout-text {
+  margin-right: 8px;
 }
 
 /* Logout Icon */
 .logout-icon {
-  width: 24px; /* Adjust size as needed */
-  height: 24px; /* Adjust size as needed */
-}
-
-/* Logout Text (Hidden by default) */
-.logout-text {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s, visibility 0.3s;
-  position: absolute;
-  bottom: -25px; /* Adjust position as needed */
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: #fff;
-  padding: 2px 6px; /* Reduce padding to make it less thick */
-  font-size: 12px; /* Smaller font size for a more compact look */
-  border-radius: 3px; /* Slightly rounded corners */
-  white-space: nowrap;
-  line-height: 1.2; /* Adjust line height for a tighter fit */
-}
-
-/* Show Logout Text on Hover */
-.logout-button:hover .logout-text {
-  visibility: visible;
-  opacity: 1;
+  width: 24px;
+  height: 24px;
+  padding-right: 10px;
 }
 
 /* Hover Effects */
 .nav-item a:hover,
-.nav-item button:hover {
+.nav-item button:hover,
+.help-link:hover {
   text-decoration: underline;
-  text-decoration-color: white; /* White underline */
+  text-decoration-color: white;
 }
 
 /* Active/Focus Effects */
 .nav-item a:focus,
-.nav-item button:focus {
+.nav-item button:focus,
+.help-link:focus {
   outline: none;
   color: #ffffff;
   text-decoration: underline;
   text-decoration-color: white;
 }
 
-/* Responsive Design */
+/* Responsive Design for Mobile */
 @media (max-width: 768px) {
   .navbar {
     padding: 10px;
@@ -172,18 +236,24 @@ const logout = async () => {
 
   .nav-item a,
   .nav-item button {
-    padding: 8px 12px;
+    padding: 6px 10px;
     font-size: 14px;
   }
 
   .logout-icon {
-    width: 20px; /* Smaller size for mobile */
-    height: 20px; /* Smaller size for mobile */
+    width: 20px;
+    height: 20px;
   }
 
   .logout-text {
-    bottom: -25px; /* Adjust for smaller screens */
+    font-size: 14px;
   }
-  
+}
+
+/* Add more spacing between nav items on larger screens */
+@media (min-width: 769px) {
+  .nav-item {
+    margin: 0 30px;
+  }
 }
 </style>

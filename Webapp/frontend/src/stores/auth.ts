@@ -12,6 +12,7 @@ export interface User {
     updated_at: Date;
     __v: number;
     refresh_token: string;
+    tracker: Array<{ _id: string }>;
   }
 
   export interface State {
