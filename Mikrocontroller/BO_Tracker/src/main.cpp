@@ -70,7 +70,7 @@ void loop()
   char cell_infos[256];
   float temperature;
   float humid;
-  float batterypercentag = _BoardBattery.calculateBatteryPercentage(_BoardBattery.readBatteryVoltage());
+  float batterypercentage = _BoardBattery.calculateBatteryPercentage(_BoardBattery.readBatteryVoltage());
 
   DeserializationError error;
 
@@ -163,7 +163,7 @@ void loop()
     docInput["CellInfos"] = cell_infos;
     docInput["Temperature"] = 23;
     docInput["Humidity"] = 90;                     
-    docInput["BatteryPercentag"] = batterypercentag;
+    docInput["BatteryPercentage"] = batterypercentage;
     docInput["Position"] = gnss_posi;
     docInput["NMEA"] = gnss_nmea;
 
@@ -187,7 +187,7 @@ void loop()
     docInput["Timestamp"] = _GNSS.GetCurrentTime();
     docInput["CellInfos"] = cell_infos;
     docInput["Temperature"] = 23;                    // temperature;
-    docInput["BatteryPercentag"] = batterypercentag; // batterypercentag;
+    docInput["BatteryPercentag"] = batterypercentage; // batterypercentag;
 
     serializeJsonPretty(docInput, payload);
 

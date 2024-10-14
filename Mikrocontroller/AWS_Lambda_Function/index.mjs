@@ -32,16 +32,16 @@ export const handler = async (event) => {
     }
 
     const data = {
-        DeviceID: event.DeviceID,
+        IMEI: event.IMEI,
         Timestamp: convertedTimestamp,
         CellInfos: event.CellInfos,
         Temperature: event.Temperature,
         BatteryPercentage: event.BatteryPercentage,
         Position: event.Position,
-        Humidity: event.Humidity || null
+        Humidity: event.Humidity 
     };
 
-    console.log("Received DeviceID: ", data.DeviceID);
+    console.log("Received IMEI: ", data.IMEI);
     console.log("Converted Timestamp: ", data.Timestamp);
 
     try {
@@ -49,13 +49,13 @@ export const handler = async (event) => {
         await client.connect();
         const database = client.db('SOP'); 
         const trackersCollection = database.collection('trackers');
-        const trackerDoc = await trackersCollection.findOne({ DeviceID: data.DeviceID });
+        const trackerDoc = await trackersCollection.findOne({ imei: data.IMEI });
 
         if (!trackerDoc) {
-            console.error(`Tracker not found for DeviceID: ${data.DeviceID}`);
+            console.error(`Tracker not found for IMEI: ${data.IMEI}`);
             return {
                 statusCode: 404,
-                body: JSON.stringify(`Tracker not found for DeviceID: ${data.DeviceID}`)
+                body: JSON.stringify(`Tracker not found for IMEI: ${data.IMEI}`)
             };
         }
 
@@ -66,7 +66,7 @@ export const handler = async (event) => {
         const longitude = parseFloat(positionParts[2]);  
 
         const mongoData = {
-            imei: data.DeviceID, 
+            imei: data.IMEI, 
             mode: "GPS",
             latitude: latitude,
             longitude: longitude,

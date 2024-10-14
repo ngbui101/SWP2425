@@ -717,7 +717,8 @@ bool _BG96_Common::ScanmodeConfig(int mode)
     sprintf(cmd, "+QCFG=\"nwscanmode\",%d", mode);
 
     if (sendAndSearch(cmd, RESPONSE_OK, 2))
-    {
+    {   
+        ResetModule();
         return true;
     }
     return false;
