@@ -36,9 +36,11 @@ export const handler = async (event) => {
         Timestamp: convertedTimestamp,
         CellInfos: event.CellInfos,
         Temperature: event.Temperature,
+        Humidity: event.Humidity,
         BatteryPercentage: event.BatteryPercentage,
         Position: event.Position,
-        Humidity: event.Humidity 
+        NMEA: event.NMEA,
+        TimeToGetFirstFix: event.TimeToGetFirstFix 
     };
 
     console.log("Received IMEI: ", data.IMEI);
@@ -70,11 +72,13 @@ export const handler = async (event) => {
             mode: "GPS",
             latitude: latitude,
             longitude: longitude,
+            nmea: data.NMEA,
             temperature: data.Temperature,
             cellinfo: data.CellInfos,
             humidity: data.Humidity,
             battery: data.BatteryPercentage,
             tracker: new ObjectId(trackerId),
+            timeToGetFirstFix: data.TimeToGetFirstFix,
             createdAt: data.Timestamp,  // Verwende den konvertierten Timestamp
             updatedAt: data.Timestamp   // Verwende den konvertierten Timestamp
         };
