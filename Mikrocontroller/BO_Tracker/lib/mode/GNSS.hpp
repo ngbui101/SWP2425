@@ -4,10 +4,12 @@
 #include "BG96_GNSS.h"
 
 bool InitGNSS(_BG96_GNSS &GNSS,
-              Stream &DSerial,
-              char *currentTimestamp)
-{
+              Stream &DSerial)
+{   
     GNSS_Work_Mode_t mode = STAND_ALONE;
+    char currentTimestamp[64];
+
+    GNSS.GetLatestGMTTime(currentTimestamp); 
 
     if (GNSS.InitGpsOneXTRA(currentTimestamp))
     {
@@ -24,6 +26,11 @@ bool InitGNSS(_BG96_GNSS &GNSS,
         }
     }
     DSerial.println("\r\nOpen the GNSS Function Success!");
+    
+    if(GNSS.SetGNSSEnableNMEASentences(true)){
+         DSerial.println("\r\nEnable NMEA Sentences Success!");
+    }
+    
     return true;
 }
 #endif

@@ -214,7 +214,7 @@ bool _BG96_GNSS::GetGNSSNMEASentences(NMEA_Type_t type, char *sentences)
     switch (type)
     {
     case GPGGA:
-        strcat(cmd, "=\"GCA\"");
+        strcat(cmd, "=\"GGA\"");
         break;
     case GPRMC:
         strcat(cmd, "=\"RMC\"");
