@@ -132,7 +132,7 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   // SSL Networking
   BG96.DeleteCertificate("all");
 
-  BG96.ScanmodeConfig(0);
+  BG96.ScanmodeConfig(3);
 
   char apn_error[64];
   while (!BG96.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
