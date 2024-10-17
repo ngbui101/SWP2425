@@ -43,9 +43,12 @@
           <h3 class="card-title">{{ $t('SETTINGSVIEW-phone_number_settings') }}</h3>
           <p>
             {{ user.number
-              ? $t('SETTINGSVIEW-current_phone_number', { number: user.number })
+              ? $t('SETTINGSVIEW-current_phone_number')
               : $t('SETTINGSVIEW-no_phone_number') }}
           </p>
+
+          <!-- If user.number exists, display the phone number in a separate <p> tag -->
+          <p v-if="user.number"><strong>{{ user.number }}</strong></p>
 
           <form @submit.prevent="updatePhoneNumber" class="settings-form">
             <label for="phoneNumber" class="form-label">{{ $t('SETTINGSVIEW-phone_number') }}</label>
@@ -64,15 +67,18 @@
               <option value="EN">{{ $t('SETTINGSVIEW-english') }}</option>
               <option value="DE">{{ $t('SETTINGSVIEW-german') }}</option>
             </select>
+
             <!-- Theme Selection -->
             <label for="theme" class="form-label">{{ $t('SETTINGSVIEW-select_color_scheme') }}</label>
             <select v-model="selectedTheme" id="theme" class="form-input">
               <option value="light">{{ $t('SETTINGSVIEW-light') }}</option>
               <option value="dark">{{ $t('SETTINGSVIEW-dark') }}</option>
             </select>
+
             <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
           </form>
         </div>
+
 
         <!-- Notification Settings Card -->
         <div class="settings-card">
@@ -112,6 +118,7 @@ const user = computed(() => authStore.userDetail);
 
 onMounted(async () => {
   await authStore.getUser();
+  selectedLanguage.value = user.value?.language || 'EN'; // Default to EN if not set
 });
 
 const newEmail = ref('');
@@ -166,13 +173,25 @@ const updatePassword = async () => {
 
 
 const updatePhoneNumber = async () => {
-  // Handle phone number update logic
+  try {
+    // Call your store's API method to update the phone number
+    await authStore.updatePhoneNumber(phoneNumber.value);
+    alert('Phone number updated successfully');
+    await authStore.getUser();
+    closeModal(); // Close the modal after successful update
+  } catch (error: any) {
+    alert(`Error updating phone number: ${error.message}`);
+  }
 };
+
 
 const updateLanguage = async () => {
   try {
+    // Update user language with the selected value
     await authStore.updateLanguage(selectedLanguage.value);
     alert('Language updated successfully');
+
+    // Update the locale for i18n based on the selected language
     locale.value = selectedLanguage.value;
   } catch (error) {
     alert(`Error updating Language: ${error.message}`);

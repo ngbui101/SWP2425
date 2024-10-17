@@ -47,44 +47,44 @@ async function createUser(req, res) {
 
 async function updateUser(req, res) {
   const { id } = req.params;
-  const { email, language, currentPassword, newPassword, confirmPassword } = req.body;
+  const { email, language, currentPassword, newPassword, confirmPassword, number } = req.body;
   
   try {
-    // Find the user by ID
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // If email is provided, update it
+    // Update email if provided
     if (email) {
       user.email = email;
     }
 
-    // If language is provided, update it
+    // Update language if provided
     if (language) {
       user.language = language;
     }
 
+    // Handle phone number update
+    if (number) {
+      user.number = number;
+    }
+
     // Handle password change
     if (currentPassword && newPassword && confirmPassword) {
-      // Check if current password matches the stored hashed password
       const isMatch = await bcrypt.compare(currentPassword, user.password);
       if (!isMatch) {
         return res.status(400).json({ message: 'Current password is incorrect' });
       }
 
-      // Check if new password and confirm password match
       if (newPassword !== confirmPassword) {
         return res.status(400).json({ message: 'New passwords do not match' });
       }
 
-      // Hash the new password
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       user.password = hashedPassword;
     }
 
-    // Save updated user
     await user.save();
     res.status(200).json({ message: 'User updated successfully', user });
 
@@ -93,6 +93,7 @@ async function updateUser(req, res) {
     res.status(500).json({ message: 'Failed to update user', error });
   }
 }
+
 
 
 // Delete a user by ID

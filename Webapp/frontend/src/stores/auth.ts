@@ -142,6 +142,16 @@ export interface User {
               throw new Error(`Failed to update password: ${error.message}`);
             }
           },
+          async updatePhoneNumber(newPhoneNumber: string) {
+            try {
+              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
+                number: newPhoneNumber
+              });
+              return data;
+            } catch (error: any) {
+              throw new Error(`Failed to update phone number: ${error.message}`);
+            }
+          },          
           
           async updateEmail(newEmail: string) {
             try {
