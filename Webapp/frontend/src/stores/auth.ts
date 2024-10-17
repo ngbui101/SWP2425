@@ -129,7 +129,20 @@ export interface User {
               throw new Error(`Failed to fetch users: ${error.message}`);
             }
           },
-
+          async updatePassword(currentPassword: string, newPassword: string, confirmPassword: string) {
+            try {
+              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
+                currentPassword,
+                newPassword,
+                confirmPassword
+              });
+          
+              return data; // Return the response data if needed
+            } catch (error: any) {
+              throw new Error(`Failed to update password: ${error.message}`);
+            }
+          },
+          
           async updateEmail(newEmail: string) {
             try {
               const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {

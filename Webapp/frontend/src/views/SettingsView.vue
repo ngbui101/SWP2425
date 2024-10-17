@@ -153,8 +153,17 @@ const updatePassword = async () => {
     alert('Passwords do not match');
     return;
   }
-  // Handle password update logic
+
+  try {
+    // Call your store's API method to update the password
+    await authStore.updatePassword(oldPassword.value, newPassword.value, confirmNewPassword.value);
+    alert('Password updated successfully');
+    closeModal(); // Close the modal after successful update
+  } catch (error: any) {
+    alert(`Error updating password: ${error.message}`);
+  }
 };
+
 
 const updatePhoneNumber = async () => {
   // Handle phone number update logic
