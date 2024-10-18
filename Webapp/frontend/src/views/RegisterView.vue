@@ -61,11 +61,7 @@ async function register() {
     console.log('Payload:', registerData);
     const response = await authStore.register(registerData);
     alert('Registration successful!'); // Show success message
-    const emailContent = {
-      to: registerData.email,
-      subject: 'Welcome to BOTracker!',
-      text: 'Hi, Welcome to BOTracker! We are glad to have you on board.',
-    };
+    const emailContent = getWelcomeEmailContent(registerData.email);
 
     // Call the backend to send the welcome email
     await sendWelcomeEmail(emailContent);
@@ -79,6 +75,56 @@ async function register() {
   }
 }
 
+function getWelcomeEmailContent(email: string) {
+  // Extract user name from the email (everything before the @)
+  const userName = email.split('@')[0];
+
+  if (locale.value === 'DE') {
+    // German version
+    return {
+      to: email,
+      subject: 'Willkommen bei BO-Tracker!',
+      text: `Hallo ${userName},
+
+Willkommen bei BO-Tracker! Wir freuen uns sehr, dich an Bord zu haben. BO-Tracker hilft dir dabei, deine Geräte einfach und effizient zu überwachen und zu verwalten.
+
+Hier sind einige Dinge, die du direkt tun kannst:
+- Entdecke dein Dashboard und sieh dir deine Tracker an.
+- Passe deine Einstellungen für eine optimale Nutzung an.
+- Kontaktiere unser Support-Team, wenn du Hilfe benötigst.
+
+Wenn du Fragen hast, kannst du gerne auf diese E-Mail antworten. Wir sind immer für dich da.
+
+Viel Spaß mit BO-Tracker! Wir freuen uns darauf, dir die beste Nutzung unserer Plattform zu ermöglichen.
+
+Mit freundlichen Grüßen,
+Dein BOTracker-Team`,
+    };
+  } else {
+    // English version (default)
+    return {
+      to: email,
+      subject: 'Welcome to BO-Tracker!',
+      text: `Hi ${userName},
+
+Welcome to BO-Tracker! We’re thrilled to have you on board. BO-Tracker is here to help you track and manage your devices with ease and efficiency.
+
+Here are a few things you can do right away:
+- Explore your dashboard to see your trackers.
+- Customize your settings for an optimal experience.
+- Reach out to our support team if you need any help.
+
+If you have any questions, feel free to reply to this email. We’re always here to assist you.
+
+Enjoy using BO-Tracker, and we look forward to helping you make the most of our platform!
+
+Best regards,
+The BOTracker Team`,
+    };
+  }
+}
+
+
 function setLanguage(language: string) {
   console.log('Language switched to:', language);
   locale.value = language; // Update the locale to the selected language
@@ -86,7 +132,7 @@ function setLanguage(language: string) {
 
 async function sendWelcomeEmail(emailContent: { to: string; subject: string; text: string }) {
   try {
-    // Use the full URL of your backend API
+
     const response = await fetch('http://localhost:3500/api/mail/send', {
       method: 'POST',
       headers: {
