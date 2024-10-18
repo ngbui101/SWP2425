@@ -2,6 +2,73 @@ const Tracker = require('../models/Tracker')
 const Geofence = require('../models/Geofence')
 const TrackerHistory = require('../models/Trackerhistory')
 const User = require('../models/User');
+const device = require('../models/mqttDevice'); // Gerät aus der neuen Datei importieren
+
+// Funktion zum Senden von Daten an einen bestimmten Tracker
+const sendData = (trackerId, data) => {
+  if (!device) {
+    console.error('MQTT device is not defined');
+    return;
+  }
+
+  const telemetryData = {
+    dateTime: new Date().toISOString(),
+    payload: data,
+  };
+
+  const topic = `tracker/${trackerId}/sub`;
+
+  console.log(`Sending data to AWS IoT Core on topic: ${topic}`, telemetryData);
+
+  if (typeof device.publish !== 'function') {
+    console.error('Publish function is not available on the device object');
+    return;
+  }
+
+  return device.publish(topic, JSON.stringify(telemetryData));
+};
+
+// Controller-Methode zum Senden von Daten an einen Tracker
+async function publicMessageToTracker(req, res) {
+  const { imei } = req.params;  // IMEI des Trackers aus den URL-Parametern
+  const { payload } = req.body;  // Payload der Nachricht
+  const userId = req.user.id;  // Authentifizierter Benutzer (angenommen, dies ist im req.user nach der Authentifizierung verfügbar)
+
+  if (!payload) {
+    return res.status(400).json({ message: 'Payload is required' });
+  }
+
+  try {
+    // Prüfen, ob der Tracker existiert
+    const tracker = await Tracker.findOne({ imei }).exec();
+    if (!tracker) {
+      return res.status(404).json({ message: 'Tracker not found' });
+    }
+
+    // Prüfen, ob der Benutzer diesen Tracker besitzt
+    const user = await User.findById(userId).populate('tracker').exec();
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Überprüfen, ob der Tracker in der Liste der Benutzer-Tracker enthalten ist
+    const userOwnsTracker = user.tracker.some(t => t._id.equals(tracker._id));
+
+    if (!userOwnsTracker) {
+      return res.status(403).json({ message: 'You do not have permission to send messages to this tracker' });
+    }
+
+    // Wenn der Benutzer den Tracker besitzt, die Nachricht über MQTT senden
+    sendData(imei, payload);
+
+    res.status(200).json({ message: `Data sent to tracker ${imei}`, payload });
+  } catch (error) {
+    console.error('Error sending data to tracker:', error);
+    res.status(500).json({ message: 'Failed to send data', error });
+  }
+}
+
+
 
 // Get all trackers
 async function getAllTrackers(req, res) {
@@ -20,7 +87,7 @@ async function getAllUserTrackers(req, res) {
   try {
     // Find the user by ID and populate their trackers
     const user = await User.findById(userId).populate('tracker').exec();
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -40,7 +107,7 @@ async function getTrackerById(req, res) {
   try {
     const tracker = await Tracker.findById(id);
     if (!tracker) {
-      return   res.status(404).json({ message: 'Tracker not found' });
+      return res.status(404).json({ message: 'Tracker not found' });
     }
     res.status(200).json(tracker);
   } catch (error) {
@@ -50,7 +117,7 @@ async function getTrackerById(req, res) {
 
 // Create a new tracker
 async function createTracker(req, res) {
-  const { name, imei} = req.body;  // Accept name, imei, and geofence parameters
+  const { name, imei } = req.body;  // Accept name, imei, and geofence parameters
   const userId = req.user.id;  // Assuming req.user contains authenticated user info
 
   try {
@@ -60,7 +127,7 @@ async function createTracker(req, res) {
       return res.status(409).json({ message: 'Tracker with this imei already exists' });
     }
 
-  
+
     // Create a new tracker with mode set to 'LT' (default mode) and link tracker history
     const tracker = new Tracker({
       imei,
@@ -73,9 +140,9 @@ async function createTracker(req, res) {
     // Now create a geofence linked to this tracker
     const geofence = new Geofence({
       tracker: tracker._id,
-      radius:0,
-      longitude:0,
-      latitude:0
+      radius: 0,
+      longitude: 0,
+      latitude: 0
     });
     await geofence.save();
     tracker.geofence = geofence._id;
@@ -109,7 +176,7 @@ async function createTracker(req, res) {
 // Update a tracker by ID
 async function updateTrackerName(req, res) {
   const { id } = req.params;
-  const { name} = req.body;
+  const { name } = req.body;
 
   try {
     const tracker = await Tracker.findById(id);
@@ -146,67 +213,62 @@ async function deleteTracker(req, res) {
 }
 
 async function setTrackerMode(req, res) {
-    const { id } = req.params;
-    const { mode } = req.body;
-  
-    // Ensure the mode is one of the allowed values
-    if (!['RT', 'LT', 'NB', 'None'].includes(mode)) {
-      return res.status(400).json({ message: 'Invalid mode. Mode should be one of "RT", "LT", or "Test".' });
-    }
-  
-    try {
-      const tracker = await Tracker.findById(id);
-      if (!tracker) {
-        return res.status(404).json({ message: 'Tracker not found' });
-      }
-  
-      tracker.mode = mode;
-      await tracker.save();
-      res.status(200).json({ message: `Tracker mode set to ${mode}`, tracker });
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error });
-    }
+  const { id } = req.params;
+  const { mode } = req.body;
+
+  // Ensure the mode is one of the allowed values
+  if (!['RT', 'LT', 'NB', 'None'].includes(mode)) {
+    return res.status(400).json({ message: 'Invalid mode. Mode should be one of "RT", "LT", or "Test".' });
   }
 
-  async function getTrackerGeofence(req, res) {
-    const { id } = req.params;  // Tracker ID from the request parameters
-  
-    try {
-      // Find the geofence linked to this tracker
-      const geofence = await Geofence.findOne({ tracker: id }).exec();
-  
-      if (!geofence) {
-        return res.status(404).json({ message: 'Geofence not found for this tracker' });
-      }
-  
-      res.status(200).json(geofence);
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error });
+  try {
+    const tracker = await Tracker.findById(id);
+    if (!tracker) {
+      return res.status(404).json({ message: 'Tracker not found' });
     }
-  }
 
-  async function getTrackerHistory(req, res) {
-    const { id } = req.params;  // Tracker ID from the request parameters
-  
-    try {
-      // Find the tracker history linked to this tracker
-      const trackerHistory = await TrackerHistory.findOne({ tracker: id });
-        
-  
-      if (!trackerHistory) {
-        return res.status(404).json({ message: 'Tracker history not found for this tracker' });
-      }
-  
-      res.status(200).json(trackerHistory);
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error });
+    tracker.mode = mode;
+    await tracker.save();
+    res.status(200).json({ message: `Tracker mode set to ${mode}`, tracker });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+}
+
+async function getTrackerGeofence(req, res) {
+  const { id } = req.params;  // Tracker ID from the request parameters
+
+  try {
+    // Find the geofence linked to this tracker
+    const geofence = await Geofence.findOne({ tracker: id }).exec();
+
+    if (!geofence) {
+      return res.status(404).json({ message: 'Geofence not found for this tracker' });
     }
+
+    res.status(200).json(geofence);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
   }
-  
+}
+
+async function getTrackerHistory(req, res) {
+  const { id } = req.params;  // Tracker ID from the request parameters
+
+  try {
+    // Find the tracker history linked to this tracker
+    const trackerHistory = await TrackerHistory.findOne({ tracker: id });
 
 
-  
-  
+    if (!trackerHistory) {
+      return res.status(404).json({ message: 'Tracker history not found for this tracker' });
+    }
+
+    res.status(200).json(trackerHistory);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+}
 
 module.exports = {
   getAllTrackers,
@@ -217,5 +279,6 @@ module.exports = {
   setTrackerMode,
   getTrackerGeofence,
   getTrackerHistory,
-  getAllUserTrackers
+  getAllUserTrackers,
+  publicMessageToTracker
 };

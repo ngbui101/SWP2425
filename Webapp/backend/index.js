@@ -16,10 +16,13 @@ const PORT = process.env.PORT || 3500;
 connectDB()
 // Allow Credentials
 app.use(credentials);
+//AWS
+const device = require('./models/mqttDevice');
 
 const corsOptions = {
   origin: "http://localhost:5173",
 };
+
 // CORS
 app.use(cors({ credentials: true, origin: corsOptions }));
 
@@ -77,22 +80,22 @@ app.use('/api/event', require('../backend/rest/trainingevent'));
 app.use('/api/history', require('../backend/rest/trackerhistory'));
 app.use('/api/position', require('../backend/rest/measurement'));
 app.use('/api/tracker', require('../backend/rest/tracker'));
-app.use('/api/users', require('../backend/rest/users')); 
+app.use('/api/users', require('../backend/rest/users'));
 app.use('/api/auth', require('../backend/rest/auth'));
 // 404 route handler
 app.all('*', (req, res) => {
-    res.status(404);
-  
-    if (req.accepts('json')) {
-      res.json({ 'error': '404 Not Found' });
-    } else {
-      res.type('text').send('404 Not Found');
-    }
-  });
+  res.status(404);
 
-  mongoose.connection.once('open', () => {
-    console.log('DB connected');
-    app.listen(PORT, () => {
-      console.log(`Listening on port ${PORT}`);
-    });
+  if (req.accepts('json')) {
+    res.json({ 'error': '404 Not Found' });
+  } else {
+    res.type('text').send('404 Not Found');
+  }
+});
+
+mongoose.connection.once('open', () => {
+  console.log('DB connected');
+  app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
   });
+});
