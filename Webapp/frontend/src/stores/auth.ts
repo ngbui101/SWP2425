@@ -109,7 +109,7 @@ export interface User {
       
           async refresh() {
             try {
-              const { data } = await useApi().post(`/api/auth/refresh`);
+              const { data } = await useApi().post(`http://localhost:3500/api/auth/refresh`);
               this.accessToken = data.access_token;
               return data;
             } catch (error: any) {

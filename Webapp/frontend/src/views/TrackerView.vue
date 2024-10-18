@@ -3,17 +3,19 @@
         <!-- Toolbar with icons for List/Card view -->
         <div class="toolbar">
             <div class="view-switcher">
-                <!-- List View Icon with Tooltip -->
-                <div class="icon-container">
-                    <i class="fas fa-list" @click="setView('list')" :class="{ active: currentView === 'list' }"></i>
-                    <span class="tooltip">List View</span>
-                </div>
 
                 <!-- Card View Icon with Tooltip -->
                 <div class="icon-container">
                     <i class="fas fa-th-large" @click="setView('card')" :class="{ active: currentView === 'card' }"></i>
                     <span class="tooltip">Card View</span>
                 </div>
+                <!-- List View Icon with Tooltip -->
+                <div class="icon-container">
+                    <i class="fas fa-list" @click="setView('list')" :class="{ active: currentView === 'list' }"></i>
+                    <span class="tooltip">List View</span>
+                </div>
+
+
             </div>
         </div>
 
@@ -106,7 +108,7 @@ onMounted(async () => {
 .tracker-view {
     background-color: #f1e4cc;
     padding-bottom: 20px;
-    min-height: 600px;
+    min-height: 100vh;
     padding: 13px;
 }
 

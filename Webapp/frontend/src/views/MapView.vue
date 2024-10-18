@@ -401,6 +401,7 @@ body {
   margin: 0;
   gap: 0;
   background-color: #f1e4cc;
+  min-height: 100vh;
 }
 
 .card {
