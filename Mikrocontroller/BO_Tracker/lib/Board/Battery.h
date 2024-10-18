@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define BATVOLTAGE_CTRL_PIN 3
+#define BATVOLTAGE_CTRL_PIN 3u
 #define BATVOLTAGE_READ_PIN A1
 #define REF_VOLTAGE 3.3          // Reference voltage of the MCU (SAMD board is 3.3V)
 #define R25 10000                // Resistor value R25 in ohms (10k)

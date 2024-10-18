@@ -1,6 +1,39 @@
 const bcrypt = require('bcrypt');
 
 const User = require('../models/User')
+const Tracker = require('../models/Tracker');
+
+async function addTrackerToUser(req, res) {
+  const {trackerId } = req.params;
+  const userId = req.user.id;
+  try {
+    // Prüfe, ob der Benutzer existiert
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Prüfe, ob der Tracker existiert
+    const tracker = await Tracker.findById(trackerId);
+    if (!tracker) {
+      return res.status(404).json({ message: 'Tracker not found' });
+    }
+
+    // Prüfe, ob der Tracker bereits dem Benutzer hinzugefügt wurde
+    if (user.tracker.includes(trackerId)) {
+      return res.status(400).json({ message: 'Tracker already added to user' });
+    }
+
+    // Füge den Tracker dem Benutzer hinzu
+    user.tracker.push(trackerId);
+    await user.save();
+
+    res.status(200).json({ message: 'Tracker added to user successfully', user });
+  } catch (error) {
+    console.error('Error adding tracker to user:', error);
+    res.status(500).json({ message: 'Failed to add tracker to user', error });
+  }
+}
 // Get all users
 async function getAllUsers(req, res) {
   try {
@@ -121,4 +154,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  addTrackerToUser
 };

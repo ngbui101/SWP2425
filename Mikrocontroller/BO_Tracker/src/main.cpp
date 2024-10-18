@@ -18,13 +18,18 @@ char mqtt_server[] = "a336z3b6pu6hdu-ats.iot.us-east-1.amazonaws.com";
 unsigned int mqtt_port = 8883;
 char mqtt_clientId[] = "BG96";
 // char mqtt_topicName[50];
-char mqtt_sub_topic[64];  // Für "tracker/{IMEI}/sub"
-char mqtt_pub_topic[64];  // Für "tracker/{IMEI}/pub"
+char mqtt_sub_topic[64]; // Für "tracker/{IMEI}/sub"
+char mqtt_pub_topic[64]; // Für "tracker/{IMEI}/pub"
 
 unsigned int mqtt_index = 0;
 Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
 unsigned long pub_time;
+
+//GNSS
 unsigned long gnss_start_time;
+unsigned long last_millis = 0;
+unsigned long time_taken;
+bool gnssFixReceived = false;
 
 // IMEI of the modem
 char IMEI[20];
@@ -133,22 +138,29 @@ void loop()
     break;
   }
 
-  if (GnssMode && (millis() - pub_time >= 5000UL))
+  if (gnssFixReceived && GnssMode && (millis() - pub_time >= 5000UL))
   {
     if (!_GNSS.GetGNSSPositionInformation(gnss_posi))
     {
-      DSerial.println("\r\nGet the GNSS Position Fail!\nTry in 5 Seconds");
+      DSerial.println("\r\nGet the GNSS Position Fail!\nTry in 1 Seconds");
       strcpy(gnss_posi, "no fix");
-      delay(5000);
+      if (millis() - last_millis >= 1000u)
+      {
+        last_millis = millis();
+      }
     }
     else
     {
       DSerial.println("\r\nGet the GNSS Position Success!");
       DSerial.println(gnss_posi);
-      unsigned long time_taken = millis() - gnss_start_time;
-      DSerial.print("Time taken to get GNSS Position: ");
-      DSerial.print(time_taken);
-      DSerial.println(" ms");
+      if (!gnssFixReceived) 
+      {
+        time_taken = millis() - gnss_start_time;
+        DSerial.print("Time taken to get GNSS Position: ");
+        DSerial.print(time_taken);
+        DSerial.println(" ms");
+        gnssFixReceived = true; 
+      }
     }
     if (!_GNSS.GetGNSSNMEASentences(GPGGA, gnss_nmea))
     {
@@ -162,10 +174,11 @@ void loop()
     docInput["Timestamp"] = _GNSS.GetCurrentTime();
     docInput["CellInfos"] = cell_infos;
     docInput["Temperature"] = 23;
-    docInput["Humidity"] = 90;                     
+    docInput["Humidity"] = 90;
     docInput["BatteryPercentage"] = batterypercentage;
     docInput["Position"] = gnss_posi;
     docInput["NMEA"] = gnss_nmea;
+    docInput["TimeToGetFirstFix"] = time_taken;
 
     serializeJsonPretty(docInput, payload);
 
@@ -186,13 +199,12 @@ void loop()
     pub_time = millis();
     docInput["Timestamp"] = _GNSS.GetCurrentTime();
     docInput["CellInfos"] = cell_infos;
-    docInput["Temperature"] = 23;                    // temperature;
-    docInput["BatteryPercentag"] = batterypercentage; // batterypercentag;
+    docInput["Temperature"] = 23;                     
+    docInput["BatteryPercentag"] = batterypercentage; 
 
     serializeJsonPretty(docInput, payload);
 
     res = _AWS.MQTTPublishMessages(mqtt_index, 1, AT_LEAST_ONCE, mqtt_pub_topic, false, payload);
-
 
     if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK ||
         res == PACKET_RETRANSMISSION)
