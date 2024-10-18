@@ -29,4 +29,7 @@ router.get('/:id/geofence', authenticate, trackerController.getTrackerGeofence);
 // Route to get the tracker history of a tracker by ID
 router.get('/:id/history', authenticate, trackerController.getTrackerHistory);
 
+router.post('/:imei/pub', authenticate,trackerController.publishMessageToTracker);
+
+
 module.exports = router;

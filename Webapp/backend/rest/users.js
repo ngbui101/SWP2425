@@ -13,6 +13,7 @@ router.post('/',   userController.createUser);
 router.put('/:id',  userController.updateUser);
 // Route to delete a user by ID
 router.delete('/:id',  userController.deleteUser);
-
+//
+router.post('/add/:trackerId', authenticate, userController.addTrackerToUser);
 
 module.exports = router;
