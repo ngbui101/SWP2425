@@ -6,6 +6,8 @@
     "LOGINVIEW-login": "Anmelden",
     "LOGINVIEW-dont_have_account": "Noch kein Konto?",
     "LOGINVIEW-sign_up": "Konto erstellen",
+    "LOGINVIEW-submit": "Absenden",
+    "LOGINVIEW-close": "Schließen",
     "REGISTERVIEW-password_confirm": "Passwort bestätigen",
     "REGISTERVIEW-already_account": "Bereits registriert?",
     "REGISTERVIEW-create_password": "Passwort eingeben",

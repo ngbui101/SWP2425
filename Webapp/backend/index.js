@@ -7,7 +7,7 @@ const path = require('path');
 const connectDB = require('./config/database');
 const credentials = require('./middleware/credentials');
 const axios = require('axios');
-
+const mailController = require('./controller/mailController');
 const errorHandlerMiddleware = require('./middleware/error_handler');
 const authenticationMiddleware = require('./middleware/authentification');
 
@@ -79,6 +79,7 @@ app.use('/api/position', require('../backend/rest/measurement'));
 app.use('/api/tracker', require('../backend/rest/tracker'));
 app.use('/api/users', require('../backend/rest/users')); 
 app.use('/api/auth', require('../backend/rest/auth'));
+app.use('/api/mail', require('./rest/mail'));
 // 404 route handler
 app.all('*', (req, res) => {
     res.status(404);

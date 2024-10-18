@@ -1,7 +1,7 @@
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-
+const mailController = require('../controller/mailController');
 /* Purpose: Register a new user
 
 1.Extract user details from the request body.
@@ -167,6 +167,52 @@ async function user(req, res) {
 
   return res.status(200).json(user)
 }
+// Utility function to generate a random password
+function generateRandomPassword(length) {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    password += chars[randomIndex];
+  }
+  return password;
+}
 
+// Reset password function
+async function resetPassword(req, res) {
+  const { email } = req.body;
 
-module.exports = { register, login, logout, refresh, user }
+  if (!email) return res.status(422).json({ message: 'Email is required' });
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email }).exec();
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No account found with that email.' });
+    }
+
+    // Generate a new random password
+    const newPassword = generateRandomPassword(8);
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user's password in the database
+    user.password = hashedPassword;
+    await user.save();
+
+    // Send the new password to the user's email
+    const subject = 'Your New Password for BOTracker';
+    const text = `Hi, here is your new password: ${newPassword}. Please change it after logging in.`;
+
+    await mailController.sendEmail(user.email, subject, text);
+
+    return res.status(200).json({ success: true, message: 'A new password has been sent to your email.' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+}
+
+module.exports = { register, login, logout, refresh, user, resetPassword }

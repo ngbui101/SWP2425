@@ -6,6 +6,8 @@
     "LOGINVIEW-login": "Login",
     "LOGINVIEW-dont_have_account": "No account yet?",
     "LOGINVIEW-sign_up": "Sign Up",
+    "LOGINVIEW-submit": "Send",
+    "LOGINVIEW-close": "Close",
     "REGISTERVIEW-password_confirm": "Confirm password",
     "REGISTERVIEW-already_account": "Already registered?",
     "REGISTERVIEW-create_password": "Enter password",

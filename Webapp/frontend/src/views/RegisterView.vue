@@ -8,8 +8,10 @@
         <header>{{ $t('LOGINVIEW-sign_up') }}</header>
         <form @submit.prevent="register">
           <input type="text" v-model="registerData.email" :placeholder="$t('LOGINVIEW-enter_email')" required>
-          <input type="password" v-model="registerData.password" :placeholder="$t('REGISTERVIEW-create_password')" required>
-          <input type="password" v-model="registerData.password_confirm" :placeholder="$t('REGISTERVIEW-password_confirm')" required>
+          <input type="password" v-model="registerData.password" :placeholder="$t('REGISTERVIEW-create_password')"
+            required>
+          <input type="password" v-model="registerData.password_confirm"
+            :placeholder="$t('REGISTERVIEW-password_confirm')" required>
           <input type="submit" class="button" :value="$t('LOGINVIEW-sign_up')">
         </form>
         <div class="signup">
@@ -58,6 +60,15 @@ async function register() {
     }
     console.log('Payload:', registerData);
     const response = await authStore.register(registerData);
+    alert('Registration successful!'); // Show success message
+    const emailContent = {
+      to: registerData.email,
+      subject: 'Welcome to BOTracker!',
+      text: 'Hi, Welcome to BOTracker! We are glad to have you on board.',
+    };
+
+    // Call the backend to send the welcome email
+    await sendWelcomeEmail(emailContent);
     router.replace({ name: 'login' });
   } catch (err: any) {
     console.error('Register failed:', err);
@@ -72,6 +83,28 @@ function setLanguage(language: string) {
   console.log('Language switched to:', language);
   locale.value = language; // Update the locale to the selected language
 }
+
+async function sendWelcomeEmail(emailContent: { to: string; subject: string; text: string }) {
+  try {
+    // Use the full URL of your backend API
+    const response = await fetch('http://localhost:3500/api/mail/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(emailContent),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send welcome email');
+    }
+
+    console.log('Welcome email sent successfully');
+  } catch (error) {
+    console.error('Error sending welcome email:', error);
+  }
+}
+
 </script>
 
 <style scoped>
@@ -107,7 +140,8 @@ function setLanguage(language: string) {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%; /* Ensure it occupies the full height */
+  height: 100%;
+  /* Ensure it occupies the full height */
 }
 
 /* Ensure the logo is centered at the top */
