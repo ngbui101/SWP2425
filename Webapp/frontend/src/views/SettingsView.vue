@@ -18,6 +18,17 @@
               <label for="confirmNewEmail" class="form-label">{{ $t('SETTINGSVIEW-confirm_email') }}</label>
               <input v-model="confirmNewEmail" id="confirmNewEmail" type="email" class="form-input"
                 :placeholder="$t('SETTINGSVIEW-confirm_email')" required>
+
+              <!-- Email Notification Settings -->
+              <label class="form-label">
+                <input type="checkbox" v-model="notificationSettings.emailBatteryLow">
+                {{ $t('SETTINGSVIEW-email_battery_low') }}
+              </label>
+              <label class="form-label">
+                <input type="checkbox" v-model="notificationSettings.emailGeofenceAlert">
+                {{ $t('SETTINGSVIEW-email_geofence_alert') }}
+              </label>
+
               <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
             </form>
           </div>
@@ -42,19 +53,31 @@
           <!-- Phone Number Settings Card -->
           <div class="settings-card">
             <h3 class="card-title">{{ $t('SETTINGSVIEW-phone_number_settings') }}</h3>
-            <p>
-              {{ user.number
-                ? $t('SETTINGSVIEW-current_phone_number')
-                : $t('SETTINGSVIEW-no_phone_number') }}
+            <!-- Phone Number Display in the same line -->
+            <p v-if="user.number">
+              {{ $t('SETTINGSVIEW-current_phone_number') }}: <strong>{{ user.number }}</strong>
             </p>
 
-            <!-- If user.number exists, display the phone number in a separate <p> tag -->
-            <p v-if="user.number"><strong>{{ user.number }}</strong></p>
+            <p v-else>
+              {{ $t('SETTINGSVIEW-no_phone_number') }}
+            </p>
+
 
             <form @submit.prevent="updatePhoneNumber" class="settings-form">
               <label for="phoneNumber" class="form-label">{{ $t('SETTINGSVIEW-phone_number') }}</label>
               <input v-model="phoneNumber" id="phoneNumber" type="tel" class="form-input"
                 :placeholder="$t('SETTINGSVIEW-enter_phone_number')" required>
+
+              <!-- SMS Notification Settings -->
+              <label class="form-label">
+                <input type="checkbox" v-model="notificationSettings.smsBatteryLow">
+                {{ $t('SETTINGSVIEW-sms_battery_low') }}
+              </label>
+              <label class="form-label">
+                <input type="checkbox" v-model="notificationSettings.smsGeofenceAlert">
+                {{ $t('SETTINGSVIEW-sms_geofence_alert') }}
+              </label>
+
               <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
             </form>
           </div>
@@ -80,36 +103,13 @@
             </form>
           </div>
 
-
-          <!-- Notification Settings Card -->
-          <div class="settings-card">
-            <h3 class="card-title">{{ $t('SETTINGSVIEW-notification_settings') }}</h3>
-            <form @submit.prevent="updateNotificationSettings" class="settings-form">
-              <label class="form-label">
-                <input type="checkbox" v-model="notificationSettings.smsBatteryLow">
-                {{ $t('SETTINGSVIEW-sms_battery_low') }}
-              </label>
-              <label class="form-label">
-                <input type="checkbox" v-model="notificationSettings.smsGeofenceAlert">
-                {{ $t('SETTINGSVIEW-sms_geofence_alert') }}
-              </label>
-              <label class="form-label">
-                <input type="checkbox" v-model="notificationSettings.emailBatteryLow">
-                {{ $t('SETTINGSVIEW-email_battery_low') }}
-              </label>
-              <label class="form-label">
-                <input type="checkbox" v-model="notificationSettings.emailGeofenceAlert">
-                {{ $t('SETTINGSVIEW-email_geofence_alert') }}
-              </label>
-              <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
-            </form>
-          </div>
         </div>
       </div>
     </div>
 
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth'; // Adjust the path as needed

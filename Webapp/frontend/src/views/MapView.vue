@@ -26,11 +26,11 @@
           <!-- Mode Information -->
           <div class="grid-item-full mode-item">
             <strong>Mode:</strong>
-            <span v-if="trackerMode === 'RT'">Real-Time</span>
+            <span v-if="trackerMode === 'GPS'">Real-Time Tracking</span>
             <span v-else>{{ trackerMode || 'N/A' }}</span>
 
             <!-- Mode Badges for GPS and LTE -->
-            <span v-if="trackerMode === 'RT'" class="mode-badge">GPS</span>
+            <span v-if="trackerMode === 'GPS'" class="mode-badge">GPS</span>
             <span v-if="trackerMode === 'LT'" class="mode-badge">LTE</span>
 
             <!-- Switch Mode Button -->
@@ -43,10 +43,11 @@
               <strong>Battery Status:</strong>
               <div class="battery-wrapper">
                 <div class="battery-bar">
-                  <div class="battery-fill" :style="{ width: `${selectedMeasurement.battery || 89}%` }"></div>
+                  <div class="battery-fill" :style="{ width: `${Math.round(selectedMeasurement.battery) || N / A}%` }">
+                  </div>
                 </div>
                 <div class="battery-indicator">
-                  <span>{{ selectedMeasurement.battery || '89' }}%</span>
+                  <span>{{ Math.round(selectedMeasurement.battery) || 'N/A' }}%</span>
                 </div>
               </div>
             </div>
@@ -54,18 +55,18 @@
 
           <!-- Latitude and Longitude -->
           <div class="grid-item">
-            <strong>Latitude: </strong> {{ selectedMeasurement.latitude || 'N/A' }}
+            <strong>Latitude:&nbsp; </strong> {{ selectedMeasurement.latitude || 'N/A' }}
           </div>
           <div class="grid-item">
-            <strong>Longitude:</strong> {{ selectedMeasurement.longitude || 'N/A' }}
+            <strong>Longitude:&nbsp;</strong> {{ selectedMeasurement.longitude || 'N/A' }}
           </div>
 
           <!-- Temperature and Humidity -->
           <div class="grid-item">
-            <strong>Temperature:</strong> {{ selectedMeasurement.temperature || 'N/A' }} °C
+            <strong>Temperature:&nbsp;</strong> {{ selectedMeasurement.temperature || 'N/A' }} °C
           </div>
           <div class="grid-item">
-            <strong>Humidity:</strong> {{ selectedMeasurement.humidity || 'N/A' }} %
+            <strong>Humidity:&nbsp;</strong> {{ selectedMeasurement.humidity || 'N/A' }} %
           </div>
 
           <!-- Add/Remove Geofence button -->
@@ -467,7 +468,7 @@ body {
   grid-column: span 2;
   background-color: #f1e4cc;
   padding: 15px;
-  text-align: center;
+  text-align: start;
   border-radius: 8px;
   font-size: 1.2rem;
   font-weight: 500;
@@ -676,12 +677,13 @@ body {
 
 /* Battery Bar (Phone-like) */
 .battery-bar {
-  width: 70px;
-  height: 20px;
+  width: 200px;
+  height: 30px;
   background-color: #ddd;
   border-radius: 4px;
   position: relative;
   margin-right: 5px;
+  margin-left: 20px;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -700,6 +702,11 @@ body {
   font-size: 0.8rem;
   font-weight: bold;
   color: #333;
+
+}
+
+.dark-mode .battery-indicator {
+  color: #ddd;
 }
 
 /* Remove border specifically for the grid item containing the geofence button */
@@ -783,6 +790,11 @@ body {
 .dark-mode .battery-bar {
   background-color: #555;
   border-color: #777;
+
+}
+
+.dark-mode .battery-status-wrapper strong {
+  color: #518561;
 }
 
 .dark-mode .timestamp {
@@ -793,7 +805,13 @@ body {
   color: #518561;
 }
 
+.dark-mode .mode-item strong {
+  color: #518561;
+}
 
+.dark-mode .mode-item span {
+  color: #ddd;
+}
 
 .dark-mode .battery-fill {
   background-color: #4caf50;
