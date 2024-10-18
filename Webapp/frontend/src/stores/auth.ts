@@ -8,10 +8,12 @@ export interface User {
     password: string;
     number: string;
     language: string;
+    template: string;
     created_at: Date;
     updated_at: Date;
     __v: number;
     refresh_token: string;
+    tracker: Array<{ _id: string }>;
   }
 
   export interface State {
@@ -107,7 +109,7 @@ export interface User {
       
           async refresh() {
             try {
-              const { data } = await useApi().post(`/api/auth/refresh`);
+              const { data } = await useApi().post(`http://localhost:3500/api/auth/refresh`);
               this.accessToken = data.access_token;
               return data;
             } catch (error: any) {
@@ -128,7 +130,30 @@ export interface User {
               throw new Error(`Failed to fetch users: ${error.message}`);
             }
           },
-
+          async updatePassword(currentPassword: string, newPassword: string, confirmPassword: string) {
+            try {
+              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
+                currentPassword,
+                newPassword,
+                confirmPassword
+              });
+          
+              return data; // Return the response data if needed
+            } catch (error: any) {
+              throw new Error(`Failed to update password: ${error.message}`);
+            }
+          },
+          async updatePhoneNumber(newPhoneNumber: string) {
+            try {
+              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
+                number: newPhoneNumber
+              });
+              return data;
+            } catch (error: any) {
+              throw new Error(`Failed to update phone number: ${error.message}`);
+            }
+          },          
+          
           async updateEmail(newEmail: string) {
             try {
               const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
@@ -151,6 +176,27 @@ export interface User {
               throw new Error(`Failed to update email: ${error.message}`);
             }
           },
+          async updateTemplate(newTemplate: string) { // Treat template as string
+            if (!this.userDetail) return;
+          
+            try {
+              // Use useApiPrivate to make the API call
+              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.userDetail._id}`, {
+                template: newTemplate,
+              });
+          
+              // Update the userDetail template field after successful API call
+              this.userDetail.template = newTemplate;
+              console.log('Template updated successfully:', data);
+              return data;
+            } catch (error: any) {
+              console.error('Error updating template:', error);
+              throw new Error(`Failed to update template: ${error.message}`);
+            }
+          }
+          
+          
+          
 
         },
     });

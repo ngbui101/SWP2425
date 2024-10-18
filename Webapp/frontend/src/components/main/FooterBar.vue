@@ -1,5 +1,6 @@
 <template>
-  <div class="footer-wrapper">
+
+  <div :class="['footer-wrapper', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="footer-basic">
       <footer>
         <div class="social">
@@ -21,10 +22,16 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "FooterBar",
-};
+<script setup>
+import { computed, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth'; // Adjust the path as needed
+
+const authStore = useAuthStore();
+const user = computed(() => authStore.userDetail);
+
+onMounted(async () => {
+  await authStore.getUser();
+});
 </script>
 
 <style scoped>
@@ -32,12 +39,13 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
 }
 
 .social {
-  color:#ffffff;
+  color: #ffffff;
 }
+
 .list-inline-item {
   color: #ffffff;
 }
@@ -49,12 +57,17 @@ export default {
   text-align: center;
 }
 
-.footer-basic .social {
-  text-align: center;
-     /* Space between icons and links */
+.dark-mode .footer-basic {
+  background-color: #00261C;
+  /* Darker green for dark mode */
 }
 
-.footer-basic .social > a {
+.footer-basic .social {
+  text-align: center;
+  /* Space between icons and links */
+}
+
+.footer-basic .social>a {
   font-size: 24px;
   width: 40px;
   height: 40px;
@@ -66,7 +79,7 @@ export default {
   opacity: 0.75;
 }
 
-.footer-basic .social > a:hover {
+.footer-basic .social>a:hover {
   opacity: 0.9;
 }
 
@@ -76,7 +89,8 @@ export default {
   text-align: center;
   font-size: 18px;
   line-height: 1.6;
-  margin-bottom: 20px; /* Space between links and copyright */
+  margin-bottom: 20px;
+  /* Space between links and copyright */
 }
 
 .footer-basic ul a {
@@ -90,8 +104,10 @@ export default {
 }
 
 .footer-basic ul .list-inline-item {
-  display: inline-block; /* Ensure links are inline */
-  margin: 0 10px; /* Add spacing between the links */
+  display: inline-block;
+  /* Ensure links are inline */
+  margin: 0 10px;
+  /* Add spacing between the links */
 }
 
 .footer-basic p {
@@ -99,5 +115,10 @@ export default {
   font-size: 13px;
   text-align: center;
   color: #aaa;
+}
+
+.dark-mode .footer-basic p {
+  color: #ddd;
+  /* Lighter text in dark mode */
 }
 </style>

@@ -1,26 +1,37 @@
 <template>
-  <div class="header">
+  <div :class="['header', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']" ref="tour1">
+    <!-- Logo Section -->
     <div class="logo-container">
-      <img src="/src/assets/logo-transparent.png" alt="Company Logo" class="logo" />
+      <router-link to="/">
+        <!-- First image for text -->
+        <img v-if="user.template === 'dark'" src="/src/assets/logo-text-dark.png" alt="Company Logo Dark"
+          class="logo-text" />
+        <img v-else src="/src/assets/logo-text.png" alt="Company Logo" class="logo-text" />
+
+        <!-- Second image for icon -->
+        <img src="/src/assets/headerlogo_icon.gif" alt="Company Logo Icon" class="logo-icon" />
+      </router-link>
     </div>
+
+    <!-- Logged in as Section -->
     <div class="email-placeholder">Logged in as: {{ user.email }}</div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+<script setup>
+import { computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { useI18n } from 'vue-i18n'; // Import the useI18n function
+
+import { tour1 } from '@/routes/tourRefs.js';  // Import the shared logoRef
+
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
-const { locale } = useI18n();
-// Computed property for user email
+
 
 onMounted(async () => {
   await authStore.getUser();
-  if (user.value?.language) {
-    locale.value = user.value.language; // Set the locale to the user's language
-  }
+  console.log(user.value?.template);
+
 });
 </script>
 
@@ -34,13 +45,19 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 20%, rgb(212, 236, 206) 80%);
   padding: 10px;
-  border-bottom: 1px solid #ddd;
-  height: 70px; /* Explicit height to match navbar's top value */
-  font-family: 'Poppins', sans-serif; /* Set font to Poppins */
+
+  height: 70px;
+  font-family: 'Poppins', sans-serif;
   position: relative;
 }
+
+.header.dark-mode {
+  background: linear-gradient(180deg, rgba(30, 30, 30, 1) 60%, rgba(40, 40, 40, 1) 99%);
+}
+
+
 
 .logo-container {
   position: absolute;
@@ -49,11 +66,21 @@ onMounted(async () => {
   height: 100%;
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  /* Prevent the text and icon from wrapping */
 }
 
-.logo {
+.logo-text,
+.logo-icon {
   height: 50px;
   width: auto;
+  flex-shrink: 0;
+  /* Prevent shrinking */
+}
+
+.logo-icon {
+  margin-left: 10px;
+  /* Adds some spacing between text and icon */
 }
 
 .email-placeholder {
@@ -61,12 +88,17 @@ onMounted(async () => {
   bottom: 0px;
   right: 10px;
   font-size: 14px;
-  color: #333; /* Text color */
-  
+  color: #333;
 }
+
+.header.dark-mode .email-placeholder {
+  color: #518561;
+}
+
+
 @media (max-width: 768px) {
   .email-placeholder {
-    display: none; /* Hide the "Logged in as..." text on mobile screens */
+    display: none;
   }
 }
 </style>
