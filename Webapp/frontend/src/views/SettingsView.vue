@@ -359,6 +359,11 @@ body {
   /* Light text color */
 }
 
+.dark-mode .card-title {
+  color: #ddd;
+  /* Gold color */
+}
+
 .dark-mode .settings-card {
   background: #2e2e2e;
   /* Dark card background */

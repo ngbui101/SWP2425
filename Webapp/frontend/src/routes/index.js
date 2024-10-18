@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-const MapView = () => import('../views/MapView.vue');
+const MapView = () => import('../views/map_view/MapView.vue');
 const LoginView = () => import('../views/LoginView.vue');
 const RegisterView = () => import('../views/RegisterView.vue');
 const SettingsView = () => import('../views/SettingsView.vue');
