@@ -4,16 +4,25 @@ const TrackerHistory = require('../models/Trackerhistory')
 const User = require('../models/User');
 const device = require('../models/mqttDevice'); // Gerät aus der neuen Datei importieren
 
-// Funktion zum Senden von Daten an einen bestimmten Tracker
-const sendData = (trackerId, data) => {
+/**
+ * Sends data to a specified tracker via MQTT.
+ * 
+ * @param {String} userId - The ID of the user sending the data.
+ * @param {String} trackerId - The ID (IMEI) of the tracker to send data to.
+ * @param {Object} payload - The data to be sent, containing the messages or any other information.
+ * 
+ * @returns {void}
+ */
+const sendData = (userId, trackerId, payload) => {
   if (!device) {
     console.error('MQTT device is not defined');
     return;
   }
 
   const telemetryData = {
-    dateTime: new Date().toISOString(),
-    payload: data,
+    userId: userId,
+    timestamp: new Date().toISOString(),
+    payload,
   };
 
   const topic = `tracker/${trackerId}/sub`;
@@ -28,45 +37,47 @@ const sendData = (trackerId, data) => {
   return device.publish(topic, JSON.stringify(telemetryData));
 };
 
-// Controller-Methode zum Senden von Daten an einen Tracker
-async function publicMessageToTracker(req, res) {
-  const { imei } = req.params;  // IMEI des Trackers aus den URL-Parametern
-  const { payload } = req.body;  // Payload der Nachricht
-  const userId = req.user.id;  // Authentifizierter Benutzer (angenommen, dies ist im req.user nach der Authentifizierung verfügbar)
-
-  if (!payload) {
-    return res.status(400).json({ message: 'Payload is required' });
-  }
+/**
+ * Controller method that validates the user and tracker ownership,
+ * then sends multiple messages (message1, message2, message3) to the specified tracker.
+ * 
+ * @param {Object} req - Express request object, containing the user and tracker details.
+ * @param {Object} res - Express response object, used to send the result back to the client.
+ * 
+ * @returns {Promise<void>}
+ */
+async function publishMessageToTracker(req, res) {
+  const { imei } = req.params;
+  const { message1, message2, message3 } = req.body;
+  const userId = req.user.id;
 
   try {
-    // Prüfen, ob der Tracker existiert
     const tracker = await Tracker.findOne({ imei }).exec();
     if (!tracker) {
       return res.status(404).json({ message: 'Tracker not found' });
     }
 
-    // Prüfen, ob der Benutzer diesen Tracker besitzt
     const user = await User.findById(userId).populate('tracker').exec();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Überprüfen, ob der Tracker in der Liste der Benutzer-Tracker enthalten ist
     const userOwnsTracker = user.tracker.some(t => t._id.equals(tracker._id));
 
     if (!userOwnsTracker) {
       return res.status(403).json({ message: 'You do not have permission to send messages to this tracker' });
     }
 
-    // Wenn der Benutzer den Tracker besitzt, die Nachricht über MQTT senden
-    sendData(imei, payload);
+    const payload = { message1, message2, message3 };
+    sendData(userId, imei, payload);
 
-    res.status(200).json({ message: `Data sent to tracker ${imei}`, payload });
+    res.status(200).json({ Response: `Data sent to tracker ${imei}`, payload });
   } catch (error) {
     console.error('Error sending data to tracker:', error);
-    res.status(500).json({ message: 'Failed to send data', error });
+    res.status(500).json({ Error: 'Failed to send data', error });
   }
 }
+
 
 
 
@@ -280,5 +291,5 @@ module.exports = {
   getTrackerGeofence,
   getTrackerHistory,
   getAllUserTrackers,
-  publicMessageToTracker
+  publishMessageToTracker
 };

@@ -3,7 +3,6 @@ const router = express.Router();
 const trackerController = require('../controller/trackerController');
 const authenticate = require('../middleware/auth');
 
-
 // Route to get all trackers 
 router.get('/', authenticate, trackerController.getAllTrackers);
 
@@ -30,7 +29,7 @@ router.get('/:id/geofence', authenticate, trackerController.getTrackerGeofence);
 // Route to get the tracker history of a tracker by ID
 router.get('/:id/history', authenticate, trackerController.getTrackerHistory);
 
-router.post('/:imei/pub', authenticate,trackerController.publicMessageToTracker);
+router.post('/:imei/pub', authenticate,trackerController.publishMessageToTracker);
 
 
 module.exports = router;
