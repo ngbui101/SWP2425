@@ -306,7 +306,7 @@ const logout = async () => {
 
   /* You can adjust the min-width value based on your definition of full screen */
   .nav-center {
-    margin-left: 100px;
+    margin-left: 95px;
     /* Adjust this value to move the items right in full screen */
   }
 }

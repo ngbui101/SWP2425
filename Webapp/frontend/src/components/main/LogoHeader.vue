@@ -4,7 +4,10 @@
     <div class="logo-container">
       <router-link to="/">
         <!-- First image for text -->
-        <img src="/src/assets/logo-text.png" alt="Company Logo Text" class="logo-text" />
+        <img v-if="user.template === 'dark'" src="/src/assets/logo-text-dark.png" alt="Company Logo Dark"
+          class="logo-text" />
+        <img v-else src="/src/assets/logo-text.png" alt="Company Logo" class="logo-text" />
+
         <!-- Second image for icon -->
         <img src="/src/assets/headerlogo_icon.gif" alt="Company Logo Icon" class="logo-icon" />
       </router-link>

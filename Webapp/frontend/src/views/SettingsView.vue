@@ -149,31 +149,31 @@ const closeModal = () => {
 
 const updateEmail = async () => {
   if (newEmail.value !== confirmNewEmail.value) {
-    alert('Emails do not match');
+    // alert('Emails do not match');
     return;
   }
   try {
     await authStore.updateEmail(newEmail.value);
-    alert('Email updated successfully');
+    // alert('Email updated successfully');
     closeModal();
   } catch (error) {
-    alert(`Error updating email: ${error.message}`);
+    //   alert(`Error updating email: ${error.message}`);
   }
 };
 
 const updatePassword = async () => {
   if (newPassword.value !== confirmNewPassword.value) {
-    alert('Passwords do not match');
+    // alert('Passwords do not match');
     return;
   }
 
   try {
     // Call your store's API method to update the password
     await authStore.updatePassword(oldPassword.value, newPassword.value, confirmNewPassword.value);
-    alert('Password updated successfully');
+    // alert('Password updated successfully');
     closeModal(); // Close the modal after successful update
   } catch (error: any) {
-    alert(`Error updating password: ${error.message}`);
+    // alert(`Error updating password: ${error.message}`);
   }
 };
 
@@ -182,11 +182,11 @@ const updatePhoneNumber = async () => {
   try {
     // Call your store's API method to update the phone number
     await authStore.updatePhoneNumber(phoneNumber.value);
-    alert('Phone number updated successfully');
+    // alert('Phone number updated successfully');
     await authStore.getUser();
     closeModal(); // Close the modal after successful update
   } catch (error: any) {
-    alert(`Error updating phone number: ${error.message}`);
+    // alert(`Error updating phone number: ${error.message}`);
   }
 };
 
@@ -195,12 +195,12 @@ const updateLanguage = async () => {
   try {
     // Update user language with the selected value
     await authStore.updateLanguage(selectedLanguage.value);
-    alert('Language updated successfully');
+    // alert('Language updated successfully');
 
     // Update the locale for i18n based on the selected language
     locale.value = selectedLanguage.value;
   } catch (error) {
-    alert(`Error updating Language: ${error.message}`);
+    // alert(`Error updating Language: ${error.message}`);
   }
 };
 const updateTemplate = async () => {
@@ -208,7 +208,7 @@ const updateTemplate = async () => {
     await authStore.updateTemplate(selectedTheme.value);
     await authStore.getUser(); // Refresh user data
   } catch (error) {
-    alert(`Error updating theme: ${error.message}`);
+    // alert(`Error updating theme: ${error.message}`);
   }
 };
 const updateSettings = async () => {
@@ -216,9 +216,9 @@ const updateSettings = async () => {
     // Call both updateLanguage and updateTemplate methods
     await updateLanguage();
     await updateTemplate();
-    alert('Settings updated successfully');
+    // alert('Settings updated successfully');
   } catch (error) {
-    alert(`Error updating settings: ${error.message}`);
+    // alert(`Error updating settings: ${error.message}`);
   }
 };
 
@@ -228,9 +228,9 @@ const updateNotificationSettings = async () => {
   try {
     //await authStore.updateNotificationSettings(notificationSettings.value);
     console.log("hi test")
-    alert('Notification settings updated successfully');
+    // alert('Notification settings updated successfully');
   } catch (error) {
-    alert(`Error updating notification settings: ${error.message}`);
+    //  alert(`Error updating notification settings: ${error.message}`);
   }
 };
 
@@ -248,16 +248,23 @@ body {
 
 .settings-container {
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  /* Center the settings container horizontally */
-  height: 85vh;
-  width: 100vw;
+  flex-direction: column;
+  /* Column layout for stacking */
+  align-items: flex-mid;
+  /* Align items at the start */
+  justify-content: flex-start;
+  /* Avoid unnecessary stretching */
+  height: auto;
+  /* Allow content to adjust height dynamically */
+  min-height: 100vh;
+  /* Ensure the settings container takes at least full screen height */
+  width: 100%;
   background: #f1e4cc;
 }
 
 .settings-content {
-  padding-top: 40px;
+  padding: 40px;
+
 
 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.);
@@ -281,18 +288,21 @@ body {
 .settings-body {
   display: flex;
   flex-direction: row;
+  /* Set to row for wider screens */
   gap: 20px;
+  justify-content: flex-start;
   flex-wrap: wrap;
-  justify-content: space-between;
+  /* This will wrap the elements if there are too many to fit */
 }
 
 .settings-card {
   flex: 1;
   min-width: 250px;
-  border: 1px solid #000000;
+
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   border-radius: 8px;
   padding: 20px;
-  background: #fafafa;
+  background: #ddd;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -353,6 +363,8 @@ body {
   background: #2e2e2e;
   /* Dark card background */
   color: #bbb;
+  box-shadow: 0 0 5px rgba(255, 235, 235, 0.3);
+
   /* Light text color */
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :class="(user.template ?? 'default') === 'dark' ? 'dark-mode' : ''">
         <table class="tracker-table">
             <thead>
                 <tr>
@@ -46,12 +46,12 @@
 defineProps({
     trackers: Array, // Props passed from parent
     addTracker: Function, // Function to add a tracker
+    user: Object, // User object passed from the parent component
 });
 </script>
 
-
 <style scoped>
-/* Include the styles for the tracker table */
+/* General tracker table styles */
 .tracker-table {
     width: 100%;
     border-collapse: collapse;
@@ -103,5 +103,43 @@ defineProps({
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
+}
+
+/* Dark mode styles */
+.dark-mode .tracker-table {
+    background-color: #2e2e2e;
+}
+
+.dark-mode .tracker-table th {
+    background-color: #333;
+    color: #ddd;
+    border-color: #555;
+}
+
+.dark-mode .tracker-table td {
+    background-color: #3a3a3a;
+    color: #ccc;
+    border-color: #555;
+}
+
+.dark-mode .tracker-table tr:nth-child(even) {
+    background-color: #444;
+}
+
+.dark-mode .tracker-table tr:hover {
+    background-color: #555;
+}
+
+.dark-mode .settings-icon {
+    color: #bbb;
+}
+
+.dark-mode .add-tracker-btn {
+    background-color: #444;
+    color: #bbb;
+}
+
+.dark-mode .add-tracker-btn:hover {
+    background-color: #555;
 }
 </style>

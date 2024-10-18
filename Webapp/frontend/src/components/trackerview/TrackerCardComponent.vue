@@ -1,5 +1,5 @@
 <template>
-    <div class="card-view">
+    <div class="card-view" :class="[(user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <div class="tracker-card" v-for="tracker in trackers" :key="tracker._id">
             <!-- Settings Icon at the top-right corner -->
             <div class="settings-icon">
@@ -47,10 +47,12 @@
     </div>
 </template>
 
+
 <script setup>
 defineProps({
     trackers: Array, // Props passed from parent
     addTracker: Function, // Function to add a tracker
+    user: Object, // The user object passed from the parent
 });
 </script>
 
@@ -63,6 +65,7 @@ defineProps({
     justify-content: center;
 }
 
+/* Default light mode styles */
 .tracker-card {
     background-color: #f1f1f1;
     padding: 20px;
@@ -81,6 +84,18 @@ defineProps({
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Dark mode styles */
+.card-view.dark-mode .tracker-card {
+    background-color: #2e2e2e;
+    border-color: #555;
+    color: #bbb;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.card-view.dark-mode .tracker-card:hover {
+    box-shadow: 0 6px 12px rgba(255, 255, 255, 0.2);
+}
+
 /* Settings Icon */
 .settings-icon {
     position: absolute;
@@ -95,6 +110,14 @@ defineProps({
     color: #000;
 }
 
+.card-view.dark-mode .settings-icon {
+    color: #aaa;
+}
+
+.card-view.dark-mode .settings-icon:hover {
+    color: #fff;
+}
+
 /* Battery Bar Wrapper */
 .battery-wrapper {
     display: flex;
@@ -104,7 +127,6 @@ defineProps({
     position: relative;
 }
 
-/* Battery Bar (Phone-like) */
 .battery-bar {
     width: 70px;
     height: 20px;
@@ -118,18 +140,25 @@ defineProps({
     border: 2px solid #555;
 }
 
-/* Battery Fill (Green) */
 .battery-fill {
     background-color: #28a745;
     height: 100%;
     transition: width 0.3s;
 }
 
-/* Battery Indicator Text */
 .battery-indicator {
     font-size: 0.8rem;
     font-weight: bold;
     color: #333;
+}
+
+.card-view.dark-mode .battery-bar {
+    background-color: #444;
+    border-color: #777;
+}
+
+.card-view.dark-mode .battery-indicator {
+    color: #bbb;
 }
 
 .card-header {
@@ -148,33 +177,39 @@ defineProps({
     text-align: left;
 }
 
+.card-view.dark-mode .card-body p {
+    color: #bbb;
+}
+
 /* Add Tracker Button */
 .add-tracker-wrapper {
     display: flex;
     justify-content: center;
     margin-top: 10px;
-    /* Reduce the margin above the button */
 }
 
 .add-tracker-btn {
     background-color: #28a745;
     color: white;
     padding: 4px 10px;
-    /* Minimal padding */
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.9rem;
-    /* Adjust font size */
     line-height: 1;
     height: 40px;
-    /* Set explicit height */
     display: flex;
     align-items: center;
-    /* Ensure content is vertically centered */
     justify-content: center;
-    /* Ensure content is horizontally centered */
     width: 150px;
-    /* Optional: adjust width if needed */
+}
+
+.card-view.dark-mode .add-tracker-btn {
+    background-color: #444;
+    color: #bbb;
+}
+
+.card-view.dark-mode .add-tracker-btn:hover {
+    background-color: #555;
 }
 </style>

@@ -69,10 +69,12 @@
           </div>
 
           <!-- Add/Remove Geofence button -->
-          <div class="grid-item no-border">
+          <div class="geofence-button-container">
             <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">Add Geofence</button>
             <button v-else @click="removeGeofence" class="remove-geofence-button">Remove Geofence</button>
           </div>
+
+
         </div>
 
         <!-- Slider for geofence radius, shown only when geofence is active -->
@@ -258,14 +260,17 @@ const initializeMap = () => {
 };
 
 
+
 // Add geofence when the button is clicked
 const addGeofence = () => {
   geofenceActive.value = true;
 
   const position = {
-    lat: selectedMeasurement.value.latitude,
-    lng: selectedMeasurement.value.longitude
+    lat: Number(selectedMeasurement.value.latitude),
+    lng: Number(selectedMeasurement.value.longitude)
   };
+
+  console.log('Adding geofence at position:', position); // Log the geofence position for debugging
 
   // Always recreate the geofence circle when adding it, even after removing it
   if (map) {
@@ -277,18 +282,17 @@ const addGeofence = () => {
     geofenceCircle = new google.maps.Circle({
       map,
       center: position,
-      radius: 2000, // Default to 2000 meters (even before slider change)
+      radius: geofenceRadius.value, // Ensure radius is set correctly
       fillColor: '#28a745',
       fillOpacity: 0.35,
-      strokeColor: '##28a745',
+      strokeColor: '#28a745',
       strokeOpacity: 0.8,
       strokeWeight: 2,
     });
 
-    // Make sure the slider reflects the default 2000 meters
-    geofenceRadius.value = 2000;
-
-    console.log('Geofence added with radius:', geofenceRadius.value);
+    console.log('Geofence circle added with radius:', geofenceRadius.value); // Log circle radius
+  } else {
+    console.error('Map object is not available when adding geofence');
   }
 };
 
@@ -414,6 +418,12 @@ body {
   margin-bottom: 20px;
 }
 
+.geofence-button-container {
+
+
+  margin-top: 20px;
+}
+
 .timestamp {
   flex: 1;
   text-align: left;
@@ -449,6 +459,8 @@ body {
   justify-content: center;
 }
 
+
+
 /* Ensures full-width for Mode and Battery grid items */
 .grid-item-full {
   grid-column: span 2;
@@ -463,6 +475,8 @@ body {
   border: 1px solid #00543D;
 }
 
+
+
 /* Mode Item - relative positioning for Switch Mode button */
 .mode-item {
   position: relative;
@@ -472,8 +486,10 @@ body {
   align-items: center;
 }
 
-.grid-item strong {
-  color: #011812;
+
+
+.dark-mode .grid-item strong {
+  color: #518561;
 }
 
 .switch-mode-button {
@@ -693,6 +709,7 @@ body {
 /* Styling for the "Add Geofence" and "Remove Geofence" button */
 .geofence-button,
 .remove-geofence-button {
+
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 20px;
@@ -704,7 +721,9 @@ body {
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
-  border: 1px solid #00543D;
+  box-shadow: inset 0 0 10px 3px rgba(0, 84, 61, 0.4);
+  /* More shadowy effect */
+
 }
 
 .remove-geofence-button {
@@ -729,6 +748,10 @@ body {
   margin-right: 10px;
 }
 
+.dark-mode .radius-label {
+  color: #4caf50;
+}
+
 /* Dark mode background for the container */
 .container.dark-mode {
   background-color: #1a1a1a;
@@ -743,7 +766,7 @@ body {
 
 /* Dark mode for text */
 .dark-mode .dropdown-label {
-  color: #ddd;
+  color: #518561;
 }
 
 .dark-mode .grid-item,
@@ -753,15 +776,23 @@ body {
   border-color: #444;
 }
 
-.dark-mode .grid-item {
-  color: #518561;
-}
+
 
 /* Dark mode for the battery bar */
 .dark-mode .battery-bar {
   background-color: #555;
   border-color: #777;
 }
+
+.dark-mode .timestamp {
+  color: #518561;
+}
+
+.dark-mode .tracker-mode {
+  color: #518561;
+}
+
+
 
 .dark-mode .battery-fill {
   background-color: #4caf50;
@@ -776,7 +807,7 @@ body {
 /* Dark mode for location display */
 .dark-mode .location-display p,
 .dark-mode .location-accuracy {
-  color: #ddd;
+  color: #518561;
 }
 
 /* Dark mode for buttons */
@@ -807,6 +838,7 @@ body {
 .dark-mode .radius-slider {
   background-color: #555;
 }
+
 
 /* General input focus styles */
 .dark-mode input[type="range"] {
