@@ -8,6 +8,7 @@ export interface User {
     password: string;
     number: string;
     language: string;
+    template: string;
     created_at: Date;
     updated_at: Date;
     __v: number;
@@ -175,6 +176,27 @@ export interface User {
               throw new Error(`Failed to update email: ${error.message}`);
             }
           },
+          async updateTemplate(newTemplate: string) { // Treat template as string
+            if (!this.userDetail) return;
+          
+            try {
+              // Use useApiPrivate to make the API call
+              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.userDetail._id}`, {
+                template: newTemplate,
+              });
+          
+              // Update the userDetail template field after successful API call
+              this.userDetail.template = newTemplate;
+              console.log('Template updated successfully:', data);
+              return data;
+            } catch (error: any) {
+              console.error('Error updating template:', error);
+              throw new Error(`Failed to update template: ${error.message}`);
+            }
+          }
+          
+          
+          
 
         },
     });

@@ -1,5 +1,6 @@
 <template>
-  <div class="footer-wrapper">
+
+  <div :class="['footer-wrapper', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="footer-basic">
       <footer>
         <div class="social">
@@ -21,10 +22,16 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "FooterBar",
-};
+<script setup>
+import { computed, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth'; // Adjust the path as needed
+
+const authStore = useAuthStore();
+const user = computed(() => authStore.userDetail);
+
+onMounted(async () => {
+  await authStore.getUser();
+});
 </script>
 
 <style scoped>
@@ -48,6 +55,11 @@ export default {
   padding: 2.2rem;
   width: 100%;
   text-align: center;
+}
+
+.dark-mode .footer-basic {
+  background-color: #072c22;
+  /* Darker green for dark mode */
 }
 
 .footer-basic .social {
@@ -103,5 +115,10 @@ export default {
   font-size: 13px;
   text-align: center;
   color: #aaa;
+}
+
+.dark-mode .footer-basic p {
+  color: #ddd;
+  /* Lighter text in dark mode */
 }
 </style>

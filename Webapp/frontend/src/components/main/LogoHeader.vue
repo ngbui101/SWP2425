@@ -1,5 +1,5 @@
 <template>
-  <div ref="tour1" class="header">
+  <div :class="['header', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']" ref="tour1">
     <!-- Logo Section -->
     <div class="logo-container">
       <router-link to="/">
@@ -18,18 +18,17 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { useI18n } from 'vue-i18n';
+
 import { tour1 } from '@/routes/tourRefs.js';  // Import the shared logoRef
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
-const { locale } = useI18n();
+
 
 onMounted(async () => {
   await authStore.getUser();
-  if (user.value?.language) {
-    locale.value = user.value.language;
-  }
+  console.log(user.value?.template);
+
 });
 </script>
 
@@ -50,6 +49,12 @@ onMounted(async () => {
   font-family: 'Poppins', sans-serif;
   position: relative;
 }
+
+.header.dark-mode {
+  background: linear-gradient(180deg, rgba(30, 30, 30, 1) 60%, rgba(40, 40, 40, 1) 99%);
+}
+
+
 
 .logo-container {
   position: absolute;
@@ -82,6 +87,11 @@ onMounted(async () => {
   font-size: 14px;
   color: #333;
 }
+
+.header.dark-mode .email-placeholder {
+  color: #518561;
+}
+
 
 @media (max-width: 768px) {
   .email-placeholder {

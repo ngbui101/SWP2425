@@ -47,7 +47,7 @@ async function createUser(req, res) {
 
 async function updateUser(req, res) {
   const { id } = req.params;
-  const { email, language, currentPassword, newPassword, confirmPassword, number } = req.body;
+  const { email, language, currentPassword, newPassword, confirmPassword, number, template } = req.body;
   
   try {
     const user = await User.findById(id);
@@ -68,6 +68,9 @@ async function updateUser(req, res) {
     // Handle phone number update
     if (number) {
       user.number = number;
+    }
+    if (template) {
+      user.template = template;
     }
 
     // Handle password change

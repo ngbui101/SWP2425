@@ -8,17 +8,15 @@ import 'shepherd.js/dist/css/shepherd.css';  // Import Shepherd CSS
 <template>
   <LogoHeader v-if="!$route.meta.hideComponent" />
   <NavBar v-if="!$route.meta.hideComponent" />
-  <div class="boxi">
-    <RouterView />
-  </div>
+
+  <RouterView />
+
   <FooterBar />
 </template>
 
 <style>
 /* Your existing styles */
-.boxi {
-  background-color: #f1e4cc;
-}
+
 
 /* Custom styles for Shepherd tour */
 .shepherd-element {

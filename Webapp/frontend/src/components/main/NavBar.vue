@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar">
+  <nav :class="['navbar', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="nav-container">
       <!-- Centered Navigation Items -->
       <div class="nav-center">
@@ -38,11 +38,17 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
+import { computed, onMounted } from 'vue';
+
 import { useAuthStore } from '@/stores/auth';
 import { useTour } from '@/routes/TourController.js';  // Import useTour
 import { tour2 } from '@/routes/tourRefs.js';
 const router = useRouter();
 const authStore = useAuthStore();
+const user = computed(() => authStore.userDetail);
+onMounted(async () => {
+  await authStore.getUser();
+});
 
 // Navigation functions
 const goToHome = () => {
@@ -99,6 +105,7 @@ const logout = async () => {
   display: flex;
   justify-content: center;
   flex-grow: 1;
+
 }
 
 /* Navbar List */
@@ -224,6 +231,42 @@ const logout = async () => {
   text-decoration-color: white;
 }
 
+/* Dark Mode for Navbar */
+.navbar.dark-mode {
+  background-color: #00261C;
+  /* Darker background for the navbar */
+}
+
+.dark-mode .nav-item a,
+.dark-mode .nav-item button,
+.dark-mode .help-link {
+  color: #bbb;
+  /* Lighter text color for dark mode */
+}
+
+.dark-mode .logout-button {
+  color: #bbb;
+  /* Lighter text color for logout button */
+}
+
+.dark-mode .dropdown-menu {
+  background-color: #333;
+  /* Darker dropdown background */
+  border-color: #444;
+}
+
+.dark-mode .dropdown-menu li {
+  color: #bbb;
+  /* Light text for dropdown items */
+}
+
+.dark-mode .dropdown-menu li:hover {
+  background-color: #555;
+  /* Darker hover color for dropdown */
+  color: #fff;
+}
+
+
 /* Responsive Design for Mobile */
 @media (max-width: 768px) {
   .navbar {
@@ -250,10 +293,21 @@ const logout = async () => {
   }
 }
 
+
+
 /* Add more spacing between nav items on larger screens */
 @media (min-width: 769px) {
   .nav-item {
     margin: 0 30px;
+  }
+}
+
+@media (min-width: 1200px) {
+
+  /* You can adjust the min-width value based on your definition of full screen */
+  .nav-center {
+    margin-left: 100px;
+    /* Adjust this value to move the items right in full screen */
   }
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
-  <div class="container">
+  <div :class="['container', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+
     <!-- Tracker Info Card -->
     <div class="tracker-info-card">
       <div class="card-body">
@@ -98,7 +99,15 @@
       </div>
 
       <!-- Map Container -->
-      <div ref="mapElement" class="map"></div>
+      <div class="map-container">
+        <div ref="mapElement" class="map"></div>
+
+        <!-- Grey Overlay for dark mode -->
+        <div v-if="(user.template ?? 'default') === 'dark'" class="map-overlay"></div>
+      </div>
+
+
+
 
       <div class="location-display">
         <p>{{ selectedTrackerLocation }}</p>
@@ -115,6 +124,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useShepherd } from 'vue-shepherd'
 import axios from 'axios';
 import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
 const el = ref(null);
 const tour = useShepherd({
   useModalOverlay: true
@@ -145,7 +155,7 @@ const trackerMode = computed(() => {
 
 // Fetch trackers and measurements for the user
 const fetchTrackersForUser = async () => {
-  const authStore = useAuthStore(); // Access the auth store
+  // Access the auth store
 
   try {
     // Retrieve the access token from the auth store
@@ -341,9 +351,10 @@ const loadGoogleMapsScript = () => {
     }
   });
 };
-
+const user = computed(() => authStore.userDetail);
 // On component mount, fetch trackers and measurements
 onMounted(async () => {
+  await authStore.getUser();
   await fetchTrackersForUser();
 
 });
@@ -374,6 +385,8 @@ body {
   color: red;
   margin-left: 8px;
 }
+
+
 
 .container {
   display: flex;
@@ -575,13 +588,34 @@ body {
   width: 100%;
 }
 
-.map {
+.map-container {
+  position: relative;
   width: 100%;
   height: 470px;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #00543D;
 }
+
+.map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent grey */
+  z-index: 10;
+  /* Ensures the overlay is above the map */
+  pointer-events: none;
+  /* Allow interaction with the map through the overlay */
+}
+
 
 .location-display {
   display: flex;
@@ -693,6 +727,95 @@ body {
 .radius-label {
   font-weight: bold;
   margin-right: 10px;
+}
+
+/* Dark mode background for the container */
+.container.dark-mode {
+  background-color: #1a1a1a;
+}
+
+/* Dark mode for the tracker info card */
+.tracker-info-card.dark-mode,
+.card.dark-mode {
+  background-color: #2c2c2c;
+  border-color: #555;
+}
+
+/* Dark mode for text */
+.dark-mode .dropdown-label {
+  color: #ddd;
+}
+
+.dark-mode .grid-item,
+.dark-mode .grid-item-full {
+  background-color: #333;
+  color: #ddd;
+  border-color: #444;
+}
+
+.dark-mode .grid-item {
+  color: #518561;
+}
+
+/* Dark mode for the battery bar */
+.dark-mode .battery-bar {
+  background-color: #555;
+  border-color: #777;
+}
+
+.dark-mode .battery-fill {
+  background-color: #4caf50;
+  /* You can adjust this to a more muted green if desired */
+}
+
+/* Dark mode for map container */
+.map.dark-mode {
+  border-color: #555;
+}
+
+/* Dark mode for location display */
+.dark-mode .location-display p,
+.dark-mode .location-accuracy {
+  color: #ddd;
+}
+
+/* Dark mode for buttons */
+.geofence-button.dark-mode,
+.remove-geofence-button.dark-mode {
+  background-color: #444;
+  border-color: #666;
+}
+
+.dark-mode .remove-geofence-button {
+  background-color: #aa4444;
+}
+
+/* Dark mode for dropdowns */
+.dark-mode .tracker-dropdown,
+.dark-mode #timestamp-dropdown {
+  background-color: #333;
+  color: #ddd;
+  border-color: #555;
+}
+
+/* Dark mode for switch mode button */
+.dark-mode .switch-mode-button {
+  background: linear-gradient(45deg, #555, #777);
+}
+
+/* Dark mode for geofence slider */
+.dark-mode .radius-slider {
+  background-color: #555;
+}
+
+/* General input focus styles */
+.dark-mode input[type="range"] {
+  background-color: #666;
+}
+
+/* Optional shimmering button adjustment for dark mode */
+.dark-mode .shimmering-button {
+  background: linear-gradient(90deg, #444 25%, #666 50%, #444 75%);
 }
 
 /* Mobile view: Stack cards on top of each other */

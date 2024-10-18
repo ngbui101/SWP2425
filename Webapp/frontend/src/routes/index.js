@@ -10,14 +10,15 @@ const TrackerView = () => import('../views/TrackerView.vue'); // Neue Seite impo
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
-    { path: '/', component: MapView, name: 'home', meta: { requiresAuth: true } }, // Geschützte Route
-    { path: '/map', component: MapView, name: 'main', meta: { requiresAuth: true } }, // Geschützte Route
-    { path: '/account', component: SettingsView, name: 'account', meta: { requiresAuth: true } }, // Geschützte Route
-    { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true, hideComponent: true } },
-    { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true, hideComponent: true} },
-    { path: '/trackers', component: TrackerView, name: 'trackers', meta: { requiresAuth: true } }, // Neue Route hinzugefügt
-    // { path: '/unauthorized', name: 'unauthorized', component: ForbiddenPage, meta: { hideComponent:true}} // Falls benötigt
+  { path: '/', redirect: { name: 'login' } }, // Default to login if no route is specified
+  { path: '/map', component: MapView, name: 'main', meta: { requiresAuth: true } },
+  { path: '/account', component: SettingsView, name: 'account', meta: { requiresAuth: true } },
+  { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true, hideComponent: true } },
+  { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true, hideComponent: true } },
+  { path: '/trackers', component: TrackerView, name: 'trackers', meta: { requiresAuth: true } },
 ];
+
+
 
 const router = createRouter({
     history: createWebHistory(),

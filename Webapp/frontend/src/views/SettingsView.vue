@@ -1,110 +1,113 @@
 <template>
-  <div class="settings-container">
-    <div class="settings-content">
-      <!-- Settings Header -->
-      <div class="settings-header">
-        <h2 class="settings-title">{{ $t('SETTINGSVIEW-settings') }}</h2>
-      </div>
-      <div class="settings-body">
-        <!-- Email Settings Card -->
-        <div class="settings-card">
-          <h3 class="card-title">{{ $t('SETTINGSVIEW-email_settings') }}</h3>
-          <p>{{ $t('SETTINGSVIEW-current_email') }}: {{ user.email }}</p>
-          <form @submit.prevent="updateEmail" class="settings-form">
-            <label for="newEmail" class="form-label">{{ $t('SETTINGSVIEW-new_email') }}</label>
-            <input v-model="newEmail" id="newEmail" type="email" class="form-input"
-              :placeholder="$t('SETTINGSVIEW-new_email')" required>
-            <label for="confirmNewEmail" class="form-label">{{ $t('SETTINGSVIEW-confirm_email') }}</label>
-            <input v-model="confirmNewEmail" id="confirmNewEmail" type="email" class="form-input"
-              :placeholder="$t('SETTINGSVIEW-confirm_email')" required>
-            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
-          </form>
+  <div :class="['settings-container', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div class="settings-container">
+      <div class="settings-content">
+        <!-- Settings Header -->
+        <div class="settings-header">
+          <h2 class="settings-title">{{ $t('SETTINGSVIEW-settings') }}</h2>
         </div>
+        <div class="settings-body">
+          <!-- Email Settings Card -->
+          <div class="settings-card">
+            <h3 class="card-title">{{ $t('SETTINGSVIEW-email_settings') }}</h3>
+            <p>{{ $t('SETTINGSVIEW-current_email') }}: {{ user.email }}</p>
+            <form @submit.prevent="updateEmail" class="settings-form">
+              <label for="newEmail" class="form-label">{{ $t('SETTINGSVIEW-new_email') }}</label>
+              <input v-model="newEmail" id="newEmail" type="email" class="form-input"
+                :placeholder="$t('SETTINGSVIEW-new_email')" required>
+              <label for="confirmNewEmail" class="form-label">{{ $t('SETTINGSVIEW-confirm_email') }}</label>
+              <input v-model="confirmNewEmail" id="confirmNewEmail" type="email" class="form-input"
+                :placeholder="$t('SETTINGSVIEW-confirm_email')" required>
+              <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
+            </form>
+          </div>
 
-        <!-- Password Settings Card -->
-        <div class="settings-card">
-          <h3 class="card-title">{{ $t('SETTINGSVIEW-password_settings') }}</h3>
-          <form @submit.prevent="updatePassword" class="settings-form">
-            <label for="oldPassword" class="form-label">{{ $t('SETTINGSVIEW-current_password') }}</label>
-            <input v-model="oldPassword" id="oldPassword" type="password" class="form-input"
-              :placeholder="$t('SETTINGSVIEW-current_password')" required>
-            <label for="newPassword" class="form-label">{{ $t('SETTINGSVIEW-new_password') }}</label>
-            <input v-model="newPassword" id="newPassword" type="password" class="form-input" placeholder="New Password"
-              required>
-            <label for="confirmNewPassword" class="form-label">{{ $t('SETTINGSVIEW-confirm_new_password') }}</label>
-            <input v-model="confirmNewPassword" id="confirmNewPassword" type="password" class="form-input"
-              placeholder="Confirm New Password" required>
-            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
-          </form>
-        </div>
+          <!-- Password Settings Card -->
+          <div class="settings-card">
+            <h3 class="card-title">{{ $t('SETTINGSVIEW-password_settings') }}</h3>
+            <form @submit.prevent="updatePassword" class="settings-form">
+              <label for="oldPassword" class="form-label">{{ $t('SETTINGSVIEW-current_password') }}</label>
+              <input v-model="oldPassword" id="oldPassword" type="password" class="form-input"
+                :placeholder="$t('SETTINGSVIEW-current_password')" required>
+              <label for="newPassword" class="form-label">{{ $t('SETTINGSVIEW-new_password') }}</label>
+              <input v-model="newPassword" id="newPassword" type="password" class="form-input"
+                placeholder="New Password" required>
+              <label for="confirmNewPassword" class="form-label">{{ $t('SETTINGSVIEW-confirm_new_password') }}</label>
+              <input v-model="confirmNewPassword" id="confirmNewPassword" type="password" class="form-input"
+                placeholder="Confirm New Password" required>
+              <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
+            </form>
+          </div>
 
-        <!-- Phone Number Settings Card -->
-        <div class="settings-card">
-          <h3 class="card-title">{{ $t('SETTINGSVIEW-phone_number_settings') }}</h3>
-          <p>
-            {{ user.number
-              ? $t('SETTINGSVIEW-current_phone_number')
-              : $t('SETTINGSVIEW-no_phone_number') }}
-          </p>
+          <!-- Phone Number Settings Card -->
+          <div class="settings-card">
+            <h3 class="card-title">{{ $t('SETTINGSVIEW-phone_number_settings') }}</h3>
+            <p>
+              {{ user.number
+                ? $t('SETTINGSVIEW-current_phone_number')
+                : $t('SETTINGSVIEW-no_phone_number') }}
+            </p>
 
-          <!-- If user.number exists, display the phone number in a separate <p> tag -->
-          <p v-if="user.number"><strong>{{ user.number }}</strong></p>
+            <!-- If user.number exists, display the phone number in a separate <p> tag -->
+            <p v-if="user.number"><strong>{{ user.number }}</strong></p>
 
-          <form @submit.prevent="updatePhoneNumber" class="settings-form">
-            <label for="phoneNumber" class="form-label">{{ $t('SETTINGSVIEW-phone_number') }}</label>
-            <input v-model="phoneNumber" id="phoneNumber" type="tel" class="form-input"
-              :placeholder="$t('SETTINGSVIEW-enter_phone_number')" required>
-            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
-          </form>
-        </div>
+            <form @submit.prevent="updatePhoneNumber" class="settings-form">
+              <label for="phoneNumber" class="form-label">{{ $t('SETTINGSVIEW-phone_number') }}</label>
+              <input v-model="phoneNumber" id="phoneNumber" type="tel" class="form-input"
+                :placeholder="$t('SETTINGSVIEW-enter_phone_number')" required>
+              <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
+            </form>
+          </div>
 
-        <!-- Language Settings Card -->
-        <div class="settings-card">
-          <h3 class="card-title">{{ $t('SETTINGSVIEW-language_settings') }}</h3>
-          <form @submit.prevent="updateLanguage" class="settings-form">
-            <label for="language" class="form-label">{{ $t('SETTINGSVIEW-select_language') }}</label>
-            <select v-model="selectedLanguage" id="language" class="form-input">
-              <option value="EN">{{ $t('SETTINGSVIEW-english') }}</option>
-              <option value="DE">{{ $t('SETTINGSVIEW-german') }}</option>
-            </select>
+          <!-- Language Settings Card -->
+          <div class="settings-card">
+            <h3 class="card-title">{{ $t('SETTINGSVIEW-language_settings') }}</h3>
+            <form @submit.prevent="updateSettings" class="settings-form"> <!-- Update method here -->
+              <label for="language" class="form-label">{{ $t('SETTINGSVIEW-select_language') }}</label>
+              <select v-model="selectedLanguage" id="language" class="form-input">
+                <option value="EN">{{ $t('SETTINGSVIEW-english') }}</option>
+                <option value="DE">{{ $t('SETTINGSVIEW-german') }}</option>
+              </select>
 
-            <!-- Theme Selection -->
-            <label for="theme" class="form-label">{{ $t('SETTINGSVIEW-select_color_scheme') }}</label>
-            <select v-model="selectedTheme" id="theme" class="form-input">
-              <option value="light">{{ $t('SETTINGSVIEW-light') }}</option>
-              <option value="dark">{{ $t('SETTINGSVIEW-dark') }}</option>
-            </select>
+              <!-- Theme Selection -->
+              <label for="theme" class="form-label">{{ $t('SETTINGSVIEW-select_color_scheme') }}</label>
+              <select v-model="selectedTheme" id="theme" class="form-input">
+                <option value="default">{{ $t('SETTINGSVIEW-light') }}</option>
+                <option value="dark">{{ $t('SETTINGSVIEW-dark') }}</option>
+              </select>
 
-            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
-          </form>
-        </div>
+              <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
+            </form>
+          </div>
 
 
-        <!-- Notification Settings Card -->
-        <div class="settings-card">
-          <h3 class="card-title">{{ $t('SETTINGSVIEW-notification_settings') }}</h3>
-          <form @submit.prevent="updateNotificationSettings" class="settings-form">
-            <label class="form-label">
-              <input type="checkbox" v-model="notificationSettings.smsBatteryLow">
-              {{ $t('SETTINGSVIEW-sms_battery_low') }}
-            </label>
-            <label class="form-label">
-              <input type="checkbox" v-model="notificationSettings.smsGeofenceAlert">
-              {{ $t('SETTINGSVIEW-sms_geofence_alert') }}
-            </label>
-            <label class="form-label">
-              <input type="checkbox" v-model="notificationSettings.emailBatteryLow">
-              {{ $t('SETTINGSVIEW-email_battery_low') }}
-            </label>
-            <label class="form-label">
-              <input type="checkbox" v-model="notificationSettings.emailGeofenceAlert">
-              {{ $t('SETTINGSVIEW-email_geofence_alert') }}
-            </label>
-            <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
-          </form>
+          <!-- Notification Settings Card -->
+          <div class="settings-card">
+            <h3 class="card-title">{{ $t('SETTINGSVIEW-notification_settings') }}</h3>
+            <form @submit.prevent="updateNotificationSettings" class="settings-form">
+              <label class="form-label">
+                <input type="checkbox" v-model="notificationSettings.smsBatteryLow">
+                {{ $t('SETTINGSVIEW-sms_battery_low') }}
+              </label>
+              <label class="form-label">
+                <input type="checkbox" v-model="notificationSettings.smsGeofenceAlert">
+                {{ $t('SETTINGSVIEW-sms_geofence_alert') }}
+              </label>
+              <label class="form-label">
+                <input type="checkbox" v-model="notificationSettings.emailBatteryLow">
+                {{ $t('SETTINGSVIEW-email_battery_low') }}
+              </label>
+              <label class="form-label">
+                <input type="checkbox" v-model="notificationSettings.emailGeofenceAlert">
+                {{ $t('SETTINGSVIEW-email_geofence_alert') }}
+              </label>
+              <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 <script setup lang="ts">
@@ -119,6 +122,8 @@ const user = computed(() => authStore.userDetail);
 onMounted(async () => {
   await authStore.getUser();
   selectedLanguage.value = user.value?.language || 'EN'; // Default to EN if not set
+  selectedTheme.value = user.value?.template || 'default';
+
 });
 
 const newEmail = ref('');
@@ -127,8 +132,9 @@ const oldPassword = ref('');
 const newPassword = ref('');
 const confirmNewPassword = ref('');
 const phoneNumber = ref('');
+
 const selectedLanguage = ref('EN');
-const selectedTheme = ref('light');
+const selectedTheme = ref('default');
 const notificationSettings = ref({
   smsBatteryLow: false,
   smsGeofenceAlert: false,
@@ -197,6 +203,25 @@ const updateLanguage = async () => {
     alert(`Error updating Language: ${error.message}`);
   }
 };
+const updateTemplate = async () => {
+  try {
+    await authStore.updateTemplate(selectedTheme.value);
+    await authStore.getUser(); // Refresh user data
+  } catch (error) {
+    alert(`Error updating theme: ${error.message}`);
+  }
+};
+const updateSettings = async () => {
+  try {
+    // Call both updateLanguage and updateTemplate methods
+    await updateLanguage();
+    await updateTemplate();
+    alert('Settings updated successfully');
+  } catch (error) {
+    alert(`Error updating settings: ${error.message}`);
+  }
+};
+
 
 const updateNotificationSettings = async () => {
   // Handle the logic for saving the notification settings
@@ -208,6 +233,7 @@ const updateNotificationSettings = async () => {
     alert(`Error updating notification settings: ${error.message}`);
   }
 };
+
 </script>
 
 <style scoped>
@@ -225,13 +251,13 @@ body {
   align-items: flex-start;
   justify-content: center;
   /* Center the settings container horizontally */
-  min-height: 600px;
-
-
+  height: 85vh;
+  width: 100vw;
+  background: #f1e4cc;
 }
 
 .settings-content {
-  background: #f1e4cc;
+  padding-top: 40px;
 
 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.);
@@ -315,6 +341,37 @@ body {
 .form-submit-button:hover {
   background-color: #009579;
 }
+
+.dark-mode .settings-container {
+  background: #1e1e1e;
+  /* Dark background */
+  color: #bbb;
+  /* Light text color */
+}
+
+.dark-mode .settings-card {
+  background: #2e2e2e;
+  /* Dark card background */
+  color: #bbb;
+  /* Light text color */
+}
+
+.dark-mode .form-input {
+  background-color: #333;
+  /* Dark background for text fields */
+  color: #bbb;
+  /* Light grey text color for inputs */
+  border: 1px solid #555;
+  /* Darker border for inputs */
+}
+
+.dark-mode .form-submit-button {
+  background-color: #333;
+  /* Darker button */
+  color: #bbb;
+  /* Lighter text */
+}
+
 
 @media (max-width: 768px) {
   .settings-body {
