@@ -16,8 +16,6 @@ const PORT = process.env.PORT || 3500;
 connectDB()
 // Allow Credentials
 app.use(credentials);
-//AWS
-const device = require('./models/mqttDevice');
 
 const corsOptions = {
   origin: "http://localhost:5173",

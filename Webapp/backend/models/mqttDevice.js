@@ -9,8 +9,6 @@ const device = awsIot.device({
   caPath: './AWS_Cert/AmazonRootCA1.pem',
 });
 
-device.on('connect', function () {
-  console.log('Connected to AWS IoT Core');
-});
+
 
 module.exports = device;

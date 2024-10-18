@@ -3,7 +3,7 @@ const Geofence = require('../models/Geofence')
 const TrackerHistory = require('../models/Trackerhistory')
 const User = require('../models/User');
 const device = require('../models/mqttDevice'); // Gerät aus der neuen Datei importieren
-
+let isConnected = false;
 /**
  * Sends data to a specified tracker via MQTT.
  * 
@@ -11,14 +11,33 @@ const device = require('../models/mqttDevice'); // Gerät aus der neuen Datei im
  * @param {String} trackerId - The ID (IMEI) of the tracker to send data to.
  * @param {Object} payload - The data to be sent, containing the messages or any other information.
  * 
- * @returns {void}
+ * @returns {Promise<boolean>} - Returns true if the message was sent, false if there was an error.
  */
 const sendData = (userId, trackerId, payload) => {
-  if (!device) {
-    console.error('MQTT device is not defined');
-    return;
-  }
+  return new Promise((resolve, reject) => {
+    if (!device) {
+      console.error('MQTT device is not defined');
+      return reject(false);
+    }
 
+    if (!isConnected) {
+      device.on('connect', function () {
+        console.log('Connected to AWS IoT Core');
+        isConnected = true;
+        publishMessage(userId, trackerId, payload, resolve, reject);
+      });
+
+      device.on('error', (err) => {
+        console.error('Error connecting to AWS IoT Core:', err);
+        reject(false);
+      });
+    } else {
+      publishMessage(userId, trackerId, payload, resolve, reject);
+    }
+  });
+};
+
+const publishMessage = (userId, trackerId, payload, resolve, reject) => {
   const telemetryData = {
     userId: userId,
     timestamp: new Date().toISOString(),
@@ -31,10 +50,17 @@ const sendData = (userId, trackerId, payload) => {
 
   if (typeof device.publish !== 'function') {
     console.error('Publish function is not available on the device object');
-    return;
+    return reject(false);
   }
 
-  return device.publish(topic, JSON.stringify(telemetryData));
+  device.publish(topic, JSON.stringify(telemetryData), (err) => {
+    if (err) {
+      console.error('Failed to publish message:', err);
+      return reject(false);
+    }
+    console.log('Message published successfully');
+    resolve(true);
+  });
 };
 
 /**
@@ -69,9 +95,13 @@ async function publishMessageToTracker(req, res) {
     }
 
     const payload = { message1, message2, message3 };
-    sendData(userId, imei, payload);
+    const result = await sendData(userId, imei, payload);
 
-    res.status(200).json({ Response: `Data sent to tracker ${imei}`, payload });
+    if (result) {
+      res.status(200).json({ Response: `Data sent to tracker ${imei}`, payload });
+    } else {
+      res.status(500).json({ Error: 'Failed to send data' });
+    }
   } catch (error) {
     console.error('Error sending data to tracker:', error);
     res.status(500).json({ Error: 'Failed to send data', error });
