@@ -34,7 +34,7 @@
             <!-- Mode Information -->
             <div class="grid-item-full mode-item">
               <strong>Mode:</strong>
-              <span v-if="trackerMode === 'GPS'">Real-Time Tracking</span>
+              <span v-if="trackerMode === 'RT'">Real-Time Tracking</span>
               <span v-else>{{ trackerMode || 'N/A' }}</span>
 
               <!-- Mode Badges for GPS and LTE -->
@@ -42,7 +42,7 @@
               <span v-if="trackerMode === 'LT'" class="mode-badge">LTE</span>
 
               <!-- Switch Mode Button -->
-              <button class="switch-mode-button shimmering-button" @click="switchMode">Switch Mode</button>
+              <button class="switch-mode-button shimmering-button" @click="switchMode">Change Mode</button>
             </div>
 
             <!-- Battery Status -->
@@ -262,6 +262,8 @@ const initializeMap = () => {
     map = new google.maps.Map(mapElement.value, {
       center: position,
       zoom: 12,
+      mapTypeControl: false,
+      streetViewControl: false
     });
     marker = new google.maps.Marker({
       position,

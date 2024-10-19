@@ -8,7 +8,7 @@
             <a href="#" @click.prevent="goToHome">Map</a>
           </li>
           <li class="nav-item">
-            <a ref="tour2" href="#" @click.prevent="goToTrackers">Trackers</a>
+            <a ref="tour2" href="#" @click.prevent="goToTrackers">Tracker</a>
           </li>
           <li class="nav-item">
             <RouterLink to="account">Account</RouterLink>
@@ -87,9 +87,12 @@ const logout = async () => {
   z-index: 999;
   background-color: #00543D;
   padding: 10px 0px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   font-family: 'Poppins', sans-serif;
+  border-bottom: 3px solid #C19A6B;
 
+
+  backdrop-filter: blur(5px);
 }
 
 /* Navbar Flexbox Container */
@@ -138,10 +141,13 @@ const logout = async () => {
   cursor: pointer;
   padding: 6px 12px;
   border-radius: 4px;
-  transition: color 0.3s, text-decoration 0.3s;
+
   display: flex;
   align-items: center;
+
 }
+
+
 
 /* Help Dropdown */
 .help-dropdown {
@@ -186,6 +192,7 @@ const logout = async () => {
   align-items: center;
   justify-content: flex-end;
   margin-left: auto;
+  margin-right: auto;
 }
 
 /* Logout Button */
@@ -209,7 +216,7 @@ const logout = async () => {
 
 /* Logout Icon */
 .logout-icon {
-  width: 24px;
+  width: 42px;
   height: 24px;
   padding-right: 10px;
 }
@@ -218,23 +225,16 @@ const logout = async () => {
 .nav-item a:hover,
 .nav-item button:hover,
 .help-link:hover {
-  text-decoration: underline;
-  text-decoration-color: white;
+  transform: scale(1.1);
+
 }
 
-/* Active/Focus Effects */
-.nav-item a:focus,
-.nav-item button:focus,
-.help-link:focus {
-  outline: none;
-  color: #ffffff;
-  text-decoration: underline;
-  text-decoration-color: white;
-}
+
 
 /* Dark Mode for Navbar */
 .navbar.dark-mode {
-  background-color: #00261C;
+  background: linear-gradient(135deg, #444 0%, #2e2e2e 50%, #444 100%);
+  border-bottom: 3px solid #ddd;
   /* Darker background for the navbar */
 }
 
@@ -269,37 +269,47 @@ const logout = async () => {
 
 
 /* Responsive Design for Mobile */
+
 @media (max-width: 768px) {
   .navbar {
     padding: 10px;
   }
 
+  /* Ensure consistent margin for all nav-items */
   .nav-item {
     margin: 0 10px;
   }
 
+  /* Adjust font size and padding for nav items, making sure they're consistent */
   .nav-item a,
-  .nav-item button {
-    padding: 6px 10px;
+  .nav-item button,
+  .help-link {
+    padding: 8px 12px;
+    /* Consistent padding */
     font-size: 14px;
+    /* Smaller font size for mobile */
   }
 
+  /* Adjust logout icon size, make it more proportional to the text */
   .logout-icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    /* Adjust to a better size for consistency */
+    height: 24px;
   }
 
   .logout-text {
     font-size: 14px;
+    /* Same as other nav items */
   }
 }
+
 
 
 
 /* Add more spacing between nav items on larger screens */
 @media (min-width: 769px) {
   .nav-item {
-    margin: 0 30px;
+    margin: 0 35px;
   }
 }
 

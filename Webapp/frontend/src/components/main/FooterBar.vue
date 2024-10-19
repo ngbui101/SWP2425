@@ -58,7 +58,7 @@ onMounted(async () => {
 }
 
 .dark-mode .footer-basic {
-  background-color: #00261C;
+  background-color: #1e1e1e;
   /* Darker green for dark mode */
 }
 

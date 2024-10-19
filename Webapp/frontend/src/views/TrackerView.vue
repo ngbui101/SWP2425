@@ -247,7 +247,7 @@ onMounted(async () => {
 /* Add other styles back */
 .dark-mode .toggle-container .active {
     background-color: #5A976D;
-    color: #ddd;
+    color: #333;
 }
 
 .dark-mode .toggle-container label:not(.active) {

@@ -17,7 +17,12 @@
             </thead>
             <tbody>
                 <tr v-for="tracker in trackers" :key="tracker._id">
-                    <td>{{ tracker.name }}</td>
+                    <td @dblclick="startEditingName(tracker)">
+                        <span v-if="!tracker.isEditingName">{{ tracker.name }}</span>
+                        <input v-else type="text" v-model="tracker.editingName" class="name-input"
+                            @blur="saveTrackerName(tracker)" @keydown.enter="saveTrackerName(tracker)" maxlength="18"
+                            spellcheck="false" />
+                    </td>
                     <td>{{ tracker.mode }}</td>
                     <td>{{ tracker.location }}</td>
                     <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.latitude || 'N/A' : 'N/A' }}</td>
@@ -37,20 +42,60 @@
 
         <!-- Add Tracker Button below the table -->
         <div class="add-tracker-wrapper">
-            <button class="add-tracker-btn" @click="addTracker">
+            <button class="add-tracker-btn" @click="addTracker" :class="{ 'scaling-effect': trackers.length === 0 }">
                 <i class="fas fa-plus"></i>&nbsp; Add Tracker
             </button>
         </div>
     </div>
 </template>
 
+
 <script setup>
+import { ref } from 'vue';
+import { useAuthStore } from "@/stores/auth";
+import { useApi, useApiPrivate } from "../../composables/useApi";
+
+// Define props received from parent component
 defineProps({
-    trackers: Array, // Props passed from parent
-    addTracker: Function, // Function to add a tracker
-    user: Object, // User object passed from the parent component
+    trackers: Array, // Array of trackers passed from the parent
+    addTracker: Function, // Function to add a new tracker
+    user: Object, // The user object passed from the parent
 });
+
+// Start editing the tracker's name
+const startEditingName = (tracker) => {
+    tracker.isEditingName = true;
+    tracker.editingName = tracker.name; // Pre-populate the input with the current name
+};
+
+// Save the new tracker name and update it in the backend
+const saveTrackerName = async (tracker) => {
+    tracker.isEditingName = false; // Disable the editing mode
+
+    // Only proceed with the API call if the name has changed
+    if (tracker.editingName && tracker.editingName !== tracker.name) {
+        try {
+            const { data } = await updateTrackerName(tracker._id, tracker.editingName);
+            tracker.name = tracker.editingName; // Update the tracker name in the frontend
+        } catch (error) {
+            console.error("Failed to update the tracker name:", error);
+        }
+    }
+};
+
+// Update the tracker name in the backend
+const updateTrackerName = async (trackerId, newName) => {
+    try {
+        const { data } = await useApiPrivate().put(`http://localhost:3500/api/tracker/${trackerId}`, {
+            name: newName
+        });
+        return data;
+    } catch (error) {
+        throw new Error(`Failed to update tracker name: ${error.message}`);
+    }
+};
 </script>
+
 
 <style scoped>
 /* General tracker table styles */
@@ -105,7 +150,7 @@ defineProps({
 
 .settings-icon:hover {
     transform: scale(1.3);
-    animation: rotate360 2s ease-in-out 0.3s infinite;
+    animation: rotate360 2s linear infinite;
 }
 
 .add-tracker-wrapper {
@@ -125,10 +170,47 @@ defineProps({
 
 }
 
-.add-tracker-btn:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
+.name-input {
+    background-color: transparent;
+    border: none;
+    font-size: 1rem;
+    text-align: center;
+    width: 100%;
+    outline: none;
+    color: inherit;
 }
+
+.name-input:focus {
+    border-bottom: 1px solid #555;
+}
+
+.scaling-effect {
+    animation: scaleEffect 4s ease-in-out infinite;
+}
+
+/* Add tracker hover effect */
+.add-tracker-card:hover {
+    transform: scale(1.05);
+    animation: none;
+    /* Stop animation when hovering */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Keyframe animation for scaling */
+@keyframes scaleEffect {
+    0% {
+        transform: scale(1.0);
+    }
+
+    50% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1.0);
+    }
+}
+
 
 
 /* Dark mode styles */
@@ -157,12 +239,12 @@ defineProps({
 }
 
 .dark-mode .settings-icon {
-    color: #5A976D;
+    color: #87c099;
 }
 
 .dark-mode .add-tracker-btn {
-    background-color: #28a745;
-    color: #ddd;
+    background-color: #87c099;
+    color: #1f1f1f;
 
 }
 </style>

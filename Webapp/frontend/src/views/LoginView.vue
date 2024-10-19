@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="container">
+    <div class="login-container">
       <div class="logo-container">
         <img src="@/assets/logo-transparent.png" alt="Logo" class="logo" />
       </div>
@@ -210,8 +210,8 @@ function goToSignup() {
   color: #333;
 }
 
-.container {
-  background-color: #fff;
+.login-container {
+  background-color: #fff !important;
   border-radius: 7px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
   padding: 2rem;

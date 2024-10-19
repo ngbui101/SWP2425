@@ -30,7 +30,7 @@ const user = computed(() => authStore.userDetail);
 
 onMounted(async () => {
   await authStore.getUser();
-  console.log(user.value?.template);
+
 
 });
 </script>
@@ -54,7 +54,7 @@ onMounted(async () => {
 }
 
 .header.dark-mode {
-  background: linear-gradient(180deg, rgba(30, 30, 30, 1) 60%, rgba(40, 40, 40, 1) 99%);
+  background: linear-gradient(135deg, #1e1e1e 0%, #141414 50%, #1e1e1e 100%);
 }
 
 

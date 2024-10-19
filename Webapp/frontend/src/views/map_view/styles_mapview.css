@@ -41,7 +41,7 @@ body {
 
 .mode-badge {
   font-weight: bold;
-  color: red;
+  color: #E69543;
   margin-left: 8px;
 }
 
@@ -51,7 +51,7 @@ body {
   display: flex;
   flex-direction: row;
   width: 100%;
-  margin: 0;
+  padding-top: 80px;
   gap: 0;
   background: linear-gradient(135deg, #f1e4cc 0%, #e6cc99 50%, #f1e4cc 100%);
   min-height: 100vh;
@@ -147,7 +147,7 @@ body {
 
 
 .dark-mode .grid-item strong {
-  color: #518561;
+  color: #87c099;
 }
 
 .switch-mode-button {
@@ -160,15 +160,15 @@ body {
   /* Space from the border */
   padding: 4px 8px;
   /* Smaller padding */
-  background: linear-gradient(45deg, #7a7a7a, #9a9a9a);
-  color: white;
+  
+  color: #ddd;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 0.8rem;
+  
   /* Smaller font */
-  font-weight: bold;
-  text-transform: uppercase;
+
+  
   overflow: hidden;
   position: relative;
   z-index: 1;
@@ -182,10 +182,7 @@ body {
   left: -100%;
   width: 200%;
   height: 100%;
-  background: linear-gradient(to right,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0) 100%);
+ 
   z-index: -1;
   transition: all 0.5s;
   transform: skewX(-20deg);
@@ -200,9 +197,7 @@ body {
   outline: none;
 }
 
-.switch-mode-button:active {
-  background: linear-gradient(45deg, #b0b0b0, #d0d0d0);
-}
+
 
 /* Optional shimmer animation for continuous effect */
 @keyframes shimmer {
@@ -216,13 +211,14 @@ body {
 }
 
 .shimmering-button {
-  background: linear-gradient(90deg, #6a6a6a 25%, #8a8a8a 50%, #6a6a6a 75%);
-  background-size: 400%;
-  animation: shimmer 5s infinite;
+  background: #851515;
+  
+  
 }
 
 .switch-mode-button:hover {
-  background-color: #0056b3;
+  background-color: #b63a3a;
+  transform: scale(1.1);
 }
 
 .card-title {
@@ -387,7 +383,7 @@ body {
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
-  box-shadow: inset 0 0 10px 3px rgba(0, 84, 61, 0.4);
+  box-shadow: inset 0 0 10px 3px rgba(0, 84, 61, 0.2);
   /* More shadowy effect */
 
 }
@@ -432,7 +428,7 @@ body {
 
 /* Dark mode for text */
 .dark-mode .dropdown-label {
-  color: #518561;
+  color: #87c099;
 }
 
 .dark-mode .grid-item,
@@ -452,19 +448,19 @@ body {
 }
 
 .dark-mode .battery-status-wrapper strong {
-  color: #518561;
+  color: #87c099;
 }
 
 .dark-mode .timestamp {
-  color: #518561;
+  color: #87c099;
 }
 
 .dark-mode .tracker-mode {
-  color: #518561;
+  color: #87c099;
 }
 
 .dark-mode .mode-item strong {
-  color: #518561;
+  color: #87c099;
 }
 
 .dark-mode .mode-item span {
@@ -484,7 +480,7 @@ body {
 /* Dark mode for location display */
 .dark-mode .location-display p,
 .dark-mode .location-accuracy {
-  color: #518561;
+  color: #87c099;
 }
 
 /* Dark mode for buttons */
@@ -494,6 +490,10 @@ body {
   border-color: #666;
 }
 
+.dark-mode .geofence-button {
+  background: #E69543;
+  color: #1f1f1f;
+}
 .dark-mode .remove-geofence-button {
   background-color: #aa4444;
 }
@@ -506,10 +506,7 @@ body {
   border-color: #555;
 }
 
-/* Dark mode for switch mode button */
-.dark-mode .switch-mode-button {
-  background: linear-gradient(45deg, #555, #777);
-}
+
 
 /* Dark mode for geofence slider */
 .dark-mode .radius-slider {
@@ -524,7 +521,8 @@ body {
 
 /* Optional shimmering button adjustment for dark mode */
 .dark-mode .shimmering-button {
-  background: linear-gradient(90deg, #444 25%, #666 50%, #444 75%);
+  background: #E69543;
+  color: #1f1f1f;
 }
 
 /* Mobile view: Stack cards on top of each other */

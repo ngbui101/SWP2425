@@ -25,7 +25,7 @@
                     @keydown.enter="saveTrackerName(tracker)">
                     <span v-if="!tracker.isEditingName">{{ tracker.name }}</span>
                     <input v-else type="text" v-model="tracker.editingName" class="name-input"
-                        @blur="saveTrackerName(tracker)" />
+                        @blur="saveTrackerName(tracker)" maxlength="18" spellcheck="false" />
                 </h3>
             </div>
 
@@ -46,7 +46,8 @@
         </div>
 
         <!-- Add Tracker as a card -->
-        <div class="tracker-card add-tracker-card" @click="addTracker">
+        <div class="tracker-card add-tracker-card" @click="addTracker"
+            :class="{ 'scaling-effect': trackers.length === 0 }">
             <div class="card-body add-tracker-body">
                 <i class="fas fa-plus"></i>&nbsp; Add Tracker
             </div>
@@ -176,11 +177,11 @@ const updateTrackerName = async (trackerId, newName) => {
 
 .settings-icon:hover {
     transform: scale(1.3);
-    animation: rotate360 2s ease-in-out 0.3s infinite;
+    animation: rotate360 2s linear infinite;
 }
 
 .card-view.dark-mode .settings-icon {
-    color: #fff;
+    color: #87c099;
 }
 
 /* Battery Bar Wrapper */
@@ -261,9 +262,31 @@ const updateTrackerName = async (trackerId, newName) => {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
+.scaling-effect {
+    animation: scaleEffect 4s ease-in-out infinite;
+}
+
+/* Add tracker hover effect */
 .add-tracker-card:hover {
     transform: scale(1.05);
+    animation: none;
+    /* Stop animation when hovering */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Keyframe animation for scaling */
+@keyframes scaleEffect {
+    0% {
+        transform: scale(1.0);
+    }
+
+    50% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1.0);
+    }
 }
 
 /* Dark mode for Add Tracker */
@@ -291,11 +314,11 @@ const updateTrackerName = async (trackerId, newName) => {
 
 .add-tracker-body {
     font-size: 1.2rem;
-    color: #333;
+    color: #851515;
     text-align: center;
 }
 
 .card-view.dark-mode .add-tracker-body {
-    color: #bbb;
+    color: #ddd;
 }
 </style>

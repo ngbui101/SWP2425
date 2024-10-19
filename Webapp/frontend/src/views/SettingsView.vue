@@ -250,6 +250,7 @@ body {
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+
 }
 
 .settings-container {
@@ -374,7 +375,8 @@ input[type="checkbox"] {
 }
 
 .form-submit-button:hover {
-  background-color: #009579;
+  background-color: #00412F;
+
 }
 
 .dark-mode .form-submit-button:hover {
@@ -389,7 +391,8 @@ input[type="checkbox"] {
 }
 
 .dark-mode .settings-container {
-  background: linear-gradient(135deg, #1e1e1e 0%, #1a1a1a 50%, #1e1e1e 100%);
+  background:
+    linear-gradient(135deg, #1e1e1e 0%, #1a1a1a 50%, #1e1e1e 100%);
   color: #bbb;
 }
 
@@ -408,6 +411,7 @@ input[type="checkbox"] {
 .dark-mode .form-submit-button {
   background-color: #333;
   color: #bbb;
+  box-shadow: 0 0 5px rgba(255, 235, 235, 0.4);
 }
 
 @media (max-width: 768px) {
