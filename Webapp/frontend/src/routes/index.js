@@ -1,12 +1,13 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
+
 const MapView = () => import('../views/map_view/MapView.vue');
 const LoginView = () => import('../views/LoginView.vue');
 const RegisterView = () => import('../views/RegisterView.vue');
 const SettingsView = () => import('../views/SettingsView.vue');
 const TrackerView = () => import('../views/TrackerView.vue'); // Neue Seite importieren
-
+const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue');
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
@@ -15,6 +16,7 @@ const routes = [
   { path: '/account', component: SettingsView, name: 'account', meta: { requiresAuth: true } },
   { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true, hideComponent: true } },
   { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true, hideComponent: true } },
+  { path: '/reset', component: ForgotPasswordView, name: 'reset', meta: { requiresGuest: true, hideComponent: true } },
   { path: '/trackers', component: TrackerView, name: 'trackers', meta: { requiresAuth: true } },
 ];
 

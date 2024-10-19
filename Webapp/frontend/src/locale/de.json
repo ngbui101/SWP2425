@@ -38,8 +38,13 @@
     "SETTINGSVIEW-sms_geofence_alert": "SMS bei Geofence-Alarm",
     "SETTINGSVIEW-email_battery_low": "E-Mail wenn Akku eines Trackers fast leer ist",
     "SETTINGSVIEW-email_geofence_alert": "E-Mail bei Geofence-Alarm",
-    "SETTINGSVIEW-notification_settings": "Benachrichtigungseinstellungen"
-
+    "SETTINGSVIEW-notification_settings": "Benachrichtigungseinstellungen",
+    "RESETVIEW-passwort_zuruecksetzen": "Passwort zurücksetzen",
+    "RESETVIEW-email_adresse_eingeben": "E-Mail-Adresse eingeben",
+    "RESETVIEW-zuruecksetzen": "Zurücksetzen",
+    "RESETVIEW-benötigen_sie_hilfe": "Benötigen Sie Hilfe?",
+    "RESETVIEW-support": "Support",
+    "RESETVIEW-back_to": "Zurück zum"
 
 
 }

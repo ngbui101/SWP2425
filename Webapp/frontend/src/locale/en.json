@@ -38,7 +38,13 @@
     "SETTINGSVIEW-sms_geofence_alert": "SMS when geofence alarm is triggered",
     "SETTINGSVIEW-email_battery_low": "E-Mail when tracker battery is low",
     "SETTINGSVIEW-email_geofence_alert": "E-Mail when geofence alarm is triggered",
-    "SETTINGSVIEW-notification_settings": "Notification Settings"
+    "SETTINGSVIEW-notification_settings": "Notification Settings",
+    "RESETVIEW-passwort_zuruecksetzen": "Reset Password",
+  "RESETVIEW-email_adresse_eingeben": "Enter your email address",
+  "RESETVIEW-zuruecksetzen": "Reset",
+  "RESETVIEW-benötigen_sie_hilfe": "Need help?",
+  "RESETVIEW-support": "Support",
+  "RESETVIEW-back_to": "Back to login"
 
     
     

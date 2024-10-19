@@ -178,7 +178,7 @@ async function sendWelcomeEmail(emailContent: { to: string; subject: string; tex
 .container {
   background-color: #fff;
   border-radius: 7px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.9);
   padding: 2rem;
   max-width: 430px;
   width: 100%;
@@ -225,6 +225,7 @@ async function sendWelcomeEmail(emailContent: { to: string; subject: string; tex
   font-weight: 500;
   text-align: center;
   margin-bottom: 1.5rem;
+  color: #333;
 }
 
 .form input {
@@ -236,6 +237,25 @@ async function sendWelcomeEmail(emailContent: { to: string; subject: string; tex
   border: 1px solid #ddd;
   border-radius: 6px;
   outline: none;
+}
+
+.form input[type="text"],
+.form input[type="password"] {
+  height: 60px;
+  width: 100%;
+  padding: 0 15px;
+  font-size: 17px;
+  margin-bottom: 1.3rem;
+  border: 2px solid #333;
+  border-radius: 6px;
+  outline: none;
+  transition: border 0.3s ease-in-out;
+}
+
+.form input[type="text"]:focus,
+.form input[type="password"]:focus {
+  box-shadow: 0 0 5px rgba(0, 149, 121, 0.5);
+  border-color: #006653;
 }
 
 .form input:focus {

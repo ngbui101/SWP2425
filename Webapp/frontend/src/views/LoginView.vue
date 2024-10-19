@@ -9,29 +9,13 @@
         <form @submit.prevent="submit">
           <input type="text" v-model="loginData.email" :placeholder="$t('LOGINVIEW-enter_email')" required />
           <input type="password" v-model="loginData.password" :placeholder="$t('LOGINVIEW-enter_password')" required />
-          <a href="#" @click="openForgotPasswordPopup">{{ $t('LOGINVIEW-forgot_password') }}</a>
+          <RouterLink to="reset">{{ $t('LOGINVIEW-forgot_password') }}</RouterLink>
           <input type="submit" class="button" :value="$t('LOGINVIEW-login')" />
         </form>
         <div class="signup">
           <span class="signup">{{ $t('LOGINVIEW-dont_have_account') }}
             <RouterLink to="register">{{ $t('LOGINVIEW-sign_up') }}</RouterLink>
           </span>
-        </div>
-      </div>
-
-      <!-- Forgot Password Popup -->
-      <div v-if="showForgotPasswordPopup" class="forgot-password-popup">
-        <div class="popup-content">
-          <h2>{{ $t('LOGINVIEW-forgot_password') }}</h2>
-          <form @submit.prevent="submitForgotPassword">
-            <input type="text" v-model="forgotPasswordEmail" :placeholder="$t('LOGINVIEW-enter_email')" required />
-            <input type="submit" class="button" :value="$t('LOGINVIEW-submit')" />
-          </form>
-
-          <!-- Display success or error message -->
-          <div v-if="forgotPasswordMessage" class="forgot-password-message">{{ forgotPasswordMessage }}</div>
-
-          <button class="close-button" @click="closeForgotPasswordPopup">{{ $t('LOGINVIEW-close') }}</button>
         </div>
       </div>
 
@@ -57,39 +41,6 @@ import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
 const authStore = useAuthStore();
-const showForgotPasswordPopup = ref(false);
-const forgotPasswordEmail = ref('');
-const forgotPasswordMessage = ref<string | null>(null); // Message to display to the user
-
-function openForgotPasswordPopup() {
-  showForgotPasswordPopup.value = true;
-}
-
-function closeForgotPasswordPopup() {
-  showForgotPasswordPopup.value = false;
-  forgotPasswordMessage.value = null; // Reset message when closing the popup
-}
-
-async function submitForgotPassword() {
-  try {
-    const response = await fetch('http://localhost:3500/api/auth/forgot-password', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: forgotPasswordEmail.value }),
-    });
-
-    const data = await response.json();
-    if (data.success) {
-      forgotPasswordMessage.value = 'Check your email for the new password!'; // Display success message
-    } else {
-      forgotPasswordMessage.value = data.message; // Display error message
-    }
-  } catch (error) {
-    forgotPasswordMessage.value = 'An error occurred. Please try again.'; // Display generic error message
-  }
-}
 
 const loginData = reactive({
   email: '',
@@ -118,7 +69,6 @@ function goToSignup() {
 }
 </script>
 
-
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
@@ -141,79 +91,10 @@ function goToSignup() {
   background-repeat: no-repeat;
 }
 
-.forgot-password-popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.popup-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 400px;
-}
-
-.popup-content h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.popup-content input[type='text'],
-.popup-content input[type='submit'] {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-.popup-content input.button {
-  color: #fff;
-  background-color: #006653;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.popup-content input.button:hover {
-  background-color: #004d40;
-}
-
-.close-button {
-  background-color: #ff6b6b;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.close-button:hover {
-  background-color: #ff4d4d;
-}
-
-.forgot-password-message {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #333;
-}
-
 .login-container {
   background-color: #fff !important;
   border-radius: 7px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.9);
   padding: 2rem;
   max-width: 430px;
   width: 100%;
@@ -260,6 +141,7 @@ function goToSignup() {
   font-weight: 500;
   text-align: center;
   margin-bottom: 1.5rem;
+  color: #333;
 }
 
 .form input {
@@ -271,6 +153,28 @@ function goToSignup() {
   border: 1px solid #ddd;
   border-radius: 6px;
   outline: none;
+}
+
+.form input[type="text"],
+.form input[type="password"] {
+  height: 60px;
+  width: 100%;
+  padding: 0 15px;
+  font-size: 17px;
+  margin-bottom: 1.3rem;
+  border: 2px solid #333;
+  /* Updated the outline color */
+  border-radius: 6px;
+  outline: none;
+  transition: border 0.3s ease-in-out;
+}
+
+.form input[type="text"]:focus,
+.form input[type="password"]:focus {
+  box-shadow: 0 0 5px rgba(0, 149, 121, 0.5);
+  /* Add shadow for better focus */
+  border-color: #006653;
+  /* Darker green on focus */
 }
 
 .form input:focus {
