@@ -135,6 +135,10 @@ function goToSignup() {
   vertical-align: middle;
 }
 
+.language-icon:hover {
+  transform: scale(1.2);
+}
+
 /* Form styling */
 .form header {
   font-size: 1.6rem;

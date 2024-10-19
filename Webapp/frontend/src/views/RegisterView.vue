@@ -219,6 +219,10 @@ async function sendWelcomeEmail(emailContent: { to: string; subject: string; tex
   vertical-align: middle;
 }
 
+.language-icon:hover {
+  transform: scale(1.2);
+}
+
 /* Form styling */
 .form header {
   font-size: 1.6rem;
