@@ -1,33 +1,33 @@
 <template>
     <div :class="['tracker-view', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
-        <!-- Toolbar with icons for List/Card view -->
+        <!-- Toolbar with Toggle Bar for List/Card view -->
         <div class="toolbar">
-            <div class="view-switcher">
+            <div class="toggle-container" @mousedown="startDragging($event)" @mouseup="stopDragging"
+                @mouseleave="stopDragging" @mousemove="handleDragging($event)">
 
-                <!-- Card View Icon with Tooltip -->
-                <div class="icon-container">
-                    <i class="fas fa-th-large" @click="setView('card')" :class="{ active: currentView === 'card' }"></i>
-                    <span class="tooltip">Card View</span>
-                </div>
-                <!-- List View Icon with Tooltip -->
-                <div class="icon-container">
-                    <i class="fas fa-list" @click="setView('list')" :class="{ active: currentView === 'list' }"></i>
-                    <span class="tooltip">List View</span>
-                </div>
+                <!-- Sliding background div -->
+                <div class="slider"
+                    :class="{ 'slide-left': currentView === 'card', 'slide-right': currentView === 'list' }"></div>
 
+                <!-- Card View Toggle (Left) -->
+                <label @click="setView('card')" :class="{ active: currentView === 'card' }">
+                    Card View
+                </label>
 
+                <!-- List View Toggle (Right) -->
+                <label @click="setView('list')" :class="{ active: currentView === 'list' }">
+                    List View
+                </label>
             </div>
         </div>
 
         <!-- Conditional rendering based on selected view -->
-        <TrackerListComponent v-if="currentView === 'list'" :trackers="trackers" :user="user"
-            @add-tracker="addTracker" />
         <TrackerCardComponent v-if="currentView === 'card'" :trackers="trackers" :user="user"
+            @add-tracker="addTracker" />
+        <TrackerListComponent v-if="currentView === 'list'" :trackers="trackers" :user="user"
             @add-tracker="addTracker" />
     </div>
 </template>
-
-
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
@@ -37,28 +37,77 @@ import TrackerCardComponent from '../components/trackerview/TrackerCardComponent
 import { useAuthStore } from "@/stores/auth";
 
 const trackers = ref([]);
-const currentView = ref('card'); // Default view is now card view
+const currentView = ref('card'); // Default view is now card
+let isDragging = ref(false); // Indicates if the slider is being dragged
+let sliderPosition = ref(100); // Default slider starts at Card View (rightmost)
+let draggingDirection = ref(''); // Tracks the drag direction
 
-// Fetch the user object from the auth store
+// Fetch user from the auth store
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
 
-// Method to fetch trackers and their latest measurements
+// Method to change the view
+const setView = (view) => {
+    currentView.value = view;
+    sliderPosition.value = view === 'card' ? 0 : 100; // Card View on left (0), List View on right (100)
+};
+
+// Start dragging the slider
+const startDragging = (event) => {
+    isDragging.value = true;
+    updateSliderPosition(event.clientX);
+};
+
+// Stop dragging the slider
+const stopDragging = () => {
+    if (!isDragging.value) return;
+    isDragging.value = false;
+
+    // Determine which view is closer to the slider
+    if (sliderPosition.value > 50) {
+        setView('list'); // Snap to List View (right side)
+    } else {
+        setView('card'); // Snap to Card View (left side)
+    }
+
+    // Reset dragging direction after stop
+    draggingDirection.value = '';
+};
+
+// Handle the dragging movement
+const handleDragging = (event) => {
+    if (!isDragging.value) return;
+
+    const oldSliderPosition = sliderPosition.value;
+    updateSliderPosition(event.clientX);
+
+    // Set the dragging direction based on the new position
+    draggingDirection.value = sliderPosition.value > oldSliderPosition ? 'right' : 'left';
+};
+
+// Update the slider's position based on the mouse X position
+const updateSliderPosition = (clientX) => {
+    const container = document.querySelector('.toggle-container');
+    const rect = container.getBoundingClientRect();
+    const percentage = ((clientX - rect.left) / rect.width) * 100;
+
+    // Boundaries to prevent dragging outside
+    sliderPosition.value = Math.min(100, Math.max(0, percentage));
+};
+
+// Fetch trackers and latest measurements
 const fetchTrackersForUser = async () => {
     try {
         const token = authStore.accessToken;
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
-        // Fetch trackers for the authenticated user
         const response = await axios.get('http://localhost:3500/api/tracker/user/', config);
         const trackersWithLatestMeasurements = response.data;
 
-        // Fetch measurements for each tracker
         for (const tracker of trackersWithLatestMeasurements) {
             const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
             const measurements = measurementsResponse.data;
 
-            // Filter and sort measurements
             const validMeasurements = measurements.filter(measurement =>
                 measurement.latitude && measurement.longitude && !isNaN(measurement.latitude) && !isNaN(measurement.longitude)
             );
@@ -87,16 +136,6 @@ const getReverseGeocodingAddress = async (lat, lng) => {
     }
 };
 
-// Change view (list or card)
-const setView = (view) => {
-    currentView.value = view;
-};
-
-// Add Tracker button action
-const addTracker = () => {
-    console.log('Add Tracker clicked');
-};
-
 // Fetch trackers on component mount
 onMounted(async () => {
     await authStore.getUser();
@@ -104,76 +143,114 @@ onMounted(async () => {
 });
 </script>
 
+
 <style scoped>
 .tracker-view {
-    background-color: #f1e4cc;
+    background: linear-gradient(135deg, #f1e4cc 0%, #e6cc99 50%, #f1e4cc 100%);
     padding-bottom: 20px;
     min-height: 100vh;
-    padding: 13px;
+    padding-top: 15px;
 }
 
 .tracker-view.dark-mode {
-    background-color: #1e1e1e;
+    background: linear-gradient(135deg, #1e1e1e 0%, #141414 50%, #1e1e1e 100%);
 }
 
 /* Toolbar styling */
 .toolbar {
     display: flex;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
-/* View switcher icon container */
-.view-switcher {
+/* Toggle container */
+.toggle-container {
+    position: relative;
+    width: 250px;
+    height: 50px;
+    border-radius: 30px;
+    border: 1px solid #000;
     display: flex;
-    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    overflow: hidden;
+    user-select: none;
 }
 
-.view-switcher i {
-    font-size: 24px;
-    cursor: pointer;
-    color: #555;
-    transition: color 0.3s;
-}
-
-.view-switcher.dark-mode i {
-    color: #bbb;
-}
-
-.view-switcher i.active {
-    color: #333;
-}
-
-.view-switcher.dark-mode i.active {
-    color: #fff;
-}
-
-.view-switcher i:hover {
-    color: #000;
-}
-
-.view-switcher.dark-mode i:hover {
-    color: #fff;
-}
-
-/* Tooltip styles */
-.tooltip {
-    visibility: hidden;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 4px;
-    padding: 5px;
+/* Sliding background */
+.slider {
     position: absolute;
-    bottom: -25px;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background-color: #C19A6B;
+    border-radius: 30px 0 0 30px;
+    transition: transform 0s ease;
+    z-index: 0;
+    transform: translateX(calc(var(--slider-pos, 0) * 1%));
 }
 
-.icon-container:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
+.slide-left {
+    transform: translateX(0);
+}
+
+.slide-right {
+    border-radius: 0 30px 30px 0;
+    transform: translateX(100%);
+}
+
+/* Toggle labels */
+.toggle-container label {
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    cursor: pointer;
+    z-index: 1;
+    /* Ensures text is on top of slider */
+}
+
+.toggle-container .active {
+    color: rgb(0, 0, 0);
+    /* Color of active label */
+    border-right: none;
+    /* Remove right border when active */
+}
+
+/* Remove left border on Card View when active */
+.toggle-container label:last-of-type.active {
+    border-left: none;
+}
+
+.toggle-container label:not(.active) {
+    color: #1f1f1f;
+    border-left: none;
+}
+
+/* Dark mode styles */
+.dark-mode .toggle-container {
+    background-color: #333;
+    border-color: #555;
+}
+
+.dark-mode .slider {
+    background-color: #5A976D;
+}
+
+.dark-mode .toggle-container label {
+    color: white;
+}
+
+/* Add other styles back */
+.dark-mode .toggle-container .active {
+    background-color: #5A976D;
+    color: #ddd;
+}
+
+.dark-mode .toggle-container label:not(.active) {
+    color: #aaa;
 }
 </style>

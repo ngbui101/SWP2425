@@ -89,6 +89,7 @@ const logout = async () => {
   padding: 10px 0px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-family: 'Poppins', sans-serif;
+
 }
 
 /* Navbar Flexbox Container */

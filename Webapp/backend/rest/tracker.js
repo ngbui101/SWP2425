@@ -15,13 +15,13 @@ router.get('/:id', authenticate, trackerController.getTrackerById);
 router.post('/', authenticate, trackerController.createTracker);
 
 // Route to update a tracker by ID
-router.put('/:id', authenticate, trackerController.updateTrackerName);
+router.put('/:id', trackerController.updateTrackerName);
 
 // Route to delete a tracker by ID
 router.delete('/:id', authenticate, trackerController.deleteTracker);
 
 // Route to set the mode of a tracker by ID
-router.put('/:id/mode', authenticate, trackerController.setTrackerMode);
+// router.put('/:id/mode', authenticate, trackerController.setTrackerMode);
 
 // Route to get the geofence of a tracker by ID
 router.get('/:id/geofence', authenticate, trackerController.getTrackerGeofence);

@@ -14,12 +14,19 @@
                     </div>
                 </div>
                 <div class="battery-indicator">
-                    <span>{{ tracker.latestMeasurement ? tracker.latestMeasurement.battery || '89' : '89' }}%</span>
+                    <span>{{ tracker.latestMeasurement ? Math.round(tracker.latestMeasurement.battery) || 'N/A' : 'N/A'
+                        }}%</span>
                 </div>
             </div>
 
             <div class="card-header">
-                <h3>{{ tracker.name }}</h3>
+                <!-- Name Editing -->
+                <h3 @dblclick="startEditingName(tracker)" @blur="saveTrackerName(tracker)"
+                    @keydown.enter="saveTrackerName(tracker)">
+                    <span v-if="!tracker.isEditingName">{{ tracker.name }}</span>
+                    <input v-else type="text" v-model="tracker.editingName" class="name-input"
+                        @blur="saveTrackerName(tracker)" />
+                </h3>
             </div>
 
             <div class="card-body">
@@ -38,26 +45,78 @@
             </div>
         </div>
 
-        <!-- Add Tracker Button below the card view -->
-        <div class="add-tracker-wrapper">
-            <button class="add-tracker-btn" @click="addTracker">
-                <i class="fas fa-plus"></i> Add Tracker
-            </button>
+        <!-- Add Tracker as a card -->
+        <div class="tracker-card add-tracker-card" @click="addTracker">
+            <div class="card-body add-tracker-body">
+                <i class="fas fa-plus"></i>&nbsp; Add Tracker
+            </div>
         </div>
     </div>
 </template>
 
-
 <script setup>
+import { ref } from 'vue';
+import { useAuthStore } from "@/stores/auth";
+import { useApi, useApiPrivate } from "../../composables/useApi";
+
+// Define props received from parent component
 defineProps({
-    trackers: Array, // Props passed from parent
-    addTracker: Function, // Function to add a tracker
+    trackers: Array, // Array of trackers passed from the parent
+    addTracker: Function, // Function to add a new tracker
     user: Object, // The user object passed from the parent
 });
+
+// Start editing the tracker's name
+const startEditingName = (tracker) => {
+    tracker.isEditingName = true;
+    tracker.editingName = tracker.name; // Pre-populate the input with the current name
+};
+
+// Save the new tracker name and update it in the backend
+const saveTrackerName = async (tracker) => {
+    tracker.isEditingName = false; // Disable the editing mode
+
+    // Only proceed with the API call if the name has changed
+    if (tracker.editingName && tracker.editingName !== tracker.name) {
+        try {
+            const { data } = await updateTrackerName(tracker._id, tracker.editingName);
+            tracker.name = tracker.editingName; // Update the tracker name in the frontend
+        } catch (error) {
+            console.error("Failed to update the tracker name:", error);
+        }
+    }
+};
+
+// Update the tracker name in the backend
+const updateTrackerName = async (trackerId, newName) => {
+    try {
+        const { data } = await useApiPrivate().put(`http://localhost:3500/api/tracker/${trackerId}`, {
+            name: newName
+        });
+        return data;
+    } catch (error) {
+        throw new Error(`Failed to update tracker name: ${error.message}`);
+    }
+};
 </script>
 
-
 <style scoped>
+/* Name input */
+.name-input {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    text-align: center;
+    width: 100%;
+    outline: none;
+    color: inherit;
+}
+
+.name-input:focus {
+    border-bottom: 1px solid #555;
+}
+
+/* Default light mode styles */
 .card-view {
     display: flex;
     flex-wrap: wrap;
@@ -65,27 +124,26 @@ defineProps({
     justify-content: center;
 }
 
-/* Default light mode styles */
 .tracker-card {
-    background-color: #f1f1f1;
+    background: rgba(224, 224, 224, 0.9);
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 12px;
     width: 260px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 1);
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
-    border: 1px solid #00543D;
 }
 
 .tracker-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+    z-index: 15;
 }
 
 /* Dark mode styles */
-.card-view.dark-mode .tracker-card {
+.dark-mode .tracker-card {
     background-color: #2e2e2e;
     border-color: #555;
     color: #bbb;
@@ -102,19 +160,26 @@ defineProps({
     top: 10px;
     right: 10px;
     font-size: 18px;
-    color: #555;
+    color: #851515;
     cursor: pointer;
 }
 
+@keyframes rotate360 {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 .settings-icon:hover {
-    color: #000;
+    transform: scale(1.3);
+    animation: rotate360 2s ease-in-out 0.3s infinite;
 }
 
 .card-view.dark-mode .settings-icon {
-    color: #aaa;
-}
-
-.card-view.dark-mode .settings-icon:hover {
     color: #fff;
 }
 
@@ -181,35 +246,56 @@ defineProps({
     color: #bbb;
 }
 
-/* Add Tracker Button */
-.add-tracker-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-.add-tracker-btn {
-    background-color: #28a745;
-    color: white;
-    padding: 4px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    line-height: 1;
-    height: 40px;
+/* Add Tracker as a card */
+.add-tracker-card {
+    background: rgba(224, 224, 224, 0.9);
+    border: 1px dashed #ddd;
+    padding: 20px;
+    border-radius: 12px;
+    width: 260px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 150px;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.card-view.dark-mode .add-tracker-btn {
-    background-color: #444;
+.add-tracker-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode for Add Tracker */
+.card-view.dark-mode .add-tracker-card {
+    background-color: #2e2e2e;
+    border-color: #555;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.card-view.dark-mode .add-tracker-card:hover {
+    box-shadow: 0 6px 12px rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .name-input {
+    border: none;
+    border-bottom: 2px solid #f1e4cc;
+    /* Brighter border/underline */
+    color: #f1e4cc;
+    /* Brighter text color if needed */
+    outline: none;
+    /* Remove the default outline */
+    background: transparent;
+    /* Keep the background transparent */
+}
+
+.add-tracker-body {
+    font-size: 1.2rem;
+    color: #333;
+    text-align: center;
+}
+
+.card-view.dark-mode .add-tracker-body {
     color: #bbb;
-}
-
-.card-view.dark-mode .add-tracker-btn:hover {
-    background-color: #555;
 }
 </style>

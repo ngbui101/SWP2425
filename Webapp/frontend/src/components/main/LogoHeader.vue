@@ -48,7 +48,7 @@ onMounted(async () => {
   background: linear-gradient(180deg, rgba(255, 255, 255, 1) 20%, rgb(212, 236, 206) 80%);
   padding: 10px;
 
-  height: 70px;
+  height: 100px;
   font-family: 'Poppins', sans-serif;
   position: relative;
 }
@@ -92,7 +92,7 @@ onMounted(async () => {
 }
 
 .header.dark-mode .email-placeholder {
-  color: #518561;
+  color: #5A976D;
 }
 
 

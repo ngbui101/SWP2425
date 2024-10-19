@@ -1,6 +1,6 @@
 <template>
     <div :class="(user.template ?? 'default') === 'dark' ? 'dark-mode' : ''">
-        <table class="tracker-table">
+        <table v-if="trackers.length > 0" class="tracker-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -24,7 +24,9 @@
                     <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.longitude || 'N/A' : 'N/A' }}</td>
                     <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.temperature || 'N/A' : 'N/A' }}°C</td>
                     <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.humidity || 'N/A' : 'N/A' }}%</td>
-                    <td>{{ tracker.latestMeasurement ? tracker.latestMeasurement.battery || 'N/A' : 'N/A' }}</td>
+                    <td>{{ tracker.latestMeasurement ? Math.round(tracker.latestMeasurement.battery) || 'N/A' : 'N/A'
+                        }}%
+                    </td>
                     <td>{{ tracker.imei || 'N/A' }}</td>
                     <td>
                         <i class="fas fa-cog settings-icon"></i>
@@ -36,7 +38,7 @@
         <!-- Add Tracker Button below the table -->
         <div class="add-tracker-wrapper">
             <button class="add-tracker-btn" @click="addTracker">
-                <i class="fas fa-plus"></i> Add Tracker
+                <i class="fas fa-plus"></i>&nbsp; Add Tracker
             </button>
         </div>
     </div>
@@ -63,7 +65,7 @@ defineProps({
 .tracker-table td {
     padding: 15px 20px;
     border-bottom: 1px solid #ddd;
-    text-align: left;
+    text-align: center;
     font-size: 1rem;
     border: 1px solid #00543D;
 }
@@ -79,14 +81,31 @@ defineProps({
     background-color: #f5f5f5;
 }
 
-.tracker-table tr:hover {
-    background-color: #ececec;
+.tracker-table tr {
+    background-color: #ddd;
 }
+
 
 .settings-icon {
     font-size: 1.2rem;
     color: #333;
     cursor: pointer;
+    color: #851515;
+}
+
+@keyframes rotate360 {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.settings-icon:hover {
+    transform: scale(1.3);
+    animation: rotate360 2s ease-in-out 0.3s infinite;
 }
 
 .add-tracker-wrapper {
@@ -96,14 +115,21 @@ defineProps({
 }
 
 .add-tracker-btn {
-    background-color: #28a745;
-    color: white;
+    background-color: #851515;
+    color: #ddd;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
+
 }
+
+.add-tracker-btn:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
 
 /* Dark mode styles */
 .dark-mode .tracker-table {
@@ -131,15 +157,12 @@ defineProps({
 }
 
 .dark-mode .settings-icon {
-    color: #bbb;
+    color: #5A976D;
 }
 
 .dark-mode .add-tracker-btn {
-    background-color: #444;
-    color: #bbb;
-}
+    background-color: #28a745;
+    color: #ddd;
 
-.dark-mode .add-tracker-btn:hover {
-    background-color: #555;
 }
 </style>
