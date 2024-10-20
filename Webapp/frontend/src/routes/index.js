@@ -6,7 +6,7 @@ const MapView = () => import('../views/map_view/MapView.vue');
 const LoginView = () => import('../views/LoginView.vue');
 const RegisterView = () => import('../views/RegisterView.vue');
 const SettingsView = () => import('../views/SettingsView.vue');
-const TrackerView = () => import('../views/TrackerView.vue'); // Neue Seite importieren
+const TrackerView = () => import('../views/tracker_view/TrackerView.vue'); // Neue Seite importieren
 const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue');
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 

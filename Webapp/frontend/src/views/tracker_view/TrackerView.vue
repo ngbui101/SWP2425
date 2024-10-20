@@ -32,8 +32,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
-import TrackerListComponent from '../components/trackerview/TrackerListComponent.vue';
-import TrackerCardComponent from '../components/trackerview/TrackerCardComponent.vue';
+import TrackerListComponent from './components/TrackerListComponent.vue';
+import TrackerCardComponent from './/components/TrackerCardComponent.vue';
 import { useAuthStore } from "@/stores/auth";
 
 const trackers = ref([]);
