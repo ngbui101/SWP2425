@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const trainingEventController = require('../controller/trainingEventController');
+const trainingEventController = require('../controller/trainingeventController');
 const authenticate = require('../middleware/auth');
 
 // Route to get all training events

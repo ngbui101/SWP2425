@@ -2,7 +2,7 @@ const Measurement = require('../models/Measurement');
 const Tracker = require('../models/Tracker');
 const TrackerHistory = require('../models/Trackerhistory');
 
-const { updateTrackerHistory } = require('./trackerHistoryController'); // Import the updateTrackerHistory function
+const { updateTrackerHistory } = require('./trackerhistoryController'); // Import the updateTrackerHistory function
 
 
 
