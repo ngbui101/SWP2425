@@ -34,7 +34,7 @@
                     </td>
                     <td>{{ tracker.imei || 'N/A' }}</td>
                     <td>
-                        <i class="fas fa-cog settings-icon"></i>
+                        <i class="fas fa-cog settings-icon" @click="openSettingsPopup(tracker)"></i>
                     </td>
                 </tr>
             </tbody>
@@ -42,25 +42,59 @@
 
         <!-- Add Tracker Button below the table -->
         <div class="add-tracker-wrapper">
-            <button class="add-tracker-btn" @click="addTracker" :class="{ 'scaling-effect': trackers.length === 0 }">
+            <button class="add-tracker-btn" @click="openAddTrackerPopup"
+                :class="{ 'scaling-effect': trackers.length === 0 }">
                 <i class="fas fa-plus"></i>&nbsp; Add Tracker
             </button>
         </div>
+        <!-- Tracker Settings Popup -->
+        <TrackerSettingsPopup v-if="showSettingsPopup" :trackerNameInitial="selectedTracker.name"
+            :trackerModeInitial="selectedTracker.mode" :template="user.template" :closePopup="closePopup" />
+
+        <!-- Add Tracker Popup -->
+        <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.template" :closePopup="closeAddTrackerPopup" />
     </div>
 </template>
 
 
 <script setup>
 import { ref } from 'vue';
-import { useAuthStore } from "@/stores/auth";
-import { useApi, useApiPrivate } from "../../composables/useApi";
-
+import { useApi, useApiPrivate } from "@/composables/useApi";
+import TrackerSettingsPopup from './TrackerSettingsPopup.vue';
+import AddTrackerPopup from './AddTrackerPopup.vue'; // Import AddTrackerPopup
 // Define props received from parent component
 defineProps({
     trackers: Array, // Array of trackers passed from the parent
     addTracker: Function, // Function to add a new tracker
     user: Object, // The user object passed from the parent
 });
+
+const showSettingsPopup = ref(false);
+const selectedTracker = ref(null);
+
+const openSettingsPopup = (tracker) => {
+    selectedTracker.value = tracker;
+    showSettingsPopup.value = true;
+};
+
+// State for Add Tracker Popup
+const showAddTrackerPopup = ref(false);
+
+// Function to open the Add Tracker Popup
+const openAddTrackerPopup = () => {
+    showAddTrackerPopup.value = true;
+};
+
+// Function to close the Add Tracker Popup
+const closeAddTrackerPopup = () => {
+    showAddTrackerPopup.value = false;
+};
+
+// Function to close the settings popup
+const closePopup = () => {
+    showSettingsPopup.value = false;
+    selectedTracker.value = null;
+};
 
 // Start editing the tracker's name
 const startEditingName = (tracker) => {
@@ -170,6 +204,10 @@ const updateTrackerName = async (trackerId, newName) => {
 
 }
 
+.add-tracker-btn:hover {
+    transform: scale(1.1);
+}
+
 .name-input {
     background-color: transparent;
     border: none;
@@ -239,11 +277,11 @@ const updateTrackerName = async (trackerId, newName) => {
 }
 
 .dark-mode .settings-icon {
-    color: #87c099;
+    color: #E69543;
 }
 
 .dark-mode .add-tracker-btn {
-    background-color: #87c099;
+    background-color: #E69543;
     color: #1f1f1f;
 
 }

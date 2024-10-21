@@ -317,7 +317,7 @@ input[type="checkbox"] {
 }
 
 .dark-mode input[type="checkbox"] {
-  accent-color: #5A976D;
+  accent-color: #E69543;
 }
 
 .settings-card:active {
@@ -387,7 +387,8 @@ input[type="checkbox"] {
 
 /* Dark mode styles */
 .dark-mode .settings-title {
-  color: #ddd;
+  color: #E69543;
+  ;
 }
 
 .dark-mode .settings-container {

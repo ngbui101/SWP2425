@@ -212,4 +212,8 @@ function setLanguage(language: string) {
     height: 24px;
     vertical-align: middle;
 }
+
+.language-icon:hover {
+    transform: scale(1.2);
+}
 </style>

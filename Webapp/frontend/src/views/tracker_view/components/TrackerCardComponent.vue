@@ -2,7 +2,7 @@
     <div class="card-view" :class="[(user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <div class="tracker-card" v-for="tracker in trackers" :key="tracker._id">
             <!-- Settings Icon at the top-right corner -->
-            <div class="settings-icon">
+            <div class="settings-icon" @click="openSettingsPopup(tracker)">
                 <i class="fas fa-cog"></i>
             </div>
 
@@ -45,20 +45,28 @@
             </div>
         </div>
 
+
         <!-- Add Tracker as a card -->
-        <div class="tracker-card add-tracker-card" @click="addTracker"
+        <div class="tracker-card add-tracker-card" @click="openAddTrackerPopup"
             :class="{ 'scaling-effect': trackers.length === 0 }">
             <div class="card-body add-tracker-body">
                 <i class="fas fa-plus"></i>&nbsp; Add Tracker
             </div>
         </div>
+        <!-- Tracker Settings Popup -->
+        <TrackerSettingsPopup v-if="showSettingsPopup" :trackerNameInitial="selectedTracker.name"
+            :trackerModeInitial="selectedTracker.mode" :template="user.template" :closePopup="closePopup" />
+        <!-- Add Tracker Popup -->
+        <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.template" :closePopup="closeAddTrackerPopup" />
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from "@/stores/auth";
-import { useApi, useApiPrivate } from "../../composables/useApi";
+import { useApi, useApiPrivate } from "@/composables/useApi";
+import TrackerSettingsPopup from './TrackerSettingsPopup.vue';
+import AddTrackerPopup from './AddTrackerPopup.vue';
 
 // Define props received from parent component
 defineProps({
@@ -66,6 +74,28 @@ defineProps({
     addTracker: Function, // Function to add a new tracker
     user: Object, // The user object passed from the parent
 });
+const showSettingsPopup = ref(false);
+const showAddTrackerPopup = ref(false);
+const selectedTracker = ref(null);
+const openSettingsPopup = (tracker) => {
+    selectedTracker.value = tracker;
+    showSettingsPopup.value = true;
+};
+
+// Function to close the settings popup
+const closePopup = () => {
+    showSettingsPopup.value = false;
+    selectedTracker.value = null;
+};
+// Function to open the Add Tracker Popup
+const openAddTrackerPopup = () => {
+    showAddTrackerPopup.value = true;
+};
+
+// Function to close the Add Tracker Popup
+const closeAddTrackerPopup = () => {
+    showAddTrackerPopup.value = false;
+};
 
 // Start editing the tracker's name
 const startEditingName = (tracker) => {
@@ -181,7 +211,7 @@ const updateTrackerName = async (trackerId, newName) => {
 }
 
 .card-view.dark-mode .settings-icon {
-    color: #87c099;
+    color: #E69543;
 }
 
 /* Battery Bar Wrapper */
@@ -227,8 +257,9 @@ const updateTrackerName = async (trackerId, newName) => {
     color: #bbb;
 }
 
-.card-header {
+.dark-mode .card-header {
     margin-top: 10px;
+    color: #5A976D;
 }
 
 .card-body {
@@ -319,6 +350,6 @@ const updateTrackerName = async (trackerId, newName) => {
 }
 
 .card-view.dark-mode .add-tracker-body {
-    color: #ddd;
+    color: #E69543;
 }
 </style>
