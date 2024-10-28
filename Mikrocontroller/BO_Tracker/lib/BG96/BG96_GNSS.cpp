@@ -397,12 +397,12 @@ bool _BG96_GNSS::InjectGpsOneXTRAData(const char *filename, Cmd_Status_t status,
             if (diffDays > 1)
             {
                 // Wenn der Zeitstempel älter als 1 Tag ist, gib false zurück
-                return true;
+                return false;
             }
             else
             {
                 // Wenn der Zeitstempel innerhalb von 1 Tagen liegt, gib true zurück
-                return false;
+                return true;
             }
         }
     }

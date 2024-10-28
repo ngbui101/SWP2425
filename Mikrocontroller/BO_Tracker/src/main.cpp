@@ -10,7 +10,7 @@
 StaticJsonDocument<600> docInput;
 StaticJsonDocument<600> docOutput;
 
-char APN[] = "wm";
+char APN[] = "internet.m2mportal.de";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 
