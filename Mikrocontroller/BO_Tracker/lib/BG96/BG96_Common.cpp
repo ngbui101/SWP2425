@@ -256,10 +256,13 @@ Cmd_Response_t _BG96_Common::SetDevFunctionality(Functionality_t mode)
     switch (mode)
     {
     case MINIMUM_FUNCTIONALITY:
-        strcat(cmd, "=0"); // Minimale Funktionalität
+        strcat(cmd, "=0"); // Turn off
         break;
     case FULL_FUNCTIONALITY:
         strcat(cmd, "=1"); // Volle Funktionalität
+        break;
+    case RESET_FUNCTIONALITY:
+        strcat(cmd, "=1,1"); // Restart Funktionalität
         break;
     case DISABLE_RF:
         strcat(cmd, "=4"); // RF deaktivieren
@@ -717,8 +720,81 @@ bool _BG96_Common::ScanmodeConfig(int mode)
     sprintf(cmd, "+QCFG=\"nwscanmode\",%d", mode);
 
     if (sendAndSearch(cmd, RESPONSE_OK, 2))
-    {   
-        ResetModule();
+    {
+        return true;
+    }
+    return false;
+}
+bool _BG96_Common::SearchingConfig(const char *scanseq)
+{
+    char cmd[32];
+    sprintf(cmd, "+QCFG=\"nwscanseq\",%s", scanseq);
+
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
+        return true;
+    }
+    return false;
+}
+/**
+ * @brief Configure Network Category to be Searched under LTE RAT .
+ *
+ *
+ * @param mode Der gewünschte Scanmodus (0 für LTE Cat M1, 1 für LTE Cat NB1, 2 LTE Cat M1 and Cat NB1).
+ * @return true, wenn der Befehl erfolgreich gesendet und bestätigt wurde, sonst false.
+ */
+bool _BG96_Common::LTENetworkCategoryConfig(int mode)
+{
+    char cmd[32];
+    sprintf(cmd, "+QCFG=\"iotopmode\",%d", mode);
+
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
+        return true;
+    }
+    return false;
+}
+/**
+ * @brief Configure Network Category to be Searched under LTE RAT .
+ *
+ *
+ * @param service Der gewünschte Service (1 für PS bzw. nur Datenumtausch, 2 für CS&PS auch Anrufe).
+ * @return true, wenn der Befehl erfolgreich gesendet und bestätigt wurde, sonst false.
+ */
+bool _BG96_Common::ServiceDomainConfig(int service){
+    char cmd[32];
+    sprintf(cmd, "+QCFG=\"servicedomain\",%d", service);
+
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
+        return true;
+    }
+    return false;
+}
+/**
+ * @brief Konfiguriert die Frequenzbänder des BG96-Moduls für GSM, CAT-M1 und CAT-NB1.
+ *
+ * Diese Methode formatiert und sendet einen AT-Befehl an das BG96-Modul, um die zu verwendenden Frequenzbänder für GSM, CAT-M1 und CAT-NB1 festzulegen.
+ * Die Methode akzeptiert drei String-Parameter, die die spezifischen Bandwerte für GSM, CAT-M1 und CAT-NB1 angeben und
+ * sendet den Befehl an das Modul. Falls der Befehl erfolgreich ist, wird `true` zurückgegeben, andernfalls `false`.
+ *
+ * @param gsmbandval Ein String, der das Band für GSM spezifiziert.
+ * @param catm1bandval Ein String, der das Band für LTE CAT-M1 spezifiziert.
+ * @param catnb1bandval Ein String, der das Band für LTE CAT-NB1 spezifiziert.
+ *
+ * @return `true`, wenn die Konfiguration erfolgreich war (d.h. eine positive Antwort auf den gesendeten Befehl erhalten wurde),
+ *         `false` bei einem Fehler.
+ *
+ * @note Die Methode verwendet den Befehl `+QCFG="band"` des BG96-Moduls und erwartet als Antwort `RESPONSE_OK`.
+ *       Die Wartezeit auf die Antwort beträgt 2 Sekunden.
+ */
+bool _BG96_Common::BandConfig(const char *gsmbandval, const char *catm1bandval, const char *catnb1bandval)
+{
+    char cmd[32];
+    sprintf(cmd, "+QCFG=\"band\",%s,%s,%s", gsmbandval, catm1bandval, catnb1bandval);
+
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
         return true;
     }
     return false;
@@ -755,16 +831,33 @@ bool _BG96_Common::ReportCellInformation(char *celltype, char *infos)
     if (celltype == "neighbourcell")
     {
         strcat(cmd, "=\"neighbourcell\"");
-    } else if (celltype == "servingcell"){
+    }
+    else if (celltype == "servingcell")
+    {
         strcat(cmd, "=\"servingcell\"");
-    }else return false;
-    
+    }
+    else
+        return false;
+
     if (sendAndSearch(cmd, RESPONSE_OK, 2))
     {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
-        strcpy(infos, rxBuffer); 
+        strcpy(infos, rxBuffer);
         return true;
     }
+    return true;
+}
+
+bool _BG96_Common::ConfigNetworks(){
+    SetDevFunctionality(MINIMUM_FUNCTIONALITY);
+    LTENetworkCategoryConfig(2); //LTE Cat M1 and Cat NB1 
+    ScanmodeConfig(3); //LTE
+    ServiceDomainConfig(1); //Nur Datenumtausch
+    BandConfig("F", "80084", "80084"); //LTE-M + NBIoT on B3/B8/B20 only
+    SearchingConfig("00"); //LTE-M,NBIoT,LTE
+    SetDevFunctionality(RESET_FUNCTIONALITY);
+    delay(300);
+    ResetModule();
     return true;
 }

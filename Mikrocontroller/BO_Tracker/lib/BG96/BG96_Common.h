@@ -18,6 +18,7 @@
 typedef enum functionality{
     MINIMUM_FUNCTIONALITY = 0, 
     FULL_FUNCTIONALITY = 1,
+    RESET_FUNCTIONALITY = 3,
     DISABLE_RF = 4,
 }Functionality_t;
 
@@ -101,14 +102,22 @@ class _BG96_Common : public _BG96_Serial
 
     bool DevClock(char *d_clock, Cmd_Status_t status);
 
-    //0 Automatic, 1 GSM only, 3 LTE only
     bool ScanmodeConfig(int mode);
+
+    bool SearchingConfig(const char * scanseq);
 
     time_t parseTimestamp(const char *timestamp);
 
     bool ReportCellInformation(char *celltype, char* infos);
 
-    bool ScanForCurrentAbaiableNetworks(char * scan_typ, char* scan_mode, char* infos);
+    bool LTENetworkCategoryConfig(int mode);
+
+    bool BandConfig(const char *gsmbandval, const char * catm1bandval, const char * catnb1bandval);
+
+    bool ConfigNetworks();
+
+    bool ServiceDomainConfig(int service);
+
   private:
     char currenttime[64];
 };

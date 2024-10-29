@@ -10,7 +10,7 @@
 StaticJsonDocument<600> docInput;
 StaticJsonDocument<600> docOutput;
 
-char APN[] = "internet.m2mportal.de";
+char APN[] = "wm";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 
@@ -18,13 +18,18 @@ char mqtt_server[] = "a336z3b6pu6hdu-ats.iot.us-east-1.amazonaws.com";
 unsigned int mqtt_port = 8883;
 char mqtt_clientId[] = "BG96";
 // char mqtt_topicName[50];
-char mqtt_sub_topic[64];  // Für "tracker/{IMEI}/sub"
-char mqtt_pub_topic[64];  // Für "tracker/{IMEI}/pub"
+char mqtt_sub_topic[64]; // Für "tracker/{IMEI}/sub"
+char mqtt_pub_topic[64]; // Für "tracker/{IMEI}/pub"
 
 unsigned int mqtt_index = 0;
 Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
 unsigned long pub_time;
+
+//GNSS
 unsigned long gnss_start_time;
+unsigned long last_millis = 0;
+unsigned long time_taken;
+bool gnssFixReceived = false;
 
 // IMEI of the modem
 char IMEI[20];
@@ -59,17 +64,156 @@ void setup()
 
   InitGNSS(_GNSS, DSerial);
 }
+
 void loop()
-{   
-    if (ATSerial.available())
+{
+  char payload[1028];
+  char *sta_buf;
+  int res;
+  char gnss_posi[128];
+  char gnss_nmea[128];
+  char cell_infos[256];
+  float temperature;
+  float humid;
+  float batterypercentage = _BoardBattery.calculateBatteryPercentage(_BoardBattery.readBatteryVoltage());
+
+  DeserializationError error;
+
+  Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
+
+  if (_AWS.ReportCellInformation("neighbourcell", cell_infos))
+  {
+    DSerial.println("Report Cell Information Successful");
+  }
+
+  switch (ret)
+  {
+  case MQTT_RECV_DATA_EVENT:
+    error = deserializeJson(docOutput, payload);
+
+    if (error == DeserializationError::Ok)
     {
-        char at = ATSerial.read();
-        DSerial.write(at);
+      if (docOutput["GnssMode"] == "true")
+      {
+        GnssMode = true;
+        DSerial.println("GNSS Mode On!");
+        gnss_start_time = millis();
+      }
+      else if (docOutput["GnssMode"] == "false")
+      {
+        GnssMode = false;
+        DSerial.println("GNSS Mode Off!");
+      }
+      else
+      {
+        DSerial.println("Mode not found!");
+      }
     }
-    if (DSerial.available())
+    else
     {
-        char d = DSerial.read();
-        ATSerial.write(d);
-        DSerial.write(d);
+      DSerial.println("\r\n Error in  Deserialization!");
+      DSerial.println(error.c_str());
     }
+
+    break;
+
+  case MQTT_STATUS_EVENT:
+    sta_buf = strchr(payload, ',');
+    if (atoi(sta_buf + 1) == 1)
+    {
+      if (_AWS.CloseMQTTClient(mqtt_index))
+      {
+        DSerial.println("\r\nClose the MQTT Client Success!");
+      }
+    }
+    else
+    {
+      DSerial.print("\r\nStatus cade is :");
+      DSerial.println(atoi(sta_buf + 1));
+      DSerial.println("Please check the documentation for error details.");
+    }
+    break;
+
+  default:
+    break;
+  }
+
+  if (gnssFixReceived && GnssMode && (millis() - pub_time >= 5000UL))
+  {
+    if (!_GNSS.GetGNSSPositionInformation(gnss_posi))
+    {
+      DSerial.println("\r\nGet the GNSS Position Fail!\nTry in 1 Seconds");
+      strcpy(gnss_posi, "no fix");
+      if (millis() - last_millis >= 1000u)
+      {
+        last_millis = millis();
+      }
+    }
+    else
+    {
+      DSerial.println("\r\nGet the GNSS Position Success!");
+      DSerial.println(gnss_posi);
+      if (!gnssFixReceived) 
+      {
+        time_taken = millis() - gnss_start_time;
+        DSerial.print("Time taken to get GNSS Position: ");
+        DSerial.print(time_taken);
+        DSerial.println(" ms");
+        gnssFixReceived = true; 
+      }
+    }
+    if (!_GNSS.GetGNSSNMEASentences(GPGGA, gnss_nmea))
+    {
+      DSerial.println("\r\nGet the GNSS NMEA Fail!");
+    }
+    else
+    {
+      DSerial.println(gnss_nmea);
+    }
+    pub_time = millis();
+    docInput["Timestamp"] = _GNSS.GetCurrentTime();
+    docInput["CellInfos"] = cell_infos;
+    docInput["Temperature"] = 23;
+    docInput["Humidity"] = 90;
+    docInput["BatteryPercentage"] = batterypercentage;
+    docInput["Position"] = gnss_posi;
+    docInput["NMEA"] = gnss_nmea;
+    docInput["TimeToGetFirstFix"] = time_taken;
+
+    serializeJsonPretty(docInput, payload);
+
+    res = _AWS.MQTTPublishMessages(mqtt_index, 1, AT_LEAST_ONCE, mqtt_pub_topic, false, payload);
+
+    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK ||
+        res == PACKET_RETRANSMISSION)
+    {
+      DSerial.println("Publish with GNSS Succeded!");
+    }
+    else
+    {
+      DSerial.println("Publish GNSS failed!");
+    }
+  }
+  else if ((millis() - pub_time >= 10000UL))
+  {
+    pub_time = millis();
+    docInput["Timestamp"] = _GNSS.GetCurrentTime();
+    docInput["CellInfos"] = cell_infos;
+    docInput["Temperature"] = 23;                     
+    docInput["BatteryPercentag"] = batterypercentage; 
+
+    serializeJsonPretty(docInput, payload);
+
+    res = _AWS.MQTTPublishMessages(mqtt_index, 1, AT_LEAST_ONCE, mqtt_pub_topic, false, payload);
+
+    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK ||
+        res == PACKET_RETRANSMISSION)
+    {
+      DSerial.println("Publish Succeded!");
+    }
+    else
+    {
+      DSerial.println("Publish failed!");
+    }
+  }
 }
