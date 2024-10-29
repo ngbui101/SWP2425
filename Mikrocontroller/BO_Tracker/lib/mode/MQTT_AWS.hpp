@@ -109,6 +109,9 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
 {
   Mqtt_Version_t version = MQTT_V4;
 
+  BG96.ConfigNetworks();
+  BG96.SetDevCommandEcho(false); 
+  BG96.SetDevOutputformat(true);
   // IMEI
   char imei_tmp[64];
 
@@ -131,8 +134,6 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
 
   // SSL Networking
   BG96.DeleteCertificate("all");
-
-  BG96.ScanmodeConfig(0);
 
   char apn_error[64];
   while (!BG96.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))

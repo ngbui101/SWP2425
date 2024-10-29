@@ -391,19 +391,18 @@ bool _BG96_GNSS::InjectGpsOneXTRAData(const char *filename, Cmd_Status_t status,
 
             time_t gpsTime = parseTimestamp(gpsDataTimestamp);
             time_t currentTime = parseTimestamp(currentTimestamp);
-
             
             double diffDays = difftime(currentTime, gpsTime) / (60 * 60 * 24);
 
-            if (diffDays > 7)
+            if (diffDays > 1)
             {
-                // Wenn der Zeitstempel älter als 7 Tage ist, gib false zurück
-                return true;
+                // Wenn der Zeitstempel älter als 1 Tag ist, gib false zurück
+                return false;
             }
             else
             {
-                // Wenn der Zeitstempel innerhalb von 7 Tagen liegt, gib true zurück
-                return false;
+                // Wenn der Zeitstempel innerhalb von 1 Tagen liegt, gib true zurück
+                return true;
             }
         }
     }

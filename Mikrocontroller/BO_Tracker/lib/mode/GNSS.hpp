@@ -15,7 +15,7 @@ bool InitGNSS(_BG96_GNSS &GNSS,
     {
         DSerial.println("\r\nInit GpsOneXTRA Success!");
     }
-
+    
     while (!GNSS.TurnOnGNSS(mode, WRITE_MODE))
     {
         DSerial.println("\r\nOpen the GNSS Function Fali!");
