@@ -855,7 +855,7 @@ bool _BG96_Common::ConfigNetworks()
     SetDevFunctionality(MINIMUM_FUNCTIONALITY);
     LTENetworkCategoryConfig(2);       // LTE Cat M1 and Cat NB1
     ScanmodeConfig(3);                 // LTE
-    ServiceDomainConfig(2);            // Nur Datenumtausch
+    ServiceDomainConfig(1);            // Nur Datenumtausch
     BandConfig("F", "80084", "80084"); // LTE-M + NBIoT on B3/B8/B20 only
     SearchingConfig("00");             // LTE-M,NBIoT,LTE
     SetDevFunctionality(RESET_FUNCTIONALITY);
