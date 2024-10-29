@@ -110,8 +110,7 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   Mqtt_Version_t version = MQTT_V4;
 
   BG96.ConfigNetworks();
-  
-  BG96.SetDevCommandEcho(false);
+  BG96.SetDevCommandEcho(false); 
   BG96.SetDevOutputformat(true);
   // IMEI
   char imei_tmp[64];

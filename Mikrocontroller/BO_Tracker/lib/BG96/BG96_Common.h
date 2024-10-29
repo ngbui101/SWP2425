@@ -118,6 +118,7 @@ class _BG96_Common : public _BG96_Serial
 
     bool ServiceDomainConfig(int service);
 
+    bool NetworkRegistrationCodeConfig(int n);
   private:
     char currenttime[64];
 };

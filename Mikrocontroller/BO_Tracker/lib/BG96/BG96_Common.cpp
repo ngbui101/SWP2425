@@ -761,7 +761,8 @@ bool _BG96_Common::LTENetworkCategoryConfig(int mode)
  * @param service Der gewünschte Service (1 für PS bzw. nur Datenumtausch, 2 für CS&PS auch Anrufe).
  * @return true, wenn der Befehl erfolgreich gesendet und bestätigt wurde, sonst false.
  */
-bool _BG96_Common::ServiceDomainConfig(int service){
+bool _BG96_Common::ServiceDomainConfig(int service)
+{
     char cmd[32];
     sprintf(cmd, "+QCFG=\"servicedomain\",%d", service);
 
@@ -849,15 +850,28 @@ bool _BG96_Common::ReportCellInformation(char *celltype, char *infos)
     return true;
 }
 
-bool _BG96_Common::ConfigNetworks(){
+bool _BG96_Common::ConfigNetworks()
+{
     SetDevFunctionality(MINIMUM_FUNCTIONALITY);
-    LTENetworkCategoryConfig(2); //LTE Cat M1 and Cat NB1 
-    ScanmodeConfig(3); //LTE
-    ServiceDomainConfig(1); //Nur Datenumtausch
-    BandConfig("F", "80084", "80084"); //LTE-M + NBIoT on B3/B8/B20 only
-    SearchingConfig("00"); //LTE-M,NBIoT,LTE
+    LTENetworkCategoryConfig(2);       // LTE Cat M1 and Cat NB1
+    ScanmodeConfig(3);                 // LTE
+    ServiceDomainConfig(1);            // Nur Datenumtausch
+    BandConfig("F", "80084", "80084"); // LTE-M + NBIoT on B3/B8/B20 only
+    SearchingConfig("00");             // LTE-M,NBIoT,LTE
     SetDevFunctionality(RESET_FUNCTIONALITY);
     delay(300);
     ResetModule();
     return true;
+}
+
+bool _BG96_Common::NetworkRegistrationCodeConfig(int n)
+{
+    char cmd[32];
+    sprintf(cmd, "%s=%d", DEV_EPS_NET_STATUS, n);
+
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
+        return true;
+    }
+    return false;
 }

@@ -10,7 +10,9 @@
 StaticJsonDocument<600> docInput;
 StaticJsonDocument<600> docOutput;
 
-char APN[] = "wm";
+char APN[] = "internet.m2mportal.de";
+// char APN[] = "iot.1nce.net";
+// char APN[] = "wm";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 
@@ -25,7 +27,7 @@ unsigned int mqtt_index = 0;
 Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
 unsigned long pub_time;
 
-//GNSS
+// GNSS
 unsigned long gnss_start_time;
 unsigned long last_millis = 0;
 unsigned long time_taken;
@@ -55,7 +57,7 @@ void setup()
   _AWS.InitModule();
   _AWS.SetDevCommandEcho(false);
   _AWS.SetDevOutputformat(true);
-
+  
   InitModemMQTT(_AWS, DSerial, APN, LOGIN, PASSWORD,
                 mqtt_server, mqtt_port,
                 mqtt_clientId, mqtt_sub_topic, mqtt_pub_topic,
@@ -153,13 +155,13 @@ void loop()
     {
       DSerial.println("\r\nGet the GNSS Position Success!");
       DSerial.println(gnss_posi);
-      if (!gnssFixReceived) 
+      if (!gnssFixReceived)
       {
         time_taken = millis() - gnss_start_time;
         DSerial.print("Time taken to get GNSS Position: ");
         DSerial.print(time_taken);
         DSerial.println(" ms");
-        gnssFixReceived = true; 
+        gnssFixReceived = true;
       }
     }
     if (!_GNSS.GetGNSSNMEASentences(GPGGA, gnss_nmea))
@@ -199,8 +201,8 @@ void loop()
     pub_time = millis();
     docInput["Timestamp"] = _GNSS.GetCurrentTime();
     docInput["CellInfos"] = cell_infos;
-    docInput["Temperature"] = 23;                     
-    docInput["BatteryPercentag"] = batterypercentage; 
+    docInput["Temperature"] = 23;
+    docInput["BatteryPercentag"] = batterypercentage;
 
     serializeJsonPretty(docInput, payload);
 
