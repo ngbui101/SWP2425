@@ -150,6 +150,14 @@ bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, const char* apn, const char* u
             return false;
         }
     }
+    
+     // Schritt 3: APN-Konfiguration setzen
+    if (!SetDevAPNParameters(pdp_index, IPV4, apn, usr, pwd, PAP_OR_CHAP))
+    {
+        e_str = "\r\nAPN ERROR: Failed to set APN parameters!\r\n";
+        strcpy(err_code, e_str);
+        return false;
+    }
     // Schritt 2: Netzregistrierung prüfen
     start_time = millis();
     while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
@@ -164,13 +172,7 @@ bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, const char* apn, const char* u
         }
         delay(3000);  // Warte 3 Sekunden vor dem nächsten Registrierungsversuch
     }
-    // Schritt 3: APN-Konfiguration setzen
-    if (!SetDevAPNParameters(pdp_index, IPV4, apn, usr, pwd, PAP_OR_CHAP))
-    {
-        e_str = "\r\nAPN ERROR: Failed to set APN parameters!\r\n";
-        strcpy(err_code, e_str);
-        return false;
-    }
+   
     // Schritt 4: APN aktivieren und IP-Adresse abrufen
     start_time = millis();
     while (millis() - start_time <= 150 * 1000UL)  // Timeout nach 150 Sekunden
