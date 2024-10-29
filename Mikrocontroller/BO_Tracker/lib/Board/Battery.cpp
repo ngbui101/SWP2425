@@ -30,8 +30,9 @@ float _Battery::readBatteryVoltage()
     return batteryVoltage;
 }
 
-float _Battery::calculateBatteryPercentage(float batteryVoltage)
-{
+float _Battery::calculateBatteryPercentage()
+{   
+    float batteryVoltage = readBatteryVoltage();
     if (batteryVoltage >= FULL_BATTERY_VOLTAGE)
         return 100.0;
     else if (batteryVoltage <= EMPTY_BATTERY_VOLTAGE)

@@ -829,11 +829,11 @@ bool _BG96_Common::ReportCellInformation(char *celltype, char *infos)
 {
     char cmd[32];
     strcpy(cmd, QUECCELL_ENGINEERING_MODE);
-    if (celltype == "neighbourcell")
+    if (strcmp(celltype, "neighbourcell") == 0)
     {
         strcat(cmd, "=\"neighbourcell\"");
     }
-    else if (celltype == "servingcell")
+    else if (strcmp(celltype, "servingcell") == 0)
     {
         strcat(cmd, "=\"servingcell\"");
     }
@@ -842,10 +842,15 @@ bool _BG96_Common::ReportCellInformation(char *celltype, char *infos)
 
     if (sendAndSearch(cmd, RESPONSE_OK, 2))
     {
-        char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
-        *end_buf = '\0';
-        strcpy(infos, rxBuffer);
-        return true;
+        char *start_buf = strstr(rxBuffer, "+QENG: ");
+        if (start_buf != nullptr)
+        {
+            start_buf += strlen("+QENG: ");
+            char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
+            *end_buf = '\0';
+            strcpy(infos, start_buf);
+            return true;
+        }
     }
     return true;
 }
@@ -861,7 +866,7 @@ bool _BG96_Common::ConfigNetworks()
     SetDevFunctionality(RESET_FUNCTIONALITY);
     delay(300);
     ResetModule();
-    SetDevFunctionality(FULL_FUNCTIONALITY); 
+    SetDevFunctionality(FULL_FUNCTIONALITY);
     return true;
 }
 

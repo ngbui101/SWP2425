@@ -16,7 +16,7 @@ char APN[] = "internet.m2mportal.de";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 
-char mqtt_server[] = "a336z3b6pu6hdu-ats.iot.us-east-1.amazonaws.com";
+char mqtt_server[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
 unsigned int mqtt_port = 8883;
 char mqtt_clientId[] = "BG96";
 // char mqtt_topicName[50];

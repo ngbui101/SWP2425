@@ -17,7 +17,7 @@ public:
     _Battery();
     ~_Battery();
     bool InitBattery();
-    float calculateBatteryPercentage(float batteryVoltage);
+    float calculateBatteryPercentage();
     float readBatteryVoltage();
 
 private:
