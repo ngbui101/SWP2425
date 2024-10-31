@@ -8,8 +8,12 @@
             <a href="#" @click.prevent="goToHome">Map</a>
           </li>
           <li class="nav-item">
+            <a href="#" @click.prevent="goToRoutes">Route</a>
+          </li>
+          <li class="nav-item">
             <a ref="tour2" href="#" @click.prevent="goToTrackers">Tracker</a>
           </li>
+
           <li class="nav-item">
             <RouterLink to="account">Account</RouterLink>
           </li>
@@ -54,6 +58,10 @@ onMounted(async () => {
 const goToHome = () => {
   router.push({ name: 'main' }); // Replace with your home route
 };
+const goToRoutes = () => {
+  router.push({ name: 'route' }); // Replace with your home route
+};
+
 
 const goToTrackers = () => {
   router.push({ name: 'trackers' }); // Replace with your trackers route

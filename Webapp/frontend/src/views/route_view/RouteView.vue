@@ -1,42 +1,42 @@
 <template>
-    <div :class="['map-view', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
-        <!-- Toolbar with Toggle Bar for Current/History view -->
+    <div :class="['route-view', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+        <!-- Toolbar with Toggle Bar for New/Routes view -->
         <div class="toolbar">
             <div class="toggle-container" @mousedown="startDragging($event)" @mouseup="stopDragging"
                 @mouseleave="stopDragging" @mousemove="handleDragging($event)">
 
                 <!-- Sliding background div -->
                 <div class="slider"
-                    :class="{ 'slide-left': currentView === 'current', 'slide-right': currentView === 'history' }">
+                    :class="{ 'slide-left': currentView === 'new', 'slide-right': currentView === 'routes' }">
                 </div>
 
-                <!-- Current Map View Toggle (Left) -->
-                <label @click="setView('current')" :class="{ active: currentView === 'current' }">
-                    Current
+                <!-- New Route View Toggle (Left) -->
+                <label @click="setView('new')" :class="{ active: currentView === 'new' }">
+                    New
                 </label>
 
-                <!-- Map History View Toggle (Right) -->
-                <label @click="setView('history')" :class="{ active: currentView === 'history' }">
-                    History
+                <!-- Route History View Toggle (Right) -->
+                <label @click="setView('routes')" :class="{ active: currentView === 'routes' }">
+                    Saved
                 </label>
             </div>
         </div>
 
         <!-- Conditional rendering based on selected view -->
-        <CurrentMap v-if="currentView === 'current'" />
-        <MapHistory v-if="currentView === 'history'" />
+        <NewRoute v-if="currentView === 'new'" />
+        <RouteHistory v-if="currentView === 'routes'" />
     </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import CurrentMap from './components/CurrentMap.vue';
-import MapHistory from './components/MapHistory.vue';
+import NewRoute from './components/NewRoute.vue';
+import RouteHistory from './components/RouteHistory.vue';
 import { useAuthStore } from "@/stores/auth";
 
-const currentView = ref('current'); // Default view is now current
+const currentView = ref('new'); // Default view is now 'new'
 let isDragging = ref(false); // Indicates if the slider is being dragged
-let sliderPosition = ref(100); // Default slider starts at Current Map (leftmost)
+let sliderPosition = ref(100); // Default slider starts at New Route (leftmost)
 let draggingDirection = ref(''); // Tracks the drag direction
 
 // Fetch user from the auth store
@@ -46,7 +46,7 @@ const user = computed(() => authStore.userDetail);
 // Method to change the view
 const setView = (view) => {
     currentView.value = view;
-    sliderPosition.value = view === 'current' ? 0 : 100; // Current Map on left (0), Map History on right (100)
+    sliderPosition.value = view === 'new' ? 0 : 100; // New on left (0), Routes on right (100)
 };
 
 // Start dragging the slider
@@ -62,9 +62,9 @@ const stopDragging = () => {
 
     // Determine which view is closer to the slider
     if (sliderPosition.value > 50) {
-        setView('history'); // Snap to Map History (right side)
+        setView('routes'); // Snap to Routes (right side)
     } else {
-        setView('current'); // Snap to Current Map (left side)
+        setView('new'); // Snap to New Route (left side)
     }
 
     // Reset dragging direction after stop
@@ -94,14 +94,14 @@ const updateSliderPosition = (clientX) => {
 </script>
 
 <style scoped>
-.map-view {
+.route-view {
     background: linear-gradient(135deg, #f1e4cc 0%, #e6cc99 50%, #f1e4cc 100%);
     padding-bottom: 20px;
     min-height: 100vh;
     padding-top: 15px;
 }
 
-.map-view.dark-mode {
+.route-view.dark-mode {
     background: linear-gradient(135deg, #1e1e1e 0%, #141414 50%, #1e1e1e 100%);
 }
 
@@ -169,7 +169,7 @@ const updateSliderPosition = (clientX) => {
     /* Remove right border when active */
 }
 
-/* Remove left border on Current Map View when active */
+/* Remove left border on New Route View when active */
 .toggle-container label:last-of-type.active {
     border-left: none;
 }

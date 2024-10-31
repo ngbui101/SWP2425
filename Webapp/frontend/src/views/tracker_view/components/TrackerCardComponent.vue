@@ -156,12 +156,12 @@ const updateTrackerName = async (trackerId, newName) => {
 }
 
 .tracker-card {
-    background: rgba(224, 224, 224, 0.9);
+    background: rgb(255, 255, 255);
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 12px;
     width: 260px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 1);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
@@ -280,7 +280,7 @@ const updateTrackerName = async (trackerId, newName) => {
 
 /* Add Tracker as a card */
 .add-tracker-card {
-    background: rgba(224, 224, 224, 0.9);
+    background: rgba(255, 255, 255, 1);
     border: 1px dashed #ddd;
     padding: 20px;
     border-radius: 12px;

@@ -147,6 +147,7 @@ const updateTrackerName = async (trackerId, newName) => {
     text-align: center;
     font-size: 1rem;
     border: 1px solid #00543D;
+
 }
 
 .tracker-table th {
@@ -161,7 +162,7 @@ const updateTrackerName = async (trackerId, newName) => {
 }
 
 .tracker-table tr {
-    background-color: #ddd;
+    background-color: #ffffff;
 }
 
 

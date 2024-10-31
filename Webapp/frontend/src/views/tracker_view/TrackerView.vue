@@ -105,18 +105,26 @@ const fetchTrackersForUser = async () => {
         const trackersWithLatestMeasurements = response.data;
 
         for (const tracker of trackersWithLatestMeasurements) {
-            const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
-            const measurements = measurementsResponse.data;
+            try {
+                // Attempt to fetch measurements
+                const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
+                const measurements = measurementsResponse.data;
 
-            const validMeasurements = measurements.filter(measurement =>
-                measurement.latitude && measurement.longitude && !isNaN(measurement.latitude) && !isNaN(measurement.longitude)
-            );
-            validMeasurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const validMeasurements = measurements.filter(measurement =>
+                    measurement.latitude && measurement.longitude && !isNaN(measurement.latitude) && !isNaN(measurement.longitude)
+                );
+                validMeasurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-            tracker.latestMeasurement = validMeasurements.length > 0 ? validMeasurements[0] : null;
-            tracker.location = tracker.latestMeasurement ?
-                await getReverseGeocodingAddress(tracker.latestMeasurement.latitude, tracker.latestMeasurement.longitude) :
-                'Unknown Location';
+                tracker.latestMeasurement = validMeasurements.length > 0 ? validMeasurements[0] : null;
+                tracker.location = tracker.latestMeasurement
+                    ? await getReverseGeocodingAddress(tracker.latestMeasurement.latitude, tracker.latestMeasurement.longitude)
+                    : 'Unknown Location';
+            } catch (measurementError) {
+                // If no measurements, set default values
+                console.warn(`No measurements found for tracker ${tracker._id}`);
+                tracker.latestMeasurement = null;
+                tracker.location = 'No data available';
+            }
         }
 
         trackers.value = trackersWithLatestMeasurements;

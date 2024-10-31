@@ -292,10 +292,10 @@ body {
 .settings-card {
   flex: 1;
   min-width: 250px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 1);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
   border-radius: 8px;
   padding: 20px;
-  background: rgba(224, 224, 224, 0.9);
+  background: rgba(255, 255, 255, 1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;

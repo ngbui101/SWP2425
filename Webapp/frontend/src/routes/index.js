@@ -8,11 +8,13 @@ const RegisterView = () => import('../views/RegisterView.vue');
 const SettingsView = () => import('../views/SettingsView.vue');
 const TrackerView = () => import('../views/tracker_view/TrackerView.vue'); // Neue Seite importieren
 const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue');
+const RouteView = () => import('../views/route_view/RouteView.vue');
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
   { path: '/', redirect: { name: 'login' } }, // Default to login if no route is specified
   { path: '/map', component: MapView, name: 'main', meta: { requiresAuth: true } },
+  { path: '/route', component: RouteView, name: 'route', meta: { requiresAuth: true } },
   { path: '/account', component: SettingsView, name: 'account', meta: { requiresAuth: true } },
   { path: '/login', component: LoginView, name: 'login', meta: { requiresGuest: true, hideComponent: true } },
   { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true, hideComponent: true } },

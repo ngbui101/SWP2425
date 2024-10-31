@@ -29,6 +29,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useApi, useApiPrivate } from "@/composables/useApi";
 
 // Define props to accept data passed from the parent
 const props = defineProps({
@@ -40,12 +41,32 @@ const props = defineProps({
 const trackerName = ref('');
 const trackerImei = ref('');
 
-// Save changes placeholder (no functionality)
-const saveChanges = () => {
-    console.log('Adding tracker:', trackerName.value, trackerImei.value);
-    props.closePopup(); // Close the popup
+// Save tracker to backend using a PUT request
+const saveChanges = async () => {
+    try {
+        // Use useApiPrivate to set up an authorized API request
+        const api = useApiPrivate();
+
+        // Send PUT request to create a new tracker
+        const response = await api.post('http://localhost:3500/api/tracker', {
+            name: trackerName.value,
+            imei: trackerImei.value
+        });
+
+        console.log('Tracker created successfully:', response.data);
+
+        // Close popup and clear input fields
+        props.closePopup();
+        trackerName.value = '';
+        trackerImei.value = '';
+
+    } catch (error) {
+        console.error('Failed to create tracker:', error);
+        alert('Failed to create tracker. Please try again.');
+    }
 };
 </script>
+
 
 <style scoped>
 /* Overlay background for the popup */

@@ -45,7 +45,9 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 20%, rgb(212, 236, 206) 80%);
+  background: linear-gradient(180deg, #F2F2F2 85%, rgba(212, 236, 206, 1) 100%);
+
+
   padding: 10px;
 
   height: 100px;
