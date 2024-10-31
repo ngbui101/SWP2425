@@ -122,15 +122,15 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
     s.toCharArray(ModemIMEI, 64);
     DSerial.println(ModemIMEI);
   }
-  // MQTT Subscribe Topic zusammensetzen mit strcat
-  strcpy(mqtt_sub_topic, "tracker/"); // Basisteil des Topics
-  strcat(mqtt_sub_topic, ModemIMEI);  // IMEI anhängen
-  strcat(mqtt_sub_topic, "/sub");     // Suffix "/sub" anhängen
+  
+  strcpy(mqtt_sub_topic, "tracker/"); 
+  strcat(mqtt_sub_topic, ModemIMEI);  
+  strcat(mqtt_sub_topic, "/sub");     
 
-  // MQTT Publish Topic zusammensetzen mit strcat
-  strcpy(mqtt_pub_topic, "tracker/"); // Basisteil des Topics
-  strcat(mqtt_pub_topic, ModemIMEI);  // IMEI anhängen
-  strcat(mqtt_pub_topic, "/pub");     // Suffix "/pub" anhängen
+ 
+  strcpy(mqtt_pub_topic, "tracker/"); 
+  strcat(mqtt_pub_topic, ModemIMEI);  
+  strcat(mqtt_pub_topic, "/pub");    
 
   // SSL Networking
   BG96.DeleteCertificate("all");

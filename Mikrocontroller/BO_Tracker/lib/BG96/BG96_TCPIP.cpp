@@ -151,14 +151,14 @@ bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, const char* apn, const char* u
         }
     }
     
-     // Schritt 3: APN-Konfiguration setzen
+     // Schritt 2: APN-Konfiguration setzen
     if (!SetDevAPNParameters(pdp_index, IPV4, apn, usr, pwd, PAP_OR_CHAP))
     {
         e_str = "\r\nAPN ERROR: Failed to set APN parameters!\r\n";
         strcpy(err_code, e_str);
         return false;
     }
-    // Schritt 2: Netzregistrierung prüfen
+    // Schritt 3: Netzregistrierung prüfen
     start_time = millis();
     while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
     {
