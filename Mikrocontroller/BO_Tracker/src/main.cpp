@@ -26,7 +26,12 @@ unsigned int mqtt_index = 0;
 Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
 unsigned long pub_time;
 
+// IMEI of the modem
+char IMEI[20];
+
 bool gnssFixReceived = false;
+unsigned long gnssStartMillis = 0;
+unsigned long timeToFirstFix = 0;
 
 bool GnssMode = false;
 bool CellInfosMode = false;
@@ -60,7 +65,7 @@ void setup()
                 mqtt_server, mqtt_port,
                 mqtt_clientId, mqtt_sub_topic, mqtt_pub_topic,
                 AT_MOST_ONCE, mqtt_index,
-                1, 2);
+                1, 2, IMEI);
 
   InitGNSS(_GNSS, DSerial);
 }
@@ -81,69 +86,84 @@ void loop()
 
   switch (ret)
   {
-    case MQTT_RECV_DATA_EVENT:
-      error = deserializeJson(docOutput, payload);
+  case MQTT_RECV_DATA_EVENT:
+    error = deserializeJson(docOutput, payload);
 
-      if (error == DeserializationError::Ok)
+    if (error == DeserializationError::Ok)
+    {
+      if (docOutput["GnssMode"] == "1")
       {
-        GnssMode = (docOutput["GnssMode"] == "1");
-        CellInfosMode = (docOutput["CellInfosMode"] == "1");
-        NmeaMode = (docOutput["NmeaMode"] == "1");
-        BatteryMode = (docOutput["BatteryMode"] == "1");
-
-        if (docOutput["frequenz"].is<unsigned int>())
+        if (!gnssFixReceived)
         {
-          unsigned int newFrequenz = docOutput["frequenz"];
-          if (newFrequenz > 0)
-          {
-            frequenz = newFrequenz;
-            DSerial.print("Updated publishing frequency to: ");
-            DSerial.println(frequenz);
-          }
+          gnssStartMillis = millis();
+          GnssMode = true;
         }
       }
-      else
-      {
-        DSerial.println("\r\n Error in Deserialization!");
-        DSerial.println(error.c_str());
-      }
-      break;
+      CellInfosMode = (docOutput["CellInfosMode"] == "1");
+      // NmeaMode = (docOutput["NmeaMode"] == "1");
+      BatteryMode = (docOutput["BatteryMode"] == "1");
 
-    case MQTT_STATUS_EVENT:
-      sta_buf = strchr(payload, ',');
-      if (atoi(sta_buf + 1) == 1)
+      if (docOutput["frequenz"].is<unsigned int>())
       {
-        if (_AWS.CloseMQTTClient(mqtt_index))
+        unsigned int newFrequenz = docOutput["frequenz"];
+        if (newFrequenz > 0)
         {
-          DSerial.println("\r\nClose the MQTT Client Success!");
+          frequenz = newFrequenz;
+          DSerial.print("Updated publishing frequency to: ");
+          DSerial.println(frequenz);
         }
       }
-      else
-      {
-        DSerial.print("\r\nStatus code is :");
-        DSerial.println(atoi(sta_buf + 1));
-        DSerial.println("Please check the documentation for error details.");
-      }
-      break;
+    }
+    else
+    {
+      DSerial.println("\r\n Error in Deserialization!");
+      DSerial.println(error.c_str());
+    }
+    break;
 
-    default:
-      break;
+  case MQTT_STATUS_EVENT:
+    sta_buf = strchr(payload, ',');
+    if (atoi(sta_buf + 1) == 1)
+    {
+      if (_AWS.CloseMQTTClient(mqtt_index))
+      {
+        DSerial.println("\r\nClose the MQTT Client Success!");
+      }
+    }
+    else
+    {
+      DSerial.print("\r\nStatus code is :");
+      DSerial.println(atoi(sta_buf + 1));
+      DSerial.println("Please check the documentation for error details.");
+    }
+    break;
+
+  default:
+    break;
   }
-
   if (millis() - pub_time >= frequenz)
   {
     pub_time = millis();
     if (GnssMode)
     {
-      _GNSS.GetGNSSPositionInformation(gnss_posi);
-      docInput["Position"] = gnss_posi;
-    }
-
-    if (NmeaMode)
-    {
+      if (_GNSS.GetGNSSPositionInformation(gnss_posi))
+      {
+        if (!gnssFixReceived)
+        {
+          timeToFirstFix = (millis() - gnssStartMillis);
+        }
+        docInput["TimeToGetFirstFix"] = timeToFirstFix;
+        docInput["Position"] = gnss_posi;
+        gnssFixReceived = true;
+      }
       _GNSS.GetGNSSNMEASentences(GPGGA, gnss_nmea);
       docInput["NMEA"] = gnss_nmea;
     }
+    // if (NmeaMode)
+    // {
+    //   _GNSS.GetGNSSNMEASentences(GPGGA, gnss_nmea);
+    //   docInput["NMEA"] = gnss_nmea;
+    // }
     if (BatteryMode)
     {
       batterypercentage = _BoardBattery.calculateBatteryPercentage();
@@ -151,7 +171,7 @@ void loop()
     }
     if (CellInfosMode)
     {
-      _AWS.ReportCellInformation(const_cast<char*>("servingcell"), cell_infos);
+      _AWS.ReportCellInformation(const_cast<char *>("servingcell"), cell_infos);
       docInput["CellInfos"] = cell_infos;
     }
 

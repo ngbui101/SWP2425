@@ -6,7 +6,7 @@
 bool InitGNSS(_BG96_GNSS &GNSS,
               Stream &DSerial)
 {   
-    GNSS_Work_Mode_t mode = STAND_ALONE;
+    GNSS_Work_Mode_t mode = MS_BASED;
     char currentTimestamp[64];
 
     GNSS.GetLatestGMTTime(currentTimestamp); 
