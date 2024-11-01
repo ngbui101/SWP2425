@@ -34,13 +34,14 @@ export interface User {
       };
     };
     trackerFilters: {
-      mode: boolean;
+      mode: string[];  // Array of strings to store selected modes, e.g., ['RT', 'LT']
     };
     timestampFilters: {
-      mode: boolean;
+      mode: string[];  // Array of strings to store selected modes, e.g., ['RT', 'LT']
       validPosition: boolean;
     };
   }
+  
   
   export interface State {
     user: User;
