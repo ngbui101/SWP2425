@@ -29,11 +29,22 @@ const SettingsSchema = new Schema({
 
   // Filter settings
   trackerFilters: {
-    mode: { type: Boolean, default: false }  // Filter tracker by mode
+    mode: {
+      type: [String],  // Array of strings to store selected modes
+      enum: ['RT', 'LT'],  // Allowed values: Real-Time ('RT') and Long-Time ('LT')
+      default: []  // Default to an empty array, meaning no filter applied
+    }
   },
   timestampFilters: {
-    mode: { type: Boolean, default: false },  // Filter timestamps by mode
-    validPosition: { type: Boolean, default: false }  // Filter timestamps by valid position
+    mode: {
+      type: [String],  // Array of strings to store selected modes
+      enum: ['RT', 'LT'],  // Allowed values: Real-Time ('RT') and Long-Time ('LT')
+      default: []  // Default to an empty array, meaning no filter applied
+    },
+    validPosition: {
+      type: Boolean,  // Boolean to filter by valid position or not
+      default: false
+    }
   }
 });
 
