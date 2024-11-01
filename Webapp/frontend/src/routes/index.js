@@ -3,11 +3,11 @@ import { useAuthStore } from '@/stores/auth';
 
 
 const MapView = () => import('../views/map_view/MapView.vue');
-const LoginView = () => import('../views/LoginView.vue');
-const RegisterView = () => import('../views/RegisterView.vue');
-const SettingsView = () => import('../views/settings_view/SettingsView.vue');
+const LoginView = () => import('../views/auth_view/LoginView.vue');
+const RegisterView = () => import('../views/auth_view/RegisterView.vue');
+const SettingsView = () => import('../views/accountsettings_view/SettingsView.vue');
 const TrackerView = () => import('../views/tracker_view/TrackerView.vue'); // Neue Seite importieren
-const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue');
+const ForgotPasswordView = () => import('../views/auth_view/ForgotPasswordView.vue');
 const RouteView = () => import('../views/route_view/RouteView.vue');
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
