@@ -13,6 +13,11 @@ body {
   width: 100%;
   overflow-x: hidden;
 }
+.button-row {
+  display: flex;
+  gap: 10px; /* Adjust the spacing between buttons as needed */
+  justify-content: space-between; /* Adjust alignment */
+}
 .overlay {
   
   position: absolute;
@@ -482,7 +487,7 @@ body {
 }
 
 .dark-mode .radius-label {
-  color: #4caf50;
+  color: #E69543;
 }
 
 /* Dark mode background for the container */
@@ -517,6 +522,14 @@ body {
   background-color: #555;
   border-color: #777;
 
+}
+.apply-radius-button {
+  border-radius: 18px;
+}
+
+.dark-mode .apply-radius-button {
+  background: #E69543;
+  border: none;
 }
 
 .dark-mode .battery-status-wrapper strong {

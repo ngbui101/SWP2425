@@ -88,7 +88,8 @@
             </div>
 
             <!-- Add/Remove Geofence button -->
-            <div class="grid-item-full no-background">
+            <!-- Add/Remove Geofence button -->
+            <div class="grid-item-full no-background button-row">
               <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">Add Geofence</button>
               <button v-else @click="removeGeofence" class="remove-geofence-button">Remove Geofence</button>
               <button @click="addMotionSensor" class="geofence-button">Add Motion Sensor</button>
@@ -98,10 +99,11 @@
         </div>
 
         <!-- Slider for geofence radius, shown only when geofence is active -->
-        <div v-if="geofenceActive" class="slider-container">
+        <div v-if="showGeofenceSlider" class="slider-container">
           <label for="radius-slider" class="radius-label">Geofence Radius: {{ geofenceRadius }} meters</label>
           <input id="radius-slider" type="range" min="100" max="5000" step="100" v-model="geofenceRadius"
             class="radius-slider" />
+          <button @click="applyGeofenceRadius" class="apply-radius-button">Apply</button>
         </div>
       </div>
     </div>
@@ -162,6 +164,7 @@ const selectedTrackerMeasurements = ref([]);
 const selectedTrackerLocation = ref('Unknown Location');
 const selectedTrackerName = ref('Tracker Information');
 const mapElement = ref(null);
+
 let map = null;
 let marker = null;
 let geofenceCircle = null; // Declare geofence circle
@@ -169,6 +172,7 @@ let isGoogleMapsLoaded = ref(false);
 
 // Geofence-related state
 const geofenceActive = ref(false); // Geofence initially inactive
+const showGeofenceSlider = ref(false);
 const geofenceRadius = ref(2000); // Default radius value in meters (set to 2000)
 
 // Compute the mode of the selected tracker
@@ -200,7 +204,10 @@ const fetchTrackersForUser = async () => {
     for (const tracker of trackers.value) {
       const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
       tracker.measurements = measurementsResponse.data;
+      console.log(tracker.geofence);
 
+      const geofenceResponse = await axios.get(`http://localhost:3500/api/geofence/${tracker.geofence}`, config);
+      tracker.geofenceDetails = geofenceResponse.data; // Store geofence details
       // Set the first tracker as the selected tracker, if not already set
       if (!selectedTracker.value) {
         selectedTracker.value = tracker._id;
@@ -212,6 +219,64 @@ const fetchTrackersForUser = async () => {
     updateSelectedTrackerMeasurements(true);
   } catch (error) {
     console.error('Failed to fetch trackers or measurements:', error);
+  }
+};
+
+const applyGeofenceRadius = async () => {
+  if (!selectedMeasurement.value) {
+    console.error('No selected measurement to base the geofence on.');
+    return;
+  }
+
+  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
+  const geofenceId = tracker?.geofence;
+
+  if (!geofenceId) {
+    console.error('No geofence ID found for the selected tracker.');
+    return;
+  }
+
+  const data = {
+    active: true,
+    radius: geofenceRadius.value,
+    latitude: selectedMeasurement.value.latitude,
+    longitude: selectedMeasurement.value.longitude
+  };
+
+  const token = authStore.accessToken;
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+
+  try {
+    await axios.put(`http://localhost:3500/api/geofence/${geofenceId}`, data, config);
+    console.log('Geofence applied with updated settings:', data);
+
+    // Hide slider and "Apply" button but keep geofence active
+    showGeofenceSlider.value = false;
+    geofenceActive.value = true;
+  } catch (error) {
+    console.error('Failed to save geofence settings to server:', error);
+  }
+};
+
+
+const updateGeofenceState = () => {
+  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
+  if (tracker && tracker.geofenceDetails) {
+    // Set geofence active state and radius from database values
+    geofenceActive.value = tracker.geofenceDetails.active;
+    geofenceRadius.value = tracker.geofenceDetails.radius;
+
+    // Draw the geofence circle if it's active
+    if (tracker.geofenceDetails.active) {
+      const latitude = Number(tracker.geofenceDetails.latitude);
+      const longitude = Number(tracker.geofenceDetails.longitude);
+      const radius = Number(tracker.geofenceDetails.radius);
+      drawGeofenceCircle(latitude, longitude, radius);
+    }
+  } else {
+    // Default values if no active geofence
+    geofenceActive.value = false;
+    geofenceRadius.value = 2000; // Default radius
   }
 };
 
@@ -282,65 +347,79 @@ const initializeMap = () => {
     });
   }
 };
+const drawGeofenceCircle = (latitude, longitude, radius) => {
+  if (!isGoogleMapsLoaded.value) {
+    console.warn("Google Maps API is not loaded yet.");
+    return;
+  }
 
+  if (geofenceCircle) {
+    geofenceCircle.setMap(null); // Remove the existing circle, if any
+  }
 
+  geofenceCircle = new google.maps.Circle({
+    map,
+    center: { lat: Number(latitude), lng: Number(longitude) },
+    radius: Number(radius),
+    fillColor: '#28a745',
+    fillOpacity: 0.35,
+    strokeColor: '#28a745',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+  });
+  console.log("Drawing geofence at:", { latitude, longitude, radius })
+};
 
 // Add geofence when the button is clicked
 const addGeofence = () => {
   geofenceActive.value = true;
-
+  showGeofenceSlider.value = true;
   const position = {
-    lat: Number(selectedMeasurement.value.latitude),
-    lng: Number(selectedMeasurement.value.longitude)
+    lat: parseFloat(selectedMeasurement.value.latitude),
+    lng: parseFloat(selectedMeasurement.value.longitude)
   };
-
-  console.log('Adding geofence at position:', position); // Log the geofence position for debugging
-
-  // Always recreate the geofence circle when adding it, even after removing it
-  if (map) {
-    if (geofenceCircle) {
-      geofenceCircle.setMap(null); // Remove the previous circle, if any
-    }
-
-    // Draw the geofence circle on the map with the current radius
-    geofenceCircle = new google.maps.Circle({
-      map,
-      center: position,
-      radius: geofenceRadius.value, // Ensure radius is set correctly
-      fillColor: '#28a745',
-      fillOpacity: 0.35,
-      strokeColor: '#28a745',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-    });
-
-    console.log('Geofence circle added with radius:', geofenceRadius.value); // Log circle radius
-  } else {
-    console.error('Map object is not available when adding geofence');
-  }
+  geofenceRadius.value = 2000; // Default radius
+  drawGeofenceCircle(position.lat, position.lng, geofenceRadius.value);
 };
 
 // Remove geofence when the button is clicked
-const removeGeofence = () => {
-  geofenceActive.value = false;
-  if (geofenceCircle) {
-    geofenceCircle.setMap(null); // Remove the geofence circle from the map
-    geofenceCircle = null;
+const removeGeofence = async () => {
+  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
+  const geofenceId = tracker?.geofence;
+
+  if (!geofenceId) {
+    console.error('No geofence ID found for the selected tracker.');
+    return;
   }
-  console.log('Geofence removed');
+
+  const data = { active: false, radius: null, latitude: null, longitude: null };
+
+  const token = authStore.accessToken;
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+
+  try {
+    await axios.put(`http://localhost:3500/api/geofence/${geofenceId}`, data, config);
+    console.log('Geofence removed.');
+
+    geofenceActive.value = false;
+    showGeofenceSlider.value = false; // Hide slider and apply button
+    if (geofenceCircle) {
+      geofenceCircle.setMap(null); // Remove the geofence circle from the map
+      geofenceCircle = null;
+    }
+  } catch (error) {
+    console.error('Failed to remove geofence:', error);
+  }
 };
 
-// Watch geofenceRadius for changes and update the circle's radius dynamically
+watch(selectedTracker, updateGeofenceState);
 watch(geofenceRadius, (newRadius) => {
-  const radius = parseFloat(newRadius); // Ensure the radius is a number
-  console.log('Slider moved, new radius:', radius); // Log slider changes for debugging
   if (geofenceCircle) {
-    console.log('Updating geofence radius to:', radius); // Log the radius update process
-    geofenceCircle.setRadius(radius); // Update the radius of the geofence circle when the slider changes
-  } else {
-    console.log('Geofence circle is not initialized yet');
+    geofenceCircle.setRadius(parseFloat(newRadius));
+    console.log('Updated geofence radius to:', newRadius);
   }
 });
+
 
 // Perform reverse geocoding using your backend API
 const getReverseGeocodingAddress = async (lat, lng) => {
@@ -383,8 +462,9 @@ const user = computed(() => authStore.userDetail);
 // On component mount, fetch trackers and measurements
 onMounted(async () => {
   await authStore.getUser();
+  await loadGoogleMapsScript();  // Wait for Google Maps to load
   await fetchTrackersForUser();
-
+  updateGeofenceState(); // Now safe to call since Google Maps is loaded
 });
 
 // Watch for changes in selected tracker and update measurements
