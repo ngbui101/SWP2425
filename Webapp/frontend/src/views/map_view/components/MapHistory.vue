@@ -1,5 +1,5 @@
 <template>
-    <div :class="['container', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div :class="['container', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <div class="mapview-container">
             <!-- Tracker and Timestamp Range Selection Card -->
             <div v-if="trackers.length > 0" class="tracker-info-card">
@@ -15,11 +15,12 @@
                         </select>
                     </label>
 
-                    <!-- From Timestamp Dropdown -->
+                    <!-- From Timestamp Dropdown with error highlighting -->
                     <label for="from-timestamp-dropdown" class="dropdown-label">
                         From Timestamp:
-                        <select id="from-timestamp-dropdown" class="tracker-dropdown" v-model="fromTimestamp"
-                            @change="updateTimestampRange">
+                        <select id="from-timestamp-dropdown"
+                            :class="['tracker-dropdown', !fromTimestamp && errorMessage ? 'error-dropdown' : '']"
+                            v-model="fromTimestamp" @change="updateTimestampRange">
                             <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
                                 :value="measurement.createdAt">
                                 {{ new Date(measurement.createdAt).toLocaleString() }}
@@ -27,17 +28,21 @@
                         </select>
                     </label>
 
-                    <!-- To Timestamp Dropdown -->
+                    <!-- To Timestamp Dropdown with error highlighting -->
                     <label for="to-timestamp-dropdown" class="dropdown-label">
                         To Timestamp:
-                        <select id="to-timestamp-dropdown" class="tracker-dropdown" v-model="toTimestamp"
-                            @change="updateTimestampRange">
+                        <select id="to-timestamp-dropdown"
+                            :class="['tracker-dropdown', !toTimestamp && errorMessage ? 'error-dropdown' : '']"
+                            v-model="toTimestamp" @change="updateTimestampRange">
                             <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
                                 :value="measurement.createdAt">
                                 {{ new Date(measurement.createdAt).toLocaleString() }}
                             </option>
                         </select>
                     </label>
+
+                    <!-- Error message display -->
+                    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
                     <!-- Use Pin for Every Measurement Checkbox -->
                     <label class="checkbox-label">
@@ -60,16 +65,19 @@
             <!-- Map Container -->
             <div class="map-container">
                 <div ref="mapElement" class="map"></div>
-
+                <div v-if="showViewDetailsButton" class="center-button-container">
+                    <button class="view-details-button" @click="viewDetails">View Details</button>
+                </div>
                 <!-- Grey Overlay for dark mode -->
-                <div v-if="(user.template ?? 'default') === 'dark'" class="map-overlay"></div>
+                <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
             </div>
         </div>
+
     </div>
 </template>
 
 <script setup>
-import './styles_currentmap.css';
+
 import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from "@/stores/auth";
@@ -82,12 +90,18 @@ const selectedTracker = ref(null);
 const fromTimestamp = ref(null);
 const toTimestamp = ref(null);
 const selectedTrackerMeasurements = ref([]);
-const usePinForEveryMeasurement = ref(false); // New checkbox state
+const usePinForEveryMeasurement = ref(false);
+const errorMessage = ref(''); // New ref for error message
 const mapElement = ref(null);
+const showViewDetailsButton = ref(false);
 let map = null;
-let markers = []; // Store markers to clear them as needed
+let markers = [];
 let path = null;
-let circles = []; // Store circles to clear them as needed
+let circles = [];
+const viewDetails = () => {
+    console.log("View Details button clicked");
+    // Add your logic here for viewing details, if needed.
+};
 
 // Computed property for the map history title
 const mapHistoryTitle = computed(() => {
@@ -144,20 +158,53 @@ const updateSelectedTrackerMeasurements = () => {
 };
 
 // Function to draw numbered pins for each measurement
-const drawPins = (measurements) => {
+const drawPinsWithGroupedInfoWindow = (measurements) => {
     markers.forEach(marker => marker.setMap(null)); // Clear previous markers
     markers = []; // Reset markers array
 
+    // Step 1: Group measurements by location (latitude and longitude)
+    const locationGroups = new Map();
+
     measurements.forEach((m, index) => {
+        const key = `${m.latitude},${m.longitude}`;
+        if (!locationGroups.has(key)) {
+            locationGroups.set(key, []);
+        }
+        locationGroups.get(key).push({ ...m, index: index + 1 });
+    });
+
+    // Step 2: Create markers and info windows for each unique location
+    locationGroups.forEach((groupedMeasurements, key) => {
+        const { latitude, longitude } = groupedMeasurements[0];
+
+        // Create a single marker for the location
         const marker = new google.maps.Marker({
-            position: { lat: m.latitude, lng: m.longitude },
+            position: { lat: latitude, lng: longitude },
             map,
-            label: `${index + 1}`, // Numbered label
-            title: `Measurement ${index + 1}`
+            label: `${groupedMeasurements[0].index}`, // Show the first index as label
         });
+
+        // Create combined content for the info window
+        const infoContent = groupedMeasurements
+            .map(m => `Measurement ${m.index}: ${new Date(m.createdAt).toLocaleString()}`)
+            .join("<br>");
+
+        const infoWindow = new google.maps.InfoWindow({
+            content: infoContent
+        });
+
+        // Show info window on hover
+        marker.addListener("mouseover", () => {
+            infoWindow.open(map, marker);
+        });
+        marker.addListener("mouseout", () => {
+            infoWindow.close();
+        });
+
         markers.push(marker);
     });
 };
+
 
 // Function to draw circles and specific pins based on checkbox state
 const drawCirclesAndPins = (measurements) => {
@@ -186,17 +233,30 @@ const drawCirclesAndPins = (measurements) => {
                 fillOpacity: 1.0,
                 map,
                 center: { lat: m.latitude, lng: m.longitude },
-                radius: 5 // Set a default radius for circles
+                radius: 5
             });
             circles.push(circle);
         }
     });
 };
 
-// Build history action to draw path on map
+// Build history action with validation and error handling
 const buildHistory = () => {
     const tracker = trackers.value.find(t => t._id === selectedTracker.value);
-    if (!tracker || !fromTimestamp.value || !toTimestamp.value) return;
+
+    // Validate that both timestamps are selected
+    if (!fromTimestamp.value || !toTimestamp.value) {
+        errorMessage.value = "You have to select a start- and endpoint first";
+        return;
+    }
+
+    // Validate that the start date is not later than the end date
+    if (new Date(fromTimestamp.value) > new Date(toTimestamp.value)) {
+        errorMessage.value = "The starting point of the history cannot be later than the endpoint";
+        return;
+    }
+
+    errorMessage.value = ''; // Clear error if all validations pass
 
     const measurements = tracker.measurements
         .filter(m =>
@@ -208,6 +268,7 @@ const buildHistory = () => {
             latitude: parseFloat(m.latitude),
             longitude: parseFloat(m.longitude),
         }))
+        .filter(m => !isNaN(m.latitude) && !isNaN(m.longitude)) // Filter out NaN values
         .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
     if (measurements.length < 2) {
@@ -215,13 +276,16 @@ const buildHistory = () => {
         return;
     }
 
-    // Clear previous markers, circles, and paths
     markers.forEach(marker => marker.setMap(null));
     circles.forEach(circle => circle.setMap(null));
     if (path) path.setMap(null);
 
-    // Draw path connecting all points
+    // Create an array of path coordinates for the Polyline
     const pathCoordinates = measurements.map(m => ({ lat: m.latitude, lng: m.longitude }));
+
+    // Debug: log path coordinates to check for gaps or unexpected values
+    console.log("Filtered Path coordinates:", pathCoordinates);
+
     path = new google.maps.Polyline({
         path: pathCoordinates,
         geodesic: true,
@@ -230,16 +294,14 @@ const buildHistory = () => {
         strokeWeight: 2,
     });
     path.setMap(map);
+    showViewDetailsButton.value = true;
 
     if (usePinForEveryMeasurement.value) {
-        // If checkbox is checked, use numbered pins for all points
-        drawPins(measurements);
+        drawPinsWithGroupedInfoWindow(measurements);
     } else {
-        // Otherwise, use circles for intermediate points and pins for start and end
         drawCirclesAndPins(measurements);
     }
 
-    // Automatically adjust zoom and center to fit the path
     const bounds = new google.maps.LatLngBounds();
     pathCoordinates.forEach(coord => bounds.extend(coord));
     map.fitBounds(bounds);
@@ -249,7 +311,7 @@ const buildHistory = () => {
 const initializeMap = () => {
     if (!mapElement.value) return;
 
-    const position = { lat: 51.47686, lng: 7.20766 }; // Default center point
+    const position = { lat: 51.47686, lng: 7.20766 };
 
     if (!map) {
         map = new google.maps.Map(mapElement.value, {
@@ -279,7 +341,6 @@ const loadGoogleMapsScript = () => {
     });
 };
 
-// Fetch data and initialize map on component mount
 onMounted(async () => {
     await authStore.getUser();
     await fetchTrackersForUser();
@@ -288,7 +349,6 @@ onMounted(async () => {
     });
 });
 
-// Watch selected tracker to update measurements
 watch(selectedTracker, updateSelectedTrackerMeasurements);
 </script>
 
@@ -303,7 +363,6 @@ watch(selectedTracker, updateSelectedTrackerMeasurements);
 
 .dark-mode .map-title {
     color: #5A976D;
-    ;
 }
 
 .checkbox-label {
@@ -340,6 +399,47 @@ watch(selectedTracker, updateSelectedTrackerMeasurements);
 }
 
 .build-history-button:hover {
+    transform: scale(1.05);
+}
+
+/* Error highlighting */
+.error-dropdown {
+    border: 2px solid #ff4d4d;
+}
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.center-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* View Details button styled similar to Build History button */
+.view-details-button {
+    width: 200px;
+    padding: 10px;
+    background-color: #851515;
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow: inset 0 0 10px 3px rgba(0, 84, 61, 0.2);
+}
+
+.dark-mode .view-details-button {
+    background-color: #E69543;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    color: #1f1f1f;
+}
+
+.view-details-button:hover {
     transform: scale(1.05);
 }
 </style>

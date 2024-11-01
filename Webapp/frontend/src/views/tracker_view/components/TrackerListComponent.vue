@@ -1,5 +1,5 @@
 <template>
-    <div :class="(user.template ?? 'default') === 'dark' ? 'dark-mode' : ''">
+    <div :class="(user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : ''">
         <table v-if="trackers.length > 0" class="tracker-table">
             <thead>
                 <tr>
@@ -49,10 +49,11 @@
         </div>
         <!-- Tracker Settings Popup -->
         <TrackerSettingsPopup v-if="showSettingsPopup" :trackerNameInitial="selectedTracker.name"
-            :trackerModeInitial="selectedTracker.mode" :template="user.template" :closePopup="closePopup" />
+            :trackerModeInitial="selectedTracker.mode" :template="user.settings?.template" :closePopup="closePopup" />
 
         <!-- Add Tracker Popup -->
-        <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.template" :closePopup="closeAddTrackerPopup" />
+        <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.settings?.template"
+            :closePopup="closeAddTrackerPopup" />
     </div>
 </template>
 

@@ -14,8 +14,34 @@ export interface User {
     __v: number;
     refresh_token: string;
     tracker: Array<{ _id: string }>;
+    settings: Settings;
   }
 
+  export interface Settings {
+    _id: string;
+    template: string;
+    language: string;
+    notifications: {
+      sms: {
+        geofence: boolean;
+        motionSensor: boolean;
+        batteryLow: boolean;
+      };
+      email: {
+        geofence: boolean;
+        motionSensor: boolean;
+        batteryLow: boolean;
+      };
+    };
+    trackerFilters: {
+      mode: boolean;
+    };
+    timestampFilters: {
+      mode: boolean;
+      validPosition: boolean;
+    };
+  }
+  
   export interface State {
     user: User;
     accessToken: string;
@@ -38,12 +64,12 @@ export interface User {
   export const useAuthStore = defineStore({
     id: "auth",
     state: (): State => ({
-      user: {} as User,
+      user: { settings: {} } as User,
       accessToken: "",
       authReady: false,
       users: [],
-  
     }),
+    
 
     getters: {
         userDetail: (state: State) => state.user,
@@ -88,7 +114,9 @@ export interface User {
           try {
               const { data } = await useApiPrivate().get(`http://localhost:3500/api/auth/user`);
               console.log('Fetched user:', data); // Debugging line
+              console.log('Fetched user settings:', data.settings);
               this.user = data;
+              
               return data;
           } catch (error: any) {
               throw new Error(`Failed to fetch user: ${error.message}`);
@@ -130,6 +158,24 @@ export interface User {
               throw new Error(`Failed to fetch users: ${error.message}`);
             }
           },
+          async fetchUserSettings() {
+            try {
+              const { data } = await useApiPrivate().get(`/api/settings`);
+              this.user.settings = data;
+              return data;
+            } catch (error: any) {
+              throw new Error(`Failed to fetch settings: ${error.message}`);
+            }
+          },
+          async updateUserSettings(updatedSettings: Partial<Settings>) {
+            try {
+              const { data } = await useApiPrivate().put(`/api/settings`, updatedSettings);
+              this.user.settings = { ...this.user.settings, ...updatedSettings }; // Update locally
+              return data;
+            } catch (error: any) {
+              throw new Error(`Failed to update settings: ${error.message}`);
+            }
+          },
           async updatePassword(currentPassword: string, newPassword: string, confirmPassword: string) {
             try {
               const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
@@ -165,35 +211,20 @@ export interface User {
               throw new Error(`Failed to update email: ${error.message}`);
             }
           },
-          async updateLanguage(newLanguage: string) {
+          async updateSettings(settings) {
             try {
-              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.user._id}`, {
-                language: newLanguage
-              });
-              this.user.language = newLanguage; // Update the email in the store
-              return data;
-            } catch (error: any) {
-              throw new Error(`Failed to update email: ${error.message}`);
-            }
-          },
-          async updateTemplate(newTemplate: string) { // Treat template as string
-            if (!this.userDetail) return;
-          
-            try {
-              // Use useApiPrivate to make the API call
-              const { data } = await useApiPrivate().put(`http://localhost:3500/api/users/${this.userDetail._id}`, {
-                template: newTemplate,
-              });
-          
-              // Update the userDetail template field after successful API call
-              this.userDetail.template = newTemplate;
-              console.log('Template updated successfully:', data);
-              return data;
-            } catch (error: any) {
-              console.error('Error updating template:', error);
-              throw new Error(`Failed to update template: ${error.message}`);
+              const { data } = await useApiPrivate().put('http://localhost:3500/api/settings', settings); // No userId in the URL
+              this.user.settings = data; // Update the user's settings in the store with the response data
+              console.log('Settings updated successfully:', data);
+            } catch (error) {
+              console.error('Failed to update settings:', error);
+              throw new Error(`Failed to update settings: ${error.message}`);
             }
           }
+          
+          
+          
+         
           
           
           

@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/auth';
 const MapView = () => import('../views/map_view/MapView.vue');
 const LoginView = () => import('../views/LoginView.vue');
 const RegisterView = () => import('../views/RegisterView.vue');
-const SettingsView = () => import('../views/SettingsView.vue');
+const SettingsView = () => import('../views/settings_view/SettingsView.vue');
 const TrackerView = () => import('../views/tracker_view/TrackerView.vue'); // Neue Seite importieren
 const ForgotPasswordView = () => import('../views/ForgotPasswordView.vue');
 const RouteView = () => import('../views/route_view/RouteView.vue');

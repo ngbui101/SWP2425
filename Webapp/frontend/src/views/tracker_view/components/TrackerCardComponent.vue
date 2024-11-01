@@ -1,5 +1,5 @@
 <template>
-    <div class="card-view" :class="[(user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div class="card-view" :class="[(user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <div class="tracker-card" v-for="tracker in trackers" :key="tracker._id">
             <!-- Settings Icon at the top-right corner -->
             <div class="settings-icon" @click="openSettingsPopup(tracker)">
@@ -55,9 +55,10 @@
         </div>
         <!-- Tracker Settings Popup -->
         <TrackerSettingsPopup v-if="showSettingsPopup" :trackerNameInitial="selectedTracker.name"
-            :trackerModeInitial="selectedTracker.mode" :template="user.template" :closePopup="closePopup" />
+            :trackerModeInitial="selectedTracker.mode" :template="user.settings?.template" :closePopup="closePopup" />
         <!-- Add Tracker Popup -->
-        <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.template" :closePopup="closeAddTrackerPopup" />
+        <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.settings?.template"
+            :closePopup="closeAddTrackerPopup" />
     </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
 
-  <div :class="['footer-wrapper', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+  <div :class="['footer-wrapper', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="footer-basic">
       <footer>
         <div class="social">

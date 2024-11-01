@@ -1,5 +1,5 @@
 <template>
-    <div :class="['map-view', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div :class="['map-view', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <!-- Toolbar with Toggle Bar for Current/History view -->
         <div class="toolbar">
             <div class="toggle-container" @mousedown="startDragging($event)" @mouseup="stopDragging"
@@ -29,6 +29,7 @@
 </template>
 
 <script setup>
+
 import { ref, computed } from 'vue';
 import CurrentMap from './components/CurrentMap.vue';
 import MapHistory from './components/MapHistory.vue';
@@ -99,6 +100,18 @@ const updateSliderPosition = (clientX) => {
     padding-bottom: 20px;
     min-height: 100vh;
     padding-top: 15px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .map-view {
+        padding-right: 20px;
+        /* Adds padding to create margin on the sides */
+
+        /* Adds margin on both sides */
+        box-sizing: border-box;
+        /* Ensures padding doesn’t expand width */
+    }
 }
 
 .map-view.dark-mode {

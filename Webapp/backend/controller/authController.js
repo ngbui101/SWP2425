@@ -2,6 +2,7 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const mailController = require('../controller/mailController');
+const Settings = require('../models/Settings');
 /* Purpose: Register a new user
 
 1.Extract user details from the request body.
@@ -15,34 +16,38 @@ const mailController = require('../controller/mailController');
 async function register(req, res) {
   const { email, password, password_confirm } = req.body;
 
-  // Überprüfen auf fehlende Felder
+  // Check for missing fields
   if (!email || !password || !password_confirm) {
-    return res.status(422).json({ 'message': 'Invalid fields' });
+    return res.status(422).json({ message: 'Invalid fields' });
   }
 
-  // Überprüfen, ob die Passwörter übereinstimmen
+  // Check if passwords match
   if (password !== password_confirm) {
-    return res.status(422).json({ 'message': 'Passwords do not match' });
+    return res.status(422).json({ message: 'Passwords do not match' });
   }
 
-  // Überprüfen, ob ein Benutzer mit derselben E-Mail bereits existiert
+  // Check if a user with the same email already exists
   const userExists = await User.exists({ email }).exec();
   if (userExists) {
-    return res.sendStatus(409); // Konflikt: Benutzer mit derselben E-Mail existiert bereits
+    return res.sendStatus(409); // Conflict: User with the same email already exists
   }
 
   try {
-    // Passwort hashen
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Neuen Benutzer erstellen
+    // Step 1: Create a new Settings document with default values
+    const newSettings = await Settings.create({});
+
+    // Step 2: Create the new User document with a reference to the Settings document
     const newUser = await User.create({
       email,
       password: hashedPassword,
-      tracker: [], // Leeres Tracker-Array standardmäßig
+      tracker: [], // Empty tracker array by default
+      settings: newSettings._id // Link the settings document to the user
     });
 
-    return res.sendStatus(201); // Erfolgreich erstellt
+    return res.sendStatus(201); // Successfully created
   } catch (error) {
     console.error('Error during user registration:', error);
     return res.status(400).json({ message: 'Could not register' });
@@ -162,11 +167,21 @@ async function refresh(req, res) {
 2. Return the user details with 200 status. */
 
 async function user(req, res) {
+  try {
+    // Find the user by ID and populate the settings field
+    const user = await User.findById(req.user.id).populate('settings');
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-  const user = req.user
-
-  return res.status(200).json(user)
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching authenticated user:', error);
+    return res.status(500).json({ message: 'Server error', error });
+  }
 }
+
 // Utility function to generate a random password
 function generateRandomPassword(length) {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

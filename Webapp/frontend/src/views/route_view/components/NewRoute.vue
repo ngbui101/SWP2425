@@ -1,5 +1,5 @@
 <template>
-    <div :class="['new-route-view', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div :class="['new-route-view', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <!-- Main card container -->
         <div class="card">
             <!-- Tracker selection dropdown -->
@@ -34,7 +34,7 @@
             <div class="map-container">
                 <div ref="mapElement" class="map"></div>
                 <!-- Dark mode overlay -->
-                <div v-if="(user.template ?? 'default') === 'dark'" class="map-overlay"></div>
+                <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
             </div>
         </div>
     </div>

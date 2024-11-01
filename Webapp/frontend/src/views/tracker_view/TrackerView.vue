@@ -1,5 +1,5 @@
 <template>
-    <div :class="['tracker-view', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div :class="['tracker-view', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <!-- Toolbar with Toggle Bar for List/Card view -->
         <div class="toolbar">
             <div class="toggle-container" @mousedown="startDragging($event)" @mouseup="stopDragging"

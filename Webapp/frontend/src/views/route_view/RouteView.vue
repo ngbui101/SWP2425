@@ -1,5 +1,5 @@
 <template>
-    <div :class="['route-view', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div :class="['route-view', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <!-- Toolbar with Toggle Bar for New/Routes view -->
         <div class="toolbar">
             <div class="toggle-container" @mousedown="startDragging($event)" @mouseup="stopDragging"

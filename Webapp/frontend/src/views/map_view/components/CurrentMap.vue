@@ -1,5 +1,5 @@
 <template>
-  <div :class="['container', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+  <div :class="['container', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="mapview-container">
       <div v-if="trackers.length === 0" class="overlay">
         <p class="overlay-text">No trackers available. Please add a tracker.</p>
@@ -125,7 +125,7 @@
         <div ref="mapElement" class="map"></div>
 
         <!-- Grey Overlay for dark mode -->
-        <div v-if="(user.template ?? 'default') === 'dark'" class="map-overlay"></div>
+        <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
       </div>
 
 

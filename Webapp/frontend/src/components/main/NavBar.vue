@@ -1,5 +1,5 @@
 <template>
-  <nav :class="['navbar', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+  <nav :class="['navbar', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="nav-container">
       <!-- Centered Navigation Items -->
       <div class="nav-center">
