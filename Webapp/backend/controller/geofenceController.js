@@ -46,10 +46,11 @@ async function createGeofence(req, res) {
   }
 }
 
+
 // Update a geofence by ID
 async function updateGeofence(req, res) {
   const { id } = req.params;
-  const { radius, longitude, latitude } = req.body;  // Geofence attributes
+  const { radius, longitude, latitude, active } = req.body; // Include 'active' in the request body
 
   try {
     const geofence = await Geofence.findById(id);
@@ -58,9 +59,10 @@ async function updateGeofence(req, res) {
     }
 
     // Update the geofence details
-    geofence.radius = radius || geofence.radius;
-    geofence.longitude = longitude || geofence.longitude;
-    geofence.latitude = latitude || geofence.latitude;
+    geofence.radius = radius !== undefined ? radius : geofence.radius;
+    geofence.longitude = longitude !== undefined ? longitude : geofence.longitude;
+    geofence.latitude = latitude !== undefined ? latitude : geofence.latitude;
+    geofence.active = active !== undefined ? active : geofence.active; // Update 'active' if provided
 
     // Save the updated geofence
     await geofence.save();
@@ -70,6 +72,7 @@ async function updateGeofence(req, res) {
     res.status(500).json({ message: 'Server error', error });
   }
 }
+
 
 // Delete a geofence by ID
 async function deleteGeofence(req, res) {
