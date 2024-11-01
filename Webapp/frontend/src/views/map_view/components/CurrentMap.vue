@@ -16,7 +16,7 @@
             <label for="tracker-dropdown" class="dropdown-label">
               Select Tracker:
               <select id="tracker-dropdown" class="tracker-dropdown" v-model="selectedTracker" @change="selectTracker">
-                <option v-for="tracker in trackers" :key="tracker._id" :value="tracker._id">
+                <option v-for="tracker in filteredTrackers" :key="tracker._id" :value="tracker._id">
                   {{ tracker.name }}
                 </option>
               </select>
@@ -30,13 +30,12 @@
               Select Timestamp:
               <select id="timestamp-dropdown" class="tracker-dropdown" v-model="selectedTimestamp"
                 @change="updateSelectedMeasurement">
-                <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
-                  :value="measurement._id">
+                <option v-for="measurement in filteredMeasurements" :key="measurement._id" :value="measurement._id">
                   {{ new Date(measurement.createdAt).toLocaleString() }}
                 </option>
               </select>
             </label>
-            <button class="filters-button" @click="openFilters">Filters</button>
+            <button class="filters-button" @click="openTimestampFilters">Filters</button>
           </div>
 
           <div class="grid-container">
@@ -140,6 +139,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Conditionally render the Tracker Filter Popup -->
+    <TrackerFilterPopup v-if="isTrackerFilterPopupOpen" :template="user.settings?.template"
+      :filters="user.settings.trackerFilters" :closePopup="closeTrackerFilters" :applyFilters="applyTrackerFilters" />
+
+    <!-- Conditionally render the Timestamp Filter Popup -->
+    <TimestampFilterPopup v-if="isTimestampFilterPopupOpen" :template="user.settings?.template"
+      :filters="user.settings.timestampFilters" :closePopup="closeTimestampFilters"
+      :applyFilters="applyTimestampFilters" />
   </div>
 </template>
 
@@ -148,8 +156,45 @@ import './styles_currentmap.css';
 import { ref, computed, onMounted, watch } from 'vue';
 import { useShepherd } from 'vue-shepherd'
 import axios from 'axios';
-
+import TrackerFilterPopup from './TrackerFilterPopup.vue';
+import TimestampFilterPopup from './TimestampFilterPopup.vue';
 import { useAuthStore } from "@/stores/auth";
+
+const isTrackerFilterPopupOpen = ref(false);
+const isTimestampFilterPopupOpen = ref(false);
+
+// Method to open the Tracker Filter popup
+const openTrackerFilters = () => {
+  isTrackerFilterPopupOpen.value = true;
+};
+
+// Method to close the Tracker Filter popup
+const closeTrackerFilters = () => {
+  isTrackerFilterPopupOpen.value = false;
+};
+
+// Method to open the Timestamp Filter popup
+const openTimestampFilters = () => {
+  isTimestampFilterPopupOpen.value = true;
+};
+
+// Method to close the Timestamp Filter popup
+const closeTimestampFilters = () => {
+  isTimestampFilterPopupOpen.value = false;
+};
+
+// Method to apply Tracker filters
+const applyTrackerFilters = (filters) => {
+  console.log('Applying Tracker Filters:', filters);
+  // Handle the filtering logic here
+};
+
+// Method to apply Timestamp filters
+const applyTimestampFilters = (filters) => {
+  console.log('Applying Timestamp Filters:', filters);
+  // Handle the filtering logic here
+};
+
 const authStore = useAuthStore();
 const el = ref(null);
 const tour = useShepherd({
@@ -469,6 +514,32 @@ onMounted(async () => {
 
 // Watch for changes in selected tracker and update measurements
 watch(selectedTracker, updateSelectedTrackerMeasurements);
+
+const filteredTrackers = computed(() => {
+  // Filter based on user's settings for tracker mode
+  const modeFilter = user.value.settings.trackerFilters?.mode || [];
+  return trackers.value.filter(tracker => {
+    // If no mode filter is set, include all trackers
+    if (modeFilter.length === 0) return true;
+
+    // Filter by mode if a specific mode is set
+    return modeFilter.includes(tracker.mode);
+  });
+});
+const filteredMeasurements = computed(() => {
+  const validPositionFilter = user.value.settings.timestampFilters?.validPosition ?? false;
+
+  return selectedTrackerMeasurements.value.filter(measurement => {
+    // In future, we may filter by mode here if additional modes are added to measurements
+    if (validPositionFilter) {
+      return (
+        !isNaN(measurement.latitude) &&
+        !isNaN(measurement.longitude)
+      );
+    }
+    return true;
+  });
+});
 </script>
 
 <style scoped></style>
