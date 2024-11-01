@@ -7,39 +7,41 @@
 #define DSerial SerialUSB
 #define ATSerial Serial1
 
+// De- and Serialisation
 DynamicJsonDocument docInput(600);
 DynamicJsonDocument docOutput(600);
 
+// APN
 char APN[] = "internet.m2mportal.de";
 // char APN[] = "iot.1nce.net";
 // char APN[] = "wm";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 
+// MQTT
 char mqtt_server[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
 unsigned int mqtt_port = 8883;
 char mqtt_clientId[] = "BG96";
 char mqtt_sub_topic[64];
 char mqtt_pub_topic[64];
-
 unsigned int mqtt_index = 0;
 Mqtt_Qos_t mqtt_qos = AT_MOST_ONCE;
 unsigned long pub_time;
 
 // IMEI of the modem
 char IMEI[20];
-
-bool gnssFixReceived = false;
+// GNSS
 unsigned long gnssStartMillis = 0;
 unsigned long timeToFirstFix = 0;
-
+GNSS_Work_Mode_t mode = MS_ASSISTED;
+bool gnssIsOn = false;
+// Mode
 bool GnssMode = false;
 bool CellInfosMode = false;
 bool NmeaMode = false;
 bool BatteryMode = false;
-
 unsigned int frequenz = 5000UL;
-
+// Module
 _BG96_MQTT _AWS(ATSerial, DSerial);
 _BG96_GNSS _GNSS(ATSerial, DSerial);
 _Battery _BoardBattery;
@@ -76,7 +78,8 @@ void loop()
   char *sta_buf;
   int res;
   char gnss_posi[128];
-  char gnss_nmea[128];
+  char gnss_gsa[128];
+  char gnss_gsv[516];
   char cell_infos[256];
   float batterypercentage;
 
@@ -91,17 +94,10 @@ void loop()
 
     if (error == DeserializationError::Ok)
     {
-      if (docOutput["GnssMode"] == "1")
-      {
-        if (!gnssFixReceived)
-        {
-          gnssStartMillis = millis();
-          GnssMode = true;
-        }
-      }
-      CellInfosMode = (docOutput["CellInfosMode"] == "1");
+      GnssMode = (docOutput["GnssMode"] == true);
+      CellInfosMode = (docOutput["CellInfosMode"] == true);
       // NmeaMode = (docOutput["NmeaMode"] == "1");
-      BatteryMode = (docOutput["BatteryMode"] == "1");
+      BatteryMode = (docOutput["BatteryMode"] == true);
 
       if (docOutput["frequenz"].is<unsigned int>())
       {
@@ -146,18 +142,23 @@ void loop()
     pub_time = millis();
     if (GnssMode)
     {
-      if (_GNSS.GetGNSSPositionInformation(gnss_posi))
+      if (!gnssIsOn && _GNSS.TurnOnGNSS(mode, WRITE_MODE))
       {
-        if (!gnssFixReceived)
-        {
-          timeToFirstFix = (millis() - gnssStartMillis);
-        }
-        docInput["TimeToGetFirstFix"] = timeToFirstFix;
-        docInput["Position"] = gnss_posi;
-        gnssFixReceived = true;
+        gnssIsOn = true;
+        gnssStartMillis = millis();
       }
-      _GNSS.GetGNSSNMEASentences(GPGGA, gnss_nmea);
-      docInput["NMEA"] = gnss_nmea;
+      else if (gnssIsOn)
+      {
+        if (_GNSS.GetGNSSPositionInformation(gnss_posi))
+        {
+          docInput["TimeToGetFirstFix"] = timeToFirstFix ? timeToFirstFix : (timeToFirstFix = millis() - gnssStartMillis);
+          docInput["Position"] = gnss_posi;
+        }
+        _GNSS.GetGNSSNMEASentences(GPGSA, gnss_gsa);
+        docInput["GSA"] = gnss_gsa;
+        _GNSS.GetGNSSNMEASentences(GPGSV, gnss_gsv);
+        docInput["GSV"] = gnss_gsv;
+      }
     }
     // if (NmeaMode)
     // {

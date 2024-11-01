@@ -6,7 +6,6 @@
 bool InitGNSS(_BG96_GNSS &GNSS,
               Stream &DSerial)
 {   
-    GNSS_Work_Mode_t mode = MS_BASED;
     char currentTimestamp[64];
 
     GNSS.GetLatestGMTTime(currentTimestamp); 
@@ -15,17 +14,6 @@ bool InitGNSS(_BG96_GNSS &GNSS,
     {
         DSerial.println("\r\nInit GpsOneXTRA Success!");
     }
-    
-    while (!GNSS.TurnOnGNSS(mode, WRITE_MODE))
-    {
-        DSerial.println("\r\nOpen the GNSS Function Fali!");
-        if (GNSS.TurnOnGNSS(mode, READ_MODE))
-        {
-            DSerial.println("\r\nThe GNSS Function is Opened!");
-            GNSS.TurnOffGNSS();
-        }
-    }
-    DSerial.println("\r\nOpen the GNSS Function Success!");
     
     if(GNSS.SetGNSSEnableNMEASentences(true)){
          DSerial.println("\r\nEnable NMEA Sentences Success!");

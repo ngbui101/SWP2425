@@ -1,21 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
 
-// Konvertiert NMEA-Format zu Dezimalgrad
-function parseNMEACoordinates(nmeaString) {
-    const match = nmeaString.match(/^\$GPGGA,\d+\.\d+,(.*),(N|S),(.*),(E|W),/);
-    if (!match) return null;
-
-    const [latitudeRaw, latitudeDir, longitudeRaw, longitudeDir] = match.slice(1);
-
-    const latitude = parseFloat(latitudeRaw.slice(0, 2)) + parseFloat(latitudeRaw.slice(2)) / 60;
-    const longitude = parseFloat(longitudeRaw.slice(0, 3)) + parseFloat(longitudeRaw.slice(3)) / 60;
-
-    return {
-        latitude: latitudeDir === 'S' ? -latitude : latitude,
-        longitude: longitudeDir === 'W' ? -longitude : longitude,
-    };
-}
-
 function convertTimestamp(timestamp) {
     const [datePart, timePartWithZone] = timestamp.split(",");
     const timePart = timePartWithZone.slice(0, 8);
@@ -23,6 +7,70 @@ function convertTimestamp(timestamp) {
     const fullYear = `20${year}`;
     const isoString = `${fullYear}-${month}-${day}T${timePart}Z`;
     return new Date(isoString);
+}
+
+function parseGSA(gsaString) {
+    const cleanString = gsaString.split('*')[0];
+    const fields = cleanString.split(",");
+    const pdop = parseFloat(fields[fields.length - 3]);
+    const hdop = parseFloat(fields[fields.length - 2]);
+    const vdop = parseFloat(fields[fields.length - 1]);
+
+    return { pdop, hdop, vdop };
+}
+
+
+function calculateAverageSNR(gsvData) {
+    const snrValues = [];
+    const sentences = gsvData.split(/\$GPGSV/).filter(Boolean).map(s => "$GPGSV" + s);
+
+    sentences.forEach(sentence => {
+        if (sentence.startsWith("$GPGSV")) {
+            const fields = sentence.split(",");
+            for (let i = 4; i < fields.length; i += 4) {
+                const snr = parseInt(fields[i + 3], 10);
+                if (!isNaN(snr)) {
+                    snrValues.push(snr);
+                }
+            }
+        }
+    });
+
+    if (snrValues.length === 0) {
+        return null;
+    }
+
+    const averageSNR = snrValues.reduce((acc, snr) => acc + snr, 0) / snrValues.length;
+    return averageSNR;
+}
+
+
+
+function calculateAccuracy(hdop, pdop, vdop, nsat, averageSNR) {
+    const sigmaH = 3;
+    const sigmaP = 4;
+    let ha = null, pa = null, totalAccuracy = null;
+
+    if (nsat < 4) {
+        ha = sigmaH * hdop * 2 * (3 / nsat) * (averageSNR/30);
+        console.log(`2D Fix: Calculated horizontal accuracy (ha) = ${ha}`);
+    } else {
+        ha = sigmaH * hdop * (4 / nsat) * (averageSNR/30);
+        pa = sigmaP * pdop * (4 / nsat) * (averageSNR/30);
+    }
+
+    if (ha !== null && pa !== null) {
+        totalAccuracy = Math.sqrt(Math.pow(ha, 2) + Math.pow(vdop * sigmaH, 2));
+        console.log(`Combined accuracy calculated as totalAccuracy = ${totalAccuracy}`);
+    } else {
+        totalAccuracy = ha || pa || null;
+    }
+
+    return {
+        ha: ha || null,
+        pa: pa || null,
+        totalAccuracy: totalAccuracy || null
+    };
 }
 
 export const handler = async (event) => {
@@ -45,12 +93,11 @@ export const handler = async (event) => {
         Temperature: event.Temperature,
         Humidity: event.Humidity,
         BatteryPercentage: event.BatteryPercentage,
-        NMEA: event.NMEA,
+        Position: event.Position,
+        GSA: event.GSA,
+        GSV: event.GSV,
         TimeToGetFirstFix: event.TimeToGetFirstFix
     };
-
-    console.log("Received IMEI: ", data.IMEI);
-    console.log("Converted Timestamp: ", data.Timestamp);
 
     try {
         await client.connect();
@@ -67,35 +114,39 @@ export const handler = async (event) => {
         }
 
         const trackerId = trackerDoc._id;
-
-        // Separate MongoDB documents for each type of data received
         const collection = database.collection('measurements');
-        
-        // 1. GPS-Daten verarbeiten
-        if (data.NMEA) {
-            const coordinates = parseNMEACoordinates(data.NMEA);
-            if (coordinates) {
-                const gpsData = {
-                    imei: data.IMEI,
-                    mode: "GPS",
-                    latitude: coordinates.latitude,
-                    longitude: coordinates.longitude,
-                    nmea: data.NMEA,
-                    tracker: new ObjectId(trackerId),
-                    timeToGetFirstFix: data.TimeToGetFirstFix,
-                    createdAt: data.Timestamp,
-                    updatedAt: data.Timestamp
-                };
-                await collection.insertOne(gpsData);
-                console.log("GPS data inserted");
-            } else {
-                console.error("Invalid NMEA format");
-            }
+        const documentsToInsert = [];
+
+        if (data.Position && data.GSA && data.GSV) {
+            const [_, latitudeStr, longitudeStr, hdopStr, __, fixStr, ___, ____, _____, ______, nsatStr] = data.Position.split(",");
+            const latitude = parseFloat(latitudeStr);
+            const longitude = parseFloat(longitudeStr);
+            const hdop = parseFloat(hdopStr);
+            const fix = parseInt(fixStr, 10);
+            const nsat = parseInt(nsatStr, 10);
+
+            const { pdop, vdop } = parseGSA(data.GSA);
+            const averageSNR = calculateAverageSNR(data.GSV);
+            const { ha, pa, totalAccuracy } = calculateAccuracy(hdop, pdop, vdop, nsat, averageSNR);
+
+            documentsToInsert.push({
+                imei: data.IMEI,
+                mode: "GPS",
+                latitude,
+                longitude,
+                gsa: data.GSA,
+                gsv: data.GSV,
+                tracker: new ObjectId(trackerId),
+                accuracy: totalAccuracy,
+                averageSNR: averageSNR,
+                timeToGetFirstFix: data.TimeToGetFirstFix,
+                createdAt: data.Timestamp,
+                updatedAt: data.Timestamp
+            });
         }
 
-        // 2. Temperatur und Feuchtigkeit verarbeiten
         if (data.Temperature !== undefined || data.Humidity !== undefined) {
-            const tempHumidityData = {
+            documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "TemperatureHumidity",
                 temperature: data.Temperature,
@@ -103,42 +154,41 @@ export const handler = async (event) => {
                 tracker: new ObjectId(trackerId),
                 createdAt: data.Timestamp,
                 updatedAt: data.Timestamp
-            };
-            await collection.insertOne(tempHumidityData);
-            console.log("Temperature and Humidity data inserted");
+            });
         }
 
-        // 3. Batteriedaten verarbeiten
         if (data.BatteryPercentage !== undefined) {
-            const batteryData = {
+            documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "Battery",
                 battery: data.BatteryPercentage,
                 tracker: new ObjectId(trackerId),
                 createdAt: data.Timestamp,
                 updatedAt: data.Timestamp
-            };
-            await collection.insertOne(batteryData);
-            console.log("Battery data inserted");
+            });
         }
 
-        // 4. Zellinformationen verarbeiten
         if (data.CellInfos) {
-            const cellInfoData = {
+            documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "CellInfos",
                 cellinfo: data.CellInfos,
                 tracker: new ObjectId(trackerId),
                 createdAt: data.Timestamp,
                 updatedAt: data.Timestamp
-            };
-            await collection.insertOne(cellInfoData);
-            console.log("Cell info data inserted");
+            });
+        }
+
+        if (documentsToInsert.length > 0) {
+            await collection.insertMany(documentsToInsert);
+            console.log(`${documentsToInsert.length} document(s) inserted.`);
+        } else {
+            console.log("No valid measurement data found; no documents were inserted.");
         }
 
         return {
             statusCode: 200,
-            body: JSON.stringify('Data successfully inserted')
+            body: JSON.stringify('Data successfully processed and inserted')
         };
     } catch (error) {
         console.error("Error inserting data: ", error);
