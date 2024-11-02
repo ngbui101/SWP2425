@@ -126,7 +126,7 @@ const logout = async () => {
   justify-content: center;
   align-items: center;
   list-style: none;
-  padding-left: 0;
+  padding-left: 10;
   margin: 0;
 }
 
@@ -222,11 +222,17 @@ const logout = async () => {
   margin-right: 8px;
 }
 
+
+
 /* Logout Icon */
 .logout-icon {
   width: 42px;
   height: 24px;
   padding-right: 10px;
+}
+
+.dark-mode .logout-icon {
+  color: #E69543;
 }
 
 /* Hover Effects */
@@ -254,7 +260,7 @@ const logout = async () => {
 }
 
 .dark-mode .logout-button {
-  color: #bbb;
+  color: #E69543;
   /* Lighter text color for logout button */
 }
 
@@ -277,56 +283,49 @@ const logout = async () => {
 
 
 /* Responsive Design for Mobile */
-
 @media (max-width: 768px) {
   .navbar {
     padding: 10px;
   }
 
-  /* Ensure consistent margin for all nav-items */
+  /* Reduce margin between items */
   .nav-item {
-    margin: 0 10px;
+    margin: 0 5px;
   }
 
-  /* Adjust font size and padding for nav items, making sure they're consistent */
+  /* Smaller font and padding for mobile */
   .nav-item a,
   .nav-item button,
-  .help-link {
-    padding: 8px 12px;
-    /* Consistent padding */
-    font-size: 14px;
-    /* Smaller font size for mobile */
-  }
-
-  /* Adjust logout icon size, make it more proportional to the text */
-  .logout-icon {
-    width: 24px;
-    /* Adjust to a better size for consistency */
-    height: 24px;
-  }
-
+  .help-link,
   .logout-text {
+    padding: 5px 8px;
     font-size: 14px;
-    /* Same as other nav items */
+  }
+
+  /* Adjust logout button and hide icon */
+  .logout-icon {
+    display: none;
+    /* Hide icon in mobile view */
+  }
+
+
+
+  /* Keep only text in logout button on mobile */
+  .logout-button {
+    padding: 5px 8px;
+    font-size: 14px;
   }
 }
 
-
-
-
-/* Add more spacing between nav items on larger screens */
+/* Larger screens */
 @media (min-width: 769px) {
   .nav-item {
-    margin: 0 35px;
+    margin: 0 20px;
   }
-}
 
-@media (min-width: 1200px) {
-
-  /* You can adjust the min-width value based on your definition of full screen */
-  .nav-center {
-    margin-left: 95px;
-    /* Adjust this value to move the items right in full screen */
+  /* Show logout icon on larger screens */
+  .logout-icon {
+    display: inline;
   }
 }
 </style>
