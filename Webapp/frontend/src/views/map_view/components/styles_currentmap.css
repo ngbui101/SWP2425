@@ -137,6 +137,13 @@ body {
   flex: 1;
   text-align: left;
 }
+.date-normal {
+  color: #333333; /* Adjust this to the normal mode color you want */
+}
+
+.date-dark {
+  color: #ffffff; /* Adjust this to the dark mode color you want */
+}
 
 .dropdown-label {
   display: flex;

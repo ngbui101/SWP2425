@@ -111,8 +111,10 @@
     <div v-if="trackers.length > 0" class="card">
       <div class="card-header">
         <div class="timestamp">
-          <strong>Position Timestamp:</strong> {{ selectedMeasurement.createdAt ? new
-            Date(selectedMeasurement.createdAt).toLocaleString() : 'N/A' }}
+          <strong>Position Timestamp: </strong>
+          <span :class="[(user.settings?.template ?? 'default') === 'dark' ? 'date-dark' : 'date-normal']">
+            {{ selectedMeasurement.createdAt ? new Date(selectedMeasurement.createdAt).toLocaleString() : 'N/A' }}
+          </span>
         </div>
         <div class="tracker-mode">
           Mode: {{ trackerMode || 'N/A' }}
