@@ -3,6 +3,40 @@
 #define __MQTT_AWS_H
 
 #include "BG96_MQTT.h"
+#include <ArduinoJson.h>
+#include <Arduino.h>
+#define DSerial SerialUSB
+#define ATSerial Serial1
+// APN
+char APN[] = "internet.m2mportal.de";
+char LOGIN[] = "";
+char PASSWORD[] = "";
+
+// MQTT
+char MQTTServer[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
+unsigned int MQTTPort = 8883;
+char MQTTClientId[] = "BG96";
+char mqtt_sub_topic[64];
+char mqtt_pub_topic[64];
+Mqtt_Qos_t MQTT_QoS = AT_LEAST_ONCE;
+unsigned long pub_time = 0;
+unsigned int MQTTIndex = 0;
+unsigned int PDPIndex = 1;
+unsigned int SSLIndex = 2;
+
+///
+char ModemIMEI[20];
+
+// Variablen für Modi
+bool GnssMode = false;
+bool CellInfosMode = false;
+bool BatteryMode = false;
+bool NmeaMode = false;
+unsigned int frequenz = 5000UL;
+
+DynamicJsonDocument docOutput(600);
+
+_BG96_MQTT _AWS(ATSerial, DSerial);
 
 char aws_root_ca_pem[] = "-----BEGIN CERTIFICATE-----\n\
 MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF\n\
@@ -91,70 +125,58 @@ f1ekEo4pJ+I1iQkqLLspRGJQziDcstLWuH+62b/f9wS9P3sKrcTb5PE=\n\
 // SSL index:  The range is 0 ~ 5
 
 // char *ModemIMEI  is an output contains the IMEI
-bool InitModemMQTT(_BG96_MQTT &BG96,
-                   Stream &DSerial,
-                   char *APN,
-                   char *LOGIN,
-                   char *PASSWORD,
-                   char *MQTTServer,
-                   unsigned int MQTTPort,
-                   char *MQTTClientId,
-                   char *mqtt_sub_topic,
-                   char *mqtt_pub_topic,
-                   Mqtt_Qos_t MQTT_QoS = AT_MOST_ONCE,
-                   unsigned int MQTTIndex = 0,
-                   unsigned int PDPIndex = 1,
-                   unsigned int SSLIndex = 2,
-                   char *ModemIMEI = NULL)
+bool InitModemMQTT()
 {
   Mqtt_Version_t version = MQTT_V4;
 
-  BG96.ConfigNetworks();
-  BG96.SetDevCommandEcho(false); 
-  BG96.SetDevOutputformat(true);
+  _AWS.InitModule();
+  _AWS.SetDevCommandEcho(false);
+  _AWS.SetDevOutputformat(true);
+  _AWS.ConfigNetworks();
+  _AWS.SetDevCommandEcho(false);
+  _AWS.SetDevOutputformat(true);
   // IMEI
   char imei_tmp[64];
 
-  if (BG96.GetDevIMEI(imei_tmp))
+  if (_AWS.GetDevIMEI(imei_tmp))
   {
     String s = String(imei_tmp);
     s.trim();
     s.toCharArray(ModemIMEI, 64);
     DSerial.println(ModemIMEI);
   }
-  
-  strcpy(mqtt_sub_topic, "tracker/"); 
-  strcat(mqtt_sub_topic, ModemIMEI);  
-  strcat(mqtt_sub_topic, "/sub");     
 
- 
-  strcpy(mqtt_pub_topic, "tracker/"); 
-  strcat(mqtt_pub_topic, ModemIMEI);  
-  strcat(mqtt_pub_topic, "/pub");    
+  strcpy(mqtt_sub_topic, "tracker/");
+  strcat(mqtt_sub_topic, ModemIMEI);
+  strcat(mqtt_sub_topic, "/sub");
+
+  strcpy(mqtt_pub_topic, "tracker/");
+  strcat(mqtt_pub_topic, ModemIMEI);
+  strcat(mqtt_pub_topic, "/pub");
 
   // SSL Networking
-  BG96.DeleteCertificate("all");
+  _AWS.DeleteCertificate("all");
 
   char apn_error[64];
-  while (!BG96.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
+  while (!_AWS.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
   {
     DSerial.println(apn_error);
   }
   DSerial.println(apn_error);
 
   char ssl_error[128];
-  while (!BG96.InitSSL(SSLIndex, aws_root_ca_pem, certificate_pem_crt, private_pem_key, ssl_error))
+  while (!_AWS.InitSSL(SSLIndex, aws_root_ca_pem, certificate_pem_crt, private_pem_key, ssl_error))
   {
     DSerial.println(ssl_error);
   }
   DSerial.println(ssl_error);
 
   // MQTT
-  while (!BG96.SetMQTTEnableSSL(MQTTIndex, SSLIndex, true))
+  while (!_AWS.SetMQTTEnableSSL(MQTTIndex, SSLIndex, true))
   {
     DSerial.println("\r\nSetMQTTEnableSSL the MQTT Parameter Fail!");
     int e_code;
-    if (BG96.returnErrorCode(e_code))
+    if (_AWS.returnErrorCode(e_code))
     {
       DSerial.print("\r\nERROR CODE: ");
       DSerial.println(e_code);
@@ -164,11 +186,11 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   DSerial.println("\r\nSetMQTTEnableSSL the MQTT Parameter Success!");
 
   DSerial.println("\r\nStart Config the MQTT Parameter!");
-  while (!BG96.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 150, SERVER_STORE_SUBSCRIPTIONS))
+  while (!_AWS.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 150, SERVER_STORE_SUBSCRIPTIONS))
   {
     DSerial.println("\r\nConfig the MQTT Parameter Fail!");
     int e_code;
-    if (BG96.returnErrorCode(e_code))
+    if (_AWS.returnErrorCode(e_code))
     {
       DSerial.print("\r\nERROR CODE: ");
       DSerial.println(e_code);
@@ -177,11 +199,11 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   }
   DSerial.println("\r\nConfig the MQTT Parameter Success!");
 
-  while (BG96.OpenMQTTNetwork(MQTTIndex, MQTTServer, MQTTPort) != 0)
+  while (_AWS.OpenMQTTNetwork(MQTTIndex, MQTTServer, MQTTPort) != 0)
   {
     DSerial.println("\r\nSet the MQTT Service Address Fail!");
     int e_code;
-    if (BG96.returnErrorCode(e_code))
+    if (_AWS.returnErrorCode(e_code))
     {
       DSerial.print("\r\nERROR CODE: ");
       DSerial.println(e_code);
@@ -191,11 +213,11 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   DSerial.println("\r\nSet the MQTT Service Address Success!");
 
   DSerial.println("\r\nConfigure Timeout!");
-  while (!BG96.SetMQTTMessageTimeout(MQTTIndex, 10, 5, 1))
+  while (!_AWS.SetMQTTMessageTimeout(MQTTIndex, 10, 5, 1))
   {
     DSerial.println("\r\nMQTT Timeout Fail!");
     int e_code;
-    if (BG96.returnErrorCode(e_code))
+    if (_AWS.returnErrorCode(e_code))
     {
       DSerial.print("\r\nERROR CODE: ");
       DSerial.println(e_code);
@@ -204,11 +226,11 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   }
 
   DSerial.println("\r\nStart Create a MQTT Client!");
-  while (BG96.CreateMQTTClient(MQTTIndex, MQTTClientId, "", "") != 0)
+  while (_AWS.CreateMQTTClient(MQTTIndex, MQTTClientId, "", "") != 0)
   {
     DSerial.println("\r\nCreate a MQTT Client Fail!");
     int e_code;
-    if (BG96.returnErrorCode(e_code))
+    if (_AWS.returnErrorCode(e_code))
     {
       DSerial.print("\r\nERROR CODE: ");
       DSerial.println(e_code);
@@ -218,11 +240,11 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
   DSerial.println("\r\nCreate a MQTT Client Success!");
 
   DSerial.println("\r\nStart MQTT Subscribe Topic!");
-  while (BG96.MQTTSubscribeTopic(MQTTIndex, 1, mqtt_sub_topic, MQTT_QoS) != 0)
+  while (_AWS.MQTTSubscribeTopic(MQTTIndex, 1, mqtt_sub_topic, MQTT_QoS) != 0)
   {
     DSerial.println("\r\nMQTT Subscribe Topic Fail!");
     int e_code;
-    if (BG96.returnErrorCode(e_code))
+    if (_AWS.returnErrorCode(e_code))
     {
       DSerial.print("\r\nERROR CODE: ");
       DSerial.println(e_code);
@@ -230,8 +252,69 @@ bool InitModemMQTT(_BG96_MQTT &BG96,
     }
   }
   DSerial.println("\r\nMQTT Subscribe Topic Success!");
-  BG96.DeleteCertificate("all");
+  _AWS.DeleteCertificate("all");
   return true;
 }
 
+void handleMQTTEvent(char *payload)
+{
+  DeserializationError error = deserializeJson(docOutput, payload);
+
+  if (error == DeserializationError::Ok)
+  {
+    GnssMode = (docOutput["GnssMode"] == true);
+    CellInfosMode = (docOutput["CellInfosMode"] == true);
+    BatteryMode = (docOutput["BatteryMode"] == true);
+    NmeaMode = (docOutput["NmeaMode"] == true); 
+
+    if (docOutput["frequenz"].is<unsigned int>())
+    {
+      unsigned int newFrequenz = docOutput["frequenz"];
+      if (newFrequenz > 0)
+      {
+        frequenz = newFrequenz;
+        Serial.print("Updated publishing frequency to: ");
+        Serial.println(frequenz);
+      }
+    }
+  }
+  else
+  {
+    Serial.println("\r\n Error in Deserialization!");
+    Serial.println(error.c_str());
+  }
+}
+
+void handleMQTTStatusEvent(char *payload)
+{
+  char *sta_buf = strchr(payload, ',');
+  if (atoi(sta_buf + 1) == 1)
+  {
+    if (_AWS.CloseMQTTClient(MQTTIndex))
+    {
+      Serial.println("MQTT Client closed successfully!");
+    }
+  }
+  else
+  {
+    Serial.print("Status code: ");
+    Serial.println(atoi(sta_buf + 1));
+  }
+}
+bool publishData(DynamicJsonDocument &docInput, char *payload, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS) {
+    String jsonString;  
+    serializeJsonPretty(docInput, jsonString);  
+    jsonString.toCharArray(payload, jsonString.length() + 1);
+
+    int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_pub_topic, false, payload);
+    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION) {
+        DSerial.println("Publish succeeded!");
+        docInput.clear();
+        pub_time = millis();
+        return true;
+    } else {
+        DSerial.println("Publish failed!");
+        return false;
+    }
+}
 #endif

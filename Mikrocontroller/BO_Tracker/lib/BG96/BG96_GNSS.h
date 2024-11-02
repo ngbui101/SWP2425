@@ -7,6 +7,7 @@
 #define __BG96_GNSS_H_
 
 #include "BG96_HTTP.h"
+#include <cmath>
 
 typedef enum gnss_work_mode{
     STAND_ALONE = 1,
@@ -89,6 +90,8 @@ class _BG96_GNSS : public _BG96_HTTP
     bool InitGpsOneXTRA(char *currentTimestamp);
 
     bool DeleteAssistanceData(GNSS_Delete_t deletetype);
+
+    bool GetEstimationError(float &accuracy);
 
    private:
    ///GPSOneXTRA Update Liste

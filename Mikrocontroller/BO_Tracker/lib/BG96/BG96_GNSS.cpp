@@ -485,3 +485,36 @@ bool _BG96_GNSS::DeleteAssistanceData(GNSS_Delete_t deletetype)
     }
     return false;
 }
+
+bool _BG96_GNSS::GetEstimationError(float &accuracy) {
+    accuracy = 0.0;
+    char cmd[64];
+    strcpy(cmd, GNSS_CONFIGURATION);
+    strcat(cmd, "=\"estimation_error\"");
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10)) {
+        char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
+        *end_buf = '\0';
+        char *sta_buf = searchStrBuffer(": ");
+        if (sta_buf) {
+            sta_buf += 2;
+            char *token = strtok(sta_buf, ",");
+            int index = 0;
+            float hori_unc = 0.0, vert_unc = 0.0;
+
+            while (token != nullptr) {
+                if (index == 1) {
+                    hori_unc = atof(token);
+                } else if (index == 2) {
+                    vert_unc = atof(token);
+                    break;
+                }
+                token = strtok(nullptr, ",");
+                index++;
+            }
+            accuracy = sqrt(pow(hori_unc, 2) + pow(vert_unc, 2));
+            return true;
+        }
+    }
+    return false;
+}
+
