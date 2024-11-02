@@ -218,9 +218,9 @@ const updateLanguageAndTheme = async () => {
 
     // Update frontend language immediately
     locale.value = selectedLanguage.value;
-    alert("Language and theme updated successfully");
+
   } catch (error) {
-    alert("Failed to update language and theme", "error");
+
   }
 };
 
