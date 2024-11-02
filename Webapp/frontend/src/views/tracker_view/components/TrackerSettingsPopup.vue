@@ -2,7 +2,7 @@
     <div class="popup-overlay" @click.self="closePopup">
         <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
             <div class="popup-header">
-                <h2>Edit Tracker Settings</h2>
+                <h2>Edit Tracker Settings(NO FUNCTIONALITY YET)</h2>
                 <button class="close-btn" @click="closePopup">✖</button>
             </div>
 
@@ -21,6 +21,42 @@
                         <option value="LT">LT</option>
                     </select>
                 </div>
+
+                <!-- Sending Frequency Dropdown -->
+                <div class="popup-section">
+                    <label for="sending-frequency">Sending Frequency</label>
+                    <select id="sending-frequency" v-model="sendingFrequency" class="popup-dropdown">
+                        <option value="5">5 min</option>
+                        <option value="10">10 min</option>
+                        <option value="60">60 min</option>
+                        <option value="720">12 h</option>
+                        <option value="1440">24 h</option>
+                    </select>
+                </div>
+
+                <!-- Geofence Toggle -->
+                <div class="popup-section">
+                    <label for="geofence-toggle">Geofence</label>
+                    <div class="toggle-container">
+                        <div class="toggle-switch" :class="{ active: geofenceActive }"
+                            @click="geofenceActive = !geofenceActive">
+                            <div class="toggle-handle" :class="{ active: geofenceActive }"></div>
+                        </div>
+                        <span class="toggle-text">{{ geofenceActive ? 'ON' : 'OFF' }}</span>
+                    </div>
+                </div>
+
+                <!-- Motion Sensor Toggle -->
+                <div class="popup-section">
+                    <label for="motion-sensor-toggle">Motion Sensor</label>
+                    <div class="toggle-container">
+                        <div class="toggle-switch" :class="{ active: motionSensorActive }"
+                            @click="motionSensorActive = !motionSensorActive">
+                            <div class="toggle-handle" :class="{ active: motionSensorActive }"></div>
+                        </div>
+                        <span class="toggle-text">{{ motionSensorActive ? 'ON' : 'OFF' }}</span>
+                    </div>
+                </div>
             </div>
 
             <div class="popup-footer">
@@ -33,22 +69,25 @@
 <script setup>
 import { ref } from 'vue';
 
-// Define props to accept data passed from the parent
 const props = defineProps({
-    trackerNameInitial: String,  // Initial tracker name passed from parent
-    trackerModeInitial: String,  // Initial tracker mode passed from parent
-    template: String,            // Template value for dark mode
-    closePopup: Function          // Function to close the popup
+    trackerNameInitial: String,
+    trackerModeInitial: String,
+    geofenceInitial: Boolean,
+    motionSensorInitial: Boolean,
+    sendingFrequencyInitial: Number,
+    template: String,
+    closePopup: Function
 });
 
-// Create reactive variables for tracker name and mode
 const trackerName = ref(props.trackerNameInitial);
 const trackerMode = ref(props.trackerModeInitial);
+const geofenceActive = ref(props.geofenceInitial);
+const motionSensorActive = ref(props.motionSensorInitial);
+const sendingFrequency = ref(props.sendingFrequencyInitial);
 
-// Function to save changes (placeholder, no real functionality implemented here)
 const saveChanges = () => {
-    console.log('Saving:', trackerName.value, trackerMode.value);
-    props.closePopup();  // Call the close popup function
+    console.log('Saving:', trackerName.value, trackerMode.value, geofenceActive.value, motionSensorActive.value, sendingFrequency.value);
+    props.closePopup();
 };
 </script>
 
@@ -94,6 +133,61 @@ const saveChanges = () => {
     box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
 }
 
+/* Toggle Container */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-text {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.dark-mode .toggle-text {
+    color: #bbb;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    width: 40px;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.toggle-switch.active {
+    background-color: #009579;
+}
+
+.toggle-handle {
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    transition: left 0.3s;
+}
+
+.toggle-handle.active {
+    left: 21px;
+}
+
+.dark-mode .toggle-switch {
+    background-color: #555;
+}
+
+.dark-mode .toggle-switch.active {
+    background-color: #E69543;
+}
+
 /* Popup Header */
 .popup-header {
     display: flex;
@@ -113,12 +207,10 @@ const saveChanges = () => {
     font-size: 1.5rem;
     cursor: pointer;
     color: #851515;
-    /* Button color */
 }
 
 .close-btn:hover {
     color: #750f0f;
-    /* Darker hover color */
 }
 
 .dark-mode .close-btn {
@@ -177,7 +269,6 @@ const saveChanges = () => {
 
 .popup-save-btn {
     background-color: #851515;
-    /* Button color */
     color: #fff;
     padding: 12px 30px;
     font-size: 1rem;
@@ -190,7 +281,6 @@ const saveChanges = () => {
 
 .popup-save-btn:hover {
     background-color: #750f0f;
-    /* Darker hover color */
     transform: scale(1.05);
 }
 
