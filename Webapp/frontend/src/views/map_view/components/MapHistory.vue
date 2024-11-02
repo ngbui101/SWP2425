@@ -77,11 +77,10 @@
 </template>
 
 <script setup>
-
 import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from "@/stores/auth";
-
+import './styles_maphistory.css';
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
 
@@ -91,16 +90,16 @@ const fromTimestamp = ref(null);
 const toTimestamp = ref(null);
 const selectedTrackerMeasurements = ref([]);
 const usePinForEveryMeasurement = ref(false);
-const errorMessage = ref(''); // New ref for error message
+const errorMessage = ref('');
 const mapElement = ref(null);
 const showViewDetailsButton = ref(false);
 let map = null;
 let markers = [];
 let path = null;
-let circles = [];
+
+// View Details button action
 const viewDetails = () => {
     console.log("View Details button clicked");
-    // Add your logic here for viewing details, if needed.
 };
 
 // Computed property for the map history title
@@ -205,17 +204,14 @@ const drawPinsWithGroupedInfoWindow = (measurements) => {
     });
 };
 
-
-// Function to draw circles and specific pins based on checkbox state
-const drawCirclesAndPins = (measurements) => {
+// Function to draw pins for only the first and last measurements
+const drawPinsForFirstAndLast = (measurements) => {
     markers.forEach(marker => marker.setMap(null)); // Clear previous markers
-    circles.forEach(circle => circle.setMap(null)); // Clear previous circles
-    markers = [];
-    circles = [];
+    markers = []; // Reset markers array
 
     measurements.forEach((m, index) => {
+        // Draw numbered pins for the first and last measurements only
         if (index === 0 || index === measurements.length - 1) {
-            // Draw numbered pins for the first and last measurements
             const marker = new google.maps.Marker({
                 position: { lat: m.latitude, lng: m.longitude },
                 map,
@@ -223,19 +219,6 @@ const drawCirclesAndPins = (measurements) => {
                 title: `Point ${index + 1}`
             });
             markers.push(marker);
-        } else {
-            // Draw circles for intermediate measurements
-            const circle = new google.maps.Circle({
-                strokeColor: "#000000",
-                strokeOpacity: 1.0,
-                strokeWeight: 0,
-                fillColor: "#000000",
-                fillOpacity: 1.0,
-                map,
-                center: { lat: m.latitude, lng: m.longitude },
-                radius: 5
-            });
-            circles.push(circle);
         }
     });
 };
@@ -277,15 +260,9 @@ const buildHistory = () => {
     }
 
     markers.forEach(marker => marker.setMap(null));
-    circles.forEach(circle => circle.setMap(null));
     if (path) path.setMap(null);
 
-    // Create an array of path coordinates for the Polyline
     const pathCoordinates = measurements.map(m => ({ lat: m.latitude, lng: m.longitude }));
-
-    // Debug: log path coordinates to check for gaps or unexpected values
-    console.log("Filtered Path coordinates:", pathCoordinates);
-
     path = new google.maps.Polyline({
         path: pathCoordinates,
         geodesic: true,
@@ -299,7 +276,7 @@ const buildHistory = () => {
     if (usePinForEveryMeasurement.value) {
         drawPinsWithGroupedInfoWindow(measurements);
     } else {
-        drawCirclesAndPins(measurements);
+        drawPinsForFirstAndLast(measurements);
     }
 
     const bounds = new google.maps.LatLngBounds();
@@ -351,95 +328,3 @@ onMounted(async () => {
 
 watch(selectedTracker, updateSelectedTrackerMeasurements);
 </script>
-
-<style scoped>
-.map-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #1f1f1f;
-    text-align: center;
-    margin: 0;
-}
-
-.dark-mode .map-title {
-    color: #5A976D;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    font-size: 1rem;
-    margin-top: 10px;
-    accent-color: #00543D;
-}
-
-.dark-mode .checkbox-label {
-    accent-color: #E69543;
-    color: #ddd;
-}
-
-/* Styling for Build History button */
-.build-history-button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 15px;
-    background-color: #851515;
-    color: #fff;
-    border: none;
-    border-radius: 18px;
-    cursor: pointer;
-    font-size: 1rem;
-    box-shadow: inset 0 0 10px 3px rgba(0, 84, 61, 0.2);
-}
-
-.dark-mode .build-history-button {
-    background-color: #E69543;
-    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-    color: #1f1f1f;
-}
-
-.build-history-button:hover {
-    transform: scale(1.05);
-}
-
-/* Error highlighting */
-.error-dropdown {
-    border: 2px solid #ff4d4d;
-}
-
-.error-message {
-    color: #ff4d4d;
-    font-size: 0.9rem;
-    margin-top: 10px;
-    text-align: center;
-}
-
-.center-button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-/* View Details button styled similar to Build History button */
-.view-details-button {
-    width: 200px;
-    padding: 10px;
-    background-color: #851515;
-    color: #fff;
-    border: none;
-    border-radius: 18px;
-    cursor: pointer;
-    font-size: 1rem;
-    box-shadow: inset 0 0 10px 3px rgba(0, 84, 61, 0.2);
-}
-
-.dark-mode .view-details-button {
-    background-color: #E69543;
-    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-    color: #1f1f1f;
-}
-
-.view-details-button:hover {
-    transform: scale(1.05);
-}
-</style>
