@@ -1,12 +1,12 @@
 
 #ifndef __MQTT_AWS_H
 #define __MQTT_AWS_H
+#define DSerial SerialUSB
+#define ATSerial Serial1
 
 #include "BG96_MQTT.h"
 #include <ArduinoJson.h>
 #include <Arduino.h>
-#define DSerial SerialUSB
-#define ATSerial Serial1
 // APN
 char APN[] = "internet.m2mportal.de";
 char LOGIN[] = "";
@@ -31,10 +31,9 @@ char ModemIMEI[20];
 bool GnssMode = false;
 bool CellInfosMode = false;
 bool BatteryMode = false;
+bool TemperatureMode = false;
 bool NmeaMode = false;
 unsigned int frequenz = 5000UL;
-
-DynamicJsonDocument docOutput(600);
 
 _BG96_MQTT _AWS(ATSerial, DSerial);
 
@@ -129,12 +128,14 @@ bool InitModemMQTT()
 {
   Mqtt_Version_t version = MQTT_V4;
 
-  _AWS.InitModule();
-  _AWS.SetDevCommandEcho(false);
+  if(_AWS.InitModule()){
+    _AWS.SetDevOutputformat(true);
+    _AWS.SetDevCommandEcho(false);
+    _AWS.ConfigNetworks();
+  } 
   _AWS.SetDevOutputformat(true);
-  _AWS.ConfigNetworks();
-  _AWS.SetDevCommandEcho(false);
-  _AWS.SetDevOutputformat(true);
+  // _AWS.SetDevCommandEcho(false);
+  // _AWS.SetDevOutputformat(true);
   // IMEI
   char imei_tmp[64];
 
@@ -256,7 +257,7 @@ bool InitModemMQTT()
   return true;
 }
 
-void handleMQTTEvent(char *payload)
+void handleMQTTEvent(JsonDocument &docOutput, char *payload)
 {
   DeserializationError error = deserializeJson(docOutput, payload);
 
@@ -265,6 +266,7 @@ void handleMQTTEvent(char *payload)
     GnssMode = (docOutput["GnssMode"] == true);
     CellInfosMode = (docOutput["CellInfosMode"] == true);
     BatteryMode = (docOutput["BatteryMode"] == true);
+    TemperatureMode = (docOutput["TemperatureMode"] == true);
     NmeaMode = (docOutput["NmeaMode"] == true); 
 
     if (docOutput["frequenz"].is<unsigned int>())
@@ -301,7 +303,7 @@ void handleMQTTStatusEvent(char *payload)
     Serial.println(atoi(sta_buf + 1));
   }
 }
-bool publishData(DynamicJsonDocument &docInput, char *payload, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS) {
+bool publishData(JsonDocument &docInput, char *payload, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS) {
     String jsonString;  
     serializeJsonPretty(docInput, jsonString);  
     jsonString.toCharArray(payload, jsonString.length() + 1);

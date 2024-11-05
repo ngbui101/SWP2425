@@ -146,7 +146,7 @@ bool _BG96_GNSS::TurnOnGNSS(GNSS_Work_Mode_t mode, Cmd_Status_t status)
         sprintf(buf, "=%d", mode);
         strcat(cmd, buf);
         if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
-        {
+        {   
             return true;
         }
     }

@@ -60,11 +60,12 @@ bool _BG96_Common::InitModule()
     pinMode(ENABLE_PWR, OUTPUT);
     pinMode(RESET_PIN, OUTPUT);
     pinMode(POWKEY_PIN, OUTPUT);
-    delay(800);
     PowOnModule();
     digitalWrite(RESET_PIN, LOW);
     TurnOnModule();
     // ResetModule();
+    while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
+        ;
     return true;
 }
 
@@ -863,10 +864,11 @@ bool _BG96_Common::ConfigNetworks()
     ServiceDomainConfig(1);            // Nur Datenumtausch
     BandConfig("F", "80084", "80084"); // LTE-M + NBIoT on B3/B8/B20 only
     SearchingConfig("00");             // LTE-M,NBIoT,LTE
-    SetDevFunctionality(RESET_FUNCTIONALITY);
-    delay(300);
-    ResetModule();
-    SetDevFunctionality(FULL_FUNCTIONALITY);
+    if (!(SetDevFunctionality(RESET_FUNCTIONALITY)))
+        return false;
+    while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
+        ;
+    // ResetModule();
     return true;
 }
 

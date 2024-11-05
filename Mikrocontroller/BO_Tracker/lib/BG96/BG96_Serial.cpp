@@ -196,7 +196,7 @@ unsigned int _BG96_Serial::readResponseToBuffer(unsigned int timeout)
  * @param timeout Timeout in Sekunden für die Antwortüberprüfung.
  * @return Status der Antwort (SUCCESS_RESPONSE, UNKNOWN_RESPONSE, TIMEOUT_RESPONSE).
  */
-Cmd_Response_t _BG96_Serial::readResponseAndSearchChr(const char test_chr, unsigned int timeout)
+Cmd_Response_t _BG96_Serial::readResponseAndSearchChr(char test_chr, unsigned int timeout)
 {
     unsigned long start_time = millis();
     unsigned int recv_len = 0;
