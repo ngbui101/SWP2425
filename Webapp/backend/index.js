@@ -84,6 +84,7 @@ app.use('/api/users', require('../backend/rest/users'));
 app.use('/api/auth', require('../backend/rest/auth'));
 app.use('/api/settings', require('../backend/rest/settings'));
 app.use('/api/mail', require('./rest/mail'));
+app.use('/api/mode', require('../backend/rest/mode'));
 // 404 route handler
 app.all('*', (req, res) => {
   res.status(404);

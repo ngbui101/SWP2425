@@ -1,0 +1,282 @@
+<template>
+    <div class="popup-overlay" @click.self="closePopup">
+        <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+            <div class="popup-header">
+                <h2>Change Tracking Mode</h2>
+                <button class="close-btn" @click="closePopup">✖</button>
+            </div>
+
+            <div class="popup-body">
+                <!-- Mode Toggle -->
+                <div class="popup-section">
+                    <h3>Tracking Mode</h3>
+                    <div class="mode-toggle">
+                        <button :class="{ active: !isLongTimeTracking }" @click="setRealTimeTracking">
+                            Real-Time-Tracking
+                        </button>
+                        <button :class="{ active: isLongTimeTracking }" @click="setLongTimeTracking">
+                            Long-Time-Tracking
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Frequency Display or Slider -->
+                <div class="popup-section">
+                    <h3>Sending Frequency</h3>
+                    <div v-if="!isLongTimeTracking" class="frequency-display">
+                        <p>5 seconds</p>
+                    </div>
+                    <div v-else class="frequency-slider">
+                        <input type="range" v-model="trackingInterval" min="1" max="24" />
+                        <p>{{ trackingInterval }} hour(s)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup-footer">
+
+                <button class="popup-save-btn" @click="applyChanges">Apply</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { useAuthStore } from "@/stores/auth";
+const store = useAuthStore();
+const props = defineProps({
+    closePopup: Function,
+    template: String,
+    selectedTrackerId: String,
+});
+
+const isLongTimeTracking = ref(false);
+const trackingInterval = ref(1); // Default interval of 1 hour for long-time tracking
+
+const setRealTimeTracking = () => {
+    isLongTimeTracking.value = false;
+    trackingInterval.value = 5; // Fixed frequency for Real-Time-Tracking
+};
+
+const setLongTimeTracking = () => {
+    isLongTimeTracking.value = true;
+};
+
+const applyChanges = async () => {
+    try {
+        await store.updateTrackerMode(
+            props.selectedTrackerId,
+            !isLongTimeTracking.value,
+            isLongTimeTracking.value ? trackingInterval.value : undefined
+        );
+        console.log("Mode updated successfully");
+        props.closePopup();
+    } catch (error) {
+        console.error("Failed to update mode:", error);
+    }
+};
+
+</script>
+
+<style scoped>
+/* Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Popup Card */
+.popup-card {
+    background: linear-gradient(135deg, #f1e4cc 0%, #e6cc99 50%, #f1e4cc 100%);
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    width: 320px;
+    max-width: 90vw;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 1);
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+}
+
+@media screen and (min-width: 768px) {
+    .popup-card {
+        width: 400px;
+    }
+}
+
+.dark-mode.popup-card {
+    background: linear-gradient(135deg, #1e1e1e 0%, #141414 50%, #1e1e1e 100%);
+    border-color: #555;
+    color: #bbb;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* Popup Header */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.popup-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #851515;
+}
+
+.close-btn:hover {
+    color: #750f0f;
+}
+
+.dark-mode .close-btn {
+    color: #E69543;
+}
+
+.dark-mode .close-btn:hover {
+    color: #cc7e36;
+}
+
+/* Popup Body */
+.popup-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.popup-section {
+    text-align: left;
+}
+
+.popup-section h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+/* Mode Toggle */
+.mode-toggle {
+    display: flex;
+    border: 1px solid #333;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.dark-mode .mode-toggle {
+
+    border: 1px solid #ddd;
+
+}
+
+.mode-toggle button {
+    flex: 1;
+    padding: 10px;
+    font-weight: bold;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
+
+.mode-toggle button.active {
+    background-color: #C19A6B;
+    color: #1f1f1f;
+}
+
+.dark-mode .mode-toggle button.active {
+    background-color: #87c099;
+    color: #333;
+}
+
+
+.mode-toggle button:not(.active) {
+    background-color: #fff;
+    color: #333;
+}
+
+.dark-mode .mode-toggle button:not(.active) {
+    background-color: #2e2e2e;
+    color: #fff;
+}
+
+.mode-toggle button:not(.active):hover {
+    background-color: #ccc;
+    color: #333;
+}
+
+/* Frequency Display */
+.frequency-display p,
+.frequency-slider p {
+    font-size: 1.2rem;
+    font-weight: bold;
+
+}
+
+.frequency-slider input[type="range"] {
+    width: 100%;
+    accent-color: #00543D;
+}
+
+.dark-mode .frequency-slider input[type="range"] {
+    width: 100%;
+    accent-color: #E69543;
+}
+
+/* Popup Footer */
+.popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Cancel and Apply Buttons */
+.popup-cancel-btn,
+.popup-save-btn {
+    background-color: #851515;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.popup-cancel-btn:hover,
+.popup-save-btn:hover {
+    background-color: #750f0f;
+    transform: scale(1.05);
+}
+
+.dark-mode .popup-cancel-btn,
+.dark-mode .popup-save-btn {
+    background-color: #E69543;
+    color: #1f1f1f;
+}
+
+.dark-mode .popup-cancel-btn:hover,
+.dark-mode .popup-save-btn:hover {
+    background-color: #cc7e36;
+}
+</style>

@@ -50,7 +50,9 @@
               <span v-if="trackerMode === 'LT'" class="mode-badge">LTE</span>
 
               <!-- Switch Mode Button -->
-              <button class="switch-mode-button shimmering-button" @click="switchMode">Change Mode</button>
+              <button class="switch-mode-button shimmering-button" @click="openChangeModePopup">Change Mode</button>
+              <ChangeModePopup v-if="isChangeModePopupOpen" :template="user.settings?.template"
+                :selectedTrackerId="selectedTracker" :closePopup="closeChangeModePopup" />
             </div>
 
             <!-- Battery Status -->
@@ -150,6 +152,10 @@
     <TimestampFilterPopup v-if="isTimestampFilterPopupOpen" :template="user.settings?.template"
       :filters="user.settings.timestampFilters" :closePopup="closeTimestampFilters"
       :applyFilters="applyTimestampFilters" />
+
+
+
+
   </div>
 </template>
 
@@ -161,10 +167,19 @@ import axios from 'axios';
 import TrackerFilterPopup from './TrackerFilterPopup.vue';
 import TimestampFilterPopup from './TimestampFilterPopup.vue';
 import { useAuthStore } from "@/stores/auth";
+import ChangeModePopup from './ChangeModePopup.vue';
 
 const isTrackerFilterPopupOpen = ref(false);
 const isTimestampFilterPopupOpen = ref(false);
 
+const isChangeModePopupOpen = ref(false);
+const openChangeModePopup = () => {
+  isChangeModePopupOpen.value = true;
+};
+
+const closeChangeModePopup = () => {
+  isChangeModePopupOpen.value = false;
+};
 // Method to open the Tracker Filter popup
 const openTrackerFilters = () => {
   isTrackerFilterPopupOpen.value = true;
