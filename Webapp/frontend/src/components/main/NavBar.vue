@@ -33,7 +33,7 @@
       <div class="nav-right">
         <button class="logout-button" @click="logout">
           <span class="logout-text">Logout</span>
-          <img src="/src/assets/logout-icon.png" alt="Logout" class="logout-icon" />
+
         </button>
       </div>
     </div>
@@ -224,16 +224,6 @@ const logout = async () => {
 
 
 
-/* Logout Icon */
-.logout-icon {
-  width: 42px;
-  height: 24px;
-  padding-right: 10px;
-}
-
-.dark-mode .logout-icon {
-  color: #E69543;
-}
 
 /* Hover Effects */
 .nav-item a:hover,
@@ -303,10 +293,6 @@ const logout = async () => {
   }
 
   /* Adjust logout button and hide icon */
-  .logout-icon {
-    display: none;
-    /* Hide icon in mobile view */
-  }
 
 
 
@@ -323,9 +309,6 @@ const logout = async () => {
     margin: 0 20px;
   }
 
-  /* Show logout icon on larger screens */
-  .logout-icon {
-    display: inline;
-  }
+
 }
 </style>
