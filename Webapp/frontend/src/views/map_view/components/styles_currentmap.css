@@ -60,7 +60,7 @@ body {
   background-color: #C19A6B; /* Same color as "Switch Mode" */
   color: #1f1f1f;
   border: none;
-  border-radius: 18px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;
@@ -221,7 +221,7 @@ body {
   
   color: #ddd;
   border: none;
-  border-radius: 18px;
+  border-radius: 8px;
   cursor: pointer;
   
   /* Smaller font */
