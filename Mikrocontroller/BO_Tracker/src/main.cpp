@@ -22,34 +22,40 @@ _Battery _BoardBattery;
 void setup()
 {
   DSerial.begin(115200);
-  delay(1000);
+  delay(3000);
   ATSerial.begin(115200);
-  delay(1000);
-  // Anpassungen für die Konvertierung auf `const` angepasst
+  delay(3000);
+
   InitModemMQTT();
   InitGNSS();
 }
 
 void loop()
-{ 
+{
   char payload[1028];
   Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
 
+  
   switch (ret)
   {
   case MQTT_RECV_DATA_EVENT:
-    handleMQTTEvent(docOutput, payload); 
+    DSerial.println("RECV_DATA_EVENT");
+    handleMQTTEvent(docOutput, payload);
     break;
   case MQTT_STATUS_EVENT:
-    handleMQTTStatusEvent(payload); 
+    handleMQTTStatusEvent(payload);
     break;
   default:
+    DSerial.println(ret);
+    DSerial.println("Unknow Ret");
     break;
   }
+
   if (millis() - pub_time < frequenz)
     return;
 
   pub_time = millis();
+
   if (GnssMode)
     handleGNSSMode(docInput);
   else if (gnssIsOn)
@@ -66,15 +72,17 @@ void loop()
   }
   if (BatteryMode)
     docInput["BatteryPercentage"] = _BoardBattery.calculateBatteryPercentage();
-  if (CellInfosMode){
+  if (CellInfosMode)
+  {
     _AWS.ReportCellInformation(const_cast<char *>("servingcell"), cell_infos);
     docInput["CellInfos"] = cell_infos;
   }
   docInput["Timestamp"] = _GNSS.GetCurrentTime();
-  if(!(GnssMode || CellInfosMode || BatteryMode || TemperatureMode)){
+  if (!GnssMode && !CellInfosMode && !BatteryMode && !TemperatureMode)
+  {
     docInput["RequestMode"] = true;
     publishData(docInput, payload, pub_time, AT_LEAST_ONCE);
-    return;  
+    return;
   }
-  publishData(docInput, payload, pub_time,AT_LEAST_ONCE);
+  publishData(docInput, payload, pub_time, AT_LEAST_ONCE);
 }

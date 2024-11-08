@@ -8,10 +8,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "aws-sdk": "^2.1691.0",
     "mongodb": "^6.9.0",
     "node-fetch": "^2.7.0"
-  }
+  },
+  "description": ""
 }

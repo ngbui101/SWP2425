@@ -128,11 +128,12 @@ bool InitModemMQTT()
 {
   Mqtt_Version_t version = MQTT_V4;
 
-  if(_AWS.InitModule()){
+  if (_AWS.InitModule())
+  {
     _AWS.SetDevOutputformat(true);
     _AWS.SetDevCommandEcho(false);
     _AWS.ConfigNetworks();
-  } 
+  }
   _AWS.SetDevOutputformat(true);
   // _AWS.SetDevCommandEcho(false);
   // _AWS.SetDevOutputformat(true);
@@ -258,17 +259,49 @@ bool InitModemMQTT()
 }
 
 void handleMQTTEvent(JsonDocument &docOutput, char *payload)
-{
+{ 
+  Serial.println("Deserialized JSON:");
   DeserializationError error = deserializeJson(docOutput, payload);
 
   if (error == DeserializationError::Ok)
   {
-    GnssMode = (docOutput["GnssMode"] == true);
-    CellInfosMode = (docOutput["CellInfosMode"] == true);
-    BatteryMode = (docOutput["BatteryMode"] == true);
-    TemperatureMode = (docOutput["TemperatureMode"] == true);
-    NmeaMode = (docOutput["NmeaMode"] == true); 
+    String jsonString;
+    serializeJson(docOutput, jsonString); 
+    Serial.println(jsonString);  
+    if (docOutput["GnssMode"].is<boolean>())
+    {
+      GnssMode = docOutput["GnssMode"];
+      Serial.print("GnssMode updated to: ");
+      Serial.println(GnssMode);
+    }
+    if (docOutput["CellInfosMode"].is<boolean>())
+    {
+      CellInfosMode = docOutput["CellInfosMode"];
+      Serial.print("CellInfosMode updated to: ");
+      Serial.println(CellInfosMode);
+    }
+    if (docOutput["BatteryMode"].is<boolean>())
+    {
+      BatteryMode = docOutput["BatteryMode"];
+      Serial.print("BatteryMode updated to: ");
+      Serial.println(BatteryMode);
+    }
 
+    if (docOutput["TemperatureMode"].is<boolean>())
+    {
+      TemperatureMode = docOutput["TemperatureMode"];
+      Serial.print("TemperatureMode updated to: ");
+      Serial.println(TemperatureMode);
+    }
+
+    if (docOutput["NmeaMode"].is<boolean>())
+    {
+      NmeaMode = docOutput["NmeaMode"];
+      Serial.print("NmeaMode updated to: ");
+      Serial.println(NmeaMode);
+    }
+
+    // Aktualisiere die Frequenz nur, wenn der Wert vorhanden und ein unsigned int ist
     if (docOutput["frequenz"].is<unsigned int>())
     {
       unsigned int newFrequenz = docOutput["frequenz"];
@@ -285,6 +318,7 @@ void handleMQTTEvent(JsonDocument &docOutput, char *payload)
     Serial.println("\r\n Error in Deserialization!");
     Serial.println(error.c_str());
   }
+  docOutput.clear();
 }
 
 void handleMQTTStatusEvent(char *payload)
@@ -303,20 +337,24 @@ void handleMQTTStatusEvent(char *payload)
     Serial.println(atoi(sta_buf + 1));
   }
 }
-bool publishData(JsonDocument &docInput, char *payload, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS) {
-    String jsonString;  
-    serializeJsonPretty(docInput, jsonString);  
-    jsonString.toCharArray(payload, jsonString.length() + 1);
+bool publishData(JsonDocument &docInput, char *payload, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS)
+{
+  String jsonString;
+  serializeJsonPretty(docInput, jsonString);
+  jsonString.toCharArray(payload, jsonString.length() + 1);
 
-    int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_pub_topic, false, payload);
-    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION) {
-        DSerial.println("Publish succeeded!");
-        docInput.clear();
-        pub_time = millis();
-        return true;
-    } else {
-        DSerial.println("Publish failed!");
-        return false;
-    }
+  int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_pub_topic, false, payload);
+  if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION)
+  {
+    DSerial.println("Publish succeeded!");
+    docInput.clear();
+    pub_time = millis();
+    return true;
+  }
+  else
+  {
+    DSerial.println("Publish failed!");
+    return false;
+  }
 }
 #endif

@@ -30,12 +30,12 @@ async function getModeFromMongo(trackerId, database) {
         
         if (modeDoc) {
             return {
-                GnssMode: modeDoc.GnssMode ?? false,
-                CellInfosMode: modeDoc.CellInfosMode ?? false,
-                BatteryMode: modeDoc.BatteryMode ?? false,
-                TemperatureMode: modeDoc.TemperatureMode ?? false,
-                NmeaMode: modeDoc.NmeaMode ?? false,
-                frequenz: modeDoc.frequenz ?? 5000 
+                GnssMode: modeDoc.GnssMode,
+                CellInfosMode: modeDoc.CellInfosMode,
+                BatteryMode: modeDoc.BatteryMode,
+                TemperatureMode: modeDoc.TemperatureMode,
+                NmeaMode: modeDoc.NmeaMode,
+                frequenz: modeDoc.frequenz
             };
         } else {
             console.log(`Mode document not found for tracker ID: ${trackerId}`);
