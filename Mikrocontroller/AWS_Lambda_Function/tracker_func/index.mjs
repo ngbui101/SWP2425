@@ -196,6 +196,7 @@ export const handler = async (event) => {
         GSV: event.GSV,
         Accuracy: event.Accuracy,
         RequestMode:event.RequestMode,
+        BatteryLow:event.BatteryLow,
         TimeToGetFirstFix: event.TimeToGetFirstFix
     };
 

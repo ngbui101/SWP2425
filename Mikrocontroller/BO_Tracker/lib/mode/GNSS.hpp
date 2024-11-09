@@ -24,7 +24,6 @@ _BG96_GNSS _GNSS(ATSerial, DSerial);
 bool InitGNSS()
 {
     char currentTimestamp[64];
-
     _GNSS.GetLatestGMTTime(currentTimestamp);
 
     if (_GNSS.InitGpsOneXTRA(currentTimestamp))
@@ -37,6 +36,12 @@ bool InitGNSS()
         DSerial.println("\r\nEnable NMEA Sentences Success!");
     }
     return true;
+}
+void GPSOneXtraCheckForUpdate()
+{
+    char currentTimestamp[64];
+    _GNSS.GetLatestGMTTime(currentTimestamp);
+    _GNSS.InjectGpsOneXTRAData("UFS:xtra2.bin", WRITE_MODE, currentTimestamp);
 }
 void handleGNSSMode(JsonDocument &docInput)
 {
@@ -52,30 +57,30 @@ void handleGNSSMode(JsonDocument &docInput)
         docInput["TimeToGetFirstFix"] = timeToFirstFix;
         docInput["Position"] = gnss_posi;
         docInput["Accuracy"] = accuracy;
-        if (NmeaMode)
-        {
-            if (_GNSS.GetGNSSNMEASentences(GPGSA, gnss_gsa))
-            {
-                docInput["GSA"] = gnss_gsa;
-            }
-            else
-            {
-                DSerial.println("Failed to retrieve GSA NMEA Sentence.");
-            }
-
-            if (_GNSS.GetGNSSNMEASentences(GPGSV, gnss_gsv))
-            {
-                docInput["GSV"] = gnss_gsv;
-            }
-            else
-            {
-                DSerial.println("Failed to retrieve GSV NMEA Sentence.");
-            }
-        }
     }
     else
     {
         DSerial.println("Failed to retrieve GNSS Position or Accuracy.");
+    }
+    if (NmeaMode)
+    {
+        if (_GNSS.GetGNSSNMEASentences(GPGSA, gnss_gsa))
+        {
+            docInput["GSA"] = gnss_gsa;
+        }
+        else
+        {
+            DSerial.println("Failed to retrieve GSA NMEA Sentence.");
+        }
+
+        if (_GNSS.GetGNSSNMEASentences(GPGSV, gnss_gsv))
+        {
+            docInput["GSV"] = gnss_gsv;
+        }
+        else
+        {
+            DSerial.println("Failed to retrieve GSV NMEA Sentence.");
+        }
     }
 }
 #endif

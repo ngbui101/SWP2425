@@ -14,7 +14,9 @@ JsonDocument docOutput;
 char cell_infos[256];    // Zellinformationen
 float batterypercentage; // Batterieprozentsatz
 
-// extern bool gnssIsOn;
+//Zeitintervall für Update
+const unsigned long UPDATE_INTERVAL = 86400000UL; // 24 Stunden in Millisekunden
+unsigned long lastUpdateCheck = 0;
 
 // Module
 _Battery _BoardBattery;
@@ -29,12 +31,23 @@ void setup()
   InitModemMQTT();
   InitGNSS();
 }
+void DailyUpdates()
+{
+  GPSOneXtraCheckForUpdate();
+  batterypercentage = _BoardBattery.calculateBatteryPercentage();
+  if(batterypercentage <= 10){
+    docInput["BatteryLow"] = true;
+  }
+  if(publishData(docInput, pub_time, AT_LEAST_ONCE,"/notifications")){
+    delay(300);
+    return;
+  };
+}
 
 void loop()
 {
   char payload[1028];
   Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
-
   
   switch (ret)
   {
@@ -46,9 +59,12 @@ void loop()
     handleMQTTStatusEvent(payload);
     break;
   default:
-    DSerial.println(ret);
-    DSerial.println("Unknow Ret");
     break;
+  }
+  if (millis() - lastUpdateCheck >= UPDATE_INTERVAL) {
+    lastUpdateCheck = millis();  
+    DailyUpdates();
+    return;          
   }
 
   if (millis() - pub_time < frequenz)
@@ -71,18 +87,20 @@ void loop()
     docInput["Humidity"] = 59;
   }
   if (BatteryMode)
-    docInput["BatteryPercentage"] = _BoardBattery.calculateBatteryPercentage();
+    batterypercentage = _BoardBattery.calculateBatteryPercentage();
+    docInput["BatteryPercentage"] = batterypercentage;
   if (CellInfosMode)
   {
     _AWS.ReportCellInformation(const_cast<char *>("servingcell"), cell_infos);
     docInput["CellInfos"] = cell_infos;
   }
-  docInput["Timestamp"] = _GNSS.GetCurrentTime();
-  if (!GnssMode && !CellInfosMode && !BatteryMode && !TemperatureMode)
+  if (ReqestMode)
   {
     docInput["RequestMode"] = true;
-    publishData(docInput, payload, pub_time, AT_LEAST_ONCE);
-    return;
   }
-  publishData(docInput, payload, pub_time, AT_LEAST_ONCE);
+  docInput["Timestamp"] = _GNSS.GetCurrentTime();
+  if(publishData(docInput, pub_time, AT_LEAST_ONCE,"/pub")){
+    delay(300);
+    return;
+  };
 }

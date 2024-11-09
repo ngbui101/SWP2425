@@ -16,8 +16,7 @@ char PASSWORD[] = "";
 char MQTTServer[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
 unsigned int MQTTPort = 8883;
 char MQTTClientId[] = "BG96";
-char mqtt_sub_topic[64];
-char mqtt_pub_topic[64];
+char mqtt_base_topic[32];
 Mqtt_Qos_t MQTT_QoS = AT_LEAST_ONCE;
 unsigned long pub_time = 0;
 unsigned int MQTTIndex = 0;
@@ -33,6 +32,8 @@ bool CellInfosMode = false;
 bool BatteryMode = false;
 bool TemperatureMode = false;
 bool NmeaMode = false;
+bool GeoFenMode = false;
+bool ReqestMode = true;
 unsigned int frequenz = 5000UL;
 
 _BG96_MQTT _AWS(ATSerial, DSerial);
@@ -148,13 +149,8 @@ bool InitModemMQTT()
     DSerial.println(ModemIMEI);
   }
 
-  strcpy(mqtt_sub_topic, "tracker/");
-  strcat(mqtt_sub_topic, ModemIMEI);
-  strcat(mqtt_sub_topic, "/sub");
-
-  strcpy(mqtt_pub_topic, "tracker/");
-  strcat(mqtt_pub_topic, ModemIMEI);
-  strcat(mqtt_pub_topic, "/pub");
+  strcpy(mqtt_base_topic, "tracker/");
+  strcat(mqtt_base_topic, ModemIMEI);
 
   // SSL Networking
   _AWS.DeleteCertificate("all");
@@ -242,6 +238,10 @@ bool InitModemMQTT()
   DSerial.println("\r\nCreate a MQTT Client Success!");
 
   DSerial.println("\r\nStart MQTT Subscribe Topic!");
+  char mqtt_sub_topic[64];
+  strcpy(mqtt_sub_topic, mqtt_base_topic);
+  strcat(mqtt_sub_topic, "/sub");
+
   while (_AWS.MQTTSubscribeTopic(MQTTIndex, 1, mqtt_sub_topic, MQTT_QoS) != 0)
   {
     DSerial.println("\r\nMQTT Subscribe Topic Fail!");
@@ -260,14 +260,14 @@ bool InitModemMQTT()
 
 void handleMQTTEvent(JsonDocument &docOutput, char *payload)
 { 
-  Serial.println("Deserialized JSON:");
+  // Serial.println("Deserialized JSON:");
   DeserializationError error = deserializeJson(docOutput, payload);
 
   if (error == DeserializationError::Ok)
   {
-    String jsonString;
-    serializeJson(docOutput, jsonString); 
-    Serial.println(jsonString);  
+    // String jsonString;
+    // serializeJson(docOutput, jsonString); 
+    // Serial.println(jsonString);  
     if (docOutput["GnssMode"].is<boolean>())
     {
       GnssMode = docOutput["GnssMode"];
@@ -337,13 +337,18 @@ void handleMQTTStatusEvent(char *payload)
     Serial.println(atoi(sta_buf + 1));
   }
 }
-bool publishData(JsonDocument &docInput, char *payload, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS)
-{
+bool publishData(JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS,const char* subtopic)
+{ 
+  char payload[1028];
   String jsonString;
-  serializeJsonPretty(docInput, jsonString);
-  jsonString.toCharArray(payload, jsonString.length() + 1);
+  serializeJsonPretty(docInput, payload);
 
-  int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_pub_topic, false, payload);
+  char mqtt_topic[64];
+  strcpy(mqtt_topic, mqtt_base_topic);
+  strcat(mqtt_topic, subtopic); 
+
+  int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_topic, false, payload);
+
   if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION)
   {
     DSerial.println("Publish succeeded!");

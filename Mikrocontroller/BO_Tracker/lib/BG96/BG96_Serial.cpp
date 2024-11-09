@@ -285,6 +285,7 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const c
             }
         } 
     }
+    _atserial.println(rxBuffer);
     if (recv_len > 0){
         return UNKNOWN_RESPONSE;
     } else {
