@@ -14,13 +14,8 @@ export const handler = async (event) => {
         const usersCollection = database.collection('users');
         const settingsCollection = database.collection('settings');
 
-        const { IMEI, BatteryLow } = event;
-        console.log(`IMEI: ${IMEI}, BatteryLow: ${BatteryLow}`);
-
-        if (!BatteryLow) {
-            console.log("BatteryLow is not set to true; no notification will be sent.");
-            return { statusCode: 200, body: "No notification required." };
-        }
+        const { IMEI, BatteryLow, LeavingGeo } = event;
+        console.log(`IMEI: ${IMEI}, BatteryLow: ${BatteryLow}, LeavingGeo: ${LeavingGeo}`);
 
         // Finde den Tracker mit der IMEI
         const trackerDoc = await trackersCollection.findOne({ imei: IMEI });
@@ -49,51 +44,97 @@ export const handler = async (event) => {
             return { statusCode: 404, body: "Settings not found" };
         }
 
-        // Überprüfe, ob die Benachrichtigung aktiviert ist
-        const smsEnabled = settingsDoc.notifications?.sms?.batteryLow === true;
-        const emailEnabled = settingsDoc.notifications?.email?.batteryLow === true;
+        // Überprüfe, ob Benachrichtigungen aktiviert sind
+        const smsEnabled = {
+            batteryLow: settingsDoc.notifications?.sms?.batteryLow === true,
+            geofence: settingsDoc.notifications?.sms?.geofence === true
+        };
+        const emailEnabled = {
+            batteryLow: settingsDoc.notifications?.email?.batteryLow === true,
+            geofence: settingsDoc.notifications?.email?.geofence === true
+        };
 
-        // Nachricht für die Benachrichtigung
-        const message = `Achtung: Die Batterie des Trackers '${trackerName}' ist unter 10%. Bitte laden Sie den Tracker bald auf.`;
+        // Nachricht für die Batterie-Benachrichtigung
+        const batteryMessage = `Achtung: Die Batterie des Trackers '${trackerName}' ist unter 10%. Bitte laden Sie den Tracker bald auf.`;
 
-        // Sende SMS-Benachrichtigung, wenn aktiviert und eine Telefonnummer vorhanden ist
-        if (smsEnabled && userPhoneNumber) {
+        // Nachricht für die Geofence-Benachrichtigung
+        const geoMessage = `Warnung: Der Tracker '${trackerName}' hat den definierten Geofence-Bereich verlassen.`;
+
+        // Sende SMS-Benachrichtigung für Batterie, wenn aktiviert und eine Telefonnummer vorhanden ist
+        if (BatteryLow && smsEnabled.batteryLow && userPhoneNumber) {
             const smsParams = {
-                Message: message,
+                Message: batteryMessage,
                 PhoneNumber: userPhoneNumber
             };
 
             try {
                 await sns.publish(smsParams).promise();
-                console.log(`SMS sent to ${userPhoneNumber}`);
+                console.log(`Battery SMS sent to ${userPhoneNumber}`);
             } catch (error) {
-                console.error(`Error sending SMS to ${userPhoneNumber}:`, error);
+                console.error(`Error sending battery SMS to ${userPhoneNumber}:`, error);
             }
         }
 
-        // Sende E-Mail-Benachrichtigung, wenn aktiviert und eine E-Mail-Adresse vorhanden ist
-        if (emailEnabled && userEmail) {
+        // Sende E-Mail-Benachrichtigung für Batterie, wenn aktiviert und eine E-Mail-Adresse vorhanden ist
+        if (BatteryLow && emailEnabled.batteryLow && userEmail) {
             const emailParams = {
-                Message: message,
+                Message: batteryMessage,
                 Subject: "Battery Low Alert for Tracker",
                 TopicArn: process.env.SNS_TOPIC_ARN, // Allgemeines SNS-Topic für E-Mails
                 MessageAttributes: {
                     "userEmail": {
                         DataType: "String",
-                        StringValue: userEmail // Dieses Attribut kann für Filter-Policies verwendet werden
+                        StringValue: userEmail // Attribut zur Filterung
                     }
                 }
             };
 
             try {
                 await sns.publish(emailParams).promise();
-                console.log(`Email sent to ${userEmail}`);
+                console.log(`Battery Email sent to ${userEmail}`);
             } catch (error) {
-                console.error(`Error sending email to ${userEmail}:`, error);
+                console.error(`Error sending battery email to ${userEmail}:`, error);
             }
         }
 
-        return { statusCode: 200, body: "BatteryLow notification sent to specific user." };
+        // Sende SMS-Benachrichtigung für Geofence, wenn aktiviert und eine Telefonnummer vorhanden ist
+        if (LeavingGeo && smsEnabled.geofence && userPhoneNumber) {
+            const smsParams = {
+                Message: geoMessage,
+                PhoneNumber: userPhoneNumber
+            };
+
+            try {
+                await sns.publish(smsParams).promise();
+                console.log(`Geofence SMS sent to ${userPhoneNumber}`);
+            } catch (error) {
+                console.error(`Error sending geofence SMS to ${userPhoneNumber}:`, error);
+            }
+        }
+
+        // Sende E-Mail-Benachrichtigung für Geofence, wenn aktiviert und eine E-Mail-Adresse vorhanden ist
+        if (LeavingGeo && emailEnabled.geofence && userEmail) {
+            const emailParams = {
+                Message: geoMessage,
+                Subject: "Geofence Alert for Tracker",
+                TopicArn: process.env.SNS_TOPIC_ARN,
+                MessageAttributes: {
+                    "userEmail": {
+                        DataType: "String",
+                        StringValue: userEmail
+                    }
+                }
+            };
+
+            try {
+                await sns.publish(emailParams).promise();
+                console.log(`Geofence Email sent to ${userEmail}`);
+            } catch (error) {
+                console.error(`Error sending geofence email to ${userEmail}:`, error);
+            }
+        }
+
+        return { statusCode: 200, body: "Notifications sent based on event conditions." };
 
     } catch (error) {
         console.error("Error sending notification:", error);

@@ -5,6 +5,7 @@
 #define ATSerial Serial1
 
 #include "BG96_MQTT.h"
+#include "TrackerMode.cpp"
 #include <ArduinoJson.h>
 #include <Arduino.h>
 // APN
@@ -25,16 +26,6 @@ unsigned int SSLIndex = 2;
 
 ///
 char ModemIMEI[20];
-
-// Variablen für Modi
-bool GnssMode = false;
-bool CellInfosMode = false;
-bool BatteryMode = false;
-bool TemperatureMode = false;
-bool NmeaMode = false;
-bool GeoFenMode = false;
-bool ReqestMode = true;
-unsigned int frequenz = 5000UL;
 
 _BG96_MQTT _AWS(ATSerial, DSerial);
 
@@ -258,68 +249,55 @@ bool InitModemMQTT()
   return true;
 }
 
-void handleMQTTEvent(JsonDocument &docOutput, char *payload)
-{ 
-  // Serial.println("Deserialized JSON:");
-  DeserializationError error = deserializeJson(docOutput, payload);
+void handleMQTTEvent(JsonDocument &docOutput, char *payload) {
+    DeserializationError error = deserializeJson(docOutput, payload);
 
-  if (error == DeserializationError::Ok)
-  {
-    // String jsonString;
-    // serializeJson(docOutput, jsonString); 
-    // Serial.println(jsonString);  
-    if (docOutput["GnssMode"].is<boolean>())
-    {
-      GnssMode = docOutput["GnssMode"];
-      Serial.print("GnssMode updated to: ");
-      Serial.println(GnssMode);
+    if (error == DeserializationError::Ok) {
+        if (docOutput["GnssMode"].is<boolean>()) {
+            trackerModes.GnssMode = docOutput["GnssMode"];
+        }
+        if (docOutput["CellInfosMode"].is<boolean>()) {
+            trackerModes.CellInfosMode = docOutput["CellInfosMode"];
+        }
+        if (docOutput["BatteryMode"].is<boolean>()) {
+            trackerModes.BatteryMode = docOutput["BatteryMode"];
+        }
+        if (docOutput["TemperatureMode"].is<boolean>()) {
+            trackerModes.TemperatureMode = docOutput["TemperatureMode"];
+        }
+        if (docOutput["NmeaMode"].is<boolean>()) {
+            trackerModes.NmeaMode = docOutput["NmeaMode"];
+        }
+        if (docOutput["GeoFenMode"].is<boolean>()) {
+            trackerModes.GeoFenMode = docOutput["GeoFenMode"];
+        }
+        // Frequenz aktualisieren
+        if (docOutput["frequenz"].is<unsigned int>()) {
+            unsigned int newFrequenz = docOutput["frequenz"];
+            if (newFrequenz > 0) {
+                trackerModes.frequenz = newFrequenz;
+                Serial.print("Updated publishing frequency to: ");
+                Serial.println(trackerModes.frequenz);
+            }
+        }
+        if (docOutput["geoRadius"].is<int>()) {
+            trackerModes.geoRadius = docOutput["geoRadius"].as<unsigned int>();
+        }
+        
+        if (docOutput["geoLatitude"].is<float>()) {
+            trackerModes.geoLatitude = docOutput["geoLatitude"];
+        }
+        
+        if (docOutput["geoLongitude"].is<float>()) {
+            trackerModes.geoLongitude = docOutput["geoLongitude"];
+        }
+    } else {
+        Serial.println("\r\n Error in Deserialization!");
+        Serial.println(error.c_str());
     }
-    if (docOutput["CellInfosMode"].is<boolean>())
-    {
-      CellInfosMode = docOutput["CellInfosMode"];
-      Serial.print("CellInfosMode updated to: ");
-      Serial.println(CellInfosMode);
-    }
-    if (docOutput["BatteryMode"].is<boolean>())
-    {
-      BatteryMode = docOutput["BatteryMode"];
-      Serial.print("BatteryMode updated to: ");
-      Serial.println(BatteryMode);
-    }
-
-    if (docOutput["TemperatureMode"].is<boolean>())
-    {
-      TemperatureMode = docOutput["TemperatureMode"];
-      Serial.print("TemperatureMode updated to: ");
-      Serial.println(TemperatureMode);
-    }
-
-    if (docOutput["NmeaMode"].is<boolean>())
-    {
-      NmeaMode = docOutput["NmeaMode"];
-      Serial.print("NmeaMode updated to: ");
-      Serial.println(NmeaMode);
-    }
-
-    // Aktualisiere die Frequenz nur, wenn der Wert vorhanden und ein unsigned int ist
-    if (docOutput["frequenz"].is<unsigned int>())
-    {
-      unsigned int newFrequenz = docOutput["frequenz"];
-      if (newFrequenz > 0)
-      {
-        frequenz = newFrequenz;
-        Serial.print("Updated publishing frequency to: ");
-        Serial.println(frequenz);
-      }
-    }
-  }
-  else
-  {
-    Serial.println("\r\n Error in Deserialization!");
-    Serial.println(error.c_str());
-  }
-  docOutput.clear();
+    docOutput.clear();
 }
+
 
 void handleMQTTStatusEvent(char *payload)
 {
@@ -337,29 +315,25 @@ void handleMQTTStatusEvent(char *payload)
     Serial.println(atoi(sta_buf + 1));
   }
 }
-bool publishData(JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS,const char* subtopic)
-{ 
-  char payload[1028];
-  String jsonString;
-  serializeJsonPretty(docInput, payload);
+bool publishData(JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS, const char* subtopic) {
+    char payload[1028];
+    serializeJsonPretty(docInput, payload);
 
-  char mqtt_topic[64];
-  strcpy(mqtt_topic, mqtt_base_topic);
-  strcat(mqtt_topic, subtopic); 
+    char mqtt_topic[64];
+    strcpy(mqtt_topic, mqtt_base_topic);
+    strcat(mqtt_topic, subtopic); 
 
-  int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_topic, false, payload);
+    int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_topic, false, payload);
 
-  if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION)
-  {
-    DSerial.println("Publish succeeded!");
-    docInput.clear();
-    pub_time = millis();
-    return true;
-  }
-  else
-  {
-    DSerial.println("Publish failed!");
-    return false;
-  }
+    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION) {
+        Serial.println("Publish succeeded!");
+        docInput.clear();
+        pub_time = millis();
+        return true;
+    } else {
+        Serial.println("Publish failed!");
+        return false;
+    }
 }
+
 #endif

@@ -21,33 +21,39 @@ async function publishToAwsIoT(imei, modeData) {
     }
 }
 
-async function getModeFromMongo(trackerId, database) {
+async function getModeAndGeofencesFromMongo(trackerId, database) {
     const modeCollection = database.collection('mode');
+    const geofencesCollection = database.collection('geofences');
 
     try {
-        // Ensure trackerId is a string
+        // Hole Modusinformationen
         const modeDoc = await modeCollection.findOne({ tracker: new ObjectId(String(trackerId)) });
         
-        if (modeDoc) {
-            return {
-                GnssMode: modeDoc.GnssMode,
-                CellInfosMode: modeDoc.CellInfosMode,
-                BatteryMode: modeDoc.BatteryMode,
-                TemperatureMode: modeDoc.TemperatureMode,
-                NmeaMode: modeDoc.NmeaMode,
-                frequenz: modeDoc.frequenz
-            };
-        } else {
-            console.log(`Mode document not found for tracker ID: ${trackerId}`);
-            return null;
-        }
+        const modeData = modeDoc ? {
+            GnssMode: modeDoc.GnssMode,
+            CellInfosMode: modeDoc.CellInfosMode,
+            BatteryMode: modeDoc.BatteryMode,
+            TemperatureMode: modeDoc.TemperatureMode,
+            NmeaMode: modeDoc.NmeaMode,
+            frequenz: modeDoc.frequenz
+        } : null;
+
+        // Hole Geofence-Informationen
+        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId)), active: true });
+        const geofences = await geofencesCursor.toArray();
+        const geofenceData = geofences.map(geo => ({
+            geoRadius: parseInt(geo.radius),
+            geoLongitude: parseFloat(geo.longitude),
+            geoLatitude: parseFloat(geo.latitude),
+            GeoFenMode: geo.active
+        }));
+
+        return { modeData, geofenceData };
     } catch (error) {
-        console.error("Error fetching mode from MongoDB:", error);
+        console.error("Error fetching mode and geofences from MongoDB:", error);
         return null;
     }
 }
-
-export default getModeFromMongo;
 
 
 function convertTimestamp(timestamp) {
@@ -222,12 +228,6 @@ export const handler = async (event) => {
             const [_, latitudeStr, longitudeStr, hdopStr, __, fixStr, ___, ____, _____, ______, nsatStr] = data.Position.split(",");
             const latitude = parseFloat(latitudeStr);
             const longitude = parseFloat(longitudeStr);
-            // const hdop = parseFloat(hdopStr);
-            // const fix = parseInt(fixStr, 10);
-            // const nsat = parseInt(nsatStr, 10);
-            // const { pdop, vdop } = parseGSA(data.GSA);
-            // const averageSNR = calculateAverageSNR(data.GSV);
-            // const { ha, pa, totalAccuracy } = calculateAccuracy(hdop, pdop, vdop, nsat, averageSNR);
 
             documentsToInsert.push({
                 imei: data.IMEI,
@@ -281,12 +281,17 @@ export const handler = async (event) => {
             });
         }
         
-        if(data.RequestMode){
-            const modeData = await getModeFromMongo(trackerId, database);
-            if (modeData) {
-                await publishToAwsIoT(data.IMEI, modeData);
+        if (data.RequestMode === true) {
+            const { modeData, geofenceData } = await getModeAndGeofencesFromMongo(trackerId, database);
+        
+            if ((modeData && Object.keys(modeData).length > 0) || geofenceData.length > 0) {
+                const payload = { ...modeData, geofences: geofenceData };
+                await publishToAwsIoT(data.IMEI, payload);
+            } else {
+                console.log("No mode or geofence data available for publishing.");
             }
         }
+        
         if (documentsToInsert.length > 0) {
             await collection.insertMany(documentsToInsert);
             console.log(`${documentsToInsert.length} document(s) inserted.`);

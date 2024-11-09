@@ -11,11 +11,11 @@ JsonDocument docInput;
 JsonDocument docOutput;
 
 // Cell und Batterie
-char cell_infos[256];    // Zellinformationen
-float batterypercentage; // Batterieprozentsatz
+char cell_infos[256];  
+float batterypercentage; 
 
-//Zeitintervall für Update
-const unsigned long UPDATE_INTERVAL = 86400000UL; // 24 Stunden in Millisekunden
+// Zeitintervall für das tägliche Update (24 Stunden in Millisekunden)
+const unsigned long UPDATE_INTERVAL = 86400000UL;
 unsigned long lastUpdateCheck = 0;
 
 // Module
@@ -31,24 +31,27 @@ void setup()
   InitModemMQTT();
   InitGNSS();
 }
+
+// Funktion für tägliche Updates
 void DailyUpdates()
 {
   GPSOneXtraCheckForUpdate();
   batterypercentage = _BoardBattery.calculateBatteryPercentage();
-  if(batterypercentage <= 10){
+  if (batterypercentage <= 10)
+  {
     docInput["BatteryLow"] = true;
   }
-  if(publishData(docInput, pub_time, AT_LEAST_ONCE,"/notifications")){
+  if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/notifications"))
+  {
     delay(300);
-    return;
-  };
+  }
 }
 
 void loop()
 {
   char payload[1028];
   Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
-  
+
   switch (ret)
   {
   case MQTT_RECV_DATA_EVENT:
@@ -61,46 +64,86 @@ void loop()
   default:
     break;
   }
-  if (millis() - lastUpdateCheck >= UPDATE_INTERVAL) {
-    lastUpdateCheck = millis();  
-    DailyUpdates();
-    return;          
-  }
 
-  if (millis() - pub_time < frequenz)
+  // Tägliches Update ausführen
+  if (millis() - lastUpdateCheck >= UPDATE_INTERVAL)
+  {
+    lastUpdateCheck = millis();
+    DailyUpdates();
+    return;
+  }
+  
+  // Daten nur in festgelegten Intervallen veröffentlichen
+  if (millis() - pub_time < trackerModes.frequenz)
     return;
 
   pub_time = millis();
 
-  if (GnssMode)
+  // GNSS-Modus verwalten
+  if (trackerModes.GnssMode)
+  {
     handleGNSSMode(docInput);
-  else if (gnssIsOn)
+  }
+  else if (gnssTracker.isOn)
   {
     _GNSS.TurnOffGNSS();
-    gnssIsOn = false;
-    timeToFirstFix = 0;
-    gnssStartMillis = 0;
+    gnssTracker.isOn = false;
+    gnssTracker.timeToFirstFix = 0;
+    gnssTracker.startMillis = 0;
   }
-  if (TemperatureMode)
+
+  // Temperatur- und Feuchtigkeitsdaten sammeln
+  if (trackerModes.TemperatureMode)
   {
     docInput["Temperature"] = 8;
     docInput["Humidity"] = 59;
   }
-  if (BatteryMode)
+
+  // Batteriestand erfassen
+  if (trackerModes.BatteryMode)
+  {
     batterypercentage = _BoardBattery.calculateBatteryPercentage();
     docInput["BatteryPercentage"] = batterypercentage;
-  if (CellInfosMode)
+  }
+
+  // Zellinformationen erfassen
+  if (trackerModes.CellInfosMode)
   {
     _AWS.ReportCellInformation(const_cast<char *>("servingcell"), cell_infos);
     docInput["CellInfos"] = cell_infos;
   }
-  if (ReqestMode)
+
+  // Request-Modus setzen
+  trackerModes.updateRequestMode();
+  if (trackerModes.RequestMode)
   {
     docInput["RequestMode"] = true;
   }
+  // Zeitstempel hinzufügen
   docInput["Timestamp"] = _GNSS.GetCurrentTime();
-  if(publishData(docInput, pub_time, AT_LEAST_ONCE,"/pub")){
+  // Daten veröffentlichen
+  if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/pub"))
+  {
     delay(300);
-    return;
-  };
+  }
+  if (trackerModes.GeoFenMode)
+  {
+    if (!gnssTracker.geoFenceInit)
+      addGeo();
+    GEOFENCE_STATUS_t status = _GNSS.getGeoFencingStatus(gnssTracker.geoID);
+    switch (status)
+    {
+    case OUTSIDE_GEOFENCE:
+      docInput["LeavingGeo"] = true;
+      if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/notifications"))
+      {
+        delay(300);
+      }
+      break;
+    case INSIDE_GEOFENCE || NOFIX:
+      break;
+    default:
+      break;
+    }
+  }
 }

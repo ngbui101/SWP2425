@@ -146,7 +146,7 @@ bool _BG96_GNSS::TurnOnGNSS(GNSS_Work_Mode_t mode, Cmd_Status_t status)
         sprintf(buf, "=%d", mode);
         strcat(cmd, buf);
         if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
-        {   
+        {
             return true;
         }
     }
@@ -284,19 +284,23 @@ bool _BG96_GNSS::SetGNSSOutputPort(GNSS_OutputPort_t outport)
  */
 bool _BG96_GNSS::InitGpsOneXTRA(char *currentTimestamp)
 {
-    if(!EnableGpsOneXTRA(ENABLE,READ_MODE)){
-        if(!EnableGpsOneXTRA(ENABLE,WRITE_MODE)){
+    if (!EnableGpsOneXTRA(ENABLE, READ_MODE))
+    {
+        if (!EnableGpsOneXTRA(ENABLE, WRITE_MODE))
+        {
             return false;
         }
     }
 
     ResetModule();
 
-    if(!InjectGpsOneXTRAData("UFS:xtra2.bin", READ_MODE, currentTimestamp)){
-        //delete GPSOneXtra data
+    if (!InjectGpsOneXTRAData("UFS:xtra2.bin", READ_MODE, currentTimestamp))
+    {
+        // delete GPSOneXtra data
         TurnOffGNSS();
         DeleteAssistanceData(XTRA);
-        if(!UpdateGpsOneXtraData(currentTimestamp)){
+        if (!UpdateGpsOneXtraData(currentTimestamp))
+        {
             return false;
         };
     };
@@ -381,17 +385,17 @@ bool _BG96_GNSS::InjectGpsOneXTRAData(const char *filename, Cmd_Status_t status,
         strcat(cmd, "?");
         if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
         {
-            char *sta_buf = searchStrBuffer(": ");         
-            char *time_start = strchr(sta_buf, '\"');      
-            char *time_end = strchr(time_start + 1, '\"'); 
-            *time_end = '\0';                              
-  
+            char *sta_buf = searchStrBuffer(": ");
+            char *time_start = strchr(sta_buf, '\"');
+            char *time_end = strchr(time_start + 1, '\"');
+            *time_end = '\0';
+
             char gpsDataTimestamp[64];
-            strcpy(gpsDataTimestamp, time_start + 1); 
+            strcpy(gpsDataTimestamp, time_start + 1);
 
             time_t gpsTime = parseTimestamp(gpsDataTimestamp);
             time_t currentTime = parseTimestamp(currentTimestamp);
-            
+
             double diffDays = difftime(currentTime, gpsTime) / (60 * 60 * 24);
 
             if (diffDays > 1)
@@ -408,7 +412,7 @@ bool _BG96_GNSS::InjectGpsOneXTRAData(const char *filename, Cmd_Status_t status,
     }
     else if (status == WRITE_MODE)
     {
-        InjectGpsOneXTRATime(currentTimestamp); //Set Timestamp
+        InjectGpsOneXTRATime(currentTimestamp); // Set Timestamp
 
         sprintf(buf, "=\"%s\"", filename);
         strcat(cmd, buf);
@@ -486,25 +490,32 @@ bool _BG96_GNSS::DeleteAssistanceData(GNSS_Delete_t deletetype)
     return false;
 }
 
-bool _BG96_GNSS::GetEstimationError(float &accuracy) {
+bool _BG96_GNSS::GetEstimationError(float &accuracy)
+{
     accuracy = 0.0;
     char cmd[64];
     strcpy(cmd, GNSS_CONFIGURATION);
     strcat(cmd, "=\"estimation_error\"");
-    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10)) {
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 10))
+    {
         char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
         *end_buf = '\0';
         char *sta_buf = searchStrBuffer(": ");
-        if (sta_buf) {
+        if (sta_buf)
+        {
             sta_buf += 2;
             char *token = strtok(sta_buf, ",");
             int index = 0;
             float hori_unc = 0.0, vert_unc = 0.0;
 
-            while (token != nullptr) {
-                if (index == 1) {
+            while (token != nullptr)
+            {
+                if (index == 1)
+                {
                     hori_unc = atof(token);
-                } else if (index == 2) {
+                }
+                else if (index == 2)
+                {
                     vert_unc = atof(token);
                     break;
                 }
@@ -518,3 +529,96 @@ bool _BG96_GNSS::GetEstimationError(float &accuracy) {
     return false;
 }
 
+/**
+ * @brief Fügt einen neuen Geofence-Bereich hinzu.
+ *
+ * Diese Methode verwendet den AT-Befehl AT+QCFGEXT="addgeo" und konfiguriert den Geofence mit den angegebenen Parametern.
+ *
+ * @param geoID Eindeutige ID des Geofence.
+ * @param mode Betriebsmodus des Geofence.
+ * @param shape Form des Geofence (z. B. Kreis).
+ * @param latituide Breitengrad des Mittelpunkts des Geofence (-90 bis 90).
+ * @param longituide Längengrad des Mittelpunkts des Geofence (-180 bis 180).
+ * @param radius Radius des Geofence in Metern (muss positiv sein).
+ * @return true, wenn der Geofence erfolgreich hinzugefügt wurde; andernfalls false.
+ */
+bool _BG96_GNSS::AddGeoFence(unsigned int geoID, GEOFENCE_MODE_t mode, GEOFENCE_SHAPE_t shape, float latituide, float longituide, unsigned int radius)
+{
+    // Überprüfen Sie die Gültigkeit der Parameterwerte
+    if (latituide < -90.0 || latituide > 90.0 || longituide < -180.0 || longituide > 180.0 || radius <= 0) {
+        return false;  
+    }
+    char cmd[64];
+    sprintf(cmd, "%s=\"addgeo\",%d,%d,%d,%f,%f,%d", GNSS_GEO_FENCE,geoID, mode, shape, latituide, longituide, radius);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 3)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * @brief Überprüft, ob die aktuelle Position des Geräts innerhalb oder außerhalb eines definierten Geofences liegt.
+ *
+ * Diese Methode sendet den AT-Befehl `AT+QCFGEXT="querygeo",<geoID>` an das BG96-GNSS-Modul, um den Status eines bestimmten Geofence-Bereichs abzufragen.
+ * Das Modul antwortet mit der Position des Geräts relativ zu dem angegebenen Geofence (`<posWrtGeofence>`), 
+ * die dann analysiert wird, um festzustellen, ob das Gerät innerhalb oder außerhalb des Geofence ist.
+ *
+ * Erwartetes Antwortformat:
+ * `+QCFGEXT: "querygeo",<geoID>,<posWrtGeofence>`
+ *
+ * - `<geoID>`: Geofence-ID (entspricht dem `geoID`-Parameter), um den relevanten Geofence zu identifizieren.
+ * - `<posWrtGeofence>`: Integer-Wert, der die Position relativ zum Geofence beschreibt:
+ *     - 0: Position unbekannt
+ *     - 1: Position ist innerhalb des Geofence
+ *     - 2: Position ist außerhalb des Geofence
+ *
+ * @param geoID Die eindeutige ID des Geofence, für den der Status abgefragt wird.
+ * @return `true`, wenn sich die Position innerhalb des Geofence befindet (`<posWrtGeofence>` ist 1).
+ *         `false`, wenn sich die Position außerhalb des Geofence befindet oder ein Fehler auftritt.
+ *
+ * @note Diese Methode erfordert eine erfolgreiche Kommunikation mit dem BG96-GNSS-Modul und eine gültige Antwort.
+ *       Falls keine gültige Antwort empfangen wird, gibt die Methode `false` zurück.
+ *
+ * @see Quectel BG96 GNSS AT Commands Manual, Abschnitt 2.7 für weitere Informationen zu Geofencing-Kommandos.
+ */
+bool _BG96_GNSS::QueryGeoFence(unsigned int geoID) {
+    char cmd[64];
+    sprintf(cmd, "%s=\"querygeo\",%d", GNSS_GEO_FENCE,geoID);  
+    
+    if (sendAndSearch(cmd, "+QCFGEXT: \"querygeo\"", RESPONSE_ERROR, 5)) {
+        // Erwartete Antwort: +QCFGEXT: "querygeo",<geoID>,<posWrtGeofence>
+        
+        char *sta_buf = searchStrBuffer(": \"querygeo\",");
+        if (sta_buf != nullptr) {
+            char *posStr = strchr(sta_buf, ',');  // Sucht erstes Komma
+            if (posStr != nullptr) {
+                posStr = strchr(posStr + 1, ',');  // Sucht zweites Komma, in dem die Position gespeichert ist
+                if (posStr != nullptr) {
+                    int posWrtGeofence = atoi(posStr + 1);
+                    
+                    // Rückgabe basierend auf der Position relativ zum Geofence
+                    if (posWrtGeofence == 1) {
+                        return true;  
+                    }
+                }
+            }
+        }
+    }
+    return false;  
+}
+GEOFENCE_STATUS_t _BG96_GNSS::getGeoFencingStatus(unsigned int geoID){
+    char position[128];
+    if(!TurnOnGNSS(MS_BASED, READ_MODE)){
+        TurnOnGNSS(MS_BASED, WRITE_MODE);
+    }
+    if(GetGNSSPositionInformation(position)){
+        if(QueryGeoFence(geoID)){
+            return INSIDE_GEOFENCE;
+        }else{
+            return OUTSIDE_GEOFENCE;
+        }
+        TurnOffGNSS();
+    }else{
+        return NOFIX;
+    }
+}

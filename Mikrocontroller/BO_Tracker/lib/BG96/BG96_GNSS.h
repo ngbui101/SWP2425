@@ -52,6 +52,24 @@ typedef enum nmea_sentences_type {
 	GPVTG = 16,
 }NMEA_Type_t;
 
+typedef enum geofence_shape {
+    CIRLE = 0,
+    TRIANGLE = 2,
+    QUADRANGLE = 3,
+}GEOFENCE_SHAPE_t;
+
+typedef enum geofence_mode {
+    DISABLE_GEOFENCE = 0,
+    ENTER_GEOFENCE = 1,
+    EXIT_GEOFENCE = 2,
+    ENTER_AND_EXIT_GEOFENCE = 3,
+}GEOFENCE_MODE_t;
+typedef enum geofence_status {
+    NOFIX = 0,
+    INSIDE_GEOFENCE = 1,
+    OUTSIDE_GEOFENCE = 2,
+}GEOFENCE_STATUS_t;
+
 class _BG96_GNSS : public _BG96_HTTP
 {
   public:
@@ -92,6 +110,12 @@ class _BG96_GNSS : public _BG96_HTTP
     bool DeleteAssistanceData(GNSS_Delete_t deletetype);
 
     bool GetEstimationError(float &accuracy);
+
+    bool AddGeoFence(unsigned int geoID, GEOFENCE_MODE_t mode, GEOFENCE_SHAPE_t shape, float latituide, float longituide, unsigned int radius);
+
+    bool QueryGeoFence(unsigned int geoID);
+
+    GEOFENCE_STATUS_t getGeoFencingStatus(unsigned int geoID);
 
    private:
    ///GPSOneXTRA Update Liste
