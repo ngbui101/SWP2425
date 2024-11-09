@@ -56,7 +56,7 @@ class _BG96_Serial
 
     Cmd_Response_t readResponseAndSearch(const char *test_str, unsigned int timeout);
 
-    Cmd_Response_t readResponseAndSearchChr(const char test_chr, unsigned int timeout);
+    Cmd_Response_t readResponseAndSearchChr(char test_chr, unsigned int timeout);
 
     Cmd_Response_t readResponseAndSearch(const char *test_str, const char *e_test_str, unsigned int timeout);
 

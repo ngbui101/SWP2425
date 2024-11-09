@@ -417,6 +417,7 @@ Mqtt_Client_Result_Status_t _BG96_MQTT::MQTTPublishMessages(unsigned int mqtt_in
 Mqtt_URC_Event_t _BG96_MQTT::WaitCheckMQTTURCEvent(char *event, unsigned int timeout)
 {
     Cmd_Response_t ret = readResponseAndSearch(MQTT_RECV_DATA, MQTT_STATUS, timeout);
+    
     unsigned long start_time = millis();
     while (millis() - start_time < 200UL){
         if (serialAvailable()){
