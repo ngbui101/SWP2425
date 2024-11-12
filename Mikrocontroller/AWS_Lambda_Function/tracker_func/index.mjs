@@ -224,7 +224,7 @@ export const handler = async (event) => {
         const collection = database.collection('measurements');
         const documentsToInsert = [];
 
-        if (data.Position && data.GSA && data.GSV) {
+        if (data.Position) {
             const [_, latitudeStr, longitudeStr, hdopStr, __, fixStr, ___, ____, _____, ______, nsatStr] = data.Position.split(",");
             const latitude = parseFloat(latitudeStr);
             const longitude = parseFloat(longitudeStr);
