@@ -1,6 +1,9 @@
 <template>
     <div :class="['container', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <div class="mapview-container">
+            <div v-if="trackers.length === 0" class="overlay">
+                <p class="overlay-text">No trackers available. Please add a tracker.</p>
+            </div>
             <!-- Tracker and Timestamp Range Selection Card -->
             <div v-if="trackers.length > 0" class="tracker-info-card">
                 <div class="card-body">
