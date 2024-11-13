@@ -187,6 +187,7 @@ const logout = async () => {
   color: #333;
   cursor: pointer;
   white-space: nowrap;
+  list-style-type: none;
 }
 
 .dropdown-menu li:hover {
