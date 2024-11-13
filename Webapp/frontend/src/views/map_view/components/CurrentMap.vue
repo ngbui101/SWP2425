@@ -41,13 +41,8 @@
           <div class="grid-container">
             <!-- Mode Information -->
             <div class="grid-item-full mode-item">
-              <strong>Mode:</strong>
-              <span v-if="trackerMode === 'RT'">Real-Time Tracking</span>
-              <span v-else>{{ trackerMode || 'N/A' }}</span>
+              <strong>Mode:</strong> {{ trackerModeLabel }}
 
-              <!-- Mode Badges for GPS and LTE -->
-              <span v-if="trackerMode === 'GPS'" class="mode-badge">GPS</span>
-              <span v-if="trackerMode === 'LT'" class="mode-badge">LTE</span>
 
               <!-- Switch Mode Button -->
               <button class="switch-mode-button shimmering-button" @click="openChangeModePopup">Change Mode</button>
@@ -119,9 +114,8 @@
           </span>
         </div>
         <div class="tracker-mode">
-          Mode: {{ trackerMode || 'N/A' }}
-          <span v-if="trackerMode === 'RT'" class="mode-badge">GPS</span>
-          <span v-if="trackerMode === 'LT'" class="mode-badge">LTE</span>
+          Mode: {{ trackerModeLabel }}
+
         </div>
       </div>
 
@@ -232,6 +226,18 @@ let marker = null;
 let geofenceCircle = null; // Declare geofence circle
 let isGoogleMapsLoaded = ref(false);
 
+const trackerModeLabel = computed(() => {
+  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
+  if (tracker && tracker.modeDetails) {
+    if (tracker.modeDetails.GnssMode) {
+      return "Real-Time Tracking";
+    } else if (tracker.modeDetails.CellInfosMode) {
+      return "Long-Time Tracking";
+    }
+  }
+  return "N/A"; // Default if no mode is set
+});
+
 // Geofence-related state
 const geofenceActive = ref(false); // Geofence initially inactive
 const showGeofenceSlider = ref(false);
@@ -262,8 +268,14 @@ const fetchTrackersForUser = async () => {
     const response = await axios.get('http://localhost:3500/api/tracker/user/', config);
     trackers.value = response.data;
 
+
+
     // Fetch measurements for each tracker
     for (const tracker of trackers.value) {
+
+      const modeResponse = await axios.get(`http://localhost:3500/api/mode/${tracker._id}`, config);
+      tracker.modeDetails = modeResponse.data; // Store the mode details
+
       const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
       tracker.measurements = measurementsResponse.data;
       console.log(tracker.geofence);
