@@ -22,10 +22,8 @@
         </div>
 
         <!-- Conditional rendering based on selected view -->
-        <TrackerCardComponent v-if="currentView === 'card'" :trackers="trackers" :user="user"
-            @add-tracker="addTracker" />
-        <TrackerListComponent v-if="currentView === 'list'" :trackers="trackers" :user="user"
-            @add-tracker="addTracker" />
+        <TrackerCardComponent v-if="currentView === 'card'" @tracker-added="addTracker" />
+        <TrackerListComponent v-if="currentView === 'list'" @tracker-added="addTracker" />
     </div>
 </template>
 
@@ -45,7 +43,21 @@ let draggingDirection = ref(''); // Tracks the drag direction
 // Fetch user from the auth store
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
+const addTracker = async () => {
+    try {
+        // Fetch the latest user data which should include the updated trackers
+        await authStore.getUser();
 
+        // Update the `trackers` array with the latest data
+        if (authStore.userDetail.trackers) {
+            trackers.value = authStore.userDetail.trackers;
+        }
+        console.log('User data refreshed and trackers updated:', trackers.value);
+    } catch (error) {
+        console.error('Failed to refresh user data:', error);
+        alert('There was an issue refreshing user data. Please reload the page.');
+    }
+};
 // Method to change the view
 const setView = (view) => {
     currentView.value = view;

@@ -3,7 +3,8 @@ const Geofence = require('../models/Geofence')
 const TrackerHistory = require('../models/Trackerhistory')
 const User = require('../models/User');
 const device = require('../models/mqttDevice'); // Gerät aus der neuen Datei importieren
-
+const AllTracker = require('../models/AllTrackers');
+const Mode = require('../models/Mode');
 /**
  * Sends data to a specified tracker via MQTT.
  * 
@@ -126,26 +127,32 @@ async function getTrackerById(req, res) {
   }
 }
 
-// Create a new tracker
 async function createTracker(req, res) {
-  const { name, imei } = req.body;  // Accept name and imei parameters
+  const { name, imei, pin } = req.body;  // Accept name, imei, and pin parameters
   const userId = req.user.id;  // Assuming req.user contains authenticated user info
 
   try {
-    // Check if a tracker with the same imei already exists
-    const existingTracker = await Tracker.findOne({ imei }).exec();
-    if (existingTracker) {
-      return res.status(409).json({ message: 'Tracker with this imei already exists' });
+    // Check if the provided IMEI and PIN exist in the AllTrackers collection
+    const allTracker = await AllTracker.findOne({ imei, pin }).exec();
+    if (!allTracker) {
+      return res.status(404).json({ message: 'Invalid IMEI or PIN. Tracker not found.' });
     }
 
-    // Create a new tracker with default mode set to 'LT'
+    if (allTracker.isRegistered) {
+      return res.status(409).json({ message: 'This tracker has already been registered.' });
+    }
+
+    // Check if a tracker with the same IMEI already exists in the Trackers collection
+    const existingTracker = await Tracker.findOne({ imei }).exec();
+    if (existingTracker) {
+      return res.status(409).json({ message: 'Tracker with this IMEI already exists.' });
+    }
+
+    // Create a new tracker object without saving it yet
     const tracker = new Tracker({
       imei,
       name,
     });
-
-    // Save the tracker first
-    await tracker.save();
 
     // Create a default Mode document for this tracker
     const mode = new Mode({
@@ -161,41 +168,50 @@ async function createTracker(req, res) {
 
     // Assign the mode ID to the tracker
     tracker.mode = mode._id;
+
+    // Save the tracker with the mode linked
     await tracker.save();
 
-    // Now create a geofence linked to this tracker
+    // Update the allTrackers collection to set isRegistered to true
+    allTracker.isRegistered = true;
+    await allTracker.save();
+
+    // Create a geofence linked to this tracker
     const geofence = new Geofence({
       tracker: tracker._id,
       radius: 0,
       longitude: 0,
-      latitude: 0
+      latitude: 0,
     });
     await geofence.save();
     tracker.geofence = geofence._id;
     await tracker.save();
 
     // Create a TrackerHistory document for the tracker
-    const trackerhistory = new TrackerHistory({
+    const trackerHistory = new TrackerHistory({
       tracker: tracker._id,
       measurements: [], // Start with an empty measurements array
     });
-    await trackerhistory.save();
-    tracker.trackerhistory = trackerhistory._id;
+    await trackerHistory.save();
+    tracker.trackerhistory = trackerHistory._id;
     await tracker.save();
 
     // Find the user and add the tracker to their tracker array
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found.' });
     }
     user.tracker.push(tracker._id);
     await user.save();
 
     res.status(201).json({ message: 'Tracker, Mode, and Geofence created successfully', tracker });
   } catch (error) {
+    console.error('Error creating tracker:', error);
     res.status(500).json({ message: 'Server error', error });
   }
 }
+
+
 // Update a tracker by ID
 async function updateTrackerName(req, res) {
   const { id } = req.params;

@@ -54,29 +54,30 @@ const trackerPin = ref(''); // New PIN field
 // Save tracker to backend using a PUT request
 const saveChanges = async () => {
     try {
-        // Use useApiPrivate to set up an authorized API request
         const api = useApiPrivate();
-
-        // Send PUT request to create a new tracker
         const response = await api.post('http://localhost:3500/api/tracker', {
             name: trackerName.value,
             imei: trackerImei.value,
-            pin: trackerPin.value // Include PIN in the request
+            pin: trackerPin.value,
         });
 
-        console.log('Tracker created successfully:', response.data);
+        if (response.data && response.data.tracker) {
+            console.log('Tracker created successfully:', response.data);
 
-        // Close popup and clear input fields
-        props.closePopup();
-        trackerName.value = '';
-        trackerImei.value = '';
-        trackerPin.value = ''; // Clear the PIN field
-
+            props.closePopup();
+            trackerName.value = '';
+            trackerImei.value = '';
+            trackerPin.value = '';
+        } else {
+            throw new Error('Tracker data missing in the response.');
+        }
     } catch (error) {
         console.error('Failed to create tracker:', error);
+        console.error('Error details:', error.response?.data || error.message || error);
         alert('Failed to create tracker. Please try again.');
     }
 };
+
 </script>
 
 <style scoped>

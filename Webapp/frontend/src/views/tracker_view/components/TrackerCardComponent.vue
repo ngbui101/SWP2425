@@ -1,5 +1,5 @@
 <template>
-    <div class="card-view" :class="[(user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div class="card-view" :class="[(user?.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <div class="tracker-card" v-for="tracker in trackers" :key="tracker._id">
             <!-- Settings Icon at the top-right corner -->
             <div class="settings-icon" @click="openSettingsPopup(tracker)">
@@ -14,9 +14,13 @@
                     </div>
                 </div>
                 <div class="battery-indicator">
-                    <span>{{ tracker.latestMeasurement ? Math.round(tracker.latestMeasurement.battery) || 'N/A' : 'N/A'
-                        }}%</span>
+                    <span>
+                        {{ tracker.latestMeasurement && tracker.latestMeasurement.battery ?
+                            `${Math.round(tracker.latestMeasurement.battery)}%` :
+                        'N/A' }}
+                    </span>
                 </div>
+
             </div>
 
             <div class="card-header">
@@ -33,18 +37,24 @@
                 <!-- Display each key-value pair on its own line -->
                 <p><strong>Mode:</strong> {{ tracker.mode }}</p>
                 <p><strong>Location:</strong> {{ tracker.location }}</p>
-                <p><strong>Latitude:</strong> {{ tracker.latestMeasurement ? tracker.latestMeasurement.latitude || 'N/A'
-                    : 'N/A' }}</p>
-                <p><strong>Longitude:</strong> {{ tracker.latestMeasurement ? tracker.latestMeasurement.longitude ||
-                    'N/A' : 'N/A' }}</p>
-                <p><strong>Temp:</strong> {{ tracker.latestMeasurement ? tracker.latestMeasurement.temperature || 'N/A'
-                    : 'N/A' }}°C</p>
-                <p><strong>Humidity:</strong> {{ tracker.latestMeasurement ? tracker.latestMeasurement.humidity || 'N/A'
-                    : 'N/A' }}%</p>
+                <p><strong>Latitude:</strong> {{ tracker.latestMeasurement && tracker.latestMeasurement.latitude ?
+                    tracker.latestMeasurement.latitude : 'N/A' }}</p>
+                <p><strong>Longitude:</strong> {{ tracker.latestMeasurement && tracker.latestMeasurement.longitude ?
+                    tracker.latestMeasurement.longitude : 'N/A' }}</p>
+                <p>
+                    <strong>Temp:</strong>
+                    {{ tracker.latestMeasurement && tracker.latestMeasurement.temperature ?
+                        `${tracker.latestMeasurement.temperature}°C` : 'N/A' }}
+                </p>
+                <p>
+                    <strong>Humidity:</strong>
+                    {{ tracker.latestMeasurement && tracker.latestMeasurement.humidity ?
+                        `${tracker.latestMeasurement.humidity}%` : 'N/A' }}
+                </p>
                 <p><strong>Device ID:</strong> {{ tracker.imei }}</p>
             </div>
-        </div>
 
+        </div>
 
         <!-- Add Tracker as a card -->
         <div ref="tour3" class="tracker-card add-tracker-card" @click="openAddTrackerPopup"
@@ -55,82 +65,90 @@
         </div>
         <!-- Tracker Settings Popup -->
         <TrackerSettingsPopup v-if="showSettingsPopup" :trackerNameInitial="selectedTracker.name"
-            :trackerModeInitial="selectedTracker.mode" :template="user.settings?.template" :closePopup="closePopup" />
+            :trackerModeInitial="selectedTracker.mode" :template="user?.settings?.template" :closePopup="closePopup" />
         <!-- Add Tracker Popup -->
-        <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.settings?.template"
-            :closePopup="closeAddTrackerPopup" />
+        <AddTrackerPopup v-if="showAddTrackerPopup" :template="user?.settings?.template"
+            :closePopup="closeAddTrackerPopup" @tracker-added="handleTrackerAdded" />
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from "@/stores/auth";
 import { useApi, useApiPrivate } from "@/composables/useApi";
 import TrackerSettingsPopup from './TrackerSettingsPopup.vue';
 import AddTrackerPopup from './AddTrackerPopup.vue';
 import { tour3 } from '@/routes/tourRefs.js';
 
-// Define props received from parent component
-defineProps({
-    trackers: Array, // Array of trackers passed from the parent
-    addTracker: Function, // Function to add a new tracker
-    user: Object, // The user object passed from the parent
-});
+const authStore = useAuthStore();
+const user = computed(() => authStore.userDetail);
+const trackers = ref([]);
+
 const showSettingsPopup = ref(false);
 const showAddTrackerPopup = ref(false);
 const selectedTracker = ref(null);
+
+const fetchTrackers = async () => {
+    try {
+        const response = await useApiPrivate().get('http://localhost:3500/api/tracker/user/');
+        trackers.value = response.data;
+    } catch (error) {
+        console.error('Failed to fetch trackers:', error);
+    }
+};
+
+const handleTrackerAdded = (newTracker) => {
+    trackers.value.push(newTracker);
+};
+
 const openSettingsPopup = (tracker) => {
     selectedTracker.value = tracker;
     showSettingsPopup.value = true;
 };
 
-// Function to close the settings popup
 const closePopup = () => {
     showSettingsPopup.value = false;
     selectedTracker.value = null;
 };
-// Function to open the Add Tracker Popup
+
 const openAddTrackerPopup = () => {
     showAddTrackerPopup.value = true;
 };
 
-// Function to close the Add Tracker Popup
-const closeAddTrackerPopup = () => {
+const closeAddTrackerPopup = async () => {
     showAddTrackerPopup.value = false;
+
+    try {
+        // Call authStore.getUser() to refresh user data
+        await authStore.getUser();
+        await fetchTrackers(); // Refresh the trackers list
+    } catch (error) {
+        console.error('Failed to refresh user data or fetch trackers:', error);
+        alert('There was an issue refreshing the data. Please reload the page.');
+    }
 };
 
-// Start editing the tracker's name
 const startEditingName = (tracker) => {
     tracker.isEditingName = true;
-    tracker.editingName = tracker.name; // Pre-populate the input with the current name
+    tracker.editingName = tracker.name;
 };
 
-// Save the new tracker name and update it in the backend
 const saveTrackerName = async (tracker) => {
-    tracker.isEditingName = false; // Disable the editing mode
-
-    // Only proceed with the API call if the name has changed
+    tracker.isEditingName = false;
     if (tracker.editingName && tracker.editingName !== tracker.name) {
         try {
-            const { data } = await updateTrackerName(tracker._id, tracker.editingName);
-            tracker.name = tracker.editingName; // Update the tracker name in the frontend
+            await useApiPrivate().put(`http://localhost:3500/api/tracker/${tracker._id}`, { name: tracker.editingName });
+            tracker.name = tracker.editingName;
         } catch (error) {
-            console.error("Failed to update the tracker name:", error);
+            console.error('Failed to update the tracker name:', error);
         }
     }
 };
 
-// Update the tracker name in the backend
-const updateTrackerName = async (trackerId, newName) => {
-    try {
-        const { data } = await useApiPrivate().put(`http://localhost:3500/api/tracker/${trackerId}`, {
-            name: newName
-        });
-        return data;
-    } catch (error) {
-        throw new Error(`Failed to update tracker name: ${error.message}`);
-    }
-};
+onMounted(async () => {
+    await authStore.getUser();
+    await fetchTrackers();
+});
 </script>
 
 <style scoped>
