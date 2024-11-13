@@ -47,6 +47,7 @@ import { computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useTour } from '@/routes/TourController.js';  // Import useTour
 import { tour2 } from '@/routes/tourRefs.js';
+import { tour3 } from '@/routes/tourRefs.js';
 const router = useRouter();
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);

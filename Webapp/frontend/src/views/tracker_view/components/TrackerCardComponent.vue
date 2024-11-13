@@ -47,7 +47,7 @@
 
 
         <!-- Add Tracker as a card -->
-        <div class="tracker-card add-tracker-card" @click="openAddTrackerPopup"
+        <div ref="tour3" class="tracker-card add-tracker-card" @click="openAddTrackerPopup"
             :class="{ 'scaling-effect': trackers.length === 0 }">
             <div class="card-body add-tracker-body">
                 <i class="fas fa-plus"></i>&nbsp; Add Tracker
@@ -68,6 +68,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useApi, useApiPrivate } from "@/composables/useApi";
 import TrackerSettingsPopup from './TrackerSettingsPopup.vue';
 import AddTrackerPopup from './AddTrackerPopup.vue';
+import { tour3 } from '@/routes/tourRefs.js';
 
 // Define props received from parent component
 defineProps({

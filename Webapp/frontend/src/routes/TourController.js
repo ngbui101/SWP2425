@@ -1,9 +1,9 @@
 import { useShepherd } from 'vue-shepherd';
-import { tour1, tour2 } from '@/routes/tourRefs.js';  // Import the shared refs
+import { tour1, tour2, tour3 } from '@/routes/tourRefs.js';  // Import the shared refs
 
 
 export function useTour(router) {
-  const totalSteps = 2;  // Define the total number of steps
+  const totalSteps = 3;  // Define the total number of steps
 
   const tour = useShepherd({
     defaultStepOptions: {
@@ -71,6 +71,41 @@ export function useTour(router) {
           text: 'Next',  // Next button for further steps (if any)
           action: () => {
             router.push({ name: 'trackers' });  // Navigate to /trackers
+            tour.next();  // Continue to the next step in the tour
+          },
+        },
+        {
+          text: 'Close',
+          action: tour.cancel,
+        },
+      ],
+      highlightClass: 'shepherd-highlight',  // Custom highlight class
+    });
+  } else {
+    console.warn('tour2 element is not available for the tour.');
+  }
+// Third Step
+  if (tour3.value) {
+    tour.addStep({
+      id: 'third-step',
+      attachTo: {
+        element: tour3.value, 
+        on: 'bottom',
+      },
+      text: `
+        <div>
+          <p>This button allows you to add your tracker to this application. You can give it any name you want. Use the IMEI and PIN that you find on the backsite of your packaging.</p>
+        </div>
+        <footer style="text-align: center; margin-top: 10px;">2/${totalSteps}</footer>  <!-- Pagination footer -->
+      `,
+      buttons: [
+        {
+          text: 'Previous',  // Previous button for going back to the first step
+          action: tour.back,
+        },
+        {
+          text: 'Next',  // Next button for further steps (if any)
+          action: () => {
             tour.next();  // Continue to the next step in the tour
           },
         },

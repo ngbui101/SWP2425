@@ -10,13 +10,22 @@
                 <!-- Tracker Name Input -->
                 <div class="popup-section">
                     <label for="tracker-name">Tracker Name</label>
-                    <input type="text" id="tracker-name" v-model="trackerName" class="popup-input" />
+                    <input type="text" id="tracker-name" v-model="trackerName" class="popup-input"
+                        placeholder="Any name, you can rename it later" />
                 </div>
 
                 <!-- IMEI Input -->
                 <div class="popup-section">
                     <label for="tracker-imei">IMEI</label>
-                    <input type="text" id="tracker-imei" v-model="trackerImei" class="popup-input" />
+                    <input type="text" id="tracker-imei" v-model="trackerImei" class="popup-input"
+                        placeholder="IMEI of your tracker" />
+                </div>
+
+                <!-- PIN Input -->
+                <div class="popup-section">
+                    <label for="tracker-pin">PIN</label>
+                    <input type="text" id="tracker-pin" v-model="trackerPin" class="popup-input"
+                        placeholder="Enter the valid PIN" />
                 </div>
             </div>
 
@@ -37,9 +46,10 @@ const props = defineProps({
     closePopup: Function        // Function to close the popup
 });
 
-// Reactive variables for tracker name and IMEI
+// Reactive variables for tracker name, IMEI, and PIN
 const trackerName = ref('');
 const trackerImei = ref('');
+const trackerPin = ref(''); // New PIN field
 
 // Save tracker to backend using a PUT request
 const saveChanges = async () => {
@@ -50,7 +60,8 @@ const saveChanges = async () => {
         // Send PUT request to create a new tracker
         const response = await api.post('http://localhost:3500/api/tracker', {
             name: trackerName.value,
-            imei: trackerImei.value
+            imei: trackerImei.value,
+            pin: trackerPin.value // Include PIN in the request
         });
 
         console.log('Tracker created successfully:', response.data);
@@ -59,6 +70,7 @@ const saveChanges = async () => {
         props.closePopup();
         trackerName.value = '';
         trackerImei.value = '';
+        trackerPin.value = ''; // Clear the PIN field
 
     } catch (error) {
         console.error('Failed to create tracker:', error);
@@ -66,7 +78,6 @@ const saveChanges = async () => {
     }
 };
 </script>
-
 
 <style scoped>
 /* Overlay background for the popup */
@@ -150,6 +161,7 @@ const saveChanges = async () => {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    padding: 0 10px;
 }
 
 .popup-section {
@@ -170,6 +182,7 @@ const saveChanges = async () => {
     border: 1px solid #ddd;
     outline: none;
     background: #ddd;
+    box-sizing: border-box;
 }
 
 .popup-input:focus {
