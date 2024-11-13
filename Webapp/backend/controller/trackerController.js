@@ -128,7 +128,7 @@ async function getTrackerById(req, res) {
 
 // Create a new tracker
 async function createTracker(req, res) {
-  const { name, imei } = req.body;  // Accept name, imei, and geofence parameters
+  const { name, imei } = req.body;  // Accept name and imei parameters
   const userId = req.user.id;  // Assuming req.user contains authenticated user info
 
   try {
@@ -138,16 +138,31 @@ async function createTracker(req, res) {
       return res.status(409).json({ message: 'Tracker with this imei already exists' });
     }
 
-
-    // Create a new tracker with mode set to 'LT' (default mode) and link tracker history
+    // Create a new tracker with default mode set to 'LT'
     const tracker = new Tracker({
       imei,
       name,
-      mode: 'LT',  // Mode is set to 'LT' as requested  // Link to the newly created Trackerhistory
     });
 
     // Save the tracker first
     await tracker.save();
+
+    // Create a default Mode document for this tracker
+    const mode = new Mode({
+      tracker: tracker._id, // Link the Mode document to this tracker
+      GnssMode: false,
+      CellInfosMode: true,
+      BatteryMode: true,
+      TemperatureMode: true,
+      NmeaMode: false,
+      frequenz: 3600000 // Default frequency in milliseconds
+    });
+    await mode.save();
+
+    // Assign the mode ID to the tracker
+    tracker.mode = mode._id;
+    await tracker.save();
+
     // Now create a geofence linked to this tracker
     const geofence = new Geofence({
       tracker: tracker._id,
@@ -159,12 +174,11 @@ async function createTracker(req, res) {
     tracker.geofence = geofence._id;
     await tracker.save();
 
-
-    // Create new Trackerhistory for the tracker
+    // Create a TrackerHistory document for the tracker
     const trackerhistory = new TrackerHistory({
       tracker: tracker._id,
-      measurements: [], // Beginne mit der neuen Position
-    })
+      measurements: [], // Start with an empty measurements array
+    });
     await trackerhistory.save();
     tracker.trackerhistory = trackerhistory._id;
     await tracker.save();
@@ -174,16 +188,14 @@ async function createTracker(req, res) {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    user.tracker.push(tracker._id);  // Add the tracker ID to the user's trackers
+    user.tracker.push(tracker._id);
     await user.save();
 
-    res.status(201).json({ message: 'Tracker and Geofence created successfully', tracker });
+    res.status(201).json({ message: 'Tracker, Mode, and Geofence created successfully', tracker });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
 }
-
 // Update a tracker by ID
 async function updateTrackerName(req, res) {
   const { id } = req.params;
