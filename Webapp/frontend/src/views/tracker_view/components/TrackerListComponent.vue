@@ -48,8 +48,10 @@
         </div>
 
         <!-- Tracker Settings Popup -->
-        <TrackerSettingsPopup v-if="showSettingsPopup" :trackerNameInitial="selectedTracker.name"
-            :trackerModeInitial="selectedTracker.mode" :template="user.settings?.template" :closePopup="closePopup" />
+        <TrackerSettingsPopup v-if="showSettingsPopup" :selectedTrackerId="selectedTracker?._id"
+            :trackerNameInitial="selectedTracker?.name" :trackerModeInitial="selectedTracker?.mode"
+            :sendingFrequencyInitial="selectedTracker?.frequency" :template="user.settings?.template"
+            :closePopup="closePopup" @updateTracker="handleUpdatedTracker" />
 
         <!-- Tracker Detail Popup -->
         <TrackerDetailPopup v-if="showInfoPopup" :tracker="selectedTracker" :template="user.settings?.template"
@@ -57,7 +59,7 @@
 
         <!-- Add Tracker Popup -->
         <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.settings?.template"
-            :closePopup="closeAddTrackerPopup" />
+            :closePopup="closeAddTrackerPopup" @tracker-added="handleTrackerAdded" />
     </div>
 </template>
 
@@ -72,10 +74,24 @@ import AddTrackerPopup from './AddTrackerPopup.vue';
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
 const trackers = ref([]);
+
 const showSettingsPopup = ref(false);
 const showInfoPopup = ref(false);
 const selectedTracker = ref(null);
 const showAddTrackerPopup = ref(false);
+
+const handleUpdatedTracker = (updatedTracker) => {
+    const trackerIndex = trackers.value.findIndex(tracker => tracker._id === updatedTracker.id);
+    if (trackerIndex !== -1) {
+        // Update the existing tracker with the new data
+        trackers.value[trackerIndex] = {
+            ...trackers.value[trackerIndex],
+            ...updatedTracker,
+            mode: updatedTracker.mode,
+            modeLabel: updatedTracker.mode === 'RT' ? 'Real-Time-Tracking' : 'Long-Time-Tracking'
+        };
+    }
+};
 
 const fetchTrackersWithMeasurements = async () => {
     try {
@@ -83,10 +99,8 @@ const fetchTrackersWithMeasurements = async () => {
         const response = await api.get('http://localhost:3500/api/tracker/user/');
         const trackersWithDetails = response.data;
 
-        // Iterate over each tracker and fetch its measurements and mode data
         for (const tracker of trackersWithDetails) {
             try {
-                // Fetch mode data for the tracker
                 const modeResponse = await api.get(`http://localhost:3500/api/mode/${tracker._id}`);
                 tracker.modeDetails = modeResponse.data;
 
@@ -96,17 +110,10 @@ const fetchTrackersWithMeasurements = async () => {
                         ? 'Long-Time-Tracking'
                         : 'Unknown Mode';
 
-                // Fetch measurements for the tracker
                 const measurementsResponse = await api.get(`http://localhost:3500/api/position/tracker/${tracker._id}`);
                 const measurements = measurementsResponse.data;
-
-                // Log the measurements for debugging
-
-
-                // Sort the measurements by createdAt in descending order (newest first)
                 measurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-                // Initialize details with no data and null timestamps
                 tracker.detailsWithTimestamps = {
                     latitude: { value: 'N/A', timestamp: null },
                     longitude: { value: 'N/A', timestamp: null },
@@ -115,58 +122,42 @@ const fetchTrackersWithMeasurements = async () => {
                     battery: { value: 'N/A', timestamp: null },
                 };
 
-                // Iterate through measurements to find the latest value for each type
                 for (const measurement of measurements) {
                     const measurementDate = new Date(measurement.createdAt);
-
-                    // Check and update latitude
                     if (measurement.latitude && !isNaN(measurement.latitude)) {
                         if (!tracker.detailsWithTimestamps.latitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.latitude.timestamp)) {
-
                             tracker.detailsWithTimestamps.latitude = {
                                 value: measurement.latitude,
                                 timestamp: measurementDate.toLocaleString(),
                             };
                         }
                     }
-
-                    // Check and update longitude
                     if (measurement.longitude && !isNaN(measurement.longitude)) {
                         if (!tracker.detailsWithTimestamps.longitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.longitude.timestamp)) {
-
                             tracker.detailsWithTimestamps.longitude = {
                                 value: measurement.longitude,
                                 timestamp: measurementDate.toLocaleString(),
                             };
                         }
                     }
-
-                    // Check and update temperature
                     if (measurement.temperature) {
                         if (!tracker.detailsWithTimestamps.temperature.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.temperature.timestamp)) {
-
                             tracker.detailsWithTimestamps.temperature = {
                                 value: `${measurement.temperature}°C`,
                                 timestamp: measurementDate.toLocaleString(),
                             };
                         }
                     }
-
-                    // Check and update humidity
                     if (measurement.humidity) {
                         if (!tracker.detailsWithTimestamps.humidity.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.humidity.timestamp)) {
-
                             tracker.detailsWithTimestamps.humidity = {
                                 value: `${measurement.humidity}%`,
                                 timestamp: measurementDate.toLocaleString(),
                             };
                         }
                     }
-
-                    // Check and update battery
                     if (measurement.battery) {
                         if (!tracker.detailsWithTimestamps.battery.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.battery.timestamp)) {
-
                             tracker.detailsWithTimestamps.battery = {
                                 value: `${Math.round(measurement.battery)}%`,
                                 timestamp: measurementDate.toLocaleString(),
@@ -175,7 +166,6 @@ const fetchTrackersWithMeasurements = async () => {
                     }
                 }
 
-                // Optionally, set the location based on the most recent latitude and longitude
                 tracker.location =
                     tracker.detailsWithTimestamps.latitude.value !== 'N/A' && tracker.detailsWithTimestamps.longitude.value !== 'N/A'
                         ? await getReverseGeocodingAddress(tracker.detailsWithTimestamps.latitude.value, tracker.detailsWithTimestamps.longitude.value)
@@ -210,14 +200,14 @@ const openSettingsPopup = (tracker) => {
     showSettingsPopup.value = true;
 };
 
-const openInfoPopup = (tracker) => {
-    selectedTracker.value = tracker;
-    showInfoPopup.value = true;
-};
-
 const closePopup = () => {
     showSettingsPopup.value = false;
     selectedTracker.value = null;
+};
+
+const openInfoPopup = (tracker) => {
+    selectedTracker.value = tracker;
+    showInfoPopup.value = true;
 };
 
 const closeInfoPopup = () => {
@@ -265,12 +255,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* General tracker table styles */
+/* Styles for the tracker table and components */
 .tracker-table {
     width: 100%;
     border-collapse: collapse;
     background-color: #f1e4cc;
-    overflow: hidden;
 }
 
 .tracker-table th,
@@ -293,14 +282,13 @@ onMounted(() => {
     background-color: #f5f5f5;
 }
 
-.tracker-table tr {
-    background-color: #ffffff;
+.tracker-table tr:hover {
+    background-color: #e6cc99;
 }
 
 .settings-icon,
 .info-icon {
     font-size: 1.2rem;
-    color: #333;
     cursor: pointer;
     margin-left: 8px;
 }
@@ -312,7 +300,6 @@ onMounted(() => {
 .settings-icon:hover,
 .info-icon:hover {
     transform: scale(1.3);
-    animation: rotate360 2s linear infinite;
 }
 
 .add-tracker-wrapper {
