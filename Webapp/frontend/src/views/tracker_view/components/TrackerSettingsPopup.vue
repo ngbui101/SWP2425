@@ -2,7 +2,7 @@
     <div class="popup-overlay" @click.self="closePopup">
         <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
             <div class="popup-header">
-                <h2>Edit Tracker Settings(NO FUNCTIONALITY YET)</h2>
+                <h2>Edit Tracker Settings</h2>
                 <button class="close-btn" @click="closePopup">✖</button>
             </div>
 
@@ -13,49 +13,33 @@
                     <input type="text" id="tracker-name" v-model="trackerName" class="popup-input" />
                 </div>
 
-                <!-- Mode Dropdown -->
+                <!-- Mode Toggle -->
                 <div class="popup-section">
-                    <label for="tracker-mode">Mode</label>
-                    <select id="tracker-mode" v-model="trackerMode" class="popup-dropdown">
-                        <option value="RT">RT</option>
-                        <option value="LT">LT</option>
-                    </select>
-                </div>
-
-                <!-- Sending Frequency Dropdown -->
-                <div class="popup-section">
-                    <label for="sending-frequency">Sending Frequency</label>
-                    <select id="sending-frequency" v-model="sendingFrequency" class="popup-dropdown">
-                        <option value="5">5 min</option>
-                        <option value="10">10 min</option>
-                        <option value="60">60 min</option>
-                        <option value="720">12 h</option>
-                        <option value="1440">24 h</option>
-                    </select>
-                </div>
-
-                <!-- Geofence Toggle -->
-                <div class="popup-section">
-                    <label for="geofence-toggle">Geofence</label>
-                    <div class="toggle-container">
-                        <div class="toggle-switch" :class="{ active: geofenceActive }"
-                            @click="geofenceActive = !geofenceActive">
-                            <div class="toggle-handle" :class="{ active: geofenceActive }"></div>
-                        </div>
-                        <span class="toggle-text">{{ geofenceActive ? 'ON' : 'OFF' }}</span>
+                    <h3>Tracking Mode</h3>
+                    <div class="mode-toggle">
+                        <button :class="{ active: !isLongTimeTracking }" @click="setRealTimeTracking">
+                            Real-Time-Tracking
+                        </button>
+                        <button :class="{ active: isLongTimeTracking }" @click="setLongTimeTracking">
+                            Long-Time-Tracking
+                        </button>
                     </div>
                 </div>
 
-                <!-- Motion Sensor Toggle -->
-                <div class="popup-section">
-                    <label for="motion-sensor-toggle">Motion Sensor</label>
-                    <div class="toggle-container">
-                        <div class="toggle-switch" :class="{ active: motionSensorActive }"
-                            @click="motionSensorActive = !motionSensorActive">
-                            <div class="toggle-handle" :class="{ active: motionSensorActive }"></div>
-                        </div>
-                        <span class="toggle-text">{{ motionSensorActive ? 'ON' : 'OFF' }}</span>
-                    </div>
+                <!-- Frequency Slider for Real-Time Mode -->
+                <div class="popup-section" v-if="!isLongTimeTracking">
+                    <h3>Sending Frequency (Real-Time)</h3>
+                    <input type="range" class="frequency-slider" v-model.number="selectedRealTimeStep" :min="0"
+                        :max="realTimeSteps.length - 1" step="1" />
+                    <p>{{ formattedRealTimeInterval }}</p>
+                </div>
+
+                <!-- Frequency Slider for Long-Time Mode -->
+                <div class="popup-section" v-else>
+                    <h3>Sending Frequency (Long-Time)</h3>
+                    <input type="range" class="frequency-slider" v-model.number="trackingInterval" min="1" max="24"
+                        step="1" />
+                    <p>{{ trackingInterval }} hour(s)</p>
                 </div>
             </div>
 
@@ -67,29 +51,105 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useApiPrivate } from "@/composables/useApi";
+import { useAuthStore } from "@/stores/auth";
 
 const props = defineProps({
     trackerNameInitial: String,
     trackerModeInitial: String,
-    geofenceInitial: Boolean,
-    motionSensorInitial: Boolean,
     sendingFrequencyInitial: Number,
     template: String,
-    closePopup: Function
+    closePopup: Function,
+    selectedTrackerId: String,
 });
 
-const trackerName = ref(props.trackerNameInitial);
-const trackerMode = ref(props.trackerModeInitial);
-const geofenceActive = ref(props.geofenceInitial);
-const motionSensorActive = ref(props.motionSensorInitial);
-const sendingFrequency = ref(props.sendingFrequencyInitial);
+const emit = defineEmits(['updateTracker']);
 
-const saveChanges = () => {
-    console.log('Saving:', trackerName.value, trackerMode.value, geofenceActive.value, motionSensorActive.value, sendingFrequency.value);
-    props.closePopup();
+const trackerName = ref(props.trackerNameInitial);
+const isLongTimeTracking = ref(props.trackerModeInitial === 'LT');
+const trackingInterval = ref(props.sendingFrequencyInitial || 1); // Default to 1 hour if not provided
+
+// Real-time mode frequency steps (in seconds)
+const realTimeSteps = [5, 10, 20, 30, 60, 120, 300, 600, 1800]; // 5s, 10s, 20s, 30s, 1min, 2min, 5min, 10min, 30min
+const selectedRealTimeStep = ref(0);
+
+const api = useApiPrivate();
+const store = useAuthStore();
+
+// Computed property to format the real-time interval display
+const formattedRealTimeInterval = computed(() => {
+    const seconds = realTimeSteps[selectedRealTimeStep.value];
+    return seconds < 60 ? `${seconds} seconds` : `${Math.round(seconds / 60)} min${seconds / 60 > 1 ? 's' : ''}`;
+});
+
+// Fetch initial tracker settings when the component is mounted
+onMounted(async () => {
+    try {
+        if (!props.selectedTrackerId) {
+            throw new Error('selectedTrackerId is undefined');
+        }
+        const { data } = await api.get(`http://localhost:3500/api/mode/${props.selectedTrackerId}`);
+        isLongTimeTracking.value = data.CellInfosMode;
+        if (data.GnssMode) {
+            const frequency = data.frequenz / 1000; // Convert milliseconds to seconds
+            const index = realTimeSteps.indexOf(frequency);
+            selectedRealTimeStep.value = index !== -1 ? index : 0;
+        } else {
+            trackingInterval.value = Math.round(data.frequenz / (60 * 60 * 1000)); // Convert milliseconds to hours
+        }
+    } catch (error) {
+        console.error('Failed to fetch tracker mode:', error);
+    }
+});
+
+const setRealTimeTracking = () => {
+    isLongTimeTracking.value = false;
+    selectedRealTimeStep.value = 0; // Reset to 5 seconds by default
+};
+
+const setLongTimeTracking = () => {
+    isLongTimeTracking.value = true;
+};
+
+const saveChanges = async () => {
+    try {
+        if (!props.selectedTrackerId) {
+            throw new Error('selectedTrackerId is undefined');
+        }
+        if (trackerName.value !== props.trackerNameInitial) {
+            await api.put(`http://localhost:3500/api/tracker/${props.selectedTrackerId}`, { name: trackerName.value });
+            console.log('Tracker name updated successfully');
+        }
+
+        const realTimeFrequency = realTimeSteps[selectedRealTimeStep.value];
+        await store.updateTrackerMode(
+            props.selectedTrackerId,
+            !isLongTimeTracking.value,
+            isLongTimeTracking.value ? undefined : realTimeFrequency,
+            isLongTimeTracking.value ? trackingInterval.value : undefined
+        );
+        console.log('Mode updated successfully');
+
+        // Emit updated data to parent
+        emit('updateTracker', {
+            id: props.selectedTrackerId,
+            name: trackerName.value,
+            mode: isLongTimeTracking.value ? 'LT' : 'RT',
+            frequency: isLongTimeTracking.value ? trackingInterval.value * 60 * 60 * 1000 : realTimeFrequency * 1000,
+        });
+
+        props.closePopup();
+    } catch (error) {
+        console.error('Failed to save changes:', error);
+        if (error.response) {
+            console.error('Error response data:', error.response.data);
+            console.error('Error response status:', error.response.status);
+        }
+    }
 };
 </script>
+
 
 <style scoped>
 /* Overlay background for the popup */
@@ -106,6 +166,12 @@ const saveChanges = () => {
     z-index: 1000;
 }
 
+.slider-steps {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+
 /* Popup Card */
 .popup-card {
     background: linear-gradient(135deg, #f1e4cc 0%, #e6cc99 50%, #f1e4cc 100%);
@@ -120,6 +186,15 @@ const saveChanges = () => {
     position: relative;
 }
 
+.popup-card input[type="range"] {
+    width: 100%;
+    accent-color: #00543D;
+}
+
+.dark-mode .popup-card input[type="range"] {
+    accent-color: #E69543;
+}
+
 @media screen and (min-width: 768px) {
     .popup-card {
         width: 400px;
@@ -131,61 +206,6 @@ const saveChanges = () => {
     border-color: #555;
     color: #bbb;
     box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-}
-
-/* Toggle Container */
-.toggle-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.toggle-text {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #333;
-}
-
-.dark-mode .toggle-text {
-    color: #bbb;
-}
-
-/* Toggle Switch */
-.toggle-switch {
-    width: 40px;
-    height: 20px;
-    background-color: #ddd;
-    border-radius: 12px;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.toggle-switch.active {
-    background-color: #009579;
-}
-
-.toggle-handle {
-    width: 18px;
-    height: 18px;
-    background-color: white;
-    border-radius: 50%;
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    transition: left 0.3s;
-}
-
-.toggle-handle.active {
-    left: 21px;
-}
-
-.dark-mode .toggle-switch {
-    background-color: #555;
-}
-
-.dark-mode .toggle-switch.active {
-    background-color: #E69543;
 }
 
 /* Popup Header */
@@ -238,8 +258,7 @@ const saveChanges = () => {
     margin-bottom: 5px;
 }
 
-.popup-input,
-.popup-dropdown {
+.popup-input {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
@@ -249,34 +268,103 @@ const saveChanges = () => {
     background: #ddd;
 }
 
-.popup-input:focus,
-.popup-dropdown:focus {
+.popup-input:focus {
     border-color: #009579;
     box-shadow: 0 0 5px rgba(0, 149, 121, 0.5);
 }
 
-.dark-mode .popup-input,
-.dark-mode .popup-dropdown {
+.dark-mode .popup-input {
     background-color: #444;
     border-color: #777;
     color: #bbb;
 }
 
+/* Mode Toggle */
+.mode-toggle {
+    display: flex;
+    border: 1px solid #333;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.dark-mode .mode-toggle {
+    border: 1px solid #ddd;
+}
+
+.mode-toggle button {
+    flex: 1;
+    padding: 10px;
+    font-weight: bold;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.mode-toggle button.active {
+    background-color: #C19A6B;
+    color: #1f1f1f;
+}
+
+.dark-mode .mode-toggle button.active {
+    background-color: #87c099;
+    color: #333;
+}
+
+.mode-toggle button:not(.active) {
+    background-color: #fff;
+    color: #333;
+}
+
+.dark-mode .mode-toggle button:not(.active) {
+    background-color: #2e2e2e;
+    color: #fff;
+}
+
+.mode-toggle button:not(.active):hover {
+    background-color: #ccc;
+    color: #333;
+}
+
+/* Frequency Display */
+.frequency-display p,
+.frequency-slider p {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+
+
+.frequency-slider input[type="range"] {
+    width: 100%;
+    accent-color: #00543D;
+}
+
+.dark-mode .frequency-slider input[type="range"] {
+    width: 100%;
+    accent-color: #E69543;
+}
+
 /* Popup Footer */
 .popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
     margin-top: 20px;
 }
 
+/* Save Button */
 .popup-save-btn {
     background-color: #851515;
     color: #fff;
-    padding: 12px 30px;
+    padding: 10px 20px;
     font-size: 1rem;
     font-weight: bold;
     border-radius: 6px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .popup-save-btn:hover {

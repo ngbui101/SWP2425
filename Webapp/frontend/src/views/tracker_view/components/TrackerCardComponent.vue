@@ -1,26 +1,29 @@
 <template>
     <div class="card-view" :class="[(user?.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <div class="tracker-card" v-for="tracker in trackers" :key="tracker._id">
-            <!-- Settings Icon at the top-right corner -->
-            <div class="settings-icon" @click="openSettingsPopup(tracker)">
-                <i class="fas fa-cog"></i>
+            <!-- Info and Settings Icons at the top-right corner -->
+            <div class="icon-wrapper">
+                <div class="info-icon" @click="openInfoPopup(tracker)">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="settings-icon" @click="openSettingsPopup(tracker)">
+                    <i class="fas fa-cog"></i>
+                </div>
             </div>
 
             <!-- Battery Bar above the card title -->
             <div class="battery-wrapper">
                 <div class="battery-bar">
                     <div class="battery-fill"
-                        :style="{ width: `${tracker.latestMeasurement ? tracker.latestMeasurement.battery || 89 : 89}%` }">
+                        :style="{ width: `${tracker.detailsWithTimestamps?.battery?.value.replace('%', '') || 0}%` }">
                     </div>
                 </div>
                 <div class="battery-indicator">
                     <span>
-                        {{ tracker.latestMeasurement && tracker.latestMeasurement.battery ?
-                            `${Math.round(tracker.latestMeasurement.battery)}%` :
-                        'N/A' }}
+                        {{ tracker.detailsWithTimestamps?.battery?.value !== 'N/A' ?
+                            tracker.detailsWithTimestamps?.battery?.value : 'N/A' }}
                     </span>
                 </div>
-
             </div>
 
             <div class="card-header">
@@ -35,25 +38,14 @@
 
             <div class="card-body">
                 <!-- Display each key-value pair on its own line -->
-                <p><strong>Mode:</strong> {{ tracker.mode }}</p>
+                <p><strong>Mode:</strong> {{ tracker.modeLabel }}</p>
                 <p><strong>Location:</strong> {{ tracker.location }}</p>
-                <p><strong>Latitude:</strong> {{ tracker.latestMeasurement && tracker.latestMeasurement.latitude ?
-                    tracker.latestMeasurement.latitude : 'N/A' }}</p>
-                <p><strong>Longitude:</strong> {{ tracker.latestMeasurement && tracker.latestMeasurement.longitude ?
-                    tracker.latestMeasurement.longitude : 'N/A' }}</p>
-                <p>
-                    <strong>Temp:</strong>
-                    {{ tracker.latestMeasurement && tracker.latestMeasurement.temperature ?
-                        `${tracker.latestMeasurement.temperature}°C` : 'N/A' }}
-                </p>
-                <p>
-                    <strong>Humidity:</strong>
-                    {{ tracker.latestMeasurement && tracker.latestMeasurement.humidity ?
-                        `${tracker.latestMeasurement.humidity}%` : 'N/A' }}
-                </p>
+                <p><strong>Latitude:</strong> {{ tracker.detailsWithTimestamps?.latitude?.value }}</p>
+                <p><strong>Longitude:</strong> {{ tracker.detailsWithTimestamps?.longitude?.value }}</p>
+                <p><strong>Temp:</strong> {{ tracker.detailsWithTimestamps?.temperature?.value }}</p>
+                <p><strong>Humidity:</strong> {{ tracker.detailsWithTimestamps?.humidity?.value }}</p>
                 <p><strong>Device ID:</strong> {{ tracker.imei }}</p>
             </div>
-
         </div>
 
         <!-- Add Tracker as a card -->
@@ -63,9 +55,16 @@
                 <i class="fas fa-plus"></i>&nbsp; Add Tracker
             </div>
         </div>
-        <!-- Tracker Settings Popup -->
-        <TrackerSettingsPopup v-if="showSettingsPopup" :trackerNameInitial="selectedTracker.name"
-            :trackerModeInitial="selectedTracker.mode" :template="user?.settings?.template" :closePopup="closePopup" />
+
+        <TrackerSettingsPopup v-if="showSettingsPopup" :selectedTrackerId="selectedTracker._id"
+            :trackerNameInitial="selectedTracker.name" :trackerModeInitial="selectedTracker.mode"
+            :sendingFrequencyInitial="selectedTracker.frequency" :template="user?.settings?.template"
+            :closePopup="closeSettingsPopup" @updateTracker="handleUpdatedTracker" />
+
+        <!-- Tracker Detail Popup -->
+        <TrackerDetailPopup v-if="showInfoPopup" :tracker="selectedTracker" :template="user?.settings?.template"
+            :closePopup="closeInfoPopup" />
+
         <!-- Add Tracker Popup -->
         <AddTrackerPopup v-if="showAddTrackerPopup" :template="user?.settings?.template"
             :closePopup="closeAddTrackerPopup" @tracker-added="handleTrackerAdded" />
@@ -77,6 +76,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from "@/stores/auth";
 import { useApi, useApiPrivate } from "@/composables/useApi";
 import TrackerSettingsPopup from './TrackerSettingsPopup.vue';
+import TrackerDetailPopup from './TrackerDetailPopup.vue';
 import AddTrackerPopup from './AddTrackerPopup.vue';
 import { tour3 } from '@/routes/tourRefs.js';
 
@@ -85,17 +85,157 @@ const user = computed(() => authStore.userDetail);
 const trackers = ref([]);
 
 const showSettingsPopup = ref(false);
+const showInfoPopup = ref(false);
 const showAddTrackerPopup = ref(false);
 const selectedTracker = ref(null);
+const handleUpdatedTracker = (updatedTracker) => {
+    const trackerIndex = trackers.value.findIndex(tracker => tracker._id === updatedTracker.id);
+    if (trackerIndex !== -1) {
+        // Update the existing tracker with the new data
+        trackers.value[trackerIndex] = {
+            ...trackers.value[trackerIndex],
+            ...updatedTracker,
+            mode: updatedTracker.mode,
+            modeLabel: updatedTracker.mode === 'RT' ? 'Real-Time-Tracking' : 'Long-Time-Tracking'
+        };
+    }
+};
 
-const fetchTrackers = async () => {
+const fetchTrackersWithMeasurements = async () => {
     try {
-        const response = await useApiPrivate().get('http://localhost:3500/api/tracker/user/');
-        trackers.value = response.data;
+        const api = useApiPrivate();
+        const response = await api.get('http://localhost:3500/api/tracker/user/');
+        const trackersWithDetails = response.data;
+
+        for (const tracker of trackersWithDetails) {
+            try {
+                // Fetch mode data for the tracker
+                const modeResponse = await api.get(`http://localhost:3500/api/mode/${tracker._id}`);
+                tracker.modeDetails = modeResponse.data;
+
+                tracker.modeLabel = tracker.modeDetails.GnssMode
+                    ? 'Real-Time-Tracking'
+                    : tracker.modeDetails.CellInfosMode
+                        ? 'Long-Time-Tracking'
+                        : 'Unknown Mode';
+
+                // Fetch measurements for the tracker
+                const measurementsResponse = await api.get(`http://localhost:3500/api/position/tracker/${tracker._id}`);
+                const measurements = measurementsResponse.data;
+
+                // Sort measurements by createdAt in descending order (newest to oldest)
+                measurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // Log the sorted measurements array for verification
+                console.log('Sorted Measurements array:', measurements);
+
+                // Initialize details with no data and null timestamps
+                tracker.detailsWithTimestamps = {
+                    latitude: { value: 'N/A', timestamp: null },
+                    longitude: { value: 'N/A', timestamp: null },
+                    temperature: { value: 'N/A', timestamp: null },
+                    humidity: { value: 'N/A', timestamp: null },
+                    battery: { value: 'N/A', timestamp: null },
+                };
+
+                // Iterate through measurements to find the latest value for each type
+                for (const measurement of measurements) {
+                    const measurementDate = new Date(measurement.createdAt);
+
+                    // Check and update latitude
+                    if (measurement.latitude && !isNaN(measurement.latitude)) {
+                        if (!tracker.detailsWithTimestamps.latitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.latitude.timestamp)) {
+                            console.log(`Updating latitude: ${measurement.latitude} from ${measurementDate.toLocaleString()}`);
+                            tracker.detailsWithTimestamps.latitude = {
+                                value: measurement.latitude,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
+                        }
+                    }
+
+                    // Check and update longitude
+                    if (measurement.longitude && !isNaN(measurement.longitude)) {
+                        if (!tracker.detailsWithTimestamps.longitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.longitude.timestamp)) {
+                            console.log(`Updating longitude: ${measurement.longitude} from ${measurementDate.toLocaleString()}`);
+                            tracker.detailsWithTimestamps.longitude = {
+                                value: measurement.longitude,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
+                        }
+                    }
+
+                    // Check and update temperature
+                    if (measurement.temperature) {
+                        if (!tracker.detailsWithTimestamps.temperature.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.temperature.timestamp)) {
+                            console.log(`Updating temperature: ${measurement.temperature} from ${measurementDate.toLocaleString()}`);
+                            tracker.detailsWithTimestamps.temperature = {
+                                value: `${measurement.temperature}°C`,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
+                        }
+                    }
+
+                    // Check and update humidity
+                    if (measurement.humidity) {
+                        if (!tracker.detailsWithTimestamps.humidity.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.humidity.timestamp)) {
+                            console.log(`Updating humidity: ${measurement.humidity} from ${measurementDate.toLocaleString()}`);
+                            tracker.detailsWithTimestamps.humidity = {
+                                value: `${measurement.humidity}%`,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
+                        }
+                    }
+
+                    // Check and update battery
+                    if (measurement.battery) {
+                        if (!tracker.detailsWithTimestamps.battery.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.battery.timestamp)) {
+                            console.log(`Updating battery: ${measurement.battery} from ${measurementDate.toLocaleString()}`);
+                            tracker.detailsWithTimestamps.battery = {
+                                value: `${Math.round(measurement.battery)}%`,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
+                        }
+                    }
+                }
+
+                // Get location based on the most recent latitude and longitude
+                tracker.location =
+                    tracker.detailsWithTimestamps.latitude.value !== 'N/A' && tracker.detailsWithTimestamps.longitude.value !== 'N/A'
+                        ? await getReverseGeocodingAddress(
+                            tracker.detailsWithTimestamps.latitude.value,
+                            tracker.detailsWithTimestamps.longitude.value
+                        )
+                        : 'Unknown Location';
+            } catch (error) {
+                console.warn(`Error fetching data for tracker ${tracker._id}:`, error);
+                tracker.detailsWithTimestamps = null;
+                tracker.location = 'No data available';
+                tracker.modeDetails = null;
+                tracker.modeLabel = 'Unknown Mode';
+            }
+        }
+
+        trackers.value = trackersWithDetails;
     } catch (error) {
         console.error('Failed to fetch trackers:', error);
     }
 };
+
+
+const getReverseGeocodingAddress = async (lat, lng) => {
+    try {
+        const response = await useApiPrivate().get(`http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`);
+        return response.data.address || 'Unknown Location';
+    } catch (error) {
+        console.error(`Failed to get reverse geocoding address for coordinates [${lat}, ${lng}]:`, error);
+        return 'Unknown Location';
+    }
+};
+
+onMounted(async () => {
+    await authStore.getUser();
+    await fetchTrackersWithMeasurements(); // Use the updated function
+});
 
 const handleTrackerAdded = (newTracker) => {
     trackers.value.push(newTracker);
@@ -106,8 +246,20 @@ const openSettingsPopup = (tracker) => {
     showSettingsPopup.value = true;
 };
 
-const closePopup = () => {
+const closeSettingsPopup = () => {
     showSettingsPopup.value = false;
+    selectedTracker.value = null;
+
+
+};
+
+const openInfoPopup = (tracker) => {
+    selectedTracker.value = tracker;
+    showInfoPopup.value = true;
+};
+
+const closeInfoPopup = () => {
+    showInfoPopup.value = false;
     selectedTracker.value = null;
 };
 
@@ -121,7 +273,7 @@ const closeAddTrackerPopup = async () => {
     try {
         // Call authStore.getUser() to refresh user data
         await authStore.getUser();
-        await fetchTrackers(); // Refresh the trackers list
+        await fetchTrackersWithMeasurements(); // Refresh the trackers list
     } catch (error) {
         console.error('Failed to refresh user data or fetch trackers:', error);
         alert('There was an issue refreshing the data. Please reload the page.');
@@ -144,14 +296,49 @@ const saveTrackerName = async (tracker) => {
         }
     }
 };
-
-onMounted(async () => {
-    await authStore.getUser();
-    await fetchTrackers();
-});
 </script>
 
 <style scoped>
+.icon-wrapper {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 10;
+    /* Ensure it stays above other content */
+}
+
+.info-icon,
+.settings-icon {
+    display: flex;
+    /* Ensures the icon size matches the container */
+    align-items: center;
+    /* Centers the icon vertically */
+    justify-content: center;
+    /* Centers the icon horizontally */
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    padding: 2px;
+    /* Adds a small padding to increase hover area */
+}
+
+
+.info-icon:hover,
+.settings-icon:hover {
+    transform: scale(1.05);
+}
+
+.card-view.dark-mode .info-icon {
+    color: #E69543;
+}
+
+.card-view.dark-mode .settings-icon {
+    color: #E69543;
+}
+
 /* Name input */
 .name-input {
     background-color: transparent;
@@ -162,6 +349,7 @@ onMounted(async () => {
     outline: none;
     color: inherit;
 }
+
 
 .name-input:focus {
     border-bottom: 1px solid #555;
