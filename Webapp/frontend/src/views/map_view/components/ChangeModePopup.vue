@@ -20,21 +20,23 @@
                     </div>
                 </div>
 
-                <!-- Frequency Display or Slider -->
-                <div class="popup-section">
-                    <h3>Sending Frequency</h3>
-                    <div v-if="!isLongTimeTracking" class="frequency-display">
-                        <p>5 seconds</p>
-                    </div>
-                    <div v-else class="frequency-slider">
-                        <input type="range" v-model="trackingInterval" min="1" max="24" />
-                        <p>{{ trackingInterval }} hour(s)</p>
-                    </div>
+                <!-- Frequency Slider for Real-Time Mode -->
+                <div class="popup-section" v-if="!isLongTimeTracking">
+                    <h3>Sending Frequency (Real-Time)</h3>
+                    <input type="range" v-model.number="selectedRealTimeStep" :min="0" :max="realTimeSteps.length - 1"
+                        step="1" />
+                    <p>{{ formattedRealTimeInterval }}</p>
+                </div>
+
+                <!-- Frequency Slider for Long-Time Mode -->
+                <div class="popup-section" v-else>
+                    <h3>Sending Frequency (Long-Time)</h3>
+                    <input type="range" v-model.number="trackingInterval" min="1" max="24" step="1" />
+                    <p>{{ trackingInterval }} hour(s)</p>
                 </div>
             </div>
 
             <div class="popup-footer">
-
                 <button class="popup-save-btn" @click="applyChanges">Apply</button>
             </div>
         </div>
@@ -42,9 +44,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from "@/stores/auth";
+import { useApiPrivate } from "@/composables/useApi";
+
 const store = useAuthStore();
+const api = useApiPrivate();
+
 const props = defineProps({
     closePopup: Function,
     template: String,
@@ -53,10 +59,40 @@ const props = defineProps({
 
 const isLongTimeTracking = ref(false);
 const trackingInterval = ref(1); // Default interval of 1 hour for long-time tracking
+const realTimeSteps = [5, 10, 20, 30, 60, 120, 300, 600, 1800]; // Real-time frequency options (in seconds)
+const selectedRealTimeStep = ref(0);
+
+const formattedRealTimeInterval = computed(() => {
+    const seconds = realTimeSteps[selectedRealTimeStep.value];
+    return seconds < 60 ? `${seconds} seconds` : `${Math.round(seconds / 60)} min${seconds / 60 > 1 ? 's' : ''}`;
+});
+
+// Fetch current mode and frequency details when the component is mounted
+onMounted(async () => {
+    try {
+        if (!props.selectedTrackerId) {
+            throw new Error('selectedTrackerId is undefined');
+        }
+
+        // Fetch the mode details for the selected tracker
+        const { data } = await api.get(`http://localhost:3500/api/mode/${props.selectedTrackerId}`);
+        isLongTimeTracking.value = data.CellInfosMode;
+
+        if (data.GnssMode) {
+            const frequency = data.frequenz / 1000; // Convert milliseconds to seconds
+            const index = realTimeSteps.indexOf(frequency);
+            selectedRealTimeStep.value = index !== -1 ? index : 0;
+        } else if (data.CellInfosMode) {
+            trackingInterval.value = Math.round(data.frequenz / (60 * 60 * 1000)); // Convert milliseconds to hours
+        }
+    } catch (error) {
+        console.error('Failed to fetch tracker mode details:', error);
+    }
+});
 
 const setRealTimeTracking = () => {
     isLongTimeTracking.value = false;
-    trackingInterval.value = 5; // Fixed frequency for Real-Time-Tracking
+    selectedRealTimeStep.value = 0; // Reset to default 5 seconds
 };
 
 const setLongTimeTracking = () => {
@@ -65,9 +101,11 @@ const setLongTimeTracking = () => {
 
 const applyChanges = async () => {
     try {
+        const realTimeFrequency = realTimeSteps[selectedRealTimeStep.value];
         await store.updateTrackerMode(
             props.selectedTrackerId,
             !isLongTimeTracking.value,
+            isLongTimeTracking.value ? undefined : realTimeFrequency,
             isLongTimeTracking.value ? trackingInterval.value : undefined
         );
         console.log("Mode updated successfully");
@@ -76,7 +114,6 @@ const applyChanges = async () => {
         console.error("Failed to update mode:", error);
     }
 };
-
 </script>
 
 <style scoped>
@@ -104,8 +141,8 @@ const applyChanges = async () => {
     max-width: 90vw;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 1);
     text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 @media screen and (min-width: 768px) {
@@ -180,9 +217,7 @@ const applyChanges = async () => {
 }
 
 .dark-mode .mode-toggle {
-
     border: 1px solid #ddd;
-
 }
 
 .mode-toggle button {
@@ -195,8 +230,6 @@ const applyChanges = async () => {
     transition: background-color 0.3s;
 }
 
-
-
 .mode-toggle button.active {
     background-color: #C19A6B;
     color: #1f1f1f;
@@ -206,7 +239,6 @@ const applyChanges = async () => {
     background-color: #87c099;
     color: #333;
 }
-
 
 .mode-toggle button:not(.active) {
     background-color: #fff;
@@ -224,20 +256,12 @@ const applyChanges = async () => {
 }
 
 /* Frequency Display */
-.frequency-display p,
-.frequency-slider p {
-    font-size: 1.2rem;
-    font-weight: bold;
-
-}
-
-.frequency-slider input[type="range"] {
+input[type="range"] {
     width: 100%;
     accent-color: #00543D;
 }
 
-.dark-mode .frequency-slider input[type="range"] {
-    width: 100%;
+.dark-mode input[type="range"] {
     accent-color: #E69543;
 }
 
@@ -249,8 +273,6 @@ const applyChanges = async () => {
     margin-top: 20px;
 }
 
-/* Cancel and Apply Buttons */
-.popup-cancel-btn,
 .popup-save-btn {
     background-color: #851515;
     color: #fff;
@@ -263,19 +285,16 @@ const applyChanges = async () => {
     transition: background-color 0.3s, transform 0.2s;
 }
 
-.popup-cancel-btn:hover,
 .popup-save-btn:hover {
     background-color: #750f0f;
     transform: scale(1.05);
 }
 
-.dark-mode .popup-cancel-btn,
 .dark-mode .popup-save-btn {
     background-color: #E69543;
     color: #1f1f1f;
 }
 
-.dark-mode .popup-cancel-btn:hover,
 .dark-mode .popup-save-btn:hover {
     background-color: #cc7e36;
 }
