@@ -9,6 +9,7 @@ const SettingsView = () => import('../views/accountsettings_view/SettingsView.vu
 const TrackerView = () => import('../views/tracker_view/TrackerView.vue'); // Neue Seite importieren
 const ForgotPasswordView = () => import('../views/auth_view/ForgotPasswordView.vue');
 const RouteView = () => import('../views/route_view/RouteView.vue');
+const ContactFormView = () => import('../components/main/ContactForm.vue');
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
@@ -20,6 +21,7 @@ const routes = [
   { path: '/register', component: RegisterView, name: 'register', meta: { requiresGuest: true, hideComponent: true } },
   { path: '/reset', component: ForgotPasswordView, name: 'reset', meta: { requiresGuest: true, hideComponent: true } },
   { path: '/trackers', component: TrackerView, name: 'trackers', meta: { requiresAuth: true } },
+  { path: '/contact', component: ContactFormView, name: 'contact', meta: { requiresAuth: true } },
 ];
 
 
