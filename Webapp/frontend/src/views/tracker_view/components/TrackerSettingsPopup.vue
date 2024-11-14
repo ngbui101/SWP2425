@@ -266,6 +266,7 @@ const saveChanges = async () => {
     border: 1px solid #ddd;
     outline: none;
     background: #ddd;
+    box-sizing: border-box;
 }
 
 .popup-input:focus {
