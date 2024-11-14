@@ -101,7 +101,7 @@ const stopRoute = () => {
 
 // Save route logic
 const saveRoute = () => {
-    console.log("Route saved for tracker:", selectedTracker.value);
+
     timer.value = 0;
     showSaveButton.value = false;
 };

@@ -127,7 +127,7 @@ const fetchTrackersWithMeasurements = async () => {
                 measurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                 // Log the sorted measurements array for verification
-                console.log('Sorted Measurements array:', measurements);
+
 
                 // Initialize details with no data and null timestamps
                 tracker.detailsWithTimestamps = {
@@ -145,7 +145,7 @@ const fetchTrackersWithMeasurements = async () => {
                     // Check and update latitude
                     if (measurement.latitude && !isNaN(measurement.latitude)) {
                         if (!tracker.detailsWithTimestamps.latitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.latitude.timestamp)) {
-                            console.log(`Updating latitude: ${measurement.latitude} from ${measurementDate.toLocaleString()}`);
+
                             tracker.detailsWithTimestamps.latitude = {
                                 value: measurement.latitude,
                                 timestamp: measurementDate.toLocaleString(),
@@ -156,7 +156,7 @@ const fetchTrackersWithMeasurements = async () => {
                     // Check and update longitude
                     if (measurement.longitude && !isNaN(measurement.longitude)) {
                         if (!tracker.detailsWithTimestamps.longitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.longitude.timestamp)) {
-                            console.log(`Updating longitude: ${measurement.longitude} from ${measurementDate.toLocaleString()}`);
+
                             tracker.detailsWithTimestamps.longitude = {
                                 value: measurement.longitude,
                                 timestamp: measurementDate.toLocaleString(),
@@ -167,7 +167,7 @@ const fetchTrackersWithMeasurements = async () => {
                     // Check and update temperature
                     if (measurement.temperature) {
                         if (!tracker.detailsWithTimestamps.temperature.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.temperature.timestamp)) {
-                            console.log(`Updating temperature: ${measurement.temperature} from ${measurementDate.toLocaleString()}`);
+
                             tracker.detailsWithTimestamps.temperature = {
                                 value: `${measurement.temperature}°C`,
                                 timestamp: measurementDate.toLocaleString(),
@@ -178,7 +178,7 @@ const fetchTrackersWithMeasurements = async () => {
                     // Check and update humidity
                     if (measurement.humidity) {
                         if (!tracker.detailsWithTimestamps.humidity.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.humidity.timestamp)) {
-                            console.log(`Updating humidity: ${measurement.humidity} from ${measurementDate.toLocaleString()}`);
+
                             tracker.detailsWithTimestamps.humidity = {
                                 value: `${measurement.humidity}%`,
                                 timestamp: measurementDate.toLocaleString(),
@@ -189,7 +189,7 @@ const fetchTrackersWithMeasurements = async () => {
                     // Check and update battery
                     if (measurement.battery) {
                         if (!tracker.detailsWithTimestamps.battery.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.battery.timestamp)) {
-                            console.log(`Updating battery: ${measurement.battery} from ${measurementDate.toLocaleString()}`);
+
                             tracker.detailsWithTimestamps.battery = {
                                 value: `${Math.round(measurement.battery)}%`,
                                 timestamp: measurementDate.toLocaleString(),

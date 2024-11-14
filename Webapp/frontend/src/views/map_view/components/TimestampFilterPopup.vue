@@ -81,7 +81,7 @@ const applyFilters = async () => {
             }
         }, config);
 
-        console.log('Timestamp filters updated successfully.');
+
 
         // Refresh user data to get the latest settings
         await authStore.getUser();

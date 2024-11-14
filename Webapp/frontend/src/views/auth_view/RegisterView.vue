@@ -53,12 +53,12 @@ const registerData = reactive({
 const errorMessage = ref<string>('');
 
 async function register() {
-  console.log('Register function triggered'); // Debug log
+
   try {
     if (registerData.password !== registerData.password_confirm) {
       throw new Error('Passwords do not match!');
     }
-    console.log('Payload:', registerData);
+
     const response = await authStore.register(registerData);
     alert('Registration successful!'); // Show success message
     const emailContent = getWelcomeEmailContent(registerData.email);
@@ -67,7 +67,7 @@ async function register() {
     await sendWelcomeEmail(emailContent);
     router.replace({ name: 'login' });
   } catch (err: any) {
-    console.error('Register failed:', err);
+
     if (err.response) {
       console.error('Server Response:', err.response.data); // Log server error details
     }
@@ -126,7 +126,7 @@ The BOTracker Team`,
 
 
 function setLanguage(language: string) {
-  console.log('Language switched to:', language);
+
   locale.value = language; // Update the locale to the selected language
 }
 
@@ -145,9 +145,9 @@ async function sendWelcomeEmail(emailContent: { to: string; subject: string; tex
       throw new Error('Failed to send welcome email');
     }
 
-    console.log('Welcome email sent successfully');
+
   } catch (error) {
-    console.error('Error sending welcome email:', error);
+
   }
 }
 

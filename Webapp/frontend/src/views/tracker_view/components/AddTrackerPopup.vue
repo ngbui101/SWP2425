@@ -62,7 +62,7 @@ const saveChanges = async () => {
         });
 
         if (response.data && response.data.tracker) {
-            console.log('Tracker created successfully:', response.data);
+
 
             props.closePopup();
             trackerName.value = '';

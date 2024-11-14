@@ -52,7 +52,7 @@ const addTracker = async () => {
         if (authStore.userDetail.trackers) {
             trackers.value = authStore.userDetail.trackers;
         }
-        console.log('User data refreshed and trackers updated:', trackers.value);
+
     } catch (error) {
         console.error('Failed to refresh user data:', error);
         alert('There was an issue refreshing user data. Please reload the page.');

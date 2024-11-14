@@ -54,13 +54,13 @@ app.get('/api/geocode', async (req, res) => {
   const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleApiKey}`;
 
   try {
-    console.log(`Requesting geocode for lat: ${lat}, lng: ${lng}`);
+    
     const response = await axios.get(geocodingUrl);
-    console.log("Geocoding response received:", response.data);
+    
     const { results } = response.data;
 
     if (results.length === 0) {
-      console.error("No address found for the provided coordinates");
+      
       return res.status(404).json({ error: 'No address found for the provided coordinates' });
     }
 

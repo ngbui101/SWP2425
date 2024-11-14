@@ -30,7 +30,7 @@ const user = computed(() => authStore.userDetail);
 
 onMounted(async () => {
   await authStore.getUser();
-  console.log('User Settings Template:', user.value.settings?.template);
+
 
 });
 </script>

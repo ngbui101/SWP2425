@@ -139,7 +139,7 @@ const closeMeasurementFilters = () => {
 
 // Function to apply filters
 const applyMeasurementFilters = (filters) => {
-    console.log('Applying Measurement Filters:', filters);
+
     // Implement the filtering logic based on `filters` received from the popup
     // This could be storing `filters` and using them to filter `selectedTrackerMeasurements`
 };
@@ -180,7 +180,7 @@ const disableUnavailableDates = (date) => {
 };
 const updateTimestampRange = () => {
     // Add logic here if necessary
-    console.log("Timestamp range updated:", fromTimestamp.value, toTimestamp.value);
+
 };
 // Automatically set the earliest timestamp for the selected date in the FROM dropdown
 const handleFromDateChange = (date) => {

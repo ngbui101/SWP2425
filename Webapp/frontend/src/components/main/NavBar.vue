@@ -83,7 +83,7 @@ const logout = async () => {
     await authStore.logout();
     router.replace({ name: 'login' }); // Redirect to the login page after logout
   } catch (err) {
-    console.log(err.message);
+
   }
 };
 </script>

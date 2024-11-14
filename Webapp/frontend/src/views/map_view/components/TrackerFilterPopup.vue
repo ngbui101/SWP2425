@@ -66,7 +66,7 @@ const applyFilters = async () => {
             trackerFilters: { mode: filters.value.mode }
         }, config);
 
-        console.log('Tracker filters updated successfully.');
+
 
         // Refresh user data to get the latest settings
         await authStore.getUser();

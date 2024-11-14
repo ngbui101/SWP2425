@@ -196,13 +196,13 @@ const closeTimestampFilters = () => {
 
 // Method to apply Tracker filters
 const applyTrackerFilters = (filters) => {
-  console.log('Applying Tracker Filters:', filters);
+
   // Handle the filtering logic here
 };
 
 // Method to apply Timestamp filters
 const applyTimestampFilters = (filters) => {
-  console.log('Applying Timestamp Filters:', filters);
+
   // Handle the filtering logic here
 };
 
@@ -278,7 +278,7 @@ const fetchTrackersForUser = async () => {
 
       const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
       tracker.measurements = measurementsResponse.data;
-      console.log(tracker.geofence);
+
 
       const geofenceResponse = await axios.get(`http://localhost:3500/api/geofence/${tracker.geofence}`, config);
       tracker.geofenceDetails = geofenceResponse.data; // Store geofence details
@@ -322,7 +322,7 @@ const applyGeofenceRadius = async () => {
 
   try {
     await axios.put(`http://localhost:3500/api/geofence/${geofenceId}`, data, config);
-    console.log('Geofence applied with updated settings:', data);
+
 
     // Hide slider and "Apply" button but keep geofence active
     showGeofenceSlider.value = false;
@@ -441,7 +441,7 @@ const drawGeofenceCircle = (latitude, longitude, radius) => {
     strokeOpacity: 0.8,
     strokeWeight: 2,
   });
-  console.log("Drawing geofence at:", { latitude, longitude, radius })
+
 };
 
 // Add geofence when the button is clicked
@@ -473,7 +473,7 @@ const removeGeofence = async () => {
 
   try {
     await axios.put(`http://localhost:3500/api/geofence/${geofenceId}`, data, config);
-    console.log('Geofence removed.');
+
 
     geofenceActive.value = false;
     showGeofenceSlider.value = false; // Hide slider and apply button
@@ -490,7 +490,7 @@ watch(selectedTracker, updateGeofenceState);
 watch(geofenceRadius, (newRadius) => {
   if (geofenceCircle) {
     geofenceCircle.setRadius(parseFloat(newRadius));
-    console.log('Updated geofence radius to:', newRadius);
+
   }
 });
 

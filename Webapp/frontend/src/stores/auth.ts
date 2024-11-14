@@ -101,7 +101,7 @@ export interface User {
     
         async register(payload: RegisterData) {
           try {
-            console.log('Payload being sent:', payload);
+            
             const { data } = await useApi().post('http://localhost:3500/api/auth/register', payload);
             return data;
           } catch (error: any) {
@@ -114,8 +114,7 @@ export interface User {
         async getUser() {
           try {
               const { data } = await useApiPrivate().get(`http://localhost:3500/api/auth/user`);
-              console.log('Fetched user:', data); // Debugging line
-              console.log('Fetched user settings:', data.settings);
+
               this.user = data;
               
               return data;
@@ -216,9 +215,9 @@ export interface User {
             try {
               const { data } = await useApiPrivate().put('http://localhost:3500/api/settings', settings); // No userId in the URL
               this.user.settings = data; // Update the user's settings in the store with the response data
-              console.log('Settings updated successfully:', data);
+              
             } catch (error) {
-              console.error('Failed to update settings:', error);
+              
               throw new Error(`Failed to update settings: ${error.message}`);
             }
           },
@@ -233,7 +232,7 @@ export interface User {
         
             try {
                 const { data } = await useApiPrivate().put(`http://localhost:3500/api/mode/${trackerId}`, updateData);
-                console.log('Updated tracker mode:', data);
+                
                 return data;
             } catch (error: any) {
                 console.error('Failed to update tracker mode:', error);
