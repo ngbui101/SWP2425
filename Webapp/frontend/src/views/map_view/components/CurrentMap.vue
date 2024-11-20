@@ -134,10 +134,10 @@
           <span :style="{ color: modeColors.green }">
             <i class="fas fa-map-pin"></i>
           </span> Green: {{ modeAccuracy.green }}
-          <span :style="{ color: modeColors.yellow, margin: '0 5px' }">
+          <span :style="{ color: modeColors.yellow, marginLeft: '20px' }">
             <i class="fas fa-map-pin"></i>
           </span> Yellow: {{ modeAccuracy.yellow }}
-          <span :style="{ color: modeColors.red, marginLeft: '5px' }">
+          <span :style="{ color: modeColors.red, marginLeft: '20px' }">
             <i class="fas fa-map-pin"></i>
           </span> Red: {{ modeAccuracy.red }}
           <span :style="{ marginLeft: '50px', color: '#E69543' }">
@@ -507,7 +507,7 @@ const initializeMap = () => {
     // Initialize the map if not already created
     map = new google.maps.Map(mapElement.value, {
       center: position,
-      zoom: 16,
+      zoom: 12,
       streetViewControl: false,
       mapId: "6c54d0c5731b3526",
     });
