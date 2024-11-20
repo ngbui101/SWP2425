@@ -51,17 +51,15 @@
             </div>
 
             <!-- Battery Status -->
-            <div class="grid-item-full">
+            <div v-if="selectedMeasurement.battery !== undefined" class="grid-item-full">
               <div class="battery-status-wrapper">
                 <strong>Battery Status:</strong>
                 <div class="battery-wrapper">
                   <div class="battery-bar">
-                    <div class="battery-fill"
-                      :style="{ width: `${Math.round(selectedMeasurement.battery) || N / A}%` }">
-                    </div>
+                    <div class="battery-fill" :style="{ width: `${Math.round(selectedMeasurement.battery)}%` }"></div>
                   </div>
                   <div class="battery-indicator">
-                    <span>{{ Math.round(selectedMeasurement.battery) || 'N/A' }}%</span>
+                    <span>{{ Math.round(selectedMeasurement.battery) }}%</span>
                   </div>
                 </div>
               </div>
@@ -75,12 +73,13 @@
               <strong>Longitude:&nbsp;</strong> {{ selectedMeasurement.longitude || 'N/A' }}
             </div>
 
-            <!-- Temperature and Humidity -->
-            <div class="grid-item">
-              <strong>Temperature:&nbsp;</strong> {{ selectedMeasurement.temperature || 'N/A' }} °C
+            <!-- Temperature -->
+            <div v-if="selectedMeasurement.temperature !== undefined" class="grid-item">
+              <strong>Temperature:&nbsp;</strong> {{ selectedMeasurement.temperature }} °C
             </div>
-            <div class="grid-item">
-              <strong>Humidity:&nbsp;</strong> {{ selectedMeasurement.humidity || 'N/A' }} %
+            <!-- Humidity -->
+            <div v-if="selectedMeasurement.humidity !== undefined" class="grid-item">
+              <strong>Humidity:&nbsp;</strong> {{ selectedMeasurement.humidity }} %
             </div>
 
             <!-- Add/Remove Geofence button -->
@@ -113,6 +112,9 @@
             {{ selectedMeasurement.createdAt ? new Date(selectedMeasurement.createdAt).toLocaleString() : 'N/A' }}
           </span>
         </div>
+        <div class="location">
+          <p class="location-text">{{ selectedTrackerLocation }}</p>
+        </div>
         <div class="tracker-mode">
           Mode: {{ trackerModeLabel }}
 
@@ -126,16 +128,28 @@
         <!-- Grey Overlay for dark mode -->
         <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
       </div>
-
-
-
-
-      <div class="location-display">
-        <p>{{ selectedTrackerLocation }}</p>
-        <div class="location-accuracy">
-          Estimated Accuracy: 5m
-        </div>
+      <div class="legend">
+        <p
+          :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#87c099' : 'black', display: 'flex', alignItems: 'center' }">
+          <span style="color: #228B22; margin-right: 5px;">
+            <i class="fas fa-map-pin"></i>
+          </span> Green: High accuracy (0-25m),
+          <span style="color: #FFD700; margin: 0 5px;">
+            <i class="fas fa-map-pin"></i>
+          </span> Yellow: Moderate accuracy (26-50m),
+          <span style="color: #FF0000; margin-left: 5px;">
+            <i class="fas fa-map-pin"></i>
+          </span> Red: Low accuracy (> 50m),
+          <span style="margin-left: 50px; color: #E69543;">
+            Current accuracy: <strong>{{ selectedMeasurement.accuracy || 'N/A' }}m</strong>
+          </span>
+        </p>
       </div>
+
+
+
+
+
     </div>
 
     <!-- Conditionally render the Tracker Filter Popup -->
@@ -276,8 +290,14 @@ const fetchTrackersForUser = async () => {
       const modeResponse = await axios.get(`http://localhost:3500/api/mode/${tracker._id}`, config);
       tracker.modeDetails = modeResponse.data; // Store the mode details
 
-      const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
-      tracker.measurements = measurementsResponse.data;
+      const measurementsResponse = await axios.get(
+        `http://localhost:3500/api/position/tracker/${tracker._id}`,
+        config
+      );
+      // Filter measurements to include only LTE or GPS modes
+      tracker.measurements = measurementsResponse.data.filter(
+        (measurement) => measurement.mode === 'LTE' || measurement.mode === 'GPS'
+      );
 
 
       const geofenceResponse = await axios.get(`http://localhost:3500/api/geofence/${tracker.geofence}`, config);
@@ -391,36 +411,98 @@ const updateSelectedMeasurement = (initialLoad = false) => {
   }
 };
 
-// Initialize the map without the geofence initially
+let accuracyCircle = null; // Declare a variable for the accuracy circle
+
 const initializeMap = () => {
   if (!selectedMeasurement.value || !mapElement.value) return;
 
   const position = {
     lat: Number(selectedMeasurement.value.latitude),
-    lng: Number(selectedMeasurement.value.longitude)
+    lng: Number(selectedMeasurement.value.longitude),
   };
+  const accuracy = Number(selectedMeasurement.value.accuracy);
+
+  // Determine the background color based on accuracy
+  let backgroundColor = '#228B22'; // Default green color
+  if (accuracy <= 25) {
+    backgroundColor = '#228B22'; // Green for accuracy 0-25
+  } else if (accuracy > 25 && accuracy <= 50) {
+    backgroundColor = '#FFD700'; // Yellow for accuracy 26-50
+  } else {
+    backgroundColor = '#FF0000'; // Red for accuracy above 50
+  }
+
+  const customPin = new google.maps.marker.PinElement({
+    background: backgroundColor,
+    borderColor: '#000000',
+    glyph: '●',
+    glyphColor: '#ddd',
+  });
 
   if (map) {
     map.setCenter(position);
+
     if (marker) {
-      marker.setPosition(position);
+      // Update the existing marker's position and content
+      marker.position = position;
+      marker.content = customPin.element; // Update the custom pin content
     } else {
-      marker = new google.maps.Marker({ position, map, title: 'Tracker Location' });
+      // Create a new marker if one does not exist
+      marker = new google.maps.marker.AdvancedMarkerElement({
+        position,
+        map,
+        content: customPin.element,
+        title: 'Tracker Location',
+      });
+    }
+
+    // Update or create the accuracy circle
+    if (accuracyCircle) {
+      accuracyCircle.setCenter(position);
+      accuracyCircle.setRadius(accuracy); // Set radius using accuracy
+    } else {
+      accuracyCircle = new google.maps.Circle({
+        map,
+        center: position,
+        radius: accuracy, // Set radius using accuracy
+        fillColor: '#0000FF', // Blue color for accuracy circle
+        fillOpacity: 0.2,
+        strokeColor: '#0000FF',
+        strokeOpacity: 0.5,
+        strokeWeight: 1,
+      });
     }
   } else {
+    // Initialize the map and marker if not already done
     map = new google.maps.Map(mapElement.value, {
       center: position,
-      zoom: 12,
-
-      streetViewControl: false
+      zoom: 16,
+      streetViewControl: false,
+      mapId: '6c54d0c5731b3526',
     });
-    marker = new google.maps.Marker({
+
+    marker = new google.maps.marker.AdvancedMarkerElement({
       position,
       map,
+      content: customPin.element,
       title: 'Tracker Location',
+    });
+
+    // Create the accuracy circle
+    accuracyCircle = new google.maps.Circle({
+      map,
+      center: position,
+      radius: accuracy, // Set radius using accuracy
+      fillColor: '#0000FF', // Blue color for accuracy circle
+      fillOpacity: 0.2,
+      strokeColor: '#0000FF',
+      strokeOpacity: 0.5,
+      strokeWeight: 1,
     });
   }
 };
+
+
 const drawGeofenceCircle = (latitude, longitude, radius) => {
   if (!isGoogleMapsLoaded.value) {
     console.warn("Google Maps API is not loaded yet.");
@@ -520,7 +602,8 @@ const loadGoogleMapsScript = () => {
       resolve();
     } else if (!document.querySelector("script[src*='maps.googleapis.com']")) {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDzh7DicT6KmawobOi6iir27IFEQBsRhRo&libraries=geometry`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDzh7DicT6KmawobOi6iir27IFEQBsRhRo&libraries=marker,geometry`;
+
       script.async = true;
       script.defer = true;
       script.onload = () => {
