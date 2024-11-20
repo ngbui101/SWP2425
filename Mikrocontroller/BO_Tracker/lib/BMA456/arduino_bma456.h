@@ -34,6 +34,7 @@
 #include <Wire.h>
 #include "bma456.h"
 
+
 typedef enum {
     CIC_AVG = 0,
     CONTINUOUS,
@@ -92,6 +93,8 @@ class BMA456 {
     int32_t getTemperature(void);
 
     uint32_t getStepCounterOutput(void);
+
+    struct bma4_dev* getAccelInstance();
 
   private:
 

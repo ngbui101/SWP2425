@@ -137,4 +137,8 @@ uint32_t BMA456::getStepCounterOutput(void) {
     return step;
 }
 
+struct bma4_dev* BMA456::getAccelInstance() {
+    return &accel;
+}
+
 BMA456 bma456;
