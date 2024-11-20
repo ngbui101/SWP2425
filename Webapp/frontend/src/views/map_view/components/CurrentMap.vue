@@ -131,20 +131,21 @@
       <div class="legend">
         <p
           :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#87c099' : 'black', display: 'flex', alignItems: 'center' }">
-          <span style="color: #228B22; margin-right: 5px;">
+          <span :style="{ color: modeColors.green }">
             <i class="fas fa-map-pin"></i>
-          </span> Green: High accuracy (0-25m),
-          <span style="color: #FFD700; margin: 0 5px;">
+          </span> Green: {{ modeAccuracy.green }}
+          <span :style="{ color: modeColors.yellow, margin: '0 5px' }">
             <i class="fas fa-map-pin"></i>
-          </span> Yellow: Moderate accuracy (26-50m),
-          <span style="color: #FF0000; margin-left: 5px;">
+          </span> Yellow: {{ modeAccuracy.yellow }}
+          <span :style="{ color: modeColors.red, marginLeft: '5px' }">
             <i class="fas fa-map-pin"></i>
-          </span> Red: Low accuracy (> 50m),
-          <span style="margin-left: 50px; color: #E69543;">
+          </span> Red: {{ modeAccuracy.red }}
+          <span :style="{ marginLeft: '50px', color: '#E69543' }">
             Current accuracy: <strong>{{ selectedMeasurement.accuracy || 'N/A' }}m</strong>
           </span>
         </p>
       </div>
+
 
 
 
@@ -240,17 +241,41 @@ let marker = null;
 let geofenceCircle = null; // Declare geofence circle
 let isGoogleMapsLoaded = ref(false);
 
-const trackerModeLabel = computed(() => {
-  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
-  if (tracker && tracker.modeDetails) {
-    if (tracker.modeDetails.GnssMode) {
-      return "Real-Time Tracking";
-    } else if (tracker.modeDetails.CellInfosMode) {
-      return "Long-Time Tracking";
-    }
+const modeAccuracy = computed(() => {
+  if (selectedMeasurement.value?.mode === "GPS") {
+    return {
+      green: "0-25m",
+      yellow: "26-50m",
+      red: ">50m",
+    };
+  } else if (selectedMeasurement.value?.mode === "LTE") {
+    return {
+      green: "0-100m",
+      yellow: "101-500m",
+      red: ">500m",
+    };
   }
-  return "N/A"; // Default if no mode is set
+  return {
+    green: "N/A",
+    yellow: "N/A",
+    red: "N/A",
+  };
 });
+
+const modeColors = computed(() => ({
+  green: "#228B22", // Green
+  yellow: "#FFD700", // Yellow
+  red: "#FF0000", // Red
+}));
+
+
+const trackerModeLabel = computed(() => {
+  if (selectedMeasurement.value && selectedMeasurement.value.mode) {
+    return selectedMeasurement.value.mode === "GPS" ? "Real-Time Tracking" : "Long-Time Tracking";
+  }
+  return "N/A"; // Default if no measurement or mode is set
+});
+
 
 // Geofence-related state
 const geofenceActive = ref(false); // Geofence initially inactive
@@ -421,86 +446,68 @@ const initializeMap = () => {
     lng: Number(selectedMeasurement.value.longitude),
   };
   const accuracy = Number(selectedMeasurement.value.accuracy);
+  const mode = selectedMeasurement.value.mode;
 
-  // Determine the background color based on accuracy
-  let backgroundColor = '#228B22'; // Default green color
-  if (accuracy <= 25) {
-    backgroundColor = '#228B22'; // Green for accuracy 0-25
-  } else if (accuracy > 25 && accuracy <= 50) {
-    backgroundColor = '#FFD700'; // Yellow for accuracy 26-50
+  // Determine the pin color based on accuracy and mode
+  let backgroundColor;
+  if (mode === "GPS") {
+    if (accuracy <= 25) {
+      backgroundColor = modeColors.value.green;
+    } else if (accuracy > 25 && accuracy <= 50) {
+      backgroundColor = modeColors.value.yellow;
+    } else {
+      backgroundColor = modeColors.value.red;
+    }
+  } else if (mode === "LTE") {
+    if (accuracy <= 100) {
+      backgroundColor = modeColors.value.green;
+    } else if (accuracy > 100 && accuracy <= 500) {
+      backgroundColor = modeColors.value.yellow;
+    } else {
+      backgroundColor = modeColors.value.red;
+    }
   } else {
-    backgroundColor = '#FF0000'; // Red for accuracy above 50
+    backgroundColor = "#000000"; // Default color for unknown mode
   }
 
   const customPin = new google.maps.marker.PinElement({
     background: backgroundColor,
-    borderColor: '#000000',
-    glyph: '●',
-    glyphColor: '#ddd',
+    borderColor: "#000000",
+    glyph: "●",
+    glyphColor: "#ddd",
   });
 
   if (map) {
     map.setCenter(position);
 
     if (marker) {
-      // Update the existing marker's position and content
       marker.position = position;
-      marker.content = customPin.element; // Update the custom pin content
+      marker.content = customPin.element;
     } else {
-      // Create a new marker if one does not exist
       marker = new google.maps.marker.AdvancedMarkerElement({
         position,
         map,
         content: customPin.element,
-        title: 'Tracker Location',
-      });
-    }
-
-    // Update or create the accuracy circle
-    if (accuracyCircle) {
-      accuracyCircle.setCenter(position);
-      accuracyCircle.setRadius(accuracy); // Set radius using accuracy
-    } else {
-      accuracyCircle = new google.maps.Circle({
-        map,
-        center: position,
-        radius: accuracy, // Set radius using accuracy
-        fillColor: '#0000FF', // Blue color for accuracy circle
-        fillOpacity: 0.2,
-        strokeColor: '#0000FF',
-        strokeOpacity: 0.5,
-        strokeWeight: 1,
+        title: "Tracker Location",
       });
     }
   } else {
-    // Initialize the map and marker if not already done
     map = new google.maps.Map(mapElement.value, {
       center: position,
       zoom: 16,
       streetViewControl: false,
-      mapId: '6c54d0c5731b3526',
+      mapId: "6c54d0c5731b3526",
     });
 
     marker = new google.maps.marker.AdvancedMarkerElement({
       position,
       map,
       content: customPin.element,
-      title: 'Tracker Location',
-    });
-
-    // Create the accuracy circle
-    accuracyCircle = new google.maps.Circle({
-      map,
-      center: position,
-      radius: accuracy, // Set radius using accuracy
-      fillColor: '#0000FF', // Blue color for accuracy circle
-      fillOpacity: 0.2,
-      strokeColor: '#0000FF',
-      strokeOpacity: 0.5,
-      strokeWeight: 1,
+      title: "Tracker Location",
     });
   }
 };
+
 
 
 const drawGeofenceCircle = (latitude, longitude, radius) => {
