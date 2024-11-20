@@ -217,9 +217,10 @@ const applyTrackerFilters = (filters) => {
 
 // Method to apply Timestamp filters
 const applyTimestampFilters = (filters) => {
-
-  // Handle the filtering logic here
+  // Update the timestamp filters in the parent component
+  user.value.settings.timestampFilters = filters;
 };
+
 
 const authStore = useAuthStore();
 const el = ref(null);
@@ -691,18 +692,37 @@ const filteredTrackers = computed(() => {
 });
 const filteredMeasurements = computed(() => {
   const validPositionFilter = user.value.settings.timestampFilters?.validPosition ?? false;
+  const modeFilters = user.value.settings.timestampFilters?.mode || [];
 
-  return selectedTrackerMeasurements.value.filter(measurement => {
-    // In future, we may filter by mode here if additional modes are added to measurements
+  console.log('Applying Filters:');
+  console.log('Mode Filters:', modeFilters); // Should contain 'RT' and/or 'LT'
+  console.log('Valid Position Filter:', validPositionFilter);
+
+  return selectedTrackerMeasurements.value.filter((measurement) => {
+    console.log('Checking Measurement:', measurement);
+
+    // Filter by valid position (if enabled)
     if (validPositionFilter) {
-      return (
-        !isNaN(measurement.latitude) &&
-        !isNaN(measurement.longitude)
-      );
+      if (isNaN(measurement.latitude) || isNaN(measurement.longitude)) {
+        console.log('Filtered out due to invalid position:', measurement);
+        return false;
+      }
     }
+
+    // Map measurement mode to filter mode
+    const measurementMode = measurement.mode === 'LTE' ? 'LT' : measurement.mode === 'GPS' ? 'RT' : null;
+
+    // Filter by mode
+    if (modeFilters.length > 0 && !modeFilters.includes(measurementMode)) {
+      console.log('Filtered out due to mode:', measurement.mode, 'Mapped Mode:', measurementMode, 'Expected:', modeFilters);
+      return false;
+    }
+
     return true;
   });
 });
+
+
 </script>
 
 <style scoped></style>
