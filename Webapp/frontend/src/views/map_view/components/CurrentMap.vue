@@ -419,7 +419,7 @@ const updateSelectedMeasurement = (initialLoad = false) => {
     const measurement = tracker.measurements.find(m => m._id === selectedTimestamp.value);
     if (measurement) {
       selectedMeasurement.value = measurement;
-      getReverseGeocodingAddress(measurement.latitude, measurement.longitude);
+      getReverseGeocodingAddress(measurement.latitude, measurement.longitude, measurement.accuracy);
 
       if (initialLoad) {
         if (isGoogleMapsLoaded.value) {
@@ -436,7 +436,7 @@ const updateSelectedMeasurement = (initialLoad = false) => {
   }
 };
 
-let accuracyCircle = null; // Declare a variable for the accuracy circle
+let accuracyCircle = null; // Declare a global variable for the accuracy circle
 
 const initializeMap = () => {
   if (!selectedMeasurement.value || !mapElement.value) return;
@@ -446,28 +446,23 @@ const initializeMap = () => {
     lng: Number(selectedMeasurement.value.longitude),
   };
   const accuracy = Number(selectedMeasurement.value.accuracy);
-  const mode = selectedMeasurement.value.mode;
 
   // Determine the pin color based on accuracy and mode
   let backgroundColor;
-  if (mode === "GPS") {
-    if (accuracy <= 25) {
-      backgroundColor = modeColors.value.green;
-    } else if (accuracy > 25 && accuracy <= 50) {
-      backgroundColor = modeColors.value.yellow;
-    } else {
-      backgroundColor = modeColors.value.red;
-    }
-  } else if (mode === "LTE") {
-    if (accuracy <= 100) {
-      backgroundColor = modeColors.value.green;
-    } else if (accuracy > 100 && accuracy <= 500) {
-      backgroundColor = modeColors.value.yellow;
-    } else {
-      backgroundColor = modeColors.value.red;
-    }
+  if (selectedMeasurement.value.mode === "GPS") {
+    backgroundColor = accuracy <= 25
+      ? modeColors.value.green
+      : accuracy <= 50
+        ? modeColors.value.yellow
+        : modeColors.value.red;
+  } else if (selectedMeasurement.value.mode === "LTE") {
+    backgroundColor = accuracy <= 100
+      ? modeColors.value.green
+      : accuracy <= 500
+        ? modeColors.value.yellow
+        : modeColors.value.red;
   } else {
-    backgroundColor = "#000000"; // Default color for unknown mode
+    backgroundColor = "#000000"; // Default for unknown mode
   }
 
   const customPin = new google.maps.marker.PinElement({
@@ -491,7 +486,25 @@ const initializeMap = () => {
         title: "Tracker Location",
       });
     }
+
+    // Create or update the accuracy circle
+    if (accuracyCircle) {
+      accuracyCircle.setCenter(position);
+      accuracyCircle.setRadius(accuracy); // Update radius based on accuracy
+    } else {
+      accuracyCircle = new google.maps.Circle({
+        map,
+        center: position,
+        radius: accuracy, // Set radius based on accuracy
+        fillColor: "#0000FF", // Blue color for accuracy circle
+        fillOpacity: 0.2,
+        strokeColor: "#0000FF",
+        strokeOpacity: 0.5,
+        strokeWeight: 1,
+      });
+    }
   } else {
+    // Initialize the map if not already created
     map = new google.maps.Map(mapElement.value, {
       center: position,
       zoom: 16,
@@ -505,9 +518,20 @@ const initializeMap = () => {
       content: customPin.element,
       title: "Tracker Location",
     });
+
+    // Create the accuracy circle
+    accuracyCircle = new google.maps.Circle({
+      map,
+      center: position,
+      radius: accuracy,
+      fillColor: "#0000FF", // Blue color for accuracy circle
+      fillOpacity: 0.2,
+      strokeColor: "#0000FF",
+      strokeOpacity: 0.5,
+      strokeWeight: 1,
+    });
   }
 };
-
 
 
 const drawGeofenceCircle = (latitude, longitude, radius) => {
@@ -584,14 +608,32 @@ watch(geofenceRadius, (newRadius) => {
 });
 
 
-// Perform reverse geocoding using your backend API
-const getReverseGeocodingAddress = async (lat, lng) => {
+const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
   const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
 
   try {
     const response = await axios.get(geocodingUrl);
-    if (response.data && response.data.address) {
-      selectedTrackerLocation.value = response.data.address;
+    console.log("Geocoding API response:", response.data); // Log the response for debugging
+
+    if (response.data?.address) {
+      const fullAddress = response.data.address;
+
+      // Extract zip and city from the address
+      const addressParts = fullAddress.split(','); // Split the address into parts
+      const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
+      const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
+      const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Regex to match 'zip city'
+
+      const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
+      const city = zipAndCity ? zipAndCity[2] : "Unknown City";
+
+      if (accuracy <= 25) {
+        // Full address for high accuracy
+        selectedTrackerLocation.value = fullAddress;
+      } else {
+        // Only zip and city for lower accuracy
+        selectedTrackerLocation.value = `${zip}, ${city}`;
+      }
     } else {
       selectedTrackerLocation.value = 'Unknown Location';
     }
@@ -600,6 +642,8 @@ const getReverseGeocodingAddress = async (lat, lng) => {
     selectedTrackerLocation.value = 'Unknown Location';
   }
 };
+
+
 
 // Load Google Maps API script dynamically
 const loadGoogleMapsScript = () => {
