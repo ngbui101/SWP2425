@@ -25,6 +25,19 @@
                         </button>
                     </div>
                 </div>
+                <!-- Battery Data Checkbox -->
+                <div class="popup-section">
+                    <label>
+                        <input type="checkbox" v-model="sendBatteryData" /> Send Battery Data
+                    </label>
+                </div>
+
+                <!-- Humidity Data Checkbox -->
+                <div class="popup-section">
+                    <label>
+                        <input type="checkbox" v-model="sendTemperatureData" /> Send Humidity Data
+                    </label>
+                </div>
 
                 <!-- Frequency Slider for Real-Time Mode -->
                 <div class="popup-section" v-if="!isLongTimeTracking">
@@ -69,7 +82,9 @@ const emit = defineEmits(['updateTracker']);
 const trackerName = ref(props.trackerNameInitial);
 const isLongTimeTracking = ref(props.trackerModeInitial === 'LT');
 const trackingInterval = ref(props.sendingFrequencyInitial || 1); // Default to 1 hour if not provided
-
+// Add new reactive variables for checkboxes
+const sendBatteryData = ref(props.trackerModeInitial.BatteryMode || false);
+const sendTemperatureData = ref(props.trackerModeInitial.TemperatureMode || false);
 // Real-time mode frequency steps (in seconds)
 const realTimeSteps = [5, 10, 20, 30, 60, 120, 300, 600, 1800]; // 5s, 10s, 20s, 30s, 1min, 2min, 5min, 10min, 30min
 const selectedRealTimeStep = ref(0);
@@ -83,13 +98,15 @@ const formattedRealTimeInterval = computed(() => {
     return seconds < 60 ? `${seconds} seconds` : `${Math.round(seconds / 60)} min${seconds / 60 > 1 ? 's' : ''}`;
 });
 
-// Fetch initial tracker settings when the component is mounted
 onMounted(async () => {
     try {
         if (!props.selectedTrackerId) {
             throw new Error('selectedTrackerId is undefined');
         }
+
         const { data } = await api.get(`http://localhost:3500/api/mode/${props.selectedTrackerId}`);
+
+        // Populate the tracking mode
         isLongTimeTracking.value = data.CellInfosMode;
         if (data.GnssMode) {
             const frequency = data.frequenz / 1000; // Convert milliseconds to seconds
@@ -98,10 +115,15 @@ onMounted(async () => {
         } else {
             trackingInterval.value = Math.round(data.frequenz / (60 * 60 * 1000)); // Convert milliseconds to hours
         }
+
+        // Populate BatteryMode and TemperatureMode
+        sendBatteryData.value = data.BatteryMode || false;
+        sendTemperatureData.value = data.TemperatureMode || false;
     } catch (error) {
         console.error('Failed to fetch tracker mode:', error);
     }
 });
+
 
 const setRealTimeTracking = () => {
     isLongTimeTracking.value = false;
@@ -117,18 +139,30 @@ const saveChanges = async () => {
         if (!props.selectedTrackerId) {
             throw new Error('selectedTrackerId is undefined');
         }
+
+        // Update tracker name if changed
         if (trackerName.value !== props.trackerNameInitial) {
             await api.put(`http://localhost:3500/api/tracker/${props.selectedTrackerId}`, { name: trackerName.value });
             console.log('Tracker name updated successfully');
         }
 
+        // Prepare mode update payload
         const realTimeFrequency = realTimeSteps[selectedRealTimeStep.value];
-        await store.updateTrackerMode(
-            props.selectedTrackerId,
-            !isLongTimeTracking.value,
-            isLongTimeTracking.value ? undefined : realTimeFrequency,
-            isLongTimeTracking.value ? trackingInterval.value : undefined
-        );
+
+        const updateData = {
+            GnssMode: !isLongTimeTracking.value,
+            CellInfosMode: isLongTimeTracking.value,
+            BatteryMode: sendBatteryData.value, // Include battery mode
+            TemperatureMode: sendTemperatureData.value, // Include temperature mode
+            frequenz: isLongTimeTracking.value
+                ? trackingInterval.value * 60 * 60 * 1000 // Long-Time Mode frequency in milliseconds
+                : realTimeFrequency * 1000, // Real-Time Mode frequency in milliseconds
+        };
+
+        console.log('Update Data:', updateData); // Debug the payload
+
+        await api.put(`http://localhost:3500/api/mode/${props.selectedTrackerId}`, updateData);
+
         console.log('Mode updated successfully');
 
         // Emit updated data to parent
@@ -136,18 +170,18 @@ const saveChanges = async () => {
             id: props.selectedTrackerId,
             name: trackerName.value,
             mode: isLongTimeTracking.value ? 'LT' : 'RT',
-            frequency: isLongTimeTracking.value ? trackingInterval.value * 60 * 60 * 1000 : realTimeFrequency * 1000,
+            frequency: updateData.frequenz,
+            BatteryMode: sendBatteryData.value,
+            TemperatureMode: sendTemperatureData.value,
         });
 
         props.closePopup();
     } catch (error) {
         console.error('Failed to save changes:', error);
-        if (error.response) {
-            console.error('Error response data:', error.response.data);
-            console.error('Error response status:', error.response.status);
-        }
     }
 };
+
+
 </script>
 
 
@@ -265,7 +299,7 @@ const saveChanges = async () => {
     border-radius: 6px;
     border: 1px solid #ddd;
     outline: none;
-    background: #ddd;
+    background: #ffffff;
     box-sizing: border-box;
 }
 
@@ -335,7 +369,16 @@ const saveChanges = async () => {
     font-weight: bold;
 }
 
+.popup-body input[type="checkbox"] {
+    accent-color: #00543D;
+    /* Orange color */
+}
 
+/* Dark mode checkbox accent color */
+.dark-mode .popup-body input[type="checkbox"] {
+    accent-color: #E69543;
+    /* Orange color */
+}
 
 .frequency-slider input[type="range"] {
     width: 100%;

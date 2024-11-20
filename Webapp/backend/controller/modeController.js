@@ -3,30 +3,40 @@ const Tracker = require('../models/Tracker');
 const mongoose = require('mongoose');
 // Update a mode configuration by tracker ID
 const updateMode = async (req, res) => {
-    const trackerId = req.params.trackerId;
-    const updateData = {
-        GnssMode: req.body.GnssMode,
-        CellInfosMode: req.body.CellInfosMode,
-        frequenz: req.body.frequenz
-    };
+  const trackerId = req.params.trackerId;
 
-    try {
-        await Mode.updateOne(
-            { tracker: trackerId },
-            { $set: updateData }
-        );
+  // Include BatteryMode and TemperatureMode in the update data
+  const updateData = {
+      GnssMode: req.body.GnssMode,
+      CellInfosMode: req.body.CellInfosMode,
+      frequenz: req.body.frequenz,
+      BatteryMode: req.body.BatteryMode, // New field
+      TemperatureMode: req.body.TemperatureMode // New field
+  };
 
-        // Fetch the updated document
-        const modeConfig = await Mode.findOne({ tracker: trackerId });
-        if (!modeConfig) {
-            return res.status(404).json({ message: "Mode configuration not found for this tracker" });
-        }
+  try {
+      // Update the mode configuration for the specified tracker
+      const result = await Mode.updateOne(
+          { tracker: trackerId },
+          { $set: updateData }
+      );
 
-        res.status(200).json(modeConfig);
-    } catch (error) {
-        console.error("Failed to update mode configuration:", error);
-        res.status(500).json({ message: "Failed to update mode configuration", error });
-    }
+      // Check if a document was updated
+      if (result.nModified === 0) {
+          return res.status(404).json({ message: "Mode configuration not found or no changes made" });
+      }
+
+      // Fetch the updated document
+      const modeConfig = await Mode.findOne({ tracker: trackerId });
+      if (!modeConfig) {
+          return res.status(404).json({ message: "Mode configuration not found for this tracker" });
+      }
+
+      res.status(200).json(modeConfig); // Return the updated mode configuration
+  } catch (error) {
+      console.error("Failed to update mode configuration:", error);
+      res.status(500).json({ message: "Failed to update mode configuration", error });
+  }
 };
 
 // Get a mode configuration by tracker ID
