@@ -9,8 +9,8 @@
 #include <ArduinoJson.h>
 #include <Arduino.h>
 // APN
-// char APN[] = "internet.m2mportal.de";
-char APN[] = "wm";
+char APN[] = "internet.m2mportal.de";
+// char APN[] = "wm";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 
