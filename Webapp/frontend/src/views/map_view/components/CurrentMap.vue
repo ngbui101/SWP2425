@@ -141,7 +141,9 @@
             <i class="fas fa-map-pin"></i>
           </span> Red: {{ modeAccuracy.red }}
           <span :style="{ marginLeft: '50px', color: '#E69543' }">
-            Current accuracy: <strong>{{ selectedMeasurement.accuracy || 'N/A' }}m</strong>
+            Current accuracy: <strong>{{ selectedMeasurement.accuracy ? (Math.round(selectedMeasurement.accuracy * 10) /
+              10 + 'm') : 'N/A' }}</strong>
+
           </span>
         </p>
       </div>
@@ -400,18 +402,33 @@ const updateGeofenceState = () => {
   }
 };
 
-// Update selected tracker measurements
 const updateSelectedTrackerMeasurements = (initialLoad = false) => {
   const tracker = trackers.value.find(t => t._id === selectedTracker.value);
   if (tracker && tracker.measurements.length > 0) {
     selectedTrackerName.value = tracker.name;
-    selectedTrackerMeasurements.value = tracker.measurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    const mostRecentMeasurement = selectedTrackerMeasurements.value[0];
-    selectedTimestamp.value = mostRecentMeasurement._id;
-    updateSelectedMeasurement(initialLoad);
+    // Set `selectedTrackerMeasurements` first
+    selectedTrackerMeasurements.value = tracker.measurements.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    // Use `filteredMeasurements` to find the most recent filtered measurement
+    const mostRecentMeasurement = filteredMeasurements.value[0];
+    if (mostRecentMeasurement) {
+      selectedTimestamp.value = mostRecentMeasurement._id;
+      updateSelectedMeasurement(initialLoad);
+    } else {
+      selectedTimestamp.value = null;
+      selectedMeasurement.value = {}; // Reset if no valid measurement
+    }
+  } else {
+    // Handle case where no measurements exist
+    selectedTrackerMeasurements.value = [];
+    selectedTimestamp.value = null;
+    selectedMeasurement.value = {};
   }
 };
+
 
 // Update selected measurement
 const updateSelectedMeasurement = (initialLoad = false) => {
@@ -694,33 +711,18 @@ const filteredMeasurements = computed(() => {
   const validPositionFilter = user.value.settings.timestampFilters?.validPosition ?? false;
   const modeFilters = user.value.settings.timestampFilters?.mode || [];
 
-  console.log('Applying Filters:');
-  console.log('Mode Filters:', modeFilters); // Should contain 'RT' and/or 'LT'
-  console.log('Valid Position Filter:', validPositionFilter);
-
   return selectedTrackerMeasurements.value.filter((measurement) => {
-    console.log('Checking Measurement:', measurement);
-
-    // Filter by valid position (if enabled)
-    if (validPositionFilter) {
-      if (isNaN(measurement.latitude) || isNaN(measurement.longitude)) {
-        console.log('Filtered out due to invalid position:', measurement);
-        return false;
-      }
-    }
-
-    // Map measurement mode to filter mode
-    const measurementMode = measurement.mode === 'LTE' ? 'LT' : measurement.mode === 'GPS' ? 'RT' : null;
-
-    // Filter by mode
-    if (modeFilters.length > 0 && !modeFilters.includes(measurementMode)) {
-      console.log('Filtered out due to mode:', measurement.mode, 'Mapped Mode:', measurementMode, 'Expected:', modeFilters);
+    // Filter by valid position
+    if (validPositionFilter && (isNaN(measurement.latitude) || isNaN(measurement.longitude))) {
       return false;
     }
 
-    return true;
+    // Filter by mode
+    const measurementMode = measurement.mode === 'LTE' ? 'LT' : measurement.mode === 'GPS' ? 'RT' : null;
+    return modeFilters.length === 0 || modeFilters.includes(measurementMode);
   });
 });
+
 
 
 </script>
