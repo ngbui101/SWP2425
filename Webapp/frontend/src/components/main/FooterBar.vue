@@ -3,18 +3,31 @@
   <div :class="['footer-wrapper', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="footer-basic">
       <footer>
+        <!-- Icons with functionnalities -->
         <div class="social">
-          <a href="#"><i class="icon ion-social-instagram"></i></a>
-          <a href="#"><i class="icon ion-social-snapchat"></i></a>
-          <a href="#"><i class="icon ion-social-twitter"></i></a>
-          <a href="#"><i class="icon ion-social-facebook"></i></a>
+          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+            <i class="icon ion-social-instagram"></i>
+          </a>
+          <a href="https://www.snapchat.com" target="_blank" rel="noopener noreferrer">
+            <i class="icon ion-social-snapchat"></i>
+          </a>
+          <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
+            <i class="icon ion-social-twitter"></i>
+          </a>
+          <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+            <i class="icon ion-social-facebook"></i>
+          </a>
         </div>
         <ul class="list-inline">
-          <li class="list-inline-item"><a href="#">Home</a></li>
+          <li class="list-inline-item">
+            <router-link to="/contact">Contact us</router-link> 
+          </li>
           <li class="list-inline-item"><a href="#">Services</a></li>
           <li class="list-inline-item"><a href="#">About</a></li>
           <li class="list-inline-item"><a href="#">Terms</a></li>
-          <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+          <li class="list-inline-item">
+            <router-link to="/privacy">Privacy Policy</router-link>
+          </li>
         </ul>
         <p class="copyright">BO-Tracker © 2024</p>
       </footer>

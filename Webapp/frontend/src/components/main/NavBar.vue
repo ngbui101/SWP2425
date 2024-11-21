@@ -4,7 +4,8 @@
       <!-- Centered Navigation Items -->
       <div class="nav-center">
         <ul class="nav-list">
-          <li class="nav-item">
+
+        <li class="nav-item">
             <a href="#" @click.prevent="goToHome">Map</a>
           </li>
           <li class="nav-item">
@@ -54,6 +55,7 @@ const user = computed(() => authStore.userDetail);
 onMounted(async () => {
   await authStore.getUser();
 });
+
 
 // Navigation functions
 const goToHome = () => {
@@ -313,4 +315,6 @@ const logout = async () => {
 
 
 }
+
+
 </style>
