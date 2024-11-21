@@ -1,40 +1,39 @@
 <template>
   <nav :class="['navbar', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="nav-container">
-      <!-- Centered Navigation Items -->
+      <!-- Zentrierte Navigationselemente -->
       <div class="nav-center">
         <ul class="nav-list">
 
-        <li class="nav-item">
-            <a href="#" @click.prevent="goToHome">Map</a>
+          <li class="nav-item">
+            <a href="#" @click.prevent="goToHome">{{ $t('Nav-Map') }}</a>
           </li>
           <li class="nav-item">
-            <a href="#" @click.prevent="goToRoutes">Route</a>
+            <a href="#" @click.prevent="goToRoutes">{{ $t('Nav-Route') }}</a>
           </li>
           <li class="nav-item">
-            <a ref="tour2" href="#" @click.prevent="goToTrackers">Tracker</a>
+            <a ref="tour2" href="#" @click.prevent="goToTrackers">{{ $t('Nav-Tracker') }}</a>
           </li>
 
           <li class="nav-item">
-            <RouterLink to="account">Account</RouterLink>
+            <RouterLink to="account">{{ $t('Nav-Account') }}</RouterLink>
           </li>
 
-          <!-- Help Dropdown -->
+          <!-- Hilfe Dropdown -->
           <li class="nav-item help-dropdown">
-            <span class="help-link">Help</span>
+            <span class="help-link">{{ $t('Nav-Help') }}</span>
             <ul class="dropdown-menu">
-              <li @click.prevent="startTour">Tour</li>
-              <li @click.prevent="contactSupport">Contact</li>
+              <li @click.prevent="startTour">{{ $t('Nav-Tour') }}</li>
+              <li @click.prevent="contactSupport">{{ $t('Nav-Contact') }}</li>
             </ul>
           </li>
         </ul>
       </div>
 
-      <!-- Logout Button -->
+      <!-- Abmelden-Button -->
       <div class="nav-right">
         <button class="logout-button" @click="logout">
-          <span class="logout-text">Logout</span>
-
+          <span class="logout-text">{{ $t('Nav-Logout') }}</span>
         </button>
       </div>
     </div>

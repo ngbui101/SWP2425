@@ -10,13 +10,12 @@
                     :class="{ 'slide-left': currentView === 'card', 'slide-right': currentView === 'list' }"></div>
 
                 <!-- Card View Toggle (Left) -->
-                <label @click="setView('card')" :class="{ active: currentView === 'card' }">
-                    Card View
+                <label @click="setView('card')" :class="{ active: currentView === 'card' }">{{ $t('TrackerView-CardView') }}
                 </label>
 
-                <!-- List View Toggle (Right) -->
-                <label @click="setView('list')" :class="{ active: currentView === 'list' }">
-                    List View
+            <!-- Listenansicht -->
+                <label @click="setView('list')" :class="{ active: currentView === 'list' }">{{ $t('TrackerView-ListView') }}
+                    
                 </label>
             </div>
         </div>
