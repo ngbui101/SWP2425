@@ -19,7 +19,6 @@
           </a>
         </div>
         <ul class="list-inline">
-                  <!-- Contact formular -->
           <li class="list-inline-item">
             <router-link to="/contact">Contact us</router-link> 
           </li>
