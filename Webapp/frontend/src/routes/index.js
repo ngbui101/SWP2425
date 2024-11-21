@@ -10,7 +10,7 @@ const TrackerView = () => import('../views/tracker_view/TrackerView.vue'); // Ne
 const ForgotPasswordView = () => import('../views/auth_view/ForgotPasswordView.vue');
 const RouteView = () => import('../views/route_view/RouteView.vue');
 const ContactFormView = () => import('../components/main/ContactForm.vue');
-const PrivacyPolicyView = () => import('../views/PrivacyPolicy.vue'); //neue privacy Policy Seite
+const PrivacyPolicyView = () => import('../views/PrivacyPolicy.vue'); // Neue privacy Policy Seite
 
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 

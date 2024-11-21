@@ -52,7 +52,7 @@
         <h2>6. Contact Us</h2>
         <p>
           If you have questions about this Privacy Policy, please contact us at:
-          <strong>support@bo-tracker.com</strong>
+          <strong>support@bo-tracker.de</strong>
         </p>
       </section>
   
@@ -61,7 +61,8 @@
   </template>
   
   <script setup>
-  // Add logic here if needed
+
+//just in case 
   </script>
   
   <style scoped>

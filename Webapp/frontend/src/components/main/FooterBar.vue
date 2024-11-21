@@ -19,8 +19,9 @@
           </a>
         </div>
         <ul class="list-inline">
+                  <!-- Contact formular -->
           <li class="list-inline-item">
-            <router-link to="/contact">Contact us</router-link>
+            <router-link to="/contact">Contact us</router-link> 
           </li>
           <li class="list-inline-item"><a href="#">Services</a></li>
           <li class="list-inline-item"><a href="#">About</a></li>
