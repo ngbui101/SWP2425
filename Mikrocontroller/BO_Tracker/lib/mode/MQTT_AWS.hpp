@@ -8,12 +8,12 @@
 #include <ArduinoJson.h>
 #include <Arduino.h>
 // APN
-char APN[] = "internet.m2mportal.de";
-// char APN[] = "wm";
+// char APN[] = "internet.m2mportal.de";
+char APN[] = "wm";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 Cell* cells[6] = { nullptr };
-char RAT[] = "gsm";
+char RAT[] = "lte";
 // MQTT
 char MQTTServer[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
 unsigned int MQTTPort = 8883;
