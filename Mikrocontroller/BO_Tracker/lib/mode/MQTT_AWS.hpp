@@ -9,7 +9,8 @@
 #include <Arduino.h>
 // APN
 // char APN[] = "internet.m2mportal.de";
-char APN[] = "wm";
+// char APN[] = "wm";
+char APN[] = "iot.1nce.net";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 Cell* cells[6] = { nullptr };

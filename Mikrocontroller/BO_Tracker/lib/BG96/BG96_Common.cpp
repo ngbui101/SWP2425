@@ -1126,14 +1126,14 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
         const char *operators[] = {"26201", "26202", "26203"};
         const int numOperators = sizeof(operators) / sizeof(operators[0]);
 
-        for (int i = 2; i < numOperators + 1 && cellCount < max_cells; i++)
+        for (int i = 0; i < numOperators + 1 && cellCount < max_cells; i++)
         {
             // Configure operator network
             unsigned int mode = 1;   // Manual mode
-            unsigned int resetmode = 0;
+            unsigned int resetmode = 4;
             unsigned int format = 2; // Numeric format
-            if (i < numOperators+2)
-                DevOperatorNetwork(mode, format, operators[i%2], act, WRITE_MODE);
+            if (i < numOperators)
+                DevOperatorNetwork(mode, format, operators[i], act, WRITE_MODE);
             else
             {   
                 SetDevFunctionality(MINIMUM_FUNCTIONALITY);
