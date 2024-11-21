@@ -28,7 +28,7 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
     try {
         // Hole Modusinformationen
         const modeDoc = await modeCollection.findOne({ tracker: new ObjectId(String(trackerId)) });
-        
+
         const modeData = modeDoc ? {
             GnssMode: modeDoc.GnssMode,
             CellInfosMode: modeDoc.CellInfosMode,
@@ -70,37 +70,29 @@ function convertTimestamp(timestamp) {
     }
 }
 
-async function getCellLocationAndEstimatedPositionFromUnwiredLabs(cellInfos) {
+async function getCellLocationAndEstimatedPositionFromUnwiredLabs(cells) {
     const apiUrl = "https://eu1.unwiredlabs.com/v2/process";
     const token = "pk.11e2626f93a4d4ee0bb5ab37ee6b25a4";
 
-    // Extrahieren der Zellinformationen
-    const cellData = cellInfos.split("\n").filter(line => line.trim() !== "").map(cellInfoLine => {
-        const parts = cellInfoLine.split(",");
-        return {
-            radio: "lte",
-            mnc: parseInt(parts[5].trim()),         // Mobile Network Code
-            lac: parseInt(parts[12], 16),          // Location Area Code (HEX -> DEC)
-            cid: parseInt(parts[6], 16),           // Cell ID (HEX -> DEC)
-            signal: parseInt(parts[13]),           // Signalstärke
-            psc: parseInt(parts[8])                // Physical Cell ID
-        };
-    });
-
-    if (cellData.length === 0) {
+    if (!Array.isArray(cells) || cells.length === 0) {
         console.error("No valid cell information provided.");
         return null;
     }
 
-    // MCC aus der ersten Zelle extrahieren
-    const mcc = parseInt(cellInfos.split(",")[4].trim());
-
+    // Ensure that each cell has the required fields
+    const requiredFields = ['radio', 'mcc', 'mnc', 'lac', 'cid'];
+    for (const cell of cells) {
+        for (const field of requiredFields) {
+            if (!(field in cell)) {
+                console.error(`Cell is missing required field '${field}':`, cell);
+                return null;
+            }
+        }
+    }
     // Aufbau des JSON-Payloads
     const payload = {
         token,
-        radio: "lte",
-        mcc,
-        cells: cellData.slice(0, 6), // Beschränken auf maximal 6 Zellen
+        cells: cells.slice(0, 6),
         address: 1
     };
 
@@ -122,7 +114,7 @@ async function getCellLocationAndEstimatedPositionFromUnwiredLabs(cellInfos) {
             return {
                 latitude: responseData.lat,
                 longitude: responseData.lon,
-                accuracy: responseData.accuracy/5
+                accuracy: responseData.accuracy / 5
             };
         } else {
             console.error("Unwired Labs API returned an error:", responseData);
@@ -153,7 +145,7 @@ export const handler = async (event) => {
     const data = {
         IMEI: event.IMEI,
         Timestamp: convertedTimestamp,
-        CellInfos: event.CellInfos,
+        Cells: event.cells,
         Temperature: event.Temperature,
         Humidity: event.Humidity,
         BatteryPercentage: event.BatteryPercentage,
@@ -161,8 +153,8 @@ export const handler = async (event) => {
         GSA: event.GSA,
         GSV: event.GSV,
         Accuracy: event.Accuracy,
-        RequestMode:event.RequestMode,
-        BatteryLow:event.BatteryLow,
+        RequestMode: event.RequestMode,
+        BatteryLow: event.BatteryLow,
         TimeToGetFirstFix: event.TimeToGetFirstFix
     };
 
@@ -202,23 +194,31 @@ export const handler = async (event) => {
             });
         }
 
-        if (data.CellInfos) {
-            if (data.CellInfos) {
-                const cellLocation = await getCellLocationAndEstimatedPositionFromUnwiredLabs(data.CellInfos);
-                if (cellLocation) {
-                    documentsToInsert.push({
-                        imei: data.IMEI,
-                        mode: "LTE",
-                        latitude: cellLocation.latitude,
-                        longitude: cellLocation.longitude,
-                        accuracy: cellLocation.accuracy,
-                        tracker: new ObjectId(trackerId),
-                        createdAt: data.Timestamp,
-                        updatedAt: data.Timestamp
-                    });
-                }
+        if (data.Cells && Array.isArray(data.Cells) && data.Cells.length > 0) {
+            const location = await getCellLocationAndEstimatedPositionFromUnwiredLabs(data.Cells);
+            if (location) {
+                // Das 'radio'-Feld aus der ersten Zelle extrahieren
+                const radioType = data.Cells[0].radio || "unknown";
+                
+                const modeMap = {
+                    "lte": "LTE",
+                    "gsm": "GSM",
+                    "nbiot":"NBIOT"
+                    
+                };
+                const mode = modeMap[radioType.toLowerCase()] || radioType.toUpperCase();
+        
+                documentsToInsert.push({
+                    imei: data.IMEI,
+                    mode: mode,
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    accuracy: location.accuracy,
+                    tracker: new ObjectId(trackerId),
+                    createdAt: data.Timestamp,
+                    updatedAt: data.Timestamp
+                });
             }
-            
         }
 
         if (data.Temperature !== undefined || data.Humidity !== undefined) {
@@ -243,10 +243,10 @@ export const handler = async (event) => {
                 updatedAt: data.Timestamp
             });
         }
-        
+
         if (data.RequestMode === true) {
             const { modeData, geofenceData } = await getModeAndGeofencesFromMongo(trackerId, database);
-        
+
             if ((modeData && Object.keys(modeData).length > 0) || geofenceData.length > 0) {
                 const payload = { ...modeData, geofences: geofenceData };
                 await publishToAwsIoT(data.IMEI, payload);
@@ -254,14 +254,14 @@ export const handler = async (event) => {
                 console.log("No mode or geofence data available for publishing.");
             }
         }
-        
+
         if (documentsToInsert.length > 0) {
             await collection.insertMany(documentsToInsert);
             console.log(`${documentsToInsert.length} document(s) inserted.`);
         } else {
             console.log("No valid measurement data found; no documents were inserted.");
         }
-        
+
         return {
             statusCode: 200,
             body: JSON.stringify('Data successfully processed and inserted')

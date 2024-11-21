@@ -7,7 +7,7 @@
 class Cell
 {
 protected:
-    char rat[4];    // Mobilfunktechnologie ("GSM", "LTE", etc.)
+    char rat[8];    // Mobilfunktechnologie ("GSM", "LTE", etc.)
     int mcc;        // Mobile Country Code
     int mnc;        // Mobile Network Code
     int lac;        // Location Area Code
@@ -26,21 +26,30 @@ public:
         cellid = cellid_;
         signal = signal_;
     }
-
+    virtual ~Cell()
+    {
+    }
     // Methode, die alle Attribute als JSON-Objekt ausgibt
     virtual void toJson(JsonObject &json) const
     {
-        json["radio"] = rat;
+        if (strcmp(rat, "cat-m") == 0){
+            json["radio"] = "lte";
+        }else if( strcmp(rat, "nb-iot") == 0){
+            json["radio"] = "nbiot";
+        }else
+        {
+            json["radio"] = "gsm";
+        }
         json["mcc"] = mcc;
         json["mnc"] = mnc;
         json["lac"] = lac;
-        json["cellid"] = cellid;
+        json["cid"] = cellid;
         json["signal"] = signal;
     }
-    long getCellID() const
-    {
-        return cellid;
-    }
+    const char* getRat() const { return rat; }
+    int getMnc() const { return mnc; }
+    int getLac() const { return lac; }
+    long getCellID() const { return cellid; }
+    int getSignal() const { return signal; }
 };
-
-#endif // CELL_H
+#endif 

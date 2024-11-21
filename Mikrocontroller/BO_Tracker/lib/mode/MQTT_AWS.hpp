@@ -1,4 +1,3 @@
-
 #ifndef __MQTT_AWS_H
 #define __MQTT_AWS_H
 #define DSerial SerialUSB
@@ -13,7 +12,8 @@ char APN[] = "internet.m2mportal.de";
 // char APN[] = "wm";
 char LOGIN[] = "";
 char PASSWORD[] = "";
-
+Cell* cells[6] = { nullptr };
+char RAT[] = "gsm";
 // MQTT
 char MQTTServer[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
 unsigned int MQTTPort = 8883;
@@ -126,7 +126,7 @@ bool InitModemMQTT()
   {
     _AWS.SetDevOutputformat(true);
     _AWS.SetDevCommandEcho(false);
-    _AWS.ConfigNetworks();
+    // _AWS.ConfigNetworks();
   }
   // IMEI
   char imei_tmp[64];
@@ -144,9 +144,9 @@ bool InitModemMQTT()
 
   // SSL Networking
   _AWS.DeleteCertificate("all");
-  _AWS.ScanLTECells(cell_infos);
+
   char apn_error[64];
-  while (!_AWS.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
+  while (!_AWS.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error,RAT,cells))
   {
     DSerial.println(apn_error);
   }

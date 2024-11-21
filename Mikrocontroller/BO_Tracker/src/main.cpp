@@ -11,7 +11,7 @@ JsonDocument docInput;
 JsonDocument docOutput;
 
 // Cell und Batterie
-float batterypercentage; 
+float batterypercentage;
 
 // Zeitintervall für das tägliche Update (24 Stunden in Millisekunden)
 const unsigned long UPDATE_INTERVAL = 86400000UL;
@@ -71,7 +71,7 @@ void loop()
     DailyUpdates();
     return;
   }
-  
+
   // Daten nur in festgelegten Intervallen veröffentlichen
   if (millis() - pub_time < trackerModes.frequenz)
     return;
@@ -108,9 +108,16 @@ void loop()
   // Zellinformationen erfassen
   if (trackerModes.CellInfosMode)
   {
-    // _AWS.ScanLTECells(cell_infos);
-    docInput["CellInfos"] = cell_infos;
-    // InitModemMQTT();
+    JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+     for (Cell*& cell : cells)
+    {
+      if (cell != nullptr)
+      {
+        // JSON-Objekt für jede Zelle erstellen
+        JsonObject cellObj = cellsArray.add<JsonObject>();
+        cell->toJson(cellObj);
+      }
+    }
   }
 
   // Request-Modus setzen
