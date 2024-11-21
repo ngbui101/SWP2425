@@ -108,7 +108,7 @@ class _BG96_Common : public _BG96_Serial
 
     time_t parseTimestamp(const char *timestamp);
 
-    bool ReportCellInformation(char *celltype, char* infos);
+    bool ReportCellInformation(const char* celltype, char *infos);
 
     bool LTENetworkCategoryConfig(int mode);
 
@@ -116,9 +116,14 @@ class _BG96_Common : public _BG96_Serial
 
     bool ConfigNetworks();
 
+    bool ResetFunctionality();
+
     bool ServiceDomainConfig(int service);
 
     bool NetworkRegistrationCodeConfig(int n);
+
+    bool ScanLTECells(char * cellsinformations);
+
   private:
     char currenttime[64];
 };

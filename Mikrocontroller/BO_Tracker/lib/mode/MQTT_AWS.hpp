@@ -23,6 +23,7 @@ unsigned long pub_time = 0;
 unsigned int MQTTIndex = 0;
 unsigned int PDPIndex = 1;
 unsigned int SSLIndex = 2;
+char cell_infos[600];  
 
 ///
 char ModemIMEI[20];
@@ -126,9 +127,6 @@ bool InitModemMQTT()
     _AWS.SetDevCommandEcho(false);
     _AWS.ConfigNetworks();
   }
-  _AWS.SetDevOutputformat(true);
-  // _AWS.SetDevCommandEcho(false);
-  // _AWS.SetDevOutputformat(true);
   // IMEI
   char imei_tmp[64];
 
@@ -145,7 +143,7 @@ bool InitModemMQTT()
 
   // SSL Networking
   _AWS.DeleteCertificate("all");
-
+  _AWS.ScanLTECells(cell_infos);
   char apn_error[64];
   while (!_AWS.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
   {

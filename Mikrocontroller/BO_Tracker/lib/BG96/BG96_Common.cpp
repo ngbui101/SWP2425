@@ -263,7 +263,7 @@ Cmd_Response_t _BG96_Common::SetDevFunctionality(Functionality_t mode)
         strcat(cmd, "=1"); // Volle Funktionalität
         break;
     case RESET_FUNCTIONALITY:
-        strcat(cmd, "=1,1"); // Restart Funktionalität
+        strcat(cmd, "=1,1");
         break;
     case DISABLE_RF:
         strcat(cmd, "=4"); // RF deaktivieren
@@ -826,7 +826,7 @@ time_t _BG96_Common::parseTimestamp(const char *timestamp)
     return mktime(&t);
 }
 
-bool _BG96_Common::ReportCellInformation(char *celltype, char *infos)
+bool _BG96_Common::ReportCellInformation(const char *celltype, char *infos)
 {
     char cmd[32];
     strcpy(cmd, QUECCELL_ENGINEERING_MODE);
@@ -853,22 +853,29 @@ bool _BG96_Common::ReportCellInformation(char *celltype, char *infos)
             return true;
         }
     }
+    return false;
+}
+bool _BG96_Common::ResetFunctionality()
+{
+    if (!SetDevFunctionality(RESET_FUNCTIONALITY))
+        return false;
+    while (readResponseAndSearch(RESPONSE_READY, 3) != SUCCESS_RESPONSE)
+    {
+        Serial.println("wait");
+    }; // Restart Funktionalität
+    SetDevOutputformat(true);
+    delay(300);
     return true;
 }
-
 bool _BG96_Common::ConfigNetworks()
 {
     SetDevFunctionality(MINIMUM_FUNCTIONALITY);
     LTENetworkCategoryConfig(2);       // LTE Cat M1 and Cat NB1
-    ScanmodeConfig(3);                 // LTE
+    ScanmodeConfig(0);                 // LTE*GSM
     ServiceDomainConfig(1);            // Nur Datenumtausch
     BandConfig("F", "80084", "80084"); // LTE-M + NBIoT on B3/B8/B20 only
     SearchingConfig("00");             // LTE-M,NBIoT,LTE
-    if (!(SetDevFunctionality(RESET_FUNCTIONALITY)))
-        return false;
-    while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
-        ;
-    // ResetModule();
+    ResetFunctionality();
     return true;
 }
 
@@ -882,4 +889,86 @@ bool _BG96_Common::NetworkRegistrationCodeConfig(int n)
         return true;
     }
     return false;
+}
+
+bool _BG96_Common::ScanLTECells(char *cellsinformations)
+{
+    // Startzeit für Timeout
+    unsigned long start_time = millis();
+
+    // Schritt 1: Scanmodus auf LTE-only setzen
+    if (!ScanmodeConfig(3)) // Nur LTE
+    {
+        return false; // Abbruch, falls Scanmodus nicht gesetzt werden konnte
+    }
+
+    // Funktionalität zurücksetzen
+    ResetFunctionality();
+
+    // Liste der Operatoren
+    const char *operators[] = {"26201", "26202", "26203"};
+    char tempInfo[128];
+    char tempInfoAlter[128];
+
+    // Ergebnisstring leeren
+    cellsinformations[0] = '\0';
+
+    // Operatoren durchlaufen
+    for (int i = 2; i >= 0; i--) // Schleife für Array-Index 0 bis 2
+    {
+        unsigned int mode = 1;
+        unsigned int format = 2;
+        char oper[8];
+        strcpy(oper, operators[i]);
+        Net_Type_t act = (Net_Type_t)8;
+
+        // Operatornetzwerk konfigurieren
+        DevOperatorNetwork(mode, format, oper, act, WRITE_MODE);
+
+        // Warten, bis das Gerät registriert ist
+        Net_Status_t i_status = NOT_REGISTERED;
+        start_time = millis();
+        while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+        {
+            i_status = DevNetRegistrationStatus();
+            if (millis() - start_time >= 90 * 1000UL) // Timeout nach 90 Sekunden
+            {
+                ResetModule();
+                return false; // Abbruch, wenn keine Registrierung erfolgt
+            }
+            delay(3000); // Warte 3 Sekunden
+        }
+
+        // Erste Serving Cell-Informationen abrufen
+        if (ReportCellInformation("servingcell", tempInfo) && !strstr(tempInfo, "\"SEARCH\""))
+        {
+            strcat(cellsinformations, tempInfo);
+            strcat(cellsinformations, "\n");
+        }
+
+        // Funktionalität erneut zurücksetzen
+        ScanmodeConfig(3);
+        ResetFunctionality();
+        i_status = NOT_REGISTERED;
+        while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+        {
+            i_status = DevNetRegistrationStatus();
+            if (millis() - start_time >= 90 * 1000UL) // Timeout nach 90 Sekunden
+            {
+                ResetModule();
+                return false; // Abbruch, wenn keine Registrierung erfolgt
+            }
+            delay(3000); // Warte 3 Sekunden
+        }
+        // Zweite mögliche Zelle abrufen
+        if (ReportCellInformation("servingcell", tempInfoAlter) &&
+            strcmp(tempInfo, tempInfoAlter) != 0 && 
+            !strstr(tempInfoAlter, "\"SEARCH\""))
+        {
+            strcat(cellsinformations, tempInfoAlter);
+            strcat(cellsinformations, "\n");
+        }
+    }
+
+    return true;
 }

@@ -11,7 +11,6 @@ JsonDocument docInput;
 JsonDocument docOutput;
 
 // Cell und Batterie
-char cell_infos[256];  
 float batterypercentage; 
 
 // Zeitintervall für das tägliche Update (24 Stunden in Millisekunden)
@@ -109,8 +108,9 @@ void loop()
   // Zellinformationen erfassen
   if (trackerModes.CellInfosMode)
   {
-    _AWS.ReportCellInformation(const_cast<char *>("servingcell"), cell_infos);
+    // _AWS.ScanLTECells(cell_infos);
     docInput["CellInfos"] = cell_infos;
+    // InitModemMQTT();
   }
 
   // Request-Modus setzen

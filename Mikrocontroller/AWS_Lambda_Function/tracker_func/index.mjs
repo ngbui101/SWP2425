@@ -70,110 +70,70 @@ function convertTimestamp(timestamp) {
     }
 }
 
-function convertBandwidth(bandwidthCode) {
-    switch (bandwidthCode) {
-        case '0': return 1.4;
-        case '1': return 3;
-        case '2': return 5;
-        case '3': return 10;
-        case '4': return 15;
-        case '5': return 20;
-        default: return null;  // Gibt `null` zurück, wenn der Code ungültig ist
-    }
-}
+async function getCellLocationAndEstimatedPositionFromUnwiredLabs(cellInfos) {
+    const apiUrl = "https://eu1.unwiredlabs.com/v2/process";
+    const token = "pk.11e2626f93a4d4ee0bb5ab37ee6b25a4";
 
-function calculateDistanceFromRSRP(rsrp, frequencyMHz) {
-    if (isNaN(rsrp) || isNaN(frequencyMHz) || frequencyMHz <= 0) {
-        console.error("Invalid RSRP or frequency provided for distance calculation.");
-        return null;
-    }
-    const frequencyHz = frequencyMHz * 1e6;
-    const speedOfLight = 3e8;  
-
-    // Referenzverlust L0 bei einer Distanz von 1 Meter
-    const L0 = 20 * Math.log10((4 * Math.PI * frequencyHz) / speedOfLight);
-
-    // Typischer Pfadverlustexponent für städtische Gebiete
-    const pathLossExponent = 3.5;
-
-    // Berechnung der Distanz basierend auf RSRP
-    const distance = Math.pow(10, (rsrp - L0) / (10 * pathLossExponent));
-    console.log("Distanz:", distance);
-    return distance > 0 ? distance : null;  // Sicherheitsüberprüfung für realistische Werte
-}
-
-
-
-
-function getRandomOffset(lat, lon, distance) {
-    if (isNaN(distance) || distance <= 0) {
-        console.error("Invalid distance for random offset calculation.");
-        return { latitude: lat, longitude: lon };
-    }
-
-    const earthRadius = 6371000; // Erdradius in Metern
-
-    const angle = Math.random() * 2 * Math.PI;
-    const deltaLat = (distance * Math.cos(angle)) / earthRadius;
-    const deltaLon = (distance * Math.sin(angle)) / (earthRadius * Math.cos((lat * Math.PI) / 180));
-
-    const newLat = lat + (deltaLat * 180) / Math.PI;
-    const newLon = lon + (deltaLon * 180) / Math.PI;
-
-    return {
-        latitude: isNaN(newLat) ? lat : newLat,
-        longitude: isNaN(newLon) ? lon : newLon
-    };
-}
-
-
-async function getCellLocationAndEstimatedPosition(cellInfo) {
-    const cellInfoParts = cellInfo.split(",");
-    const mcc = cellInfoParts[4];
-    const mnc = cellInfoParts[5];
-    const cellid = parseInt(cellInfoParts[6], 16);
-    const lac = parseInt(cellInfoParts[12], 16);
-    const rsrp = parseFloat(cellInfoParts[13]);
-    const frequencyMHz = parseFloat(cellInfoParts[8]);
-
-    // Debug-Ausgabe der Eingabewerte
-    console.log("Parsed Cell Information:", {
-        mcc, mnc, cellid, lac, rsrp, frequencyMHz
+    // Extrahieren der Zellinformationen
+    const cellData = cellInfos.split("\n").filter(line => line.trim() !== "").map(cellInfoLine => {
+        const parts = cellInfoLine.split(",");
+        return {
+            radio: "lte",
+            mnc: parseInt(parts[5].trim()),         // Mobile Network Code
+            lac: parseInt(parts[12], 16),          // Location Area Code (HEX -> DEC)
+            cid: parseInt(parts[6], 16),           // Cell ID (HEX -> DEC)
+            signal: parseInt(parts[13]),           // Signalstärke
+            psc: parseInt(parts[8])                // Physical Cell ID
+        };
     });
 
-    const apiKey = process.env.OPENCELLID_API_KEY;
-    const url = `https://opencellid.org/cell/get?key=${apiKey}&mcc=${mcc}&mnc=${mnc}&lac=${lac}&cellid=${cellid}&format=json`;
+    if (cellData.length === 0) {
+        console.error("No valid cell information provided.");
+        return null;
+    }
 
+    // MCC aus der ersten Zelle extrahieren
+    const mcc = parseInt(cellInfos.split(",")[4].trim());
+
+    // Aufbau des JSON-Payloads
+    const payload = {
+        token,
+        radio: "lte",
+        mcc,
+        cells: cellData.slice(0, 6), // Beschränken auf maximal 6 Zellen
+        address: 1
+    };
+
+    // POST-Anfrage an die API
     try {
-        const response = await fetch(url);
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
         if (!response.ok) {
-            throw new Error(`Failed to fetch location data: ${response.statusText}`);
+            throw new Error(`API error: ${response.statusText}`);
         }
-        const data = await response.json();
 
-        console.log("Fetched Cell Location Data:", data); // Debug-Ausgabe der Zellstandortdaten
-
-        const distance = calculateDistanceFromRSRP(rsrp, frequencyMHz);
-        if (distance === null) {
-            console.error("Unable to calculate distance, setting default accuracy.");
+        const responseData = await response.json();
+        if (responseData.status === "ok") {
+            console.log("Location data from Unwired Labs API:", responseData);
             return {
-                latitude: data.lat,
-                longitude: data.lon,
-                accuracy: 1000 // Setze eine Standard-Genauigkeit in Metern
+                latitude: responseData.lat,
+                longitude: responseData.lon,
+                accuracy: responseData.accuracy/5
             };
+        } else {
+            console.error("Unwired Labs API returned an error:", responseData);
+            return null;
         }
-
-        const estimatedPosition = getRandomOffset(data.lat, data.lon, distance);
-        return {
-            latitude: estimatedPosition.latitude,
-            longitude: estimatedPosition.longitude,
-            accuracy: distance * 2
-        };
     } catch (error) {
-        console.error("Error fetching cell location:", error);
+        console.error("Error calling Unwired Labs API:", error);
         return null;
     }
 }
+
 
 
 
@@ -243,19 +203,22 @@ export const handler = async (event) => {
         }
 
         if (data.CellInfos) {
-            const cellLocation = await getCellLocationAndEstimatedPosition(data.CellInfos);
-            if (cellLocation) {
-                documentsToInsert.push({
-                    imei: data.IMEI,
-                    mode: "LTE",
-                    latitude: cellLocation.latitude,
-                    longitude: cellLocation.longitude,
-                    accuracy: cellLocation.accuracy,
-                    tracker: new ObjectId(trackerId),
-                    createdAt: data.Timestamp,
-                    updatedAt: data.Timestamp
-                });
+            if (data.CellInfos) {
+                const cellLocation = await getCellLocationAndEstimatedPositionFromUnwiredLabs(data.CellInfos);
+                if (cellLocation) {
+                    documentsToInsert.push({
+                        imei: data.IMEI,
+                        mode: "LTE",
+                        latitude: cellLocation.latitude,
+                        longitude: cellLocation.longitude,
+                        accuracy: cellLocation.accuracy,
+                        tracker: new ObjectId(trackerId),
+                        createdAt: data.Timestamp,
+                        updatedAt: data.Timestamp
+                    });
+                }
             }
+            
         }
 
         if (data.Temperature !== undefined || data.Humidity !== undefined) {
