@@ -15,18 +15,18 @@
             <!-- Start/Stop and Save Route controls -->
             <div class="route-controls">
                 <button v-if="!isRouteActive" @click="startRoute" class="start-route-button">
-                    Start Route
+                    {{ $t('NewRoute-StartRoute') }}
                 </button>
 
                 <div v-if="isRouteActive" class="timer-container">
                     <p>{{ formattedTime }}</p>
                     <button @click="stopRoute" class="stop-route-button">
-                        Stop Route
+                        {{ $t('NewRoute-StopRoute') }}
                     </button>
                 </div>
 
                 <button v-if="showSaveButton" @click="saveRoute" class="save-route-button">
-                    Save Route
+                    {{ $t('NewRoute-SaveRoute') }}
                 </button>
             </div>
 

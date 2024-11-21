@@ -20,13 +20,13 @@
         </div>
         <ul class="list-inline">
           <li class="list-inline-item">
-            <router-link to="/contact">Contact us</router-link> 
+            <router-link to="/contact">{{ $t('FOOTER-contact_us') }}</router-link> 
           </li>
-          <li class="list-inline-item"><a href="#">Services</a></li>
-          <li class="list-inline-item"><a href="#">About</a></li>
-          <li class="list-inline-item"><a href="#">Terms</a></li>
+          <li class="list-inline-item"><a href="#">{{ $t('FOOTER-services') }}</a></li>
+          <li class="list-inline-item"><a href="#">{{ $t('FOOTER-about') }}</a></li>
+          <li class="list-inline-item"><a href="#">{{ $t('FOOTER-terms') }}</a></li>
           <li class="list-inline-item">
-            <router-link to="/privacy">Privacy Policy</router-link>
+            <router-link to="/privacy">{{ $t('FOOTER-privacy_policy') }}</router-link>
           </li>
         </ul>
         <p class="copyright">BO-Tracker © 2024</p>

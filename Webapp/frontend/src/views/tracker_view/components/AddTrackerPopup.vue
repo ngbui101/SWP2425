@@ -2,7 +2,7 @@
     <div class="popup-overlay" @click.self="closePopup">
         <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
             <div class="popup-header">
-                <h2>Add New Tracker</h2>
+                <h2>{{ $t('AddTrackerPopup-AddNewTracker') }}</h2>
                 <button class="close-btn" @click="closePopup">✖</button>
             </div>
 
@@ -30,7 +30,7 @@
             </div>
 
             <div class="popup-footer">
-                <button class="popup-save-btn" @click="saveChanges">Save</button>
+                <button class="popup-save-btn" @click="saveChanges">{{ $t('AddTrackerPopup-Save') }}</button>
             </div>
         </div>
     </div>

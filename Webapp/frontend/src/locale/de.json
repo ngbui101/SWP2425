@@ -48,7 +48,51 @@
     "RESETVIEW-zuruecksetzen": "Zurücksetzen",
     "RESETVIEW-benötigen_sie_hilfe": "Benötigen Sie Hilfe?",
     "RESETVIEW-support": "Support",
-    "RESETVIEW-back_to": "Zurück zum"
+    "RESETVIEW-back_to": "Zurück zum",
+    "FOOTER-contact_us": "Kontakt",
+    "FOOTER-services": "Dienstleistungen",
+    "FOOTER-about": "Über uns",
+    "FOOTER-terms": "Nutzungsbedingungen",
+    "FOOTER-privacy_policy": "Datenschutzrichtlinie",
+    "Nav-Map": "Karte",
+    "Nav-Route": "Route",
+    "Nav-Tracker": "Tracker",
+    "Nav-Account": "Konto",
+    "Nav-Help": "Hilfe",
+    "Nav-Tour": "Tour",
+    "Nav-Contact": "Kontakt",
+    "Nav-Logout": "Abmelden",
+    "TrackerView-CardView": "Kartenansicht",
+    "TrackerView-ListView": "Listenansicht",
+    "AddTrackerPopup-AddNewTracker": "Neuen Tracker hinzufügen",
+    "AddTrackerPopup-Save": "Speichern",
+    "TrackerListComponent-AddTracker": "Tracker hinzufügen",
+    "TrackerCardComponent-AddTracker": "Tracker hinzufügen",
+    "TrackersettingsPopup-EditTrackerSettings": "Tracker-Einstellungen bearbeiten",
+    "TrackersettingsPopup-TrackerName": "Tracker-Name",
+    "TrackersettingsPopup-TrackingMode": "Tracking-Modus",
+    "TrackersettingsPopup-RealTimeTracking": "Echtzeit-Tracking",
+    "TrackersettingsPopup-LongTimeTracking": "Langzeit-Tracking",
+    "TrackersettingsPopup-SendBatteryData": "Batteriedaten senden",
+    "TrackersettingsPopup-SendHumidityData": "Feuchtigkeitsdaten senden",
+    "TrackersettingsPopup-RealTimeFrequency": "Sendehäufigkeit (Echtzeit)",
+    "TrackersettingsPopup-LongTimeFrequency": "Sendehäufigkeit (Langzeit)",
+    "TrackersettingsPopup-Hours": "Stunde(n)",
+    "TrackersettingsPopup-Save": "Speichern",
+    "RouteView-New": "Neu",
+    "RouteView-Saved": "Gespeichert",
+    "NewRoute-SelectTracker": "Tracker auswählen",
+    "NewRoute-StartRoute": "Route starten",
+    "NewRoute-StopRoute": "Route stoppen",
+    "NewRoute-SaveRoute": "Route speichern",
+    "MapView-Current": "Aktuell",
+    "MapView-History": "Verlauf"
+  
+  
+  
+
+
+
 
 
 }
