@@ -2,6 +2,7 @@
 #include <GNSS.hpp>
 #include <Battery.h>
 #include <ArduinoJson.h>
+#include <Temperature.h>
 
 #define DSerial SerialUSB
 #define ATSerial Serial1
@@ -12,6 +13,8 @@ JsonDocument docOutput;
 
 // Cell und Batterie
 float batterypercentage; 
+float humidity;
+float temperature;
 
 // Zeitintervall für das tägliche Update (24 Stunden in Millisekunden)
 const unsigned long UPDATE_INTERVAL = 86400000UL;
@@ -19,6 +22,7 @@ unsigned long lastUpdateCheck = 0;
 
 // Module
 _Battery _BoardBattery;
+_Temperature _TInstance;
 
 void setup()
 {
@@ -35,6 +39,15 @@ void setup()
 void DailyUpdates()
 {
   GPSOneXtraCheckForUpdate();
+  /*
+  if we want to do the same for low/high temperature or humidity:
+  humidity = _TInstance().readHumidity();
+  temperature = _TInstance().readTemperature();
+  if abfragen  
+  -40 bis 85 c* temperatur
+  humidity: 5-95% in non condensing humidity: no waterdroplets
+
+  */
   batterypercentage = _BoardBattery.calculateBatteryPercentage();
   if (batterypercentage <= 10)
   {
@@ -94,8 +107,8 @@ void loop()
   // Temperatur- und Feuchtigkeitsdaten sammeln
   if (trackerModes.TemperatureMode)
   {
-    docInput["Temperature"] = 8;
-    docInput["Humidity"] = 59;
+    docInput["Temperature"] = _TInstance.readTemperature();
+    docInput["Humidity"] = _TInstance.readHumidity();
   }
 
   // Batteriestand erfassen

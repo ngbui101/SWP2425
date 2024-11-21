@@ -1,0 +1,682 @@
+/* Global box-sizing for better control over padding and width */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Prevent horizontal scrolling and ensure body and html take up full width */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+.button-row {
+  display: flex;
+  gap: 10px; /* Adjust the spacing between buttons as needed */
+  justify-content: space-between; /* Adjust alignment */
+}
+.overlay {
+  
+  position: absolute;
+  width: 100%;
+  height: 92%;
+  /* Greyish color with transparency */
+  display: flex;
+  justify-content: center;
+  align-items: top;
+  z-index: 9999; /* Ensure it's above the content in the mapview */
+}
+
+
+.dark-mode .overlay-text {
+  color: #ddd;
+}
+
+
+.overlay-text {
+  margin-top: 200px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.mode-badge {
+  font-weight: bold;
+  color: #851515;
+  margin-left: 8px;
+}
+
+.dark-mode .mode-badge {
+  color: #E69543;
+}
+.filters-button {
+  
+  margin-top: 20px;
+  font-size: 0.9rem;
+  background-color: #C19A6B; /* Same color as "Switch Mode" */
+  color: #1f1f1f;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+.filters-button:hover {
+  background-color: #8f6b3f;
+}
+
+.dark-mode .filters-button {
+  background-color: #E69543;
+  color: #1f1f1f;
+}
+
+.dark-mode .filters-button:hover {
+  background-color: #bd7227;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: stretch;
+  
+  gap: 0;
+  background: linear-gradient(135deg, #f1e4cc 0%, #e6cc99 50%, #f1e4cc 100%);
+  min-height: 100vh;
+}
+
+.tracker-info-card,
+.card {
+  flex: 1;
+  min-height: 600px; /* Ensure both have the same base height */
+}
+.dark-mode .location-text {
+  color: #E69543; /* Replace with your desired color */
+}
+
+.no-background {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+
+.card {
+  width: 100%;
+  height: 600px;
+  padding: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  flex: 1;
+  border: 1px solid #ddd;
+  background: #F2F2F2;
+  border-radius: 12px;
+  margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.dark-mode .card {
+  background: #2e2e2e;
+}
+
+.card-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.geofence-button-container {
+  display: flex;
+  gap: 10px; /* Adds spacing between buttons */
+  justify-content: center; /* Centers buttons horizontally */
+  margin-top: 20px;
+  
+}
+.timestamp {
+  flex: 1;
+  text-align: left;
+}
+.date-normal {
+  color: #333333; /* Adjust this to the normal mode color you want */
+}
+
+.date-dark {
+  color: #ffffff; /* Adjust this to the dark mode color you want */
+}
+
+.dropdown-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.1rem;
+  color: #111;
+  width: 100%;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.grid-item {
+  background-color: #f1e4cc;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  color: #011812;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+/* Ensures full-width for Mode and Battery grid items */
+.grid-item-full {
+  grid-column: span 2;
+  background-color: #f1e4cc;
+  padding: 15px;
+  text-align: start;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #011812;
+  width: 100%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Mode Item - relative positioning for Switch Mode button */
+.mode-item {
+  position: relative;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+
+.dark-mode .grid-item strong {
+  color: #87c099;
+}
+
+.switch-mode-button {
+  position: absolute;
+  bottom: 0;
+  /* Touches bottom of the grid item */
+  right: 0;
+  /* Touches right side of the grid item */
+  margin: 5px;
+  /* Space from the border */
+  padding: 4px 8px;
+  /* Smaller padding */
+  
+  color: #ddd;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  
+  /* Smaller font */
+
+  
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  
+}
+
+.switch-mode-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+ 
+  z-index: -1;
+  transition: all 0.5s;
+  transform: skewX(-20deg);
+}
+
+.switch-mode-button:hover:before {
+  left: 100%;
+  transition: all 0.5s ease-in-out;
+}
+
+.switch-mode-button:focus {
+  outline: none;
+}
+
+
+
+/* Optional shimmer animation for continuous effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200%;
+  }
+
+  100% {
+    background-position: 200%;
+  }
+}
+
+.shimmering-button {
+  background: #851515;
+  
+  
+}
+
+.switch-mode-button:hover {
+  background-color: #b63a3a;
+  transform: scale(1.1);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4B2E18;
+  text-align: center;
+}
+
+.tracker-dropdown-container {
+  flex: 1;
+  text-align: center;
+}
+
+.tracker-info-card {
+  border-radius: 12px;
+  margin-top: 20px;
+  margin-left: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #F2F2F2;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+
+}
+
+.dark-mode .tracker-info-card {
+  background: #2e2e2e;
+}
+
+.tracker-mode {
+  flex: 1;
+  text-align: right;
+}
+
+.tracker-dropdown {
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  width: 100%;
+  background: #f1f1f1;
+  border: 1px solid #ddd;
+}
+
+#timestamp-dropdown {
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  width: 100%;
+  background: #f1f1f1;
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 470px;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  
+  overflow: hidden;
+  
+}
+
+.map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  /* Semi-transparent grey */
+  z-index: 10;
+  /* Ensures the overlay is above the map */
+  pointer-events: none;
+  /* Allow interaction with the map through the overlay */
+}
+
+
+.location-display {
+  display: flex;
+  justify-content: space-between;
+  /* Align location to center and accuracy to the right */
+  align-items: center;
+
+  width: 100%;
+  /* Ensure full width */
+  color: #011812;
+}
+
+.location-display p {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: bold;
+}
+
+.location-accuracy {
+  font-weight: normal;
+  margin-left: auto;
+  text-align: right;
+  color: #011812;
+}
+
+/* Battery Status Wrapper */
+.battery-status-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+/* Battery Bar Wrapper */
+.battery-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Battery Bar (Phone-like) */
+.battery-bar {
+  width: 200px;
+  height: 30px;
+  background-color: #ddd;
+  border-radius: 4px;
+  position: relative;
+  margin-right: 5px;
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid #555;
+}
+
+/* Battery Fill (Green) */
+.battery-fill {
+  background-color: #28a745;
+  height: 100%;
+  transition: width 0.3s;
+}
+
+/* Battery Indicator Text */
+.battery-indicator {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #333;
+
+}
+
+.dark-mode .battery-indicator {
+  color: #ddd;
+}
+
+/* Remove border specifically for the grid item containing the geofence button */
+.no-border {
+  border: none;
+}
+
+/* Styling for the "Add Geofence" and "Remove Geofence" button */
+.geofence-button,
+.remove-geofence-button {
+  position: relative;
+  padding: 10px 20px;
+  background:#00543D;
+
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 48%;
+  margin: 5px 1%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+  
+  overflow: hidden; /* To contain the ::after pseudo-element */
+}
+
+.remove-geofence-button {
+  background: #d9534f;
+}
+.timestamp-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tracker-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.geofence-button:hover,
+.remove-geofence-button:hover {
+  transform: scale(1.05);
+}
+
+
+
+
+/* Styling for the slider */
+.radius-slider {
+  margin-left: 20px;
+  width: 150px;
+  cursor: pointer;
+  margin-top: 40px;
+}
+
+.radius-label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.dark-mode .radius-label {
+  color: #E69543;
+}
+
+/* Dark mode background for the container */
+.container.dark-mode {
+ background: linear-gradient(135deg, #1e1e1e 0%, #141414 50%, #1e1e1e 100%);
+}
+
+/* Dark mode for the tracker info card */
+.tracker-info-card.dark-mode,
+.card.dark-mode {
+  
+  border-color: #555;
+}
+
+/* Dark mode for text */
+.dark-mode .dropdown-label {
+  color: #87c099;
+}
+
+.dark-mode .grid-item,
+.dark-mode .grid-item-full {
+  background-color: #333;
+  color: #ddd;
+  border-color: #444;
+  box-shadow: inset 0 5px 10px rgba(255, 255, 255, 0.2);
+}
+
+
+
+/* Dark mode for the battery bar */
+.dark-mode .battery-bar {
+  background-color: #555;
+  border-color: #777;
+
+}
+.apply-radius-button {
+  border-radius: 18px;
+}
+
+.dark-mode .apply-radius-button {
+  background: #E69543;
+  border: none;
+}
+
+.dark-mode .battery-status-wrapper strong {
+  color: #87c099;
+}
+
+.dark-mode .timestamp {
+  color: #87c099;
+}
+
+.dark-mode .tracker-mode {
+  color: #87c099;
+}
+
+.dark-mode .mode-item strong {
+  color: #87c099;
+}
+
+.dark-mode .mode-item span {
+  color: #ddd;
+}
+
+.dark-mode .battery-fill {
+  background-color: #4caf50;
+  /* You can adjust this to a more muted green if desired */
+}
+
+/* Dark mode for map container */
+.map.dark-mode {
+  border-color: #555;
+}
+
+/* Dark mode for location display */
+.dark-mode .location-display p,
+.dark-mode .location-accuracy {
+  color: #87c099;
+}
+
+/* Dark mode for buttons */
+.geofence-button.dark-mode,
+.remove-geofence-button.dark-mode {
+  background-color: #444;
+  border-color: #666;
+}
+
+.dark-mode .geofence-button {
+  background: #E69543;
+  color: #1f1f1f;
+}
+.dark-mode .remove-geofence-button {
+  background-color: #aa4444;
+}
+
+/* Dark mode for dropdowns */
+.dark-mode .tracker-dropdown,
+.dark-mode #timestamp-dropdown {
+  background-color: #333;
+  color: #ddd;
+  border-color: #555;
+  box-shadow: inset 0 5px 10px rgba(255, 255, 255, 0.2);
+}
+
+
+
+/* Dark mode for geofence slider */
+.dark-mode .radius-slider {
+  background-color: #555;
+}
+
+
+/* General input focus styles */
+.dark-mode input[type="range"] {
+  background-color: #666;
+}
+
+/* Optional shimmering button adjustment for dark mode */
+.dark-mode .shimmering-button {
+  background: #E69543;
+  color: #1f1f1f;
+}
+
+/* Ensure the card uses full width in mobile view */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .card, .tracker-info-card {
+    max-width: 100%;
+    width: 100%;
+     /* Add space between cards */
+    padding: 8px; /* Reduce padding for smaller screens */
+    box-sizing: border-box; /* Include padding in the total width */
+  }
+
+  .card-body {
+    padding: 8px; /* Reduce padding */
+  }
+
+  .grid-container {
+    grid-template-columns: 1fr; /* Single column layout */
+    gap: 10px; /* Reduce gap */
+  }
+
+  .grid-item, .grid-item-full {
+    padding: 6px; /* Reduce padding */
+    font-size: 0.9rem; /* Smaller font size */
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px; /* Reduce margin */
+  }
+
+  .timestamp, .location, .tracker-mode {
+    text-align: left;
+    margin-bottom: 5px; /* Add spacing between items */
+    font-size: 0.9rem; /* Adjust font size */
+  }
+
+  .geofence-button, .remove-geofence-button {
+    width: 100%; /* Full width for mobile buttons */
+    margin: 5px 0; /* Add vertical spacing */
+  }
+
+  .legend{
+    font-size: 0.85rem; /* Reduce font size */
+    text-align: left; /* Align text to the left */
+    
+  }
+
+  .battery-status-wrapper, .battery-bar {
+    height: 20px; /* Reduce height */
+    margin-left: 10px; /* Adjust margin */
+  }
+
+  .battery-indicator {
+    font-size: 0.75rem; /* Adjust font size */
+  }
+}

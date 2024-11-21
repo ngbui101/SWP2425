@@ -10,13 +10,22 @@
                 <!-- Tracker Name Input -->
                 <div class="popup-section">
                     <label for="tracker-name">Tracker Name</label>
-                    <input type="text" id="tracker-name" v-model="trackerName" class="popup-input" />
+                    <input type="text" id="tracker-name" v-model="trackerName" class="popup-input"
+                        placeholder="Any name, you can rename it later" />
                 </div>
 
                 <!-- IMEI Input -->
                 <div class="popup-section">
                     <label for="tracker-imei">IMEI</label>
-                    <input type="text" id="tracker-imei" v-model="trackerImei" class="popup-input" />
+                    <input type="text" id="tracker-imei" v-model="trackerImei" class="popup-input"
+                        placeholder="IMEI of your tracker" />
+                </div>
+
+                <!-- PIN Input -->
+                <div class="popup-section">
+                    <label for="tracker-pin">PIN</label>
+                    <input type="text" id="tracker-pin" v-model="trackerPin" class="popup-input"
+                        placeholder="Enter the valid PIN" />
                 </div>
             </div>
 
@@ -29,6 +38,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useApi, useApiPrivate } from "@/composables/useApi";
 
 // Define props to accept data passed from the parent
 const props = defineProps({
@@ -36,15 +46,38 @@ const props = defineProps({
     closePopup: Function        // Function to close the popup
 });
 
-// Reactive variables for tracker name and IMEI
+// Reactive variables for tracker name, IMEI, and PIN
 const trackerName = ref('');
 const trackerImei = ref('');
+const trackerPin = ref(''); // New PIN field
 
-// Save changes placeholder (no functionality)
-const saveChanges = () => {
-    console.log('Adding tracker:', trackerName.value, trackerImei.value);
-    props.closePopup(); // Close the popup
+// Save tracker to backend using a PUT request
+const saveChanges = async () => {
+    try {
+        const api = useApiPrivate();
+        const response = await api.post('http://localhost:3500/api/tracker', {
+            name: trackerName.value,
+            imei: trackerImei.value,
+            pin: trackerPin.value,
+        });
+
+        if (response.data && response.data.tracker) {
+
+
+            props.closePopup();
+            trackerName.value = '';
+            trackerImei.value = '';
+            trackerPin.value = '';
+        } else {
+            throw new Error('Tracker data missing in the response.');
+        }
+    } catch (error) {
+        console.error('Failed to create tracker:', error);
+        console.error('Error details:', error.response?.data || error.message || error);
+        alert('Failed to create tracker. Please try again.');
+    }
 };
+
 </script>
 
 <style scoped>
@@ -129,6 +162,7 @@ const saveChanges = () => {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    padding: 0 10px;
 }
 
 .popup-section {
@@ -149,6 +183,7 @@ const saveChanges = () => {
     border: 1px solid #ddd;
     outline: none;
     background: #ddd;
+    box-sizing: border-box;
 }
 
 .popup-input:focus {

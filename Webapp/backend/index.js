@@ -54,13 +54,13 @@ app.get('/api/geocode', async (req, res) => {
   const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleApiKey}`;
 
   try {
-    console.log(`Requesting geocode for lat: ${lat}, lng: ${lng}`);
+    
     const response = await axios.get(geocodingUrl);
-    console.log("Geocoding response received:", response.data);
+    
     const { results } = response.data;
 
     if (results.length === 0) {
-      console.error("No address found for the provided coordinates");
+      
       return res.status(404).json({ error: 'No address found for the provided coordinates' });
     }
 
@@ -82,7 +82,11 @@ app.use('/api/position', require('../backend/rest/measurement'));
 app.use('/api/tracker', require('../backend/rest/tracker'));
 app.use('/api/users', require('../backend/rest/users'));
 app.use('/api/auth', require('../backend/rest/auth'));
+app.use('/api/all-trackers', require('../backend/rest/alltrackers'));
+app.use('/api/settings', require('../backend/rest/settings'));
 app.use('/api/mail', require('./rest/mail'));
+app.use('/api/mode', require('../backend/rest/mode'));
+
 // 404 route handler
 app.all('*', (req, res) => {
   res.status(404);
