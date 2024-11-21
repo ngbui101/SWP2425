@@ -10,6 +10,8 @@ const TrackerView = () => import('../views/tracker_view/TrackerView.vue'); // Ne
 const ForgotPasswordView = () => import('../views/auth_view/ForgotPasswordView.vue');
 const RouteView = () => import('../views/route_view/RouteView.vue');
 const ContactFormView = () => import('../components/main/ContactForm.vue');
+const PrivacyPolicyView = () => import('../views/PrivacyPolicy.vue');
+
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
 const routes = [
@@ -22,6 +24,7 @@ const routes = [
   { path: '/reset', component: ForgotPasswordView, name: 'reset', meta: { requiresGuest: true, hideComponent: true } },
   { path: '/trackers', component: TrackerView, name: 'trackers', meta: { requiresAuth: true } },
   { path: '/contact', component: ContactFormView, name: 'contact', meta: { requiresAuth: true } },
+  { path: '/privacy', component: PrivacyPolicyView, name: 'privacy' },
 ];
 
 
