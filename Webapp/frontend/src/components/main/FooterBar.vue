@@ -3,6 +3,7 @@
   <div :class="['footer-wrapper', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="footer-basic">
       <footer>
+        <!-- Icons with functionnalities -->
         <div class="social">
           <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
             <i class="icon ion-social-instagram"></i>
