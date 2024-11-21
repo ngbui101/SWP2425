@@ -916,7 +916,7 @@ bool _BG96_Common::ScanLTECells(char *cellsinformations)
     // Operatoren durchlaufen
     for (int i = 2; i >= 0; i--) // Schleife für Array-Index 0 bis 2
     {
-        unsigned int mode = 1;
+        unsigned int mode = 4;
         unsigned int format = 2;
         char oper[8];
         strcpy(oper, operators[i]);

@@ -15,7 +15,7 @@
 #define __BG96_ATCOMMAND_H_
 
 // AT commands response
-const char RESPONSE_READY[] = "RDY";
+const char RESPONSE_READY[] = "APP RDY";
 const char RESPONSE_OK[] = "OK";
 const char RESPONSE_CRLF_OK[] = "\r\n\r\nOK";
 const char RESPONSE_ERROR[] = "ERROR";

@@ -9,7 +9,8 @@
 #include <ArduinoJson.h>
 #include <Arduino.h>
 // APN
-char APN[] = "internet.m2mportal.de";
+// char APN[] = "internet.m2mportal.de";
+char APN[] = "wm";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 
@@ -243,7 +244,6 @@ bool InitModemMQTT()
     }
   }
   DSerial.println("\r\nMQTT Subscribe Topic Success!");
-  _AWS.DeleteCertificate("all");
   return true;
 }
 
