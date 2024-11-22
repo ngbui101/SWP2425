@@ -4,13 +4,11 @@ _Temperature::_Temperature() {}
 _Temperature::~_Temperature() {}
 
 bool _Temperature::initTemp(){
-    Serial.begin(115200); // Serielle Kommunikation starten
-    Wire.begin(); // I2C-Bus initialisieren
+    Wire.begin(); 
     return true;
 }
 
 bool _Temperature::isMeasurementComplete() {
-    
     delay(50); // Für Temperaturmessung ausreichend
     return true; // Wenn keine Fehler auftreten, gehe davon aus, dass die Messung abgeschlossen ist
 }

@@ -1,15 +1,8 @@
 #ifndef __GNSS
 #define __GNSS
 
-#include "BG96_GNSS.h"
-#include <ArduinoJson.h>
-#include <Arduino.h>
 #include "MQTT_AWS.hpp"
 
-#define DSerial SerialUSB
-#define ATSerial Serial1
-
-// GNSS Tracker Konfiguration und Zustand
 struct GNSS_Tracker {
     char position[128];
     bool geoFenceInit = false;
@@ -23,9 +16,8 @@ struct GNSS_Tracker {
     unsigned int geoID = 1;
 } gnssTracker;
 
-_BG96_GNSS _GNSS(ATSerial, DSerial);
 
-bool InitGNSS() {
+bool InitGNSS(Stream &DSerial, _BG96_GNSS &_GNSS) {
     char currentTimestamp[64];
     _GNSS.GetLatestGMTTime(currentTimestamp);
 
@@ -39,13 +31,13 @@ bool InitGNSS() {
     return true;
 }
 
-void GPSOneXtraCheckForUpdate() {
+void GPSOneXtraCheckForUpdate(Stream &DSerial, _BG96_GNSS &_GNSS) {
     char currentTimestamp[64];
     _GNSS.GetLatestGMTTime(currentTimestamp);
     _GNSS.InjectGpsOneXTRAData("UFS:xtra2.bin", WRITE_MODE, currentTimestamp);
 }
 
-void handleGNSSMode(JsonDocument &docInput) {
+void handleGNSSMode(Stream &DSerial, _BG96_GNSS &_GNSS, JsonDocument &docInput) {
     // GNSS einschalten, falls noch nicht aktiviert
     if (!gnssTracker.isOn && _GNSS.TurnOnGNSS(gnssTracker.workMode, WRITE_MODE)) {
         gnssTracker.isOn = true;
@@ -76,9 +68,10 @@ void handleGNSSMode(JsonDocument &docInput) {
     }
 }
 
-boolean addGeo(){
+boolean addGeo(Stream &DSerial, _BG96_GNSS &_GNSS){
     if(_GNSS.AddGeoFence(gnssTracker.geoID,DISABLE_GEOFENCE,CIRLE,trackerModes.geoLatitude,trackerModes.geoLongitude,trackerModes.geoRadius)){
         gnssTracker.geoFenceInit = true;
+        DSerial.println("GeoFence added successfully");
         return true;
     }
     return false;

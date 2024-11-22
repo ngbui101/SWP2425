@@ -1,7 +1,4 @@
-#include <MQTT_AWS.hpp>
-#include <GNSS.hpp>
-#include <ArduinoJson.h>
-#include <Temperature.h>
+#include <Mode_Handle.hpp>
 
 #define DSerial SerialUSB
 #define ATSerial Serial1
@@ -10,28 +7,27 @@
 JsonDocument docInput;
 JsonDocument docOutput;
 
-// Cell und Batterie
-float batterypercentage;
-
 // Zeitintervall für das tägliche Update (24 Stunden in Millisekunden)
 const unsigned long UPDATE_INTERVAL = 86400000UL;
 unsigned long lastUpdateCheck = 0;
 
-// Module
-_Battery _BoardBattery;
-_Temperature _TInstance;
+_Board _ArdruinoZero;
+
+_BG96_Module _BG96(ATSerial,DSerial);
 
 void setup()
 {
   DSerial.begin(115200);
-  delay(3000);
+  while (DSerial.read() >= 0)
+    ;
   ATSerial.begin(115200);
+  while (ATSerial.read() >= 0)
+    ;
   delay(3000);
-  InitModemMQTT();
-  InitGNSS();
+  
+  initModul(DSerial,_BG96,_ArdruinoZero);
+  
 }
-
-// Funktion für tägliche Updates
 
 void loop()
 {
@@ -39,17 +35,17 @@ void loop()
     return;
   if (trackerModes.Modem_Off)
   {
-    InitModemMQTT();
+    InitModemMQTT(DSerial, _BG96);
     trackerModes.Modem_Off = false;
   }
   else
   {
-    waitAndCheck(docOutput);
-    modeHandle(docInput, _BoardBattery);
+    waitAndCheck(DSerial, _BG96, docOutput);
+    modeHandle(DSerial, _BG96, docInput, _ArdruinoZero);
   }
   if (millis() - lastUpdateCheck >= UPDATE_INTERVAL)
   {
     lastUpdateCheck = millis();
-    DailyUpdates(docInput, _BoardBattery);
+    DailyUpdates(DSerial, _BG96, docInput, _ArdruinoZero);
   }
 }

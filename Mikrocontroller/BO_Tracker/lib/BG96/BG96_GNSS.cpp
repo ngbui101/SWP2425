@@ -27,7 +27,7 @@ _BG96_GNSS::~_BG96_GNSS()
  * @param atserial AT-Befehls-Schnittstelle.
  * @param dserial Daten-Schnittstelle für die Kommunikation.
  */
-_BG96_GNSS::_BG96_GNSS(Stream &atserial, Stream &dserial) : _BG96_HTTP(atserial, dserial)
+_BG96_GNSS::_BG96_GNSS(Stream &atserial, Stream &dserial) : _BG96_MQTT(atserial, dserial)
 {
 }
 

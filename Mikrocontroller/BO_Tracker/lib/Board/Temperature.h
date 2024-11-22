@@ -1,13 +1,13 @@
 #ifndef _TEMPERATURE_H_  
 #define _TEMPERATURE_H_
 
-#include <Arduino.h>
-#include <Wire.h> // I2C-Bibliothek einbinden
+
+#include <Battery.h> // I2C-Bibliothek einbinden
 
 // I2C Adresse des Sensors (überprüfen Sie das Datenblatt)
 #define HPP845E_ADDRESS 0x40 // Beispieladresse, überprüfen Sie das Datenblatt
 
-class _Temperature {
+class _Temperature: public _Battery {
 public:
     _Temperature();    // Konstruktor öffentlich
     ~_Temperature();   // Destruktor öffentlich

@@ -1,22 +1,9 @@
 #ifndef __MQTT_AWS_H
 #define __MQTT_AWS_H
-#define DSerial SerialUSB
-#define ATSerial Serial1
 
-#include "BG96_MQTT.h"
-#include "TrackerMode.cpp"
-#include <ArduinoJson.h>
-#include <Arduino.h>
-#include <GNSS.hpp>
-#include <Battery.h>
-// APN
-// char APN[] = "internet.m2mportal.de";
-// char APN[] = "wm";
-char APN[] = "iot.1nce.net";
-char LOGIN[] = "";
-char PASSWORD[] = "";
-Cell* cells[6] = { nullptr };
-char RAT[] = "lte";
+#include "Modem.hpp"
+
+
 // MQTT
 char MQTTServer[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
 unsigned int MQTTPort = 8883;
@@ -25,14 +12,8 @@ char mqtt_base_topic[32];
 Mqtt_Qos_t MQTT_QoS = AT_LEAST_ONCE;
 unsigned long pub_time = 0;
 unsigned int MQTTIndex = 0;
-unsigned int PDPIndex = 1;
 unsigned int SSLIndex = 2;
-char cell_infos[600];  
-
-///
-char ModemIMEI[20];
-
-_BG96_MQTT _AWS(ATSerial, DSerial);
+Mqtt_Version_t version = MQTT_V4;
 
 char aws_root_ca_pem[] = "-----BEGIN CERTIFICATE-----\n\
 MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF\n\
@@ -106,55 +87,13 @@ gP5HpbKQB0mBEADXAwWVXj2i8UL2nW9lo0xObxbqVSZJE8Xj+zKJCksacTq+we4/\n\
 f1ekEo4pJ+I1iQkqLLspRGJQziDcstLWuH+62b/f9wS9P3sKrcTb5PE=\n\
 -----END RSA PRIVATE KEY-----\n";
 
-// BG96 is the object of class _BG96_MQTT
-// DSerial USB serial
-// APN name
-// APIN login,
-// APN password ,
-// MQTT server FQDN,
-// MQTT port, number
-// MQTT Client Id such as "BasibPubSub",
-// MQTT topic name,
-// MQTT QoS  such as AT_MOST_ONCE,
-// MQTT index: The range is 0 ~ 5
-// PDP index:  The range is 1 ~ 16
-// SSL index:  The range is 0 ~ 5
-
-// char *ModemIMEI  is an output contains the IMEI
-bool InitModemMQTT()
+bool InitModemMQTT(Stream &DSerial, _BG96_MQTT &_AWS)
 {
-  Mqtt_Version_t version = MQTT_V4;
-
-  if (_AWS.InitModule())
-  {
-    _AWS.SetDevOutputformat(true);
-    _AWS.SetDevCommandEcho(false);
-    // _AWS.ConfigNetworks();
-  }
-  // IMEI
-  char imei_tmp[64];
-
-  if (_AWS.GetDevIMEI(imei_tmp))
-  {
-    String s = String(imei_tmp);
-    s.trim();
-    s.toCharArray(ModemIMEI, 64);
-    DSerial.println(ModemIMEI);
-  }
-
-  strcpy(mqtt_base_topic, "tracker/");
-  strcat(mqtt_base_topic, ModemIMEI);
-
   // SSL Networking
   _AWS.DeleteCertificate("all");
-
-  char apn_error[64];
-  while (!_AWS.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error,RAT,cells))
-  {
-    DSerial.println(apn_error);
-  }
-  DSerial.println(apn_error);
-
+  strcpy(mqtt_base_topic, "tracker/");
+  strcat(mqtt_base_topic, ModemIMEI);
+  
   char ssl_error[128];
   while (!_AWS.InitSSL(SSLIndex, aws_root_ca_pem, certificate_pem_crt, private_pem_key, ssl_error))
   {
@@ -250,93 +189,23 @@ bool InitModemMQTT()
   return true;
 }
 
-void handleMQTTEvent(JsonDocument &docOutput, char *payload)
-{
-  DeserializationError error = deserializeJson(docOutput, payload);
-
-  if (error == DeserializationError::Ok)
-  {
-    if (docOutput["GnssMode"].is<boolean>())
-    {
-      trackerModes.GnssMode = docOutput["GnssMode"];
-    }
-    if (docOutput["CellInfosMode"].is<boolean>())
-    {
-      trackerModes.CellInfosMode = docOutput["CellInfosMode"];
-    }
-    if (docOutput["BatteryMode"].is<boolean>())
-    {
-      trackerModes.BatteryMode = docOutput["BatteryMode"];
-    }
-    if (docOutput["TemperatureMode"].is<boolean>())
-    {
-      trackerModes.TemperatureMode = docOutput["TemperatureMode"];
-    }
-    if (docOutput["NmeaMode"].is<boolean>())
-    {
-      trackerModes.NmeaMode = docOutput["NmeaMode"];
-    }
-    if (docOutput["GeoFenMode"].is<boolean>())
-    {
-      trackerModes.GeoFenMode = docOutput["GeoFenMode"];
-    }
-    // Frequenz aktualisieren
-    if (docOutput["frequenz"].is<unsigned int>())
-    {
-      unsigned int newFrequenz = docOutput["frequenz"];
-      if (newFrequenz > 0)
-      {
-        trackerModes.frequenz = newFrequenz;
-        Serial.print("Updated publishing frequency to: ");
-        Serial.println(trackerModes.frequenz);
-      }
-    }
-    if (docOutput["geoRadius"].is<int>())
-    {
-      trackerModes.geoRadius = docOutput["geoRadius"].as<unsigned int>();
-      Serial.print("Updated geoRadius to: ");
-      Serial.println(trackerModes.geoRadius);
-    }
-
-    if (docOutput["geoLatitude"].is<float>())
-    {
-      trackerModes.geoLatitude = docOutput["geoLatitude"];
-      Serial.print("Updated geoLatitude to: ");
-      Serial.println(trackerModes.geoLatitude);
-    }
-
-    if (docOutput["geoLongitude"].is<float>())
-    {
-      trackerModes.geoLongitude = docOutput["geoLongitude"];
-      Serial.print("Updated geoLongitude to: ");
-      Serial.println(trackerModes.geoLongitude);
-    }
-  }
-  else
-  {
-    Serial.println("\r\n Error in Deserialization!");
-    Serial.println(error.c_str());
-  }
-  docOutput.clear();
-}
-
-void handleMQTTStatusEvent(char *payload)
+void handleMQTTStatusEvent(Stream &DSerial, _BG96_MQTT &_AWS, char *payload)
 {
   char *sta_buf = strchr(payload, ',');
   if (atoi(sta_buf + 1) == 1)
   {
     if (_AWS.CloseMQTTClient(MQTTIndex))
     {
-      Serial.println("MQTT Client closed successfully!");
+      DSerial.println("MQTT Client closed successfully!");
     }
   }
   else
   {
-    Serial.print("Status code: ");
-    Serial.println(atoi(sta_buf + 1));
+    DSerial.print("Status code: ");
+    DSerial.println(atoi(sta_buf + 1));
   }
 }
-bool publishData(JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS, const char *subtopic)
+bool publishData(Stream &DSerial, _BG96_MQTT &_AWS, JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS, const char *subtopic)
 {
   char payload[1028];
   serializeJsonPretty(docInput, payload);
@@ -349,128 +218,16 @@ bool publishData(JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQT
 
   if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION)
   {
-    Serial.println("Publish succeeded!");
+    DSerial.println("Publish succeeded!");
     docInput.clear();
     pub_time = millis();
     return true;
   }
   else
   {
-    Serial.println("Publish failed!");
+    DSerial.println("Publish failed!");
     return false;
   }
 }
 
-void modeHandle(JsonDocument &docInput, _Battery _BoardBattery){
-  pub_time = millis();
-
-  // GNSS-Modus verwalten
-  if (trackerModes.GnssMode)
-  {
-    handleGNSSMode(docInput);
-  }
-  else if (gnssTracker.isOn)
-  {
-    _GNSS.TurnOffGNSS();
-    gnssTracker.isOn = false;
-    gnssTracker.timeToFirstFix = 0;
-    gnssTracker.startMillis = 0;
-  }
-
-  // Temperatur- und Feuchtigkeitsdaten sammeln
-  if (trackerModes.TemperatureMode)
-  {
-    docInput["Temperature"] = 8;
-    docInput["Humidity"] = 59;
-  }
-
-  // Batteriestand erfassen
-  if (trackerModes.BatteryMode)
-  {
-    docInput["BatteryPercentage"] = _BoardBattery.calculateBatteryPercentage();;
-  }
-
-  // Zellinformationen erfassen
-  if (trackerModes.CellInfosMode)
-  {
-    JsonArray cellsArray = docInput["cells"].to<JsonArray>();
-     for (Cell*& cell : cells)
-    {
-      if (cell != nullptr)
-      {
-        // JSON-Objekt für jede Zelle erstellen
-        JsonObject cellObj = cellsArray.add<JsonObject>();
-        cell->toJson(cellObj);
-      }
-    }
-  }
-
-  // Request-Modus setzen
-  trackerModes.updateRequestMode();
-  if (trackerModes.RequestMode)
-  {
-    docInput["RequestMode"] = true;
-  }
-  // Zeitstempel hinzufügen
-  docInput["Timestamp"] = _GNSS.GetCurrentTime();
-  // Daten veröffentlichen
-  if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/pub"))
-  {
-    delay(300);
-  }
-  if (trackerModes.GeoFenMode)
-  {
-    if (!gnssTracker.geoFenceInit)
-      addGeo();
-    GEOFENCE_STATUS_t status = _GNSS.getGeoFencingStatus(gnssTracker.geoID);
-    switch (status)
-    {
-    case OUTSIDE_GEOFENCE:
-      docInput["LeavingGeo"] = true;
-      if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/notifications"))
-      {
-        delay(300);
-      }
-      break;
-    case INSIDE_GEOFENCE || NOFIX:
-      break;
-    default:
-      break;
-    }
-  }
-  if(trackerModes.frequenz > 18000){
-    _AWS.PowOffModule();
-    trackerModes.Modem_Off= true;
-  }
-}
-void DailyUpdates(JsonDocument &docInput,_Battery _BoardBattery)
-{
-  GPSOneXtraCheckForUpdate();
-  if (_BoardBattery.calculateBatteryPercentage() <= 10)
-  {
-    docInput["BatteryLow"] = true;
-  }
-  if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/notifications"))
-  {
-    delay(300);
-  }
-}
-void waitAndCheck(JsonDocument &docOutput){
-  char payload[1028];
-  Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
-
-  switch (ret)
-  {
-  case MQTT_RECV_DATA_EVENT:
-    DSerial.println("RECV_DATA_EVENT");
-    handleMQTTEvent(docOutput, payload);
-    // modeHandle(docInput,_BoardBattery);
-    break;
-  case MQTT_STATUS_EVENT:
-    handleMQTTStatusEvent(payload);
-    break;
-  default:
-    break;
-  }
-}
 #endif

@@ -6,7 +6,7 @@
 #ifndef __BG96_GNSS_H_
 #define __BG96_GNSS_H_
 
-#include "BG96_HTTP.h"
+#include "BG96_MQTT.h"
 #include <cmath>
 
 typedef enum gnss_work_mode{
@@ -70,7 +70,7 @@ typedef enum geofence_status {
     OUTSIDE_GEOFENCE = 2,
 }GEOFENCE_STATUS_t;
 
-class _BG96_GNSS : public _BG96_HTTP
+class _BG96_GNSS : public _BG96_MQTT
 {
   public:
     _BG96_GNSS();
