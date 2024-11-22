@@ -37,7 +37,7 @@
             </div>
 
             <div class="popup-footer">
-                <button class="popup-save-btn" @click="applyChanges">Apply</button>
+                <button class="popup-save-btn" @click="applyChanges">{{ $t('CurrentMap-apply') }}</button>
             </div>
         </div>
     </div>

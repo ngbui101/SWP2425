@@ -3,16 +3,16 @@
         <table v-if="trackers.length > 0" class="tracker-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Mode</th>
-                    <th>Location</th>
-                    <th>Latitude</th>
-                    <th>Longitude</th>
-                    <th>Temperature</th>
-                    <th>Humidity</th>
-                    <th>Battery</th>
-                    <th>Device ID</th>
-                    <th>Actions</th>
+                    <th>{{ $t('TrackerList-name') }}</th>
+                    <th>{{ $t('TrackerList-mode') }}</th>
+                    <th>{{ $t('TrackerList-location') }}</th>
+                    <th>{{ $t('TrackerList-latitude') }}</th>
+                    <th>{{ $t('TrackerList-longitude') }}</th>
+                    <th>{{ $t('TrackerList-temperature') }}</th>
+                    <th>{{ $t('TrackerList-humidity') }}</th>
+                    <th>{{ $t('TrackerList-battery') }}</th>
+                    <th>{{ $t('TrackerList-deviceId') }}</th>
+                    <th>{{ $t('TrackerList-actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,7 +43,7 @@
         <div class="add-tracker-wrapper">
             <button class="add-tracker-btn" @click="openAddTrackerPopup"
                 :class="{ 'scaling-effect': trackers.length === 0 }">
-                <i class="fas fa-plus"></i>&nbsp; Add Tracker
+                <i class="fas fa-plus"></i>&nbsp; {{ $t('TrackerListComponent-AddTracker') }}
             </button>
         </div>
 

@@ -4,7 +4,7 @@
         <div class="card">
             <!-- Tracker selection dropdown -->
             <div class="tracker-info">
-                <label for="tracker-select" class="dropdown-label">Select Tracker:</label>
+                <label for="tracker-select" class="dropdown-label">{{ $t('NewRoute-SelectTracker') }}:</label>
                 <select id="tracker-select" v-model="selectedTracker" @change="updateSelectedTracker">
                     <option v-for="tracker in trackers" :key="tracker._id" :value="tracker._id">
                         {{ tracker.name }}
