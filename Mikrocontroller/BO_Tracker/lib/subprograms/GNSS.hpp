@@ -4,13 +4,10 @@
 #include "MQTT_AWS.hpp"
 
 struct GNSS_Tracker {
-    char position[128];
     bool geoFenceInit = false;
-    float accuracy = 0.0;
     char gsa[128];
     char gsv[516];
     unsigned long startMillis = 0;
-    unsigned long timeToFirstFix = 0;
     GNSS_Work_Mode_t workMode = MS_BASED;
     bool isOn = false;
     unsigned int geoID = 1;
@@ -45,11 +42,8 @@ void handleGNSSMode(Stream &DSerial, _BG96_GNSS &_GNSS, JsonDocument &docInput) 
     }
 
     // GNSS-Position und Genauigkeit abrufen
-    if (_GNSS.GetGNSSPositionInformation(gnssTracker.position) && _GNSS.GetEstimationError(gnssTracker.accuracy)) {
-        gnssTracker.timeToFirstFix = gnssTracker.timeToFirstFix ? gnssTracker.timeToFirstFix : millis() - gnssTracker.startMillis;
-        docInput["TimeToGetFirstFix"] = gnssTracker.timeToFirstFix;
-        docInput["Position"] = gnssTracker.position;
-        docInput["Accuracy"] = gnssTracker.accuracy;
+    if (_GNSS.GetGnssJsonPositionInformation(docInput, gnssTracker.startMillis)) {
+        
     } else {
         DSerial.println("Failed to retrieve GNSS Position or Accuracy.");
     }

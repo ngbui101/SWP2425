@@ -21,7 +21,6 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
     {
         _BG96.TurnOffGNSS();
         gnssTracker.isOn = false;
-        gnssTracker.timeToFirstFix = 0;
         gnssTracker.startMillis = 0;
     }
 

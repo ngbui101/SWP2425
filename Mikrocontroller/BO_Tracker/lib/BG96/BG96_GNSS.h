@@ -89,6 +89,7 @@ class _BG96_GNSS : public _BG96_MQTT
 
     bool GetGNSSPositionInformation(char *position);
 
+    bool GetGnssJsonPositionInformation(JsonDocument &json, unsigned long starttime); 
     bool TurnOffGNSS();
 
     bool GetGNSSNMEASentences(NMEA_Type_t type, char *sentences);
