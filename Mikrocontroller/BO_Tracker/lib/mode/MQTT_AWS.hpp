@@ -7,6 +7,8 @@
 #include "TrackerMode.cpp"
 #include <ArduinoJson.h>
 #include <Arduino.h>
+#include <GNSS.hpp>
+#include <Battery.h>
 // APN
 // char APN[] = "internet.m2mportal.de";
 // char APN[] = "wm";
@@ -359,4 +361,116 @@ bool publishData(JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQT
   }
 }
 
+void modeHandle(JsonDocument &docInput, _Battery _BoardBattery){
+  pub_time = millis();
+
+  // GNSS-Modus verwalten
+  if (trackerModes.GnssMode)
+  {
+    handleGNSSMode(docInput);
+  }
+  else if (gnssTracker.isOn)
+  {
+    _GNSS.TurnOffGNSS();
+    gnssTracker.isOn = false;
+    gnssTracker.timeToFirstFix = 0;
+    gnssTracker.startMillis = 0;
+  }
+
+  // Temperatur- und Feuchtigkeitsdaten sammeln
+  if (trackerModes.TemperatureMode)
+  {
+    docInput["Temperature"] = 8;
+    docInput["Humidity"] = 59;
+  }
+
+  // Batteriestand erfassen
+  if (trackerModes.BatteryMode)
+  {
+    docInput["BatteryPercentage"] = _BoardBattery.calculateBatteryPercentage();;
+  }
+
+  // Zellinformationen erfassen
+  if (trackerModes.CellInfosMode)
+  {
+    JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+     for (Cell*& cell : cells)
+    {
+      if (cell != nullptr)
+      {
+        // JSON-Objekt für jede Zelle erstellen
+        JsonObject cellObj = cellsArray.add<JsonObject>();
+        cell->toJson(cellObj);
+      }
+    }
+  }
+
+  // Request-Modus setzen
+  trackerModes.updateRequestMode();
+  if (trackerModes.RequestMode)
+  {
+    docInput["RequestMode"] = true;
+  }
+  // Zeitstempel hinzufügen
+  docInput["Timestamp"] = _GNSS.GetCurrentTime();
+  // Daten veröffentlichen
+  if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/pub"))
+  {
+    delay(300);
+  }
+  if (trackerModes.GeoFenMode)
+  {
+    if (!gnssTracker.geoFenceInit)
+      addGeo();
+    GEOFENCE_STATUS_t status = _GNSS.getGeoFencingStatus(gnssTracker.geoID);
+    switch (status)
+    {
+    case OUTSIDE_GEOFENCE:
+      docInput["LeavingGeo"] = true;
+      if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/notifications"))
+      {
+        delay(300);
+      }
+      break;
+    case INSIDE_GEOFENCE || NOFIX:
+      break;
+    default:
+      break;
+    }
+  }
+  if(trackerModes.frequenz > 18000){
+    _AWS.PowOffModule();
+    trackerModes.Modem_Off= true;
+  }
+}
+void DailyUpdates(JsonDocument &docInput,_Battery _BoardBattery)
+{
+  GPSOneXtraCheckForUpdate();
+  if (_BoardBattery.calculateBatteryPercentage() <= 10)
+  {
+    docInput["BatteryLow"] = true;
+  }
+  if (publishData(docInput, pub_time, AT_LEAST_ONCE, "/notifications"))
+  {
+    delay(300);
+  }
+}
+void waitAndCheck(JsonDocument &docOutput){
+  char payload[1028];
+  Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
+
+  switch (ret)
+  {
+  case MQTT_RECV_DATA_EVENT:
+    DSerial.println("RECV_DATA_EVENT");
+    handleMQTTEvent(docOutput, payload);
+    // modeHandle(docInput,_BoardBattery);
+    break;
+  case MQTT_STATUS_EVENT:
+    handleMQTTStatusEvent(payload);
+    break;
+  default:
+    break;
+  }
+}
 #endif

@@ -6,6 +6,7 @@ struct TrackerModes {
     bool NmeaMode = false;
     bool GeoFenMode = false;
     bool RequestMode = true;
+    bool Modem_Off = false;
     unsigned int frequenz = 5000UL;
 
     float geoLatitude = 0;
