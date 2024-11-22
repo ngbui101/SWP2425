@@ -140,13 +140,21 @@
           <span :style="{ color: modeColors.red, marginLeft: '20px' }">
             <i class="fas fa-map-pin"></i>
           </span> Red: {{ modeAccuracy.red }}
-          <span :style="{ marginLeft: '50px', color: '#E69543' }">
-            Current accuracy: <strong>{{ selectedMeasurement.accuracy ? (Math.round(selectedMeasurement.accuracy * 10) /
-              10 + 'm') : 'N/A' }}</strong>
-
+          <span
+            :style="{ marginLeft: '50px', color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }">
+            Current accuracy:
+            <strong>
+              {{
+                selectedMeasurement.accuracy
+                  ? Math.round(selectedMeasurement.accuracy * 10) / 10 + 'm'
+                  : 'N/A'
+              }}
+            </strong>
           </span>
         </p>
       </div>
+
+
 
 
 
