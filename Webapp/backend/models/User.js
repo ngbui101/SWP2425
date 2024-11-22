@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// The UserSchema defines the structure of a user document with the following fields:
 const UserSchema = new Schema(
   {
     username: {
@@ -10,12 +9,6 @@ const UserSchema = new Schema(
     },
     number: {
       type: String,
-      required: false
-    },
-    language: {
-      type: String,
-      enum: ['EN', 'DE'],
-      default: 'EN',
       required: false
     },
     email: {
@@ -40,10 +33,11 @@ const UserSchema = new Schema(
         ref: 'Tracker'
       }
     ],
-    // Add the template field to manage the color scheme
-    template: {
-      type: String,
-      default: 'default'  // Default theme will be 'default'
+    // Reference the settings object for each user
+    settings: {
+      type: Schema.Types.ObjectId,
+      ref: 'Settings',
+      required: false
     }
   },
   {

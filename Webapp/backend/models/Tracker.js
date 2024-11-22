@@ -1,17 +1,19 @@
-//Schema for a Tracker. Mode is managed by String. Should only be RT or LT or Test for Realtime, Longtime or Testing
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const TrackerSchema = new Schema ( {
-    imei : {type: String},
-    name : {type: String},
+const TrackerSchema = new Schema({
+    imei: { type: String },
+    name: { type: String },
+    
+    // Reference to Mode model instead of enum
     mode: {
-        type: String,
-        enum: ['RT','LT','NB'],
-        default: 'LT'
+        type: Schema.Types.ObjectId,
+        ref: 'Mode',
+        required: true
     },
+
     geofence: { type: Schema.Types.ObjectId, ref: 'Geofence' },
-    trackerhistory: {type: Schema.Types.ObjectId, ref: 'Trackerhistory'}
-  })
+    trackerhistory: { type: Schema.Types.ObjectId, ref: 'Trackerhistory' }
+});
 
 module.exports = mongoose.model('Tracker', TrackerSchema);

@@ -1,384 +1,218 @@
 <template>
-  <div :class="['container', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
-    <div class="mapview-container">
-      <div v-if="trackers.length === 0" class="overlay">
-        <p class="overlay-text">No trackers available. Please add a tracker.</p>
-      </div>
+    <div :class="['map-view', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+        <!-- Toolbar with Toggle Bar for Current/History view -->
+        <div class="toolbar">
+            <div class="toggle-container" @mousedown="startDragging($event)" @mouseup="stopDragging"
+                @mouseleave="stopDragging" @mousemove="handleDragging($event)">
 
-      <!-- Greyish Overlay when there are no trackers (Top-level) -->
-      <!-- Greyish Overlay when there are no trackers -->
-
-      <!-- Tracker Info Card -->
-      <div v-if="trackers.length > 0" class="tracker-info-card">
-        <div class="card-body">
-          <label for="tracker-dropdown" class="dropdown-label">
-            Select Tracker:
-            <select id="tracker-dropdown" class="tracker-dropdown" v-model="selectedTracker" @change="selectTracker">
-              <option v-for="tracker in trackers" :key="tracker._id" :value="tracker._id">
-                {{ tracker.name }}
-              </option>
-            </select>
-          </label>
-
-          <label for="timestamp-dropdown" class="dropdown-label">
-            Select Timestamp:
-            <select id="timestamp-dropdown" v-model="selectedTimestamp" @change="updateSelectedMeasurement">
-              <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
-                :value="measurement._id">
-                {{ new Date(measurement.createdAt).toLocaleString() }}
-              </option>
-            </select>
-          </label>
-
-          <div class="grid-container">
-            <!-- Mode Information -->
-            <div class="grid-item-full mode-item">
-              <strong>Mode:</strong>
-              <span v-if="trackerMode === 'RT'">Real-Time Tracking</span>
-              <span v-else>{{ trackerMode || 'N/A' }}</span>
-
-              <!-- Mode Badges for GPS and LTE -->
-              <span v-if="trackerMode === 'GPS'" class="mode-badge">GPS</span>
-              <span v-if="trackerMode === 'LT'" class="mode-badge">LTE</span>
-
-              <!-- Switch Mode Button -->
-              <button class="switch-mode-button shimmering-button" @click="switchMode">Change Mode</button>
-            </div>
-
-            <!-- Battery Status -->
-            <div class="grid-item-full">
-              <div class="battery-status-wrapper">
-                <strong>Battery Status:</strong>
-                <div class="battery-wrapper">
-                  <div class="battery-bar">
-                    <div class="battery-fill"
-                      :style="{ width: `${Math.round(selectedMeasurement.battery) || N / A}%` }">
-                    </div>
-                  </div>
-                  <div class="battery-indicator">
-                    <span>{{ Math.round(selectedMeasurement.battery) || 'N/A' }}%</span>
-                  </div>
+                <!-- Sliding background div -->
+                <div class="slider"
+                    :class="{ 'slide-left': currentView === 'current', 'slide-right': currentView === 'history' }">
                 </div>
-              </div>
-            </div>
 
-            <!-- Latitude and Longitude -->
-            <div class="grid-item">
-              <strong>Latitude:&nbsp; </strong> {{ selectedMeasurement.latitude || 'N/A' }}
-            </div>
-            <div class="grid-item">
-              <strong>Longitude:&nbsp;</strong> {{ selectedMeasurement.longitude || 'N/A' }}
-            </div>
+                <!-- Current Map View Toggle (Left) -->
+                <label @click="setView('current')" :class="{ active: currentView === 'current' }">
+                    Current
+                </label>
 
-            <!-- Temperature and Humidity -->
-            <div class="grid-item">
-              <strong>Temperature:&nbsp;</strong> {{ selectedMeasurement.temperature || 'N/A' }} °C
+                <!-- Map History View Toggle (Right) -->
+                <label @click="setView('history')" :class="{ active: currentView === 'history' }">
+                    History
+                </label>
             </div>
-            <div class="grid-item">
-              <strong>Humidity:&nbsp;</strong> {{ selectedMeasurement.humidity || 'N/A' }} %
-            </div>
-
-            <!-- Add/Remove Geofence button -->
-            <div class="geofence-button-container">
-              <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">Add Geofence</button>
-              <button v-else @click="removeGeofence" class="remove-geofence-button">Remove Geofence</button>
-            </div>
-
-          </div>
         </div>
 
-        <!-- Slider for geofence radius, shown only when geofence is active -->
-        <div v-if="geofenceActive" class="slider-container">
-          <label for="radius-slider" class="radius-label">Geofence Radius: {{ geofenceRadius }} meters</label>
-          <input id="radius-slider" type="range" min="100" max="5000" step="100" v-model="geofenceRadius"
-            class="radius-slider" />
-        </div>
-      </div>
+        <!-- Conditional rendering based on selected view -->
+        <CurrentMap v-if="currentView === 'current'" />
+        <MapHistory v-if="currentView === 'history'" />
     </div>
-
-    <!-- Map Card -->
-    <div v-if="trackers.length > 0" class="card">
-      <div class="card-header">
-        <div class="timestamp">
-          <strong>Position Timestamp:</strong> {{ selectedMeasurement.createdAt ? new
-            Date(selectedMeasurement.createdAt).toLocaleString() : 'N/A' }}
-        </div>
-        <div class="tracker-mode">
-          Mode: {{ trackerMode || 'N/A' }}
-          <span v-if="trackerMode === 'RT'" class="mode-badge">GPS</span>
-          <span v-if="trackerMode === 'LT'" class="mode-badge">LTE</span>
-        </div>
-      </div>
-
-      <!-- Map Container -->
-      <div class="map-container">
-        <div ref="mapElement" class="map"></div>
-
-        <!-- Grey Overlay for dark mode -->
-        <div v-if="(user.template ?? 'default') === 'dark'" class="map-overlay"></div>
-      </div>
-
-
-
-
-      <div class="location-display">
-        <p>{{ selectedTrackerLocation }}</p>
-        <div class="location-accuracy">
-          Estimated Accuracy: 5m
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup>
-import './styles_mapview.css';
-import { ref, computed, onMounted, watch } from 'vue';
-import { useShepherd } from 'vue-shepherd'
-import axios from 'axios';
 
+import { ref, computed } from 'vue';
+import CurrentMap from './components/CurrentMap.vue';
+import MapHistory from './components/MapHistory.vue';
 import { useAuthStore } from "@/stores/auth";
+
+const currentView = ref('current'); // Default view is now current
+let isDragging = ref(false); // Indicates if the slider is being dragged
+let sliderPosition = ref(100); // Default slider starts at Current Map (leftmost)
+let draggingDirection = ref(''); // Tracks the drag direction
+
+// Fetch user from the auth store
 const authStore = useAuthStore();
-const el = ref(null);
-const tour = useShepherd({
-  useModalOverlay: true
-});
-
-const trackers = ref([]);
-const selectedTracker = ref(null);
-const selectedTimestamp = ref(null);
-const selectedMeasurement = ref({});
-const selectedTrackerMeasurements = ref([]);
-const selectedTrackerLocation = ref('Unknown Location');
-const selectedTrackerName = ref('Tracker Information');
-const mapElement = ref(null);
-let map = null;
-let marker = null;
-let geofenceCircle = null; // Declare geofence circle
-let isGoogleMapsLoaded = ref(false);
-
-// Geofence-related state
-const geofenceActive = ref(false); // Geofence initially inactive
-const geofenceRadius = ref(2000); // Default radius value in meters (set to 2000)
-
-// Compute the mode of the selected tracker
-const trackerMode = computed(() => {
-  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
-  return tracker ? tracker.mode : null;
-});
-
-// Fetch trackers and measurements for the user
-const fetchTrackersForUser = async () => {
-  // Access the auth store
-
-  try {
-    // Retrieve the access token from the auth store
-    const token = authStore.accessToken;
-
-    // Set up the configuration for Axios to include the Authorization header
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    };
-
-    // Fetch trackers for the authenticated user
-    const response = await axios.get('http://localhost:3500/api/tracker/user/', config);
-    trackers.value = response.data;
-
-    // Fetch measurements for each tracker
-    for (const tracker of trackers.value) {
-      const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
-      tracker.measurements = measurementsResponse.data;
-
-      // Set the first tracker as the selected tracker, if not already set
-      if (!selectedTracker.value) {
-        selectedTracker.value = tracker._id;
-        selectedTrackerName.value = tracker.name;
-      }
-    }
-
-    // Update the selected tracker's measurements
-    updateSelectedTrackerMeasurements(true);
-  } catch (error) {
-    console.error('Failed to fetch trackers or measurements:', error);
-  }
-};
-
-// Update selected tracker measurements
-const updateSelectedTrackerMeasurements = (initialLoad = false) => {
-  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
-  if (tracker && tracker.measurements.length > 0) {
-    selectedTrackerName.value = tracker.name;
-    selectedTrackerMeasurements.value = tracker.measurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    const mostRecentMeasurement = selectedTrackerMeasurements.value[0];
-    selectedTimestamp.value = mostRecentMeasurement._id;
-    updateSelectedMeasurement(initialLoad);
-  }
-};
-
-// Update selected measurement
-const updateSelectedMeasurement = (initialLoad = false) => {
-  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
-  if (tracker) {
-    const measurement = tracker.measurements.find(m => m._id === selectedTimestamp.value);
-    if (measurement) {
-      selectedMeasurement.value = measurement;
-      getReverseGeocodingAddress(measurement.latitude, measurement.longitude);
-
-      if (initialLoad) {
-        if (isGoogleMapsLoaded.value) {
-          initializeMap();
-        } else {
-          loadGoogleMapsScript().then(() => {
-            initializeMap();
-          });
-        }
-      } else {
-        initializeMap();
-      }
-    }
-  }
-};
-
-// Initialize the map without the geofence initially
-const initializeMap = () => {
-  if (!selectedMeasurement.value || !mapElement.value) return;
-
-  const position = {
-    lat: Number(selectedMeasurement.value.latitude),
-    lng: Number(selectedMeasurement.value.longitude)
-  };
-
-  if (map) {
-    map.setCenter(position);
-    if (marker) {
-      marker.setPosition(position);
-    } else {
-      marker = new google.maps.Marker({ position, map, title: 'Tracker Location' });
-    }
-  } else {
-    map = new google.maps.Map(mapElement.value, {
-      center: position,
-      zoom: 12,
-      mapTypeControl: false,
-      streetViewControl: false
-    });
-    marker = new google.maps.Marker({
-      position,
-      map,
-      title: 'Tracker Location',
-    });
-  }
-};
-
-
-
-// Add geofence when the button is clicked
-const addGeofence = () => {
-  geofenceActive.value = true;
-
-  const position = {
-    lat: Number(selectedMeasurement.value.latitude),
-    lng: Number(selectedMeasurement.value.longitude)
-  };
-
-  console.log('Adding geofence at position:', position); // Log the geofence position for debugging
-
-  // Always recreate the geofence circle when adding it, even after removing it
-  if (map) {
-    if (geofenceCircle) {
-      geofenceCircle.setMap(null); // Remove the previous circle, if any
-    }
-
-    // Draw the geofence circle on the map with the current radius
-    geofenceCircle = new google.maps.Circle({
-      map,
-      center: position,
-      radius: geofenceRadius.value, // Ensure radius is set correctly
-      fillColor: '#28a745',
-      fillOpacity: 0.35,
-      strokeColor: '#28a745',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-    });
-
-    console.log('Geofence circle added with radius:', geofenceRadius.value); // Log circle radius
-  } else {
-    console.error('Map object is not available when adding geofence');
-  }
-};
-
-// Remove geofence when the button is clicked
-const removeGeofence = () => {
-  geofenceActive.value = false;
-  if (geofenceCircle) {
-    geofenceCircle.setMap(null); // Remove the geofence circle from the map
-    geofenceCircle = null;
-  }
-  console.log('Geofence removed');
-};
-
-// Watch geofenceRadius for changes and update the circle's radius dynamically
-watch(geofenceRadius, (newRadius) => {
-  const radius = parseFloat(newRadius); // Ensure the radius is a number
-  console.log('Slider moved, new radius:', radius); // Log slider changes for debugging
-  if (geofenceCircle) {
-    console.log('Updating geofence radius to:', radius); // Log the radius update process
-    geofenceCircle.setRadius(radius); // Update the radius of the geofence circle when the slider changes
-  } else {
-    console.log('Geofence circle is not initialized yet');
-  }
-});
-
-// Perform reverse geocoding using your backend API
-const getReverseGeocodingAddress = async (lat, lng) => {
-  const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
-
-  try {
-    const response = await axios.get(geocodingUrl);
-    if (response.data && response.data.address) {
-      selectedTrackerLocation.value = response.data.address;
-    } else {
-      selectedTrackerLocation.value = 'Unknown Location';
-    }
-  } catch (error) {
-    console.error('Failed to perform reverse geocoding:', error);
-    selectedTrackerLocation.value = 'Unknown Location';
-  }
-};
-
-// Load Google Maps API script dynamically
-const loadGoogleMapsScript = () => {
-  return new Promise((resolve, reject) => {
-    if (window.google && window.google.maps) {
-      isGoogleMapsLoaded.value = true;
-      resolve();
-    } else if (!document.querySelector("script[src*='maps.googleapis.com']")) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDzh7DicT6KmawobOi6iir27IFEQBsRhRo&libraries=geometry`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        isGoogleMapsLoaded.value = true;
-        resolve();
-      };
-      script.onerror = reject;
-      document.head.appendChild(script);
-    }
-  });
-};
 const user = computed(() => authStore.userDetail);
-// On component mount, fetch trackers and measurements
-onMounted(async () => {
-  await authStore.getUser();
-  await fetchTrackersForUser();
 
-});
+// Method to change the view
+const setView = (view) => {
+    currentView.value = view;
+    sliderPosition.value = view === 'current' ? 0 : 100; // Current Map on left (0), Map History on right (100)
+};
 
-// Watch for changes in selected tracker and update measurements
-watch(selectedTracker, updateSelectedTrackerMeasurements);
+// Start dragging the slider
+const startDragging = (event) => {
+    isDragging.value = true;
+    updateSliderPosition(event.clientX);
+};
+
+// Stop dragging the slider
+const stopDragging = () => {
+    if (!isDragging.value) return;
+    isDragging.value = false;
+
+    // Determine which view is closer to the slider
+    if (sliderPosition.value > 50) {
+        setView('history'); // Snap to Map History (right side)
+    } else {
+        setView('current'); // Snap to Current Map (left side)
+    }
+
+    // Reset dragging direction after stop
+    draggingDirection.value = '';
+};
+
+// Handle the dragging movement
+const handleDragging = (event) => {
+    if (!isDragging.value) return;
+
+    const oldSliderPosition = sliderPosition.value;
+    updateSliderPosition(event.clientX);
+
+    // Set the dragging direction based on the new position
+    draggingDirection.value = sliderPosition.value > oldSliderPosition ? 'right' : 'left';
+};
+
+// Update the slider's position based on the mouse X position
+const updateSliderPosition = (clientX) => {
+    const container = document.querySelector('.toggle-container');
+    const rect = container.getBoundingClientRect();
+    const percentage = ((clientX - rect.left) / rect.width) * 100;
+
+    // Boundaries to prevent dragging outside
+    sliderPosition.value = Math.min(100, Math.max(0, percentage));
+};
 </script>
 
-<style scoped></style>
+<style scoped>
+.map-view {
+    background: linear-gradient(135deg, #f1e4cc 0%, #e6cc99 50%, #f1e4cc 100%);
+    padding-bottom: 20px;
+    min-height: 100vh;
+    padding-top: 15px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .map-view {
+        padding-right: 20px;
+        /* Adds padding to create margin on the sides */
+
+        /* Adds margin on both sides */
+        box-sizing: border-box;
+        /* Ensures padding doesn’t expand width */
+    }
+}
+
+.map-view.dark-mode {
+    background: linear-gradient(135deg, #1e1e1e 0%, #141414 50%, #1e1e1e 100%);
+}
+
+/* Toolbar styling */
+.toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* Toggle container */
+.toggle-container {
+    position: relative;
+    width: 250px;
+    height: 50px;
+    border-radius: 30px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* Sliding background */
+.slider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background-color: #C19A6B;
+    border-radius: 30px 0 0 30px;
+    transition: transform 0s ease;
+    z-index: 0;
+    transform: translateX(calc(var(--slider-pos, 0) * 1%));
+}
+
+.slide-left {
+    transform: translateX(0);
+}
+
+.slide-right {
+    border-radius: 0 30px 30px 0;
+    transform: translateX(100%);
+}
+
+/* Toggle labels */
+.toggle-container label {
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    cursor: pointer;
+    z-index: 1;
+    /* Ensures text is on top of slider */
+}
+
+.toggle-container .active {
+    color: rgb(0, 0, 0);
+    /* Color of active label */
+    border-right: none;
+    /* Remove right border when active */
+}
+
+/* Remove left border on Current Map View when active */
+.toggle-container label:last-of-type.active {
+    border-left: none;
+}
+
+.toggle-container label:not(.active) {
+    color: #1f1f1f;
+    border-left: none;
+}
+
+/* Dark mode styles */
+.dark-mode .toggle-container {
+    background-color: #333;
+    border-color: #555;
+}
+
+.dark-mode .slider {
+    background-color: #5A976D;
+}
+
+.dark-mode .toggle-container label {
+    color: white;
+}
+
+/* Add other styles back */
+.dark-mode .toggle-container .active {
+    background-color: #5A976D;
+    color: #333;
+}
+
+.dark-mode .toggle-container label:not(.active) {
+    color: #aaa;
+}
+</style>

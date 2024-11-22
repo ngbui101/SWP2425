@@ -1,10 +1,10 @@
 <template>
-  <div :class="['header', (user.template ?? 'default') === 'dark' ? 'dark-mode' : '']" ref="tour1">
+  <div :class="['header', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']" ref="tour1">
     <!-- Logo Section -->
     <div class="logo-container">
       <router-link to="/">
         <!-- First image for text -->
-        <img v-if="user.template === 'dark'" src="/src/assets/logo-text-dark.png" alt="Company Logo Dark"
+        <img v-if="user.settings?.template === 'dark'" src="/src/assets/logo-text-dark.png" alt="Company Logo Dark"
           class="logo-text" />
         <img v-else src="/src/assets/logo-text.png" alt="Company Logo" class="logo-text" />
 
@@ -45,7 +45,9 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 20%, rgb(212, 236, 206) 80%);
+  background: linear-gradient(180deg, #F2F2F2 85%, rgba(212, 236, 206, 1) 100%);
+
+
   padding: 10px;
 
   height: 100px;

@@ -13,13 +13,46 @@
                     <input type="text" id="tracker-name" v-model="trackerName" class="popup-input" />
                 </div>
 
-                <!-- Mode Dropdown -->
+                <!-- Mode Toggle -->
                 <div class="popup-section">
-                    <label for="tracker-mode">Mode</label>
-                    <select id="tracker-mode" v-model="trackerMode" class="popup-dropdown">
-                        <option value="RT">RT</option>
-                        <option value="LT">LT</option>
-                    </select>
+                    <h3>Tracking Mode</h3>
+                    <div class="mode-toggle">
+                        <button :class="{ active: !isLongTimeTracking }" @click="setRealTimeTracking">
+                            Real-Time-Tracking
+                        </button>
+                        <button :class="{ active: isLongTimeTracking }" @click="setLongTimeTracking">
+                            Long-Time-Tracking
+                        </button>
+                    </div>
+                </div>
+                <!-- Battery Data Checkbox -->
+                <div class="popup-section">
+                    <label>
+                        <input type="checkbox" v-model="sendBatteryData" /> Send Battery Data
+                    </label>
+                </div>
+
+                <!-- Humidity Data Checkbox -->
+                <div class="popup-section">
+                    <label>
+                        <input type="checkbox" v-model="sendTemperatureData" /> Send Humidity Data
+                    </label>
+                </div>
+
+                <!-- Frequency Slider for Real-Time Mode -->
+                <div class="popup-section" v-if="!isLongTimeTracking">
+                    <h3>Sending Frequency (Real-Time)</h3>
+                    <input type="range" class="frequency-slider" v-model.number="selectedRealTimeStep" :min="0"
+                        :max="realTimeSteps.length - 1" step="1" />
+                    <p>{{ formattedRealTimeInterval }}</p>
+                </div>
+
+                <!-- Frequency Slider for Long-Time Mode -->
+                <div class="popup-section" v-else>
+                    <h3>Sending Frequency (Long-Time)</h3>
+                    <input type="range" class="frequency-slider" v-model.number="trackingInterval" min="1" max="24"
+                        step="1" />
+                    <p>{{ trackingInterval }} hour(s)</p>
                 </div>
             </div>
 
@@ -31,26 +64,126 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useApiPrivate } from "@/composables/useApi";
+import { useAuthStore } from "@/stores/auth";
 
-// Define props to accept data passed from the parent
 const props = defineProps({
-    trackerNameInitial: String,  // Initial tracker name passed from parent
-    trackerModeInitial: String,  // Initial tracker mode passed from parent
-    template: String,            // Template value for dark mode
-    closePopup: Function          // Function to close the popup
+    trackerNameInitial: String,
+    trackerModeInitial: String,
+    sendingFrequencyInitial: Number,
+    template: String,
+    closePopup: Function,
+    selectedTrackerId: String,
 });
 
-// Create reactive variables for tracker name and mode
-const trackerName = ref(props.trackerNameInitial);
-const trackerMode = ref(props.trackerModeInitial);
+const emit = defineEmits(['updateTracker']);
 
-// Function to save changes (placeholder, no real functionality implemented here)
-const saveChanges = () => {
-    console.log('Saving:', trackerName.value, trackerMode.value);
-    props.closePopup();  // Call the close popup function
+const trackerName = ref(props.trackerNameInitial);
+const isLongTimeTracking = ref(props.trackerModeInitial === 'LT');
+const trackingInterval = ref(props.sendingFrequencyInitial || 1); // Default to 1 hour if not provided
+// Add new reactive variables for checkboxes
+const sendBatteryData = ref(props.trackerModeInitial.BatteryMode || false);
+const sendTemperatureData = ref(props.trackerModeInitial.TemperatureMode || false);
+// Real-time mode frequency steps (in seconds)
+const realTimeSteps = [5, 10, 20, 30, 60, 120, 300, 600, 1800]; // 5s, 10s, 20s, 30s, 1min, 2min, 5min, 10min, 30min
+const selectedRealTimeStep = ref(0);
+
+const api = useApiPrivate();
+const store = useAuthStore();
+
+// Computed property to format the real-time interval display
+const formattedRealTimeInterval = computed(() => {
+    const seconds = realTimeSteps[selectedRealTimeStep.value];
+    return seconds < 60 ? `${seconds} seconds` : `${Math.round(seconds / 60)} min${seconds / 60 > 1 ? 's' : ''}`;
+});
+
+onMounted(async () => {
+    try {
+        if (!props.selectedTrackerId) {
+            throw new Error('selectedTrackerId is undefined');
+        }
+
+        const { data } = await api.get(`http://localhost:3500/api/mode/${props.selectedTrackerId}`);
+
+        // Populate the tracking mode
+        isLongTimeTracking.value = data.CellInfosMode;
+        if (data.GnssMode) {
+            const frequency = data.frequenz / 1000; // Convert milliseconds to seconds
+            const index = realTimeSteps.indexOf(frequency);
+            selectedRealTimeStep.value = index !== -1 ? index : 0;
+        } else {
+            trackingInterval.value = Math.round(data.frequenz / (60 * 60 * 1000)); // Convert milliseconds to hours
+        }
+
+        // Populate BatteryMode and TemperatureMode
+        sendBatteryData.value = data.BatteryMode || false;
+        sendTemperatureData.value = data.TemperatureMode || false;
+    } catch (error) {
+        console.error('Failed to fetch tracker mode:', error);
+    }
+});
+
+
+const setRealTimeTracking = () => {
+    isLongTimeTracking.value = false;
+    selectedRealTimeStep.value = 0; // Reset to 5 seconds by default
 };
+
+const setLongTimeTracking = () => {
+    isLongTimeTracking.value = true;
+};
+
+const saveChanges = async () => {
+    try {
+        if (!props.selectedTrackerId) {
+            throw new Error('selectedTrackerId is undefined');
+        }
+
+        // Update tracker name if changed
+        if (trackerName.value !== props.trackerNameInitial) {
+            await api.put(`http://localhost:3500/api/tracker/${props.selectedTrackerId}`, { name: trackerName.value });
+            console.log('Tracker name updated successfully');
+        }
+
+        // Prepare mode update payload
+        const realTimeFrequency = realTimeSteps[selectedRealTimeStep.value];
+
+        const updateData = {
+            GnssMode: !isLongTimeTracking.value,
+            CellInfosMode: isLongTimeTracking.value,
+            BatteryMode: sendBatteryData.value, // Include battery mode
+            TemperatureMode: sendTemperatureData.value, // Include temperature mode
+            frequenz: isLongTimeTracking.value
+                ? trackingInterval.value * 60 * 60 * 1000 // Long-Time Mode frequency in milliseconds
+                : realTimeFrequency * 1000, // Real-Time Mode frequency in milliseconds
+        };
+
+        console.log('Update Data:', updateData); // Debug the payload
+
+        await api.put(`http://localhost:3500/api/mode/${props.selectedTrackerId}`, updateData);
+
+        console.log('Mode updated successfully');
+
+        // Emit updated data to parent
+        emit('updateTracker', {
+            id: props.selectedTrackerId,
+            name: trackerName.value,
+            mode: isLongTimeTracking.value ? 'LT' : 'RT',
+            frequency: updateData.frequenz,
+            BatteryMode: sendBatteryData.value,
+            TemperatureMode: sendTemperatureData.value,
+        });
+
+        props.closePopup();
+    } catch (error) {
+        console.error('Failed to save changes:', error);
+    }
+};
+
+
 </script>
+
 
 <style scoped>
 /* Overlay background for the popup */
@@ -67,6 +200,12 @@ const saveChanges = () => {
     z-index: 1000;
 }
 
+.slider-steps {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+
 /* Popup Card */
 .popup-card {
     background: linear-gradient(135deg, #f1e4cc 0%, #e6cc99 50%, #f1e4cc 100%);
@@ -79,6 +218,15 @@ const saveChanges = () => {
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
+}
+
+.popup-card input[type="range"] {
+    width: 100%;
+    accent-color: #00543D;
+}
+
+.dark-mode .popup-card input[type="range"] {
+    accent-color: #E69543;
 }
 
 @media screen and (min-width: 768px) {
@@ -113,12 +261,10 @@ const saveChanges = () => {
     font-size: 1.5rem;
     cursor: pointer;
     color: #851515;
-    /* Button color */
 }
 
 .close-btn:hover {
     color: #750f0f;
-    /* Darker hover color */
 }
 
 .dark-mode .close-btn {
@@ -146,51 +292,127 @@ const saveChanges = () => {
     margin-bottom: 5px;
 }
 
-.popup-input,
-.popup-dropdown {
+.popup-input {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
     border-radius: 6px;
     border: 1px solid #ddd;
     outline: none;
-    background: #ddd;
+    background: #ffffff;
+    box-sizing: border-box;
 }
 
-.popup-input:focus,
-.popup-dropdown:focus {
+.popup-input:focus {
     border-color: #009579;
     box-shadow: 0 0 5px rgba(0, 149, 121, 0.5);
 }
 
-.dark-mode .popup-input,
-.dark-mode .popup-dropdown {
+.dark-mode .popup-input {
     background-color: #444;
     border-color: #777;
     color: #bbb;
 }
 
+/* Mode Toggle */
+.mode-toggle {
+    display: flex;
+    border: 1px solid #333;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.dark-mode .mode-toggle {
+    border: 1px solid #ddd;
+}
+
+.mode-toggle button {
+    flex: 1;
+    padding: 10px;
+    font-weight: bold;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.mode-toggle button.active {
+    background-color: #C19A6B;
+    color: #1f1f1f;
+}
+
+.dark-mode .mode-toggle button.active {
+    background-color: #87c099;
+    color: #333;
+}
+
+.mode-toggle button:not(.active) {
+    background-color: #fff;
+    color: #333;
+}
+
+.dark-mode .mode-toggle button:not(.active) {
+    background-color: #2e2e2e;
+    color: #fff;
+}
+
+.mode-toggle button:not(.active):hover {
+    background-color: #ccc;
+    color: #333;
+}
+
+/* Frequency Display */
+.frequency-display p,
+.frequency-slider p {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.popup-body input[type="checkbox"] {
+    accent-color: #00543D;
+    /* Orange color */
+}
+
+/* Dark mode checkbox accent color */
+.dark-mode .popup-body input[type="checkbox"] {
+    accent-color: #E69543;
+    /* Orange color */
+}
+
+.frequency-slider input[type="range"] {
+    width: 100%;
+    accent-color: #00543D;
+}
+
+.dark-mode .frequency-slider input[type="range"] {
+    width: 100%;
+    accent-color: #E69543;
+}
+
 /* Popup Footer */
 .popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
     margin-top: 20px;
 }
 
+/* Save Button */
 .popup-save-btn {
     background-color: #851515;
-    /* Button color */
     color: #fff;
-    padding: 12px 30px;
+    padding: 10px 20px;
     font-size: 1rem;
     font-weight: bold;
     border-radius: 6px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .popup-save-btn:hover {
     background-color: #750f0f;
-    /* Darker hover color */
     transform: scale(1.05);
 }
 

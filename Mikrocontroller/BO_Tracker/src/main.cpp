@@ -1,6 +1,7 @@
 #include <MQTT_AWS.hpp>
 #include <GNSS.hpp>
 #include <ArduinoJson.h>
+#include <Temperature.h>
 
 #define DSerial SerialUSB
 #define ATSerial Serial1
@@ -18,6 +19,7 @@ unsigned long lastUpdateCheck = 0;
 
 // Module
 _Battery _BoardBattery;
+_Temperature _TInstance;
 
 void setup()
 {

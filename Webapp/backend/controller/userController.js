@@ -49,7 +49,7 @@ async function getUserById(req, res) {
   const { id } = req.params;
 
   try {
-    const user = await User.findById(id, '-password'); // Exclude the password field
+    const user = await User.findById(id, '-password').populate('settings'); // Populate settings
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

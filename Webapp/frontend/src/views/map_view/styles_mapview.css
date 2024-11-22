@@ -526,21 +526,3 @@ body {
   color: #1f1f1f;
 }
 
-/* Mobile view: Stack cards on top of each other */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .card {
-    max-width: 100%;
-    width: 100%;
-    padding: 10px;
-  }
-
-  .tracker-info-card {
-    width: 100%;
-
-  }
-}
