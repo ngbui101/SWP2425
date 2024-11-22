@@ -52,7 +52,7 @@
         <div ref="tour3" class="tracker-card add-tracker-card" @click="openAddTrackerPopup"
             :class="{ 'scaling-effect': trackers.length === 0 }">
             <div class="card-body add-tracker-body">
-                <i class="fas fa-plus"></i>&nbsp; Add Tracker
+                <i class="fas fa-plus"></i>&nbsp; {{ $t('TrackerCardComponent-AddTracker') }}
             </div>
         </div>
 

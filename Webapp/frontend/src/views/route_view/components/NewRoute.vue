@@ -5,40 +5,22 @@
                 <p class="overlay-text">No trackers available. Please add a tracker.</p>
             </div>
 
-            <!-- Tracker Info Card -->
-            <div v-if="trackers.length > 0" class="tracker-info-card">
-                <div class="card-body">
-                    <!-- Select Tracker with Filters Button -->
-                    <div class="tracker-container">
-                        <label for="tracker-dropdown" class="dropdown-label">
-                            Select Tracker:
-                            <select id="tracker-dropdown" class="tracker-dropdown" v-model="selectedTracker">
-                                <option v-for="tracker in filteredTrackers" :key="tracker._id" :value="tracker._id">
-                                    {{ tracker.name }}
-                                </option>
-                            </select>
-                        </label>
-                        <button class="filters-button" @click="openTrackerFilters">Filters</button>
-                    </div>
+            <!-- Start/Stop and Save Route controls -->
+            <div class="route-controls">
+                <button v-if="!isRouteActive" @click="startRoute" class="start-route-button">
+                    {{ $t('NewRoute-StartRoute') }}
+                </button>
 
-                    <!-- Start/Stop/Save Button Section -->
-                    <div class="action-buttons">
-                        <!-- Start/Stop Button -->
-                        <button class="action-button" :disabled="!selectedTracker" @click="handleStartStop">
-                            {{ buttonLabel }}
-                        </button>
-
-                        <!-- Save Button (appears after Stop is clicked) -->
-                        <button v-if="showSaveButton" class="save-button" @click="saveRoute">
-                            Save
-                        </button>
-                    </div>
-
-                    <!-- Timer Display -->
-                    <div v-if="timerVisible" class="timer">
-                        Timer: {{ formattedTime }}
-                    </div>
+                <div v-if="isRouteActive" class="timer-container">
+                    <p>{{ formattedTime }}</p>
+                    <button @click="stopRoute" class="stop-route-button">
+                        {{ $t('NewRoute-StopRoute') }}
+                    </button>
                 </div>
+
+                <button v-if="showSaveButton" @click="saveRoute" class="save-route-button">
+                    {{ $t('NewRoute-SaveRoute') }}
+                </button>
             </div>
         </div>
 
