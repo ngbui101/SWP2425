@@ -1,17 +1,8 @@
-
 #ifndef __MQTT_AWS_H
 #define __MQTT_AWS_H
-#define DSerial SerialUSB
-#define ATSerial Serial1
 
-#include "BG96_MQTT.h"
-#include "TrackerMode.cpp"
-#include <ArduinoJson.h>
-#include <Arduino.h>
-// APN
-char APN[] = "internet.m2mportal.de";
-char LOGIN[] = "";
-char PASSWORD[] = "";
+#include "Modem.hpp"
+
 
 // MQTT
 char MQTTServer[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
@@ -21,13 +12,8 @@ char mqtt_base_topic[32];
 Mqtt_Qos_t MQTT_QoS = AT_LEAST_ONCE;
 unsigned long pub_time = 0;
 unsigned int MQTTIndex = 0;
-unsigned int PDPIndex = 1;
 unsigned int SSLIndex = 2;
-
-///
-char ModemIMEI[20];
-
-_BG96_MQTT _AWS(ATSerial, DSerial);
+Mqtt_Version_t version = MQTT_V4;
 
 char aws_root_ca_pem[] = "-----BEGIN CERTIFICATE-----\n\
 MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF\n\
@@ -101,58 +87,13 @@ gP5HpbKQB0mBEADXAwWVXj2i8UL2nW9lo0xObxbqVSZJE8Xj+zKJCksacTq+we4/\n\
 f1ekEo4pJ+I1iQkqLLspRGJQziDcstLWuH+62b/f9wS9P3sKrcTb5PE=\n\
 -----END RSA PRIVATE KEY-----\n";
 
-// BG96 is the object of class _BG96_MQTT
-// DSerial USB serial
-// APN name
-// APIN login,
-// APN password ,
-// MQTT server FQDN,
-// MQTT port, number
-// MQTT Client Id such as "BasibPubSub",
-// MQTT topic name,
-// MQTT QoS  such as AT_MOST_ONCE,
-// MQTT index: The range is 0 ~ 5
-// PDP index:  The range is 1 ~ 16
-// SSL index:  The range is 0 ~ 5
-
-// char *ModemIMEI  is an output contains the IMEI
-bool InitModemMQTT()
+bool InitModemMQTT(Stream &DSerial, _BG96_MQTT &_AWS)
 {
-  Mqtt_Version_t version = MQTT_V4;
-
-  if (_AWS.InitModule())
-  {
-    _AWS.SetDevOutputformat(true);
-    _AWS.SetDevCommandEcho(false);
-    _AWS.ConfigNetworks();
-  }
-  _AWS.SetDevOutputformat(true);
-  // _AWS.SetDevCommandEcho(false);
-  // _AWS.SetDevOutputformat(true);
-  // IMEI
-  char imei_tmp[64];
-
-  if (_AWS.GetDevIMEI(imei_tmp))
-  {
-    String s = String(imei_tmp);
-    s.trim();
-    s.toCharArray(ModemIMEI, 64);
-    DSerial.println(ModemIMEI);
-  }
-
-  strcpy(mqtt_base_topic, "tracker/");
-  strcat(mqtt_base_topic, ModemIMEI);
-
   // SSL Networking
   _AWS.DeleteCertificate("all");
-
-  char apn_error[64];
-  while (!_AWS.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
-  {
-    DSerial.println(apn_error);
-  }
-  DSerial.println(apn_error);
-
+  strcpy(mqtt_base_topic, "tracker/");
+  strcat(mqtt_base_topic, ModemIMEI);
+  
   char ssl_error[128];
   while (!_AWS.InitSSL(SSLIndex, aws_root_ca_pem, certificate_pem_crt, private_pem_key, ssl_error))
   {
@@ -245,95 +186,48 @@ bool InitModemMQTT()
     }
   }
   DSerial.println("\r\nMQTT Subscribe Topic Success!");
-  _AWS.DeleteCertificate("all");
   return true;
 }
 
-void handleMQTTEvent(JsonDocument &docOutput, char *payload) {
-    DeserializationError error = deserializeJson(docOutput, payload);
-
-    if (error == DeserializationError::Ok) {
-        if (docOutput["GnssMode"].is<boolean>()) {
-            trackerModes.GnssMode = docOutput["GnssMode"];
-        }
-        if (docOutput["CellInfosMode"].is<boolean>()) {
-            trackerModes.CellInfosMode = docOutput["CellInfosMode"];
-        }
-        if (docOutput["BatteryMode"].is<boolean>()) {
-            trackerModes.BatteryMode = docOutput["BatteryMode"];
-        }
-        if (docOutput["TemperatureMode"].is<boolean>()) {
-            trackerModes.TemperatureMode = docOutput["TemperatureMode"];
-        }
-        if (docOutput["NmeaMode"].is<boolean>()) {
-            trackerModes.NmeaMode = docOutput["NmeaMode"];
-        }
-        if (docOutput["GeoFenMode"].is<boolean>()) {
-            trackerModes.GeoFenMode = docOutput["GeoFenMode"];
-        }
-        // Frequenz aktualisieren
-        if (docOutput["frequenz"].is<unsigned int>()) {
-            unsigned int newFrequenz = docOutput["frequenz"];
-            if (newFrequenz > 0) {
-                trackerModes.frequenz = newFrequenz;
-                Serial.print("Updated publishing frequency to: ");
-                Serial.println(trackerModes.frequenz);
-            }
-        }
-        if (docOutput["geoRadius"].is<int>()) {
-            trackerModes.geoRadius = docOutput["geoRadius"].as<unsigned int>();
-        }
-        
-        if (docOutput["geoLatitude"].is<float>()) {
-            trackerModes.geoLatitude = docOutput["geoLatitude"];
-        }
-        
-        if (docOutput["geoLongitude"].is<float>()) {
-            trackerModes.geoLongitude = docOutput["geoLongitude"];
-        }
-    } else {
-        Serial.println("\r\n Error in Deserialization!");
-        Serial.println(error.c_str());
-    }
-    docOutput.clear();
-}
-
-
-void handleMQTTStatusEvent(char *payload)
+void handleMQTTStatusEvent(Stream &DSerial, _BG96_MQTT &_AWS, char *payload)
 {
   char *sta_buf = strchr(payload, ',');
   if (atoi(sta_buf + 1) == 1)
   {
     if (_AWS.CloseMQTTClient(MQTTIndex))
     {
-      Serial.println("MQTT Client closed successfully!");
+      DSerial.println("MQTT Client closed successfully!");
     }
   }
   else
   {
-    Serial.print("Status code: ");
-    Serial.println(atoi(sta_buf + 1));
+    DSerial.print("Status code: ");
+    DSerial.println(atoi(sta_buf + 1));
   }
 }
-bool publishData(JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS, const char* subtopic) {
-    char payload[1028];
-    serializeJsonPretty(docInput, payload);
+bool publishData(Stream &DSerial, _BG96_MQTT &_AWS, JsonDocument &docInput, unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS, const char *subtopic)
+{
+  char payload[1028];
+  serializeJsonPretty(docInput, payload);
 
-    char mqtt_topic[64];
-    strcpy(mqtt_topic, mqtt_base_topic);
-    strcat(mqtt_topic, subtopic); 
+  char mqtt_topic[64];
+  strcpy(mqtt_topic, mqtt_base_topic);
+  strcat(mqtt_topic, subtopic);
 
-    int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_topic, false, payload);
+  int res = _AWS.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_topic, false, payload);
 
-    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION) {
-        Serial.println("Publish succeeded!");
-        docInput.clear();
-        pub_time = millis();
-        return true;
-    } else {
-        Serial.println("Publish failed!");
-        return false;
-    }
+  if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK || res == PACKET_RETRANSMISSION)
+  {
+    DSerial.println("Publish succeeded!");
+    docInput.clear();
+    pub_time = millis();
+    return true;
+  }
+  else
+  {
+    DSerial.println("Publish failed!");
+    return false;
+  }
 }
 
 #endif

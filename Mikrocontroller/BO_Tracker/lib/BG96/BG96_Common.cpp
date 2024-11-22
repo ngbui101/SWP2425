@@ -63,6 +63,7 @@ bool _BG96_Common::InitModule()
     PowOnModule();
     digitalWrite(RESET_PIN, LOW);
     TurnOnModule();
+    // Serial.println("Initialized");
     // ResetModule();
     while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
         ;
@@ -263,7 +264,7 @@ Cmd_Response_t _BG96_Common::SetDevFunctionality(Functionality_t mode)
         strcat(cmd, "=1"); // Volle Funktionalität
         break;
     case RESET_FUNCTIONALITY:
-        strcat(cmd, "=1,1"); // Restart Funktionalität
+        strcat(cmd, "=1,1");
         break;
     case DISABLE_RF:
         strcat(cmd, "=4"); // RF deaktivieren
@@ -510,7 +511,7 @@ Cmd_Response_t _BG96_Common::ScanOperatorNetwork(char *net)
  * @param status Der Modus der Operation (READ_MODE zum Lesen, WRITE_MODE zum Schreiben).
  * @return Cmd_Response_t Der Status der Antwort (SUCCESS_RESPONSE, FIAL_RESPONSE, UNKNOWN_RESPONSE, TIMEOUT_RESPONSE).
  */
-Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int &format, char *oper, Net_Type_t &act, Cmd_Status_t status)
+Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int &format, const char *&oper, Net_Type_t &act, Cmd_Status_t status)
 {
     char cmd[16];
     Cmd_Response_t oper_status = UNKNOWN_RESPONSE;
@@ -541,14 +542,25 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
             }
             mode = atoi(p[0]);
             format = atoi(p[1]);
-            strcpy(oper, p[2]);
+
+            // Lokalen Puffer für oper verwenden
+            static char local_oper[32];
+            strncpy(local_oper, p[2], sizeof(local_oper) - 1);
+            local_oper[sizeof(local_oper) - 1] = '\0';
+            oper = local_oper; // oper zeigt jetzt auf den lokalen Puffer
+
             act = (Net_Type_t)atoi(p[3]);
         }
     }
     else if (status == WRITE_MODE)
     {
         char buf[32];
-        sprintf(buf, "=%d,%d,\"%s\",%d", mode, format, oper, act);
+        if (mode != 0)
+        {
+            sprintf(buf, "=%d,%d,\"%s\",%d", mode, format, oper, act);
+        }
+        else
+            sprintf(buf, "=%d", mode);
         strcat(cmd, buf);
         oper_status = sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 30);
     }
@@ -826,49 +838,242 @@ time_t _BG96_Common::parseTimestamp(const char *timestamp)
     return mktime(&t);
 }
 
-bool _BG96_Common::ReportCellInformation(char *celltype, char *infos)
+// Adjusted method signature
+Cell *_BG96_Common::ReportCellInformation(const char *celltype)
 {
+    // Prepare and send the command
     char cmd[32];
-    strcpy(cmd, QUECCELL_ENGINEERING_MODE);
-    if (strcmp(celltype, "neighbourcell") == 0)
-    {
-        strcat(cmd, "=\"neighbourcell\"");
-    }
-    else if (strcmp(celltype, "servingcell") == 0)
-    {
-        strcat(cmd, "=\"servingcell\"");
-    }
-    else
-        return false;
+    snprintf(cmd, sizeof(cmd), "%s=\"%s\"", QUECCELL_ENGINEERING_MODE, celltype);
 
     if (sendAndSearch(cmd, RESPONSE_OK, 2))
     {
+        // Parse the response
         char *start_buf = strstr(rxBuffer, "+QENG: ");
         if (start_buf != nullptr)
         {
             start_buf += strlen("+QENG: ");
             char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
             *end_buf = '\0';
+            char infos[512]; // Adjust size if needed
             strcpy(infos, start_buf);
-            return true;
+
+            // Initialize variables
+            char cellType[16], state[16], rat[16], duplex_mode[16];
+            char *rest = infos;
+
+            // Parse cellType
+            char *token = strtok_r(rest, ",", &rest);
+            if (token == NULL)
+                return nullptr;
+            sscanf(token, "\"%[^\"]\"", cellType);
+
+            if (strcmp(cellType, "servingcell") == 0)
+            {
+                // Parse state
+                token = strtok_r(NULL, ",", &rest);
+                if (token == NULL)
+                    return nullptr;
+                sscanf(token, "\"%[^\"]\"", state);
+
+                // Parse rat
+                token = strtok_r(NULL, ",", &rest);
+                if (token == NULL)
+                    return nullptr;
+                sscanf(token, "\"%[^\"]\"", rat);
+
+                // Convert rat to lowercase
+                for (char *p = rat; *p; ++p)
+                    *p = tolower(*p);
+
+                // Parse duplex_mode
+                token = strtok_r(NULL, ",", &rest);
+                if (token == NULL)
+                    return nullptr;
+                sscanf(token, "\"%[^\"]\"", duplex_mode);
+
+                if (strcmp(rat, "gsm") == 0)
+                {
+                    // Ignore GSM servingcell as per your requirements
+                    return nullptr;
+                }
+                else if (strcmp(rat, "cat-m") == 0 || strcmp(rat, "nb-iot") == 0)
+                {
+                    // Parse mcc
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    int mcc = atoi(token);
+
+                    // Parse mnc
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    int mnc = atoi(token);
+
+                    // Parse cellid (hex)
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    long cellid = strtol(token, NULL, 16); // Hexadecimal
+
+                    // Skip pcid, earfcn, freq_band_ind, ul_bandwidth, dl_bandwidth
+                    for (int i = 0; i < 5; i++)
+                    {
+                        token = strtok_r(NULL, ",", &rest);
+                        if (token == NULL)
+                            return nullptr;
+                    }
+
+                    // Parse tac (hex)
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    int tac = (int)strtol(token, NULL, 16); // Hexadecimal
+
+                    // Parse rsrp
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    int rsrp = atoi(token);
+
+                    // Parse rsrq
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    // int rsrq = atoi(token);
+
+                    // Parse rssi
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    // int rssi = atoi(token);
+
+                    // Parse sinr
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    // int sinr = atoi(token);
+
+                    // Parse srxlev (may be "-" or a number)
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    // srxlev kann "-" oder eine Zahl sein, wir können es hier ignorieren oder nach Bedarf verwenden
+
+                    // Optional: Parse cqi (falls vorhanden)
+                    // token = strtok_r(NULL, ",", &rest);
+
+                    int signal = rsrp; // Verwenden Sie rsrp als Signalstärke
+
+                    // Create and return Cell object
+                    return new Cell(rat, mcc, mnc, tac, cellid, signal);
+                }
+                else
+                {
+                    // Unsupported RAT
+                    return nullptr;
+                }
+            }
+            else
+            {
+                // Ignore other cell types
+                return nullptr;
+            }
         }
     }
-    return true;
+    return nullptr;
 }
 
+int _BG96_Common::ReportNeighbourCellInformation(Cell *cells[], int max_cells)
+{
+    int cellCount = 0;
+
+    // Prepare and send the command
+    char cmd[32];
+    snprintf(cmd, sizeof(cmd), "%s=\"neighbourcell\"", QUECCELL_ENGINEERING_MODE);
+
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
+        // Parse the response
+        char *start_buf = strstr(rxBuffer, "+QENG: ");
+        if (start_buf != nullptr)
+        {
+            char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
+            *end_buf = '\0';
+            char infos[2048]; // Adjust size as needed
+            strcpy(infos, start_buf);
+
+            char *line = strtok(infos, "\n");
+
+            while (line != NULL && cellCount < max_cells)
+            {
+                if (strstr(line, "\"neighbourcell\"") != NULL)
+                {
+                    char *rest_line = line;
+                    char cellType[16], rat[16];
+
+                    // Parse cellType
+                    char *token = strtok_r(rest_line, ",", &rest_line);
+                    sscanf(token, "\"%[^\"]\"", cellType);
+
+                    // Parse rat
+                    token = strtok_r(NULL, ",", &rest_line);
+                    sscanf(token, "\"%[^\"]\"", rat);
+
+                    // Convert rat to lowercase
+                    for (char *p = rat; *p; ++p)
+                        *p = tolower(*p);
+
+                    if (strcmp(rat, "gsm") == 0)
+                    {
+                        // GSM neighbour cell parsing
+                        int mcc = atoi(strtok_r(NULL, ",", &rest_line));
+                        int mnc = atoi(strtok_r(NULL, ",", &rest_line));
+                        int lac = (int)strtol(strtok_r(NULL, ",", &rest_line), NULL, 16);      // Hexadecimal
+                        long cellid = (long)strtol(strtok_r(NULL, ",", &rest_line), NULL, 16); // Hexadecimal
+
+                        // Skip bsic, arfcn
+                        for (int i = 0; i < 2; i++)
+                            strtok_r(NULL, ",", &rest_line);
+
+                        // Get rxlev and calculate signal
+                        int rxlev = atoi(strtok_r(NULL, ",", &rest_line));
+                        int signal = rxlev ;
+
+                        // Create and add Cell object
+                        cells[cellCount++] = new Cell("gsm", mcc, mnc, lac, cellid, signal);
+                    }
+                }
+
+                // Get next line
+                line = strtok(NULL, "\n");
+            }
+        }
+    }
+    return cellCount;
+}
+
+bool _BG96_Common::ResetFunctionality()
+{
+    if (!SetDevFunctionality(RESET_FUNCTIONALITY))
+        return false;
+    while (readResponseAndSearch(RESPONSE_READY, 3) != SUCCESS_RESPONSE)
+    {
+        Serial.println("wait");
+    }; // Restart Funktionalität
+    SetDevOutputformat(true);
+    delay(300);
+    return true;
+}
 bool _BG96_Common::ConfigNetworks()
 {
     SetDevFunctionality(MINIMUM_FUNCTIONALITY);
     LTENetworkCategoryConfig(2);       // LTE Cat M1 and Cat NB1
-    ScanmodeConfig(3);                 // LTE
+    ScanmodeConfig(0);                 // LTE*GSM
     ServiceDomainConfig(1);            // Nur Datenumtausch
     BandConfig("F", "80084", "80084"); // LTE-M + NBIoT on B3/B8/B20 only
     SearchingConfig("00");             // LTE-M,NBIoT,LTE
-    if (!(SetDevFunctionality(RESET_FUNCTIONALITY)))
-        return false;
-    while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
-        ;
-    // ResetModule();
+    ResetFunctionality();
     return true;
 }
 
@@ -882,4 +1087,121 @@ bool _BG96_Common::NetworkRegistrationCodeConfig(int n)
         return true;
     }
     return false;
+}
+
+int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
+{
+    const int max_cells = 6; // Max number of cells to collect
+    int cellCount = 0;       // Counter for the number of cells found
+
+    // Determine scan mode based on 'rat'
+    int scanMode = 0;
+    if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
+    {
+        scanMode = 3; // LTE-only mode
+    }
+    else if (strcmp(rat, "gsm") == 0)
+    {
+        scanMode = 1; // GSM-only mode
+    }
+    else
+    {
+        // Invalid 'rat' parameter
+        return cellCount;
+    }
+
+    // Set scan mode
+    if (!ScanmodeConfig(scanMode))
+    {
+        return cellCount; // Return if scan mode could not be set
+    }
+
+    // Reset functionality
+    ResetFunctionality();
+
+    if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
+    {
+        Net_Type_t act = strcmp(rat, "lte") == 0 ? LTE_CAT_M1 : LTE_CAT_NB1; // LTE network type
+        // --- LTE Scanning ---
+        // List of operators to scan
+        const char *operators[] = {"26201", "26202", "26203"};
+        const int numOperators = sizeof(operators) / sizeof(operators[0]);
+
+        for (int i = 0; i < numOperators + 1 && cellCount < max_cells; i++)
+        {
+            // Configure operator network
+            unsigned int mode = 1;   // Manual mode
+            unsigned int resetmode = 4;
+            unsigned int format = 2; // Numeric format
+            if (i < numOperators)
+                DevOperatorNetwork(mode, format, operators[i], act, WRITE_MODE);
+            else
+            {   
+                SetDevFunctionality(MINIMUM_FUNCTIONALITY);
+                ScanmodeConfig(0);
+                ResetFunctionality();
+                DevOperatorNetwork(resetmode, format, operators[0], act, WRITE_MODE);
+            }
+            // Wait for registration with a maximum timeout of 30 seconds
+            Net_Status_t i_status = NOT_REGISTERED;
+            unsigned long start_time = millis();
+            while (i_status != REGISTERED && i_status != REGISTERED_ROAMING && i_status != REGISTRATION_DENIED)
+            {
+                i_status = DevNetRegistrationStatus();
+                if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
+                {
+                    // Proceed to the next operator
+                    break;
+                }
+                delay(3000); // Wait 3 seconds
+            }
+            Cell *cell = ReportCellInformation("servingcell");
+
+            if (cell != nullptr)
+            {
+                // Check for duplicates
+                bool isNewCell = true;
+                for (int j = 0; j < cellCount; j++)
+                {
+                    if (cells[j]->getCellID() == cell->getCellID())
+                    {
+                        isNewCell = false;
+                        delete cell; // Avoid memory leak
+                        break;
+                    }
+                }
+                if (isNewCell && cellCount < max_cells)
+                {
+                    Serial.println("Add Zelle");
+                    cells[cellCount++] = cell;
+                }
+            }
+        }
+    }
+    else if (strcmp(rat, "gsm") == 0)
+    {
+        // --- GSM Scanning ---
+        // Wait for registration with a maximum timeout of 30 seconds
+        Net_Status_t i_status = NOT_REGISTERED;
+        unsigned long start_time = millis();
+        while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+        {
+            i_status = DevNetRegistrationStatus();
+            if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
+            {
+                break;
+            }
+            delay(3000); // Wait 3 seconds
+        }
+
+        // Regardless of registration status, proceed to scan neighbour cells
+
+        // Get neighbour cell information
+        delay(10000); 
+        int neighbourCellCount = ReportNeighbourCellInformation(cells, max_cells);
+
+        cellCount = neighbourCellCount > max_cells ? max_cells : neighbourCellCount;
+    }
+
+    return cellCount; // Return the total number of cells found
 }

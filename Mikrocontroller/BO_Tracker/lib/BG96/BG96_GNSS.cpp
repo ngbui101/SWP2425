@@ -27,7 +27,7 @@ _BG96_GNSS::~_BG96_GNSS()
  * @param atserial AT-Befehls-Schnittstelle.
  * @param dserial Daten-Schnittstelle für die Kommunikation.
  */
-_BG96_GNSS::_BG96_GNSS(Stream &atserial, Stream &dserial) : _BG96_HTTP(atserial, dserial)
+_BG96_GNSS::_BG96_GNSS(Stream &atserial, Stream &dserial) : _BG96_MQTT(atserial, dserial)
 {
 }
 
@@ -195,6 +195,69 @@ bool _BG96_GNSS::GetGNSSPositionInformation(char *position)
         return true;
     }
     return false;
+}
+
+bool _BG96_GNSS::GetGnssJsonPositionInformation(JsonDocument &json, unsigned long starttime)
+{
+    char position[256];
+    float accuracy;
+    if (!GetGNSSPositionInformation(position))
+    {
+        return false;
+    }
+    GetEstimationError(accuracy);
+    position[sizeof(position) - 1] = '\0';
+
+    const char *delimiter = ",";
+    char *token = strtok(position, delimiter);
+    int fieldIndex = 0;
+
+    float latitude = 0.0f;
+    float longitude = 0.0f;
+    float hdop = 0.0f;
+    int nsat = 0;
+
+    while (token != nullptr)
+    {
+        switch (fieldIndex)
+        {
+        case 1:
+            latitude = atof(token);
+            break;
+        case 2:
+            longitude = atof(token);
+            break;
+        case 3:
+            hdop = atof(token);
+            break;
+        case 10:
+            nsat = atoi(token);
+            break;
+        default:
+            break;
+        }
+        fieldIndex++;
+        token = strtok(nullptr, delimiter);
+    }
+
+    // int parsedItems = sscanf(position, "%*f,%f,%f,%f,%*f,%*d,%*f,%*f,%*f,%*d,%d",
+    //                          &latitude, &longitude, &hdop, &nsat);
+
+    // if (parsedItems < 4)
+    // {
+    //     return false;
+    // }
+    unsigned long currentTime = millis();
+    unsigned long TTFF = currentTime - starttime;
+    // Erstellen des verschachtelten "gnss" Objekts
+    JsonObject gnss = json["gnss"].to<JsonObject>();
+    gnss["latitude"] = latitude;
+    gnss["longitude"] = longitude;
+    gnss["hdop"] = hdop;
+    gnss["nsat"] = nsat;
+    gnss["accuracy"] = accuracy;
+    gnss["TTFF"] = TTFF;
+    return true;
 }
 
 // Funktion zum Abrufen der GNSS-NMEA-Sätze
@@ -545,12 +608,14 @@ bool _BG96_GNSS::GetEstimationError(float &accuracy)
 bool _BG96_GNSS::AddGeoFence(unsigned int geoID, GEOFENCE_MODE_t mode, GEOFENCE_SHAPE_t shape, float latituide, float longituide, unsigned int radius)
 {
     // Überprüfen Sie die Gültigkeit der Parameterwerte
-    if (latituide < -90.0 || latituide > 90.0 || longituide < -180.0 || longituide > 180.0 || radius <= 0) {
-        return false;  
+    if (latituide < -90.0 || latituide > 90.0 || longituide < -180.0 || longituide > 180.0 || radius <= 0)
+    {
+        return false;
     }
     char cmd[64];
-    sprintf(cmd, "%s=\"addgeo\",%d,%d,%d,%f,%f,%d", GNSS_GEO_FENCE,geoID, mode, shape, latituide, longituide, radius);
-    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 3)) {
+    sprintf(cmd, "%s=\"addgeo\",%d,%d,%d,%f,%f,%d", GNSS_GEO_FENCE, geoID, mode, shape, latituide, longituide, radius);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 3))
+    {
         return true;
     }
     return false;
@@ -560,7 +625,7 @@ bool _BG96_GNSS::AddGeoFence(unsigned int geoID, GEOFENCE_MODE_t mode, GEOFENCE_
  * @brief Überprüft, ob die aktuelle Position des Geräts innerhalb oder außerhalb eines definierten Geofences liegt.
  *
  * Diese Methode sendet den AT-Befehl `AT+QCFGEXT="querygeo",<geoID>` an das BG96-GNSS-Modul, um den Status eines bestimmten Geofence-Bereichs abzufragen.
- * Das Modul antwortet mit der Position des Geräts relativ zu dem angegebenen Geofence (`<posWrtGeofence>`), 
+ * Das Modul antwortet mit der Position des Geräts relativ zu dem angegebenen Geofence (`<posWrtGeofence>`),
  * die dann analysiert wird, um festzustellen, ob das Gerät innerhalb oder außerhalb des Geofence ist.
  *
  * Erwartetes Antwortformat:
@@ -581,44 +646,58 @@ bool _BG96_GNSS::AddGeoFence(unsigned int geoID, GEOFENCE_MODE_t mode, GEOFENCE_
  *
  * @see Quectel BG96 GNSS AT Commands Manual, Abschnitt 2.7 für weitere Informationen zu Geofencing-Kommandos.
  */
-bool _BG96_GNSS::QueryGeoFence(unsigned int geoID) {
+bool _BG96_GNSS::QueryGeoFence(unsigned int geoID)
+{
     char cmd[64];
-    sprintf(cmd, "%s=\"querygeo\",%d", GNSS_GEO_FENCE,geoID);  
-    
-    if (sendAndSearch(cmd, "+QCFGEXT: \"querygeo\"", RESPONSE_ERROR, 5)) {
+    sprintf(cmd, "%s=\"querygeo\",%d", GNSS_GEO_FENCE, geoID);
+
+    if (sendAndSearch(cmd, "+QCFGEXT: \"querygeo\"", RESPONSE_ERROR, 5))
+    {
         // Erwartete Antwort: +QCFGEXT: "querygeo",<geoID>,<posWrtGeofence>
-        
+
         char *sta_buf = searchStrBuffer(": \"querygeo\",");
-        if (sta_buf != nullptr) {
-            char *posStr = strchr(sta_buf, ',');  // Sucht erstes Komma
-            if (posStr != nullptr) {
-                posStr = strchr(posStr + 1, ',');  // Sucht zweites Komma, in dem die Position gespeichert ist
-                if (posStr != nullptr) {
+        if (sta_buf != nullptr)
+        {
+            char *posStr = strchr(sta_buf, ','); // Sucht erstes Komma
+            if (posStr != nullptr)
+            {
+                posStr = strchr(posStr + 1, ','); // Sucht zweites Komma, in dem die Position gespeichert ist
+                if (posStr != nullptr)
+                {
                     int posWrtGeofence = atoi(posStr + 1);
-                    
+
                     // Rückgabe basierend auf der Position relativ zum Geofence
-                    if (posWrtGeofence == 1) {
-                        return true;  
+                    if (posWrtGeofence == 1)
+                    {
+                        return true;
                     }
                 }
             }
         }
     }
-    return false;  
+    return false;
 }
-GEOFENCE_STATUS_t _BG96_GNSS::getGeoFencingStatus(unsigned int geoID){
+GEOFENCE_STATUS_t _BG96_GNSS::getGeoFencingStatus(unsigned int geoID)
+{
     char position[128];
-    if(!TurnOnGNSS(MS_BASED, READ_MODE)){
+    if (!TurnOnGNSS(MS_BASED, READ_MODE))
+    {
         TurnOnGNSS(MS_BASED, WRITE_MODE);
     }
-    if(GetGNSSPositionInformation(position)){
-        if(QueryGeoFence(geoID)){
+    if (GetGNSSPositionInformation(position))
+    {
+        if (QueryGeoFence(geoID))
+        {
             return INSIDE_GEOFENCE;
-        }else{
+        }
+        else
+        {
             return OUTSIDE_GEOFENCE;
         }
         TurnOffGNSS();
-    }else{
+    }
+    else
+    {
         return NOFIX;
     }
 }
