@@ -48,8 +48,53 @@
   "RESETVIEW-zuruecksetzen": "Reset",
   "RESETVIEW-benötigen_sie_hilfe": "Need help?",
   "RESETVIEW-support": "Support",
-  "RESETVIEW-back_to": "Back to login"
+  "RESETVIEW-back_to": "Back to login",
+  "FOOTER-contact_us": "Contact us",
+  "FOOTER-services": "Services",
+  "FOOTER-about": "About",
+  "FOOTER-terms": "Terms",
+  "FOOTER-privacy_policy": "Privacy Policy",
+  "Nav-Map": "Map",
+  "Nav-Route": "Route",
+  "Nav-Tracker": "Tracker",
+  "Nav-Account": "Account",
+  "Nav-Help": "Help",
+  "Nav-Tour": "Tour",
+  "Nav-Contact": "Contact",
+  "Nav-Logout": "Logout",
+  "TrackerView-CardView": "Card View",
+  "TrackerView-ListView": "List View",
+  "AddTrackerPopup-AddNewTracker": "Add New Tracker",
+  "AddTrackerPopup-Save": "Save",
+  "TrackerListComponent-AddTracker": "Add Tracker",
+  "TrackerCardComponent-AddTracker": "Add Tracker",
+  "TrackersettingsPopup-EditTrackerSettings": "Edit Tracker Settings",
+  "TrackersettingsPopup-TrackerName": "Tracker Name",
+  "TrackersettingsPopup-TrackingMode": "Tracking Mode",
+  "TrackersettingsPopup-RealTimeTracking": "Real-Time Tracking",
+  "TrackersettingsPopup-LongTimeTracking": "Long-Time Tracking",
+  "TrackersettingsPopup-SendBatteryData": "Send Battery Data",
+  "TrackersettingsPopup-SendHumidityData": "Send Humidity Data",
+  "TrackersettingsPopup-RealTimeFrequency": "Sending Frequency (Real-Time)",
+  "TrackersettingsPopup-LongTimeFrequency": "Sending Frequency (Long-Time)",
+  "TrackersettingsPopup-Hours": "hour(s)",
+  "TrackersettingsPopup-Save": "Save",
+  "RouteView-New": "New",
+  "RouteView-Saved": "Saved",
+  "NewRoute-SelectTracker": "Select Tracker:",
+  "NewRoute-StartRoute": "Start Route",
+  "NewRoute-StopRoute": "Stop Route",
+  "NewRoute-SaveRoute": "Save Route",
+  "MapView-Current": "Current",
+  "MapView-History": "History"
 
-    
+
+
+
+
+
+
+
+
     
 }

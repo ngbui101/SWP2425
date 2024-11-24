@@ -221,24 +221,34 @@ export interface User {
               throw new Error(`Failed to update settings: ${error.message}`);
             }
           },
-          async updateTrackerMode(trackerId: string, isRealTime: boolean, frequencySeconds?: number, frequencyHours?: number) {
+          async updateTrackerMode(
+            trackerId: string,
+            isRealTime: boolean,
+            frequencySeconds?: number,
+            frequencyHours?: number,
+            batteryMode?: boolean,
+            temperatureMode?: boolean
+        ) {
             const updateData = {
                 GnssMode: isRealTime,
                 CellInfosMode: !isRealTime,
-                frequenz: isRealTime 
-                    ? (frequencySeconds ? frequencySeconds * 1000 : 5000)  // Use frequencySeconds for real-time mode, default to 5000 if not provided
-                    : (frequencyHours ? frequencyHours * 60 * 60 * 1000 : 3600000) // Use frequencyHours for long-time mode, default to 1 hour
+                BatteryMode: batteryMode ?? true, // Default to true if not provided
+                TemperatureMode: temperatureMode ?? true, // Default to true if not provided
+                frequenz: isRealTime
+                    ? (frequencySeconds ? frequencySeconds * 1000 : 5000) // Use frequencySeconds for real-time mode, default to 5000ms if not provided
+                    : (frequencyHours ? frequencyHours * 60 * 60 * 1000 : 3600000), // Use frequencyHours for long-time mode, default to 1 hour
             };
         
             try {
                 const { data } = await useApiPrivate().put(`http://localhost:3500/api/mode/${trackerId}`, updateData);
-                
+        
                 return data;
             } catch (error: any) {
                 console.error('Failed to update tracker mode:', error);
                 throw new Error(`Failed to update tracker mode: ${error.message}`);
             }
         }
+        
         
           
           

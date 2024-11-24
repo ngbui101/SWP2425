@@ -2,6 +2,7 @@
 #define _BATTERY_H_
 
 #include <Arduino.h>
+#include <Wire.h>
 
 #define BATVOLTAGE_CTRL_PIN 3u
 #define BATVOLTAGE_READ_PIN A1
@@ -16,7 +17,7 @@ class _Battery
 public:
     _Battery();
     ~_Battery();
-    bool InitBattery();
+    bool initBattery();
     float calculateBatteryPercentage();
     float readBatteryVoltage();
 

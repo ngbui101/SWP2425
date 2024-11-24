@@ -92,6 +92,9 @@ body {
   flex: 1;
   min-height: 600px; /* Ensure both have the same base height */
 }
+.dark-mode .location-text {
+  color: #E69543; /* Replace with your desired color */
+}
 
 .no-background {
   background-color: transparent !important;
@@ -616,21 +619,64 @@ body {
   color: #1f1f1f;
 }
 
-/* Mobile view: Stack cards on top of each other */
+/* Ensure the card uses full width in mobile view */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
     width: 100%;
   }
 
-  .card {
+  .card, .tracker-info-card {
     max-width: 100%;
     width: 100%;
-    padding: 10px;
+     /* Add space between cards */
+    padding: 8px; /* Reduce padding for smaller screens */
+    box-sizing: border-box; /* Include padding in the total width */
   }
 
-  .tracker-info-card {
-    width: 100%;
+  .card-body {
+    padding: 8px; /* Reduce padding */
+  }
 
+  .grid-container {
+    grid-template-columns: 1fr; /* Single column layout */
+    gap: 10px; /* Reduce gap */
+  }
+
+  .grid-item, .grid-item-full {
+    padding: 6px; /* Reduce padding */
+    font-size: 0.9rem; /* Smaller font size */
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px; /* Reduce margin */
+  }
+
+  .timestamp, .location, .tracker-mode {
+    text-align: left;
+    margin-bottom: 5px; /* Add spacing between items */
+    font-size: 0.9rem; /* Adjust font size */
+  }
+
+  .geofence-button, .remove-geofence-button {
+    width: 100%; /* Full width for mobile buttons */
+    margin: 5px 0; /* Add vertical spacing */
+  }
+
+  .legend{
+    font-size: 0.85rem; /* Reduce font size */
+    text-align: left; /* Align text to the left */
+    
+  }
+
+  .battery-status-wrapper, .battery-bar {
+    height: 20px; /* Reduce height */
+    margin-left: 10px; /* Adjust margin */
+  }
+
+  .battery-indicator {
+    font-size: 0.75rem; /* Adjust font size */
   }
 }

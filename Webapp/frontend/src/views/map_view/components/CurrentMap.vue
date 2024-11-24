@@ -51,17 +51,15 @@
             </div>
 
             <!-- Battery Status -->
-            <div class="grid-item-full">
+            <div v-if="selectedMeasurement.battery !== undefined" class="grid-item-full">
               <div class="battery-status-wrapper">
                 <strong>Battery Status:</strong>
                 <div class="battery-wrapper">
                   <div class="battery-bar">
-                    <div class="battery-fill"
-                      :style="{ width: `${Math.round(selectedMeasurement.battery) || N / A}%` }">
-                    </div>
+                    <div class="battery-fill" :style="{ width: `${Math.round(selectedMeasurement.battery)}%` }"></div>
                   </div>
                   <div class="battery-indicator">
-                    <span>{{ Math.round(selectedMeasurement.battery) || 'N/A' }}%</span>
+                    <span>{{ Math.round(selectedMeasurement.battery) }}%</span>
                   </div>
                 </div>
               </div>
@@ -75,12 +73,13 @@
               <strong>Longitude:&nbsp;</strong> {{ selectedMeasurement.longitude || 'N/A' }}
             </div>
 
-            <!-- Temperature and Humidity -->
-            <div class="grid-item">
-              <strong>Temperature:&nbsp;</strong> {{ selectedMeasurement.temperature || 'N/A' }} °C
+            <!-- Temperature -->
+            <div v-if="selectedMeasurement.temperature !== undefined" class="grid-item">
+              <strong>Temperature:&nbsp;</strong> {{ selectedMeasurement.temperature }} °C
             </div>
-            <div class="grid-item">
-              <strong>Humidity:&nbsp;</strong> {{ selectedMeasurement.humidity || 'N/A' }} %
+            <!-- Humidity -->
+            <div v-if="selectedMeasurement.humidity !== undefined" class="grid-item">
+              <strong>Humidity:&nbsp;</strong> {{ selectedMeasurement.humidity }} %
             </div>
 
             <!-- Add/Remove Geofence button -->
@@ -113,6 +112,9 @@
             {{ selectedMeasurement.createdAt ? new Date(selectedMeasurement.createdAt).toLocaleString() : 'N/A' }}
           </span>
         </div>
+        <div class="location">
+          <p class="location-text">{{ selectedTrackerLocation }}</p>
+        </div>
         <div class="tracker-mode">
           Mode: {{ trackerModeLabel }}
 
@@ -126,16 +128,39 @@
         <!-- Grey Overlay for dark mode -->
         <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
       </div>
-
-
-
-
-      <div class="location-display">
-        <p>{{ selectedTrackerLocation }}</p>
-        <div class="location-accuracy">
-          Estimated Accuracy: 5m
-        </div>
+      <div class="legend">
+        <p
+          :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#87c099' : 'black', display: 'flex', alignItems: 'center' }">
+          <span :style="{ color: modeColors.green }">
+            <i class="fas fa-map-pin"></i>
+          </span> Green: {{ modeAccuracy.green }}
+          <span :style="{ color: modeColors.yellow, marginLeft: '20px' }">
+            <i class="fas fa-map-pin"></i>
+          </span> Yellow: {{ modeAccuracy.yellow }}
+          <span :style="{ color: modeColors.red, marginLeft: '20px' }">
+            <i class="fas fa-map-pin"></i>
+          </span> Red: {{ modeAccuracy.red }}
+          <span
+            :style="{ marginLeft: '50px', color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }">
+            Current accuracy:
+            <strong>
+              {{
+                selectedMeasurement.accuracy
+                  ? Math.round(selectedMeasurement.accuracy * 10) / 10 + 'm'
+                  : 'N/A'
+              }}
+            </strong>
+          </span>
+        </p>
       </div>
+
+
+
+
+
+
+
+
     </div>
 
     <!-- Conditionally render the Tracker Filter Popup -->
@@ -202,9 +227,10 @@ const applyTrackerFilters = (filters) => {
 
 // Method to apply Timestamp filters
 const applyTimestampFilters = (filters) => {
-
-  // Handle the filtering logic here
+  // Update the timestamp filters in the parent component
+  user.value.settings.timestampFilters = filters;
 };
+
 
 const authStore = useAuthStore();
 const el = ref(null);
@@ -226,17 +252,41 @@ let marker = null;
 let geofenceCircle = null; // Declare geofence circle
 let isGoogleMapsLoaded = ref(false);
 
-const trackerModeLabel = computed(() => {
-  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
-  if (tracker && tracker.modeDetails) {
-    if (tracker.modeDetails.GnssMode) {
-      return "Real-Time Tracking";
-    } else if (tracker.modeDetails.CellInfosMode) {
-      return "Long-Time Tracking";
-    }
+const modeAccuracy = computed(() => {
+  if (selectedMeasurement.value?.mode === "GPS") {
+    return {
+      green: "0-25m",
+      yellow: "26-50m",
+      red: ">50m",
+    };
+  } else if (selectedMeasurement.value?.mode === "LTE") {
+    return {
+      green: "0-100m",
+      yellow: "101-500m",
+      red: ">500m",
+    };
   }
-  return "N/A"; // Default if no mode is set
+  return {
+    green: "N/A",
+    yellow: "N/A",
+    red: "N/A",
+  };
 });
+
+const modeColors = computed(() => ({
+  green: "#228B22", // Green
+  yellow: "#FFD700", // Yellow
+  red: "#FF0000", // Red
+}));
+
+
+const trackerModeLabel = computed(() => {
+  if (selectedMeasurement.value && selectedMeasurement.value.mode) {
+    return selectedMeasurement.value.mode === "GPS" ? "Real-Time Tracking" : "Long-Time Tracking";
+  }
+  return "N/A"; // Default if no measurement or mode is set
+});
+
 
 // Geofence-related state
 const geofenceActive = ref(false); // Geofence initially inactive
@@ -276,8 +326,14 @@ const fetchTrackersForUser = async () => {
       const modeResponse = await axios.get(`http://localhost:3500/api/mode/${tracker._id}`, config);
       tracker.modeDetails = modeResponse.data; // Store the mode details
 
-      const measurementsResponse = await axios.get(`http://localhost:3500/api/position/tracker/${tracker._id}`, config);
-      tracker.measurements = measurementsResponse.data;
+      const measurementsResponse = await axios.get(
+        `http://localhost:3500/api/position/tracker/${tracker._id}`,
+        config
+      );
+      // Filter measurements to include only LTE or GPS modes
+      tracker.measurements = measurementsResponse.data.filter(
+        (measurement) => measurement.mode === 'LTE' || measurement.mode === 'GPS'
+      );
 
 
       const geofenceResponse = await axios.get(`http://localhost:3500/api/geofence/${tracker.geofence}`, config);
@@ -354,18 +410,33 @@ const updateGeofenceState = () => {
   }
 };
 
-// Update selected tracker measurements
 const updateSelectedTrackerMeasurements = (initialLoad = false) => {
   const tracker = trackers.value.find(t => t._id === selectedTracker.value);
   if (tracker && tracker.measurements.length > 0) {
     selectedTrackerName.value = tracker.name;
-    selectedTrackerMeasurements.value = tracker.measurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    const mostRecentMeasurement = selectedTrackerMeasurements.value[0];
-    selectedTimestamp.value = mostRecentMeasurement._id;
-    updateSelectedMeasurement(initialLoad);
+    // Set `selectedTrackerMeasurements` first
+    selectedTrackerMeasurements.value = tracker.measurements.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    // Use `filteredMeasurements` to find the most recent filtered measurement
+    const mostRecentMeasurement = filteredMeasurements.value[0];
+    if (mostRecentMeasurement) {
+      selectedTimestamp.value = mostRecentMeasurement._id;
+      updateSelectedMeasurement(initialLoad);
+    } else {
+      selectedTimestamp.value = null;
+      selectedMeasurement.value = {}; // Reset if no valid measurement
+    }
+  } else {
+    // Handle case where no measurements exist
+    selectedTrackerMeasurements.value = [];
+    selectedTimestamp.value = null;
+    selectedMeasurement.value = {};
   }
 };
+
 
 // Update selected measurement
 const updateSelectedMeasurement = (initialLoad = false) => {
@@ -374,7 +445,7 @@ const updateSelectedMeasurement = (initialLoad = false) => {
     const measurement = tracker.measurements.find(m => m._id === selectedTimestamp.value);
     if (measurement) {
       selectedMeasurement.value = measurement;
-      getReverseGeocodingAddress(measurement.latitude, measurement.longitude);
+      getReverseGeocodingAddress(measurement.latitude, measurement.longitude, measurement.accuracy);
 
       if (initialLoad) {
         if (isGoogleMapsLoaded.value) {
@@ -391,36 +462,104 @@ const updateSelectedMeasurement = (initialLoad = false) => {
   }
 };
 
-// Initialize the map without the geofence initially
+let accuracyCircle = null; // Declare a global variable for the accuracy circle
+
 const initializeMap = () => {
   if (!selectedMeasurement.value || !mapElement.value) return;
 
   const position = {
     lat: Number(selectedMeasurement.value.latitude),
-    lng: Number(selectedMeasurement.value.longitude)
+    lng: Number(selectedMeasurement.value.longitude),
   };
+  const accuracy = Number(selectedMeasurement.value.accuracy);
+
+  // Determine the pin color based on accuracy and mode
+  let backgroundColor;
+  if (selectedMeasurement.value.mode === "GPS") {
+    backgroundColor = accuracy <= 25
+      ? modeColors.value.green
+      : accuracy <= 50
+        ? modeColors.value.yellow
+        : modeColors.value.red;
+  } else if (selectedMeasurement.value.mode === "LTE") {
+    backgroundColor = accuracy <= 100
+      ? modeColors.value.green
+      : accuracy <= 500
+        ? modeColors.value.yellow
+        : modeColors.value.red;
+  } else {
+    backgroundColor = "#000000"; // Default for unknown mode
+  }
+
+  const customPin = new google.maps.marker.PinElement({
+    background: backgroundColor,
+    borderColor: "#000000",
+    glyph: "●",
+    glyphColor: "#ddd",
+  });
 
   if (map) {
     map.setCenter(position);
+
     if (marker) {
-      marker.setPosition(position);
+      marker.position = position;
+      marker.content = customPin.element;
     } else {
-      marker = new google.maps.Marker({ position, map, title: 'Tracker Location' });
+      marker = new google.maps.marker.AdvancedMarkerElement({
+        position,
+        map,
+        content: customPin.element,
+        title: "Tracker Location",
+      });
+    }
+
+    // Create or update the accuracy circle
+    if (accuracyCircle) {
+      accuracyCircle.setCenter(position);
+      accuracyCircle.setRadius(accuracy); // Update radius based on accuracy
+    } else {
+      accuracyCircle = new google.maps.Circle({
+        map,
+        center: position,
+        radius: accuracy, // Set radius based on accuracy
+        fillColor: "#0000FF", // Blue color for accuracy circle
+        fillOpacity: 0.2,
+        strokeColor: "#0000FF",
+        strokeOpacity: 0.5,
+        strokeWeight: 1,
+      });
     }
   } else {
+    // Initialize the map if not already created
     map = new google.maps.Map(mapElement.value, {
       center: position,
       zoom: 12,
-
-      streetViewControl: false
+      streetViewControl: false,
+      mapId: "6c54d0c5731b3526",
     });
-    marker = new google.maps.Marker({
+
+    marker = new google.maps.marker.AdvancedMarkerElement({
       position,
       map,
-      title: 'Tracker Location',
+      content: customPin.element,
+      title: "Tracker Location",
+    });
+
+    // Create the accuracy circle
+    accuracyCircle = new google.maps.Circle({
+      map,
+      center: position,
+      radius: accuracy,
+      fillColor: "#0000FF", // Blue color for accuracy circle
+      fillOpacity: 0.2,
+      strokeColor: "#0000FF",
+      strokeOpacity: 0.5,
+      strokeWeight: 1,
     });
   }
 };
+
+
 const drawGeofenceCircle = (latitude, longitude, radius) => {
   if (!isGoogleMapsLoaded.value) {
     console.warn("Google Maps API is not loaded yet.");
@@ -495,14 +634,32 @@ watch(geofenceRadius, (newRadius) => {
 });
 
 
-// Perform reverse geocoding using your backend API
-const getReverseGeocodingAddress = async (lat, lng) => {
+const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
   const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
 
   try {
     const response = await axios.get(geocodingUrl);
-    if (response.data && response.data.address) {
-      selectedTrackerLocation.value = response.data.address;
+    console.log("Geocoding API response:", response.data); // Log the response for debugging
+
+    if (response.data?.address) {
+      const fullAddress = response.data.address;
+
+      // Extract zip and city from the address
+      const addressParts = fullAddress.split(','); // Split the address into parts
+      const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
+      const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
+      const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Regex to match 'zip city'
+
+      const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
+      const city = zipAndCity ? zipAndCity[2] : "Unknown City";
+
+      if (accuracy <= 25) {
+        // Full address for high accuracy
+        selectedTrackerLocation.value = fullAddress;
+      } else {
+        // Only zip and city for lower accuracy
+        selectedTrackerLocation.value = `${zip}, ${city}`;
+      }
     } else {
       selectedTrackerLocation.value = 'Unknown Location';
     }
@@ -512,6 +669,8 @@ const getReverseGeocodingAddress = async (lat, lng) => {
   }
 };
 
+
+
 // Load Google Maps API script dynamically
 const loadGoogleMapsScript = () => {
   return new Promise((resolve, reject) => {
@@ -520,7 +679,8 @@ const loadGoogleMapsScript = () => {
       resolve();
     } else if (!document.querySelector("script[src*='maps.googleapis.com']")) {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDzh7DicT6KmawobOi6iir27IFEQBsRhRo&libraries=geometry`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDzh7DicT6KmawobOi6iir27IFEQBsRhRo&libraries=marker,geometry`;
+
       script.async = true;
       script.defer = true;
       script.onload = () => {
@@ -557,18 +717,22 @@ const filteredTrackers = computed(() => {
 });
 const filteredMeasurements = computed(() => {
   const validPositionFilter = user.value.settings.timestampFilters?.validPosition ?? false;
+  const modeFilters = user.value.settings.timestampFilters?.mode || [];
 
-  return selectedTrackerMeasurements.value.filter(measurement => {
-    // In future, we may filter by mode here if additional modes are added to measurements
-    if (validPositionFilter) {
-      return (
-        !isNaN(measurement.latitude) &&
-        !isNaN(measurement.longitude)
-      );
+  return selectedTrackerMeasurements.value.filter((measurement) => {
+    // Filter by valid position
+    if (validPositionFilter && (isNaN(measurement.latitude) || isNaN(measurement.longitude))) {
+      return false;
     }
-    return true;
+
+    // Filter by mode
+    const measurementMode = measurement.mode === 'LTE' ? 'LT' : measurement.mode === 'GPS' ? 'RT' : null;
+    return modeFilters.length === 0 || modeFilters.includes(measurementMode);
   });
 });
+
+
+
 </script>
 
 <style scoped></style>

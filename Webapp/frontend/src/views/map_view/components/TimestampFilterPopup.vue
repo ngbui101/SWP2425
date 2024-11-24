@@ -11,10 +11,10 @@
                 <div class="popup-section">
                     <h3>Mode</h3>
                     <label>
-                        <input type="checkbox" v-model="realTimeChecked" /> Real-Time(NOT IMPLEMENTED)
+                        <input type="checkbox" v-model="realTimeChecked" /> Real-Time
                     </label>
                     <label>
-                        <input type="checkbox" v-model="longTimeChecked" /> Long-Time(NOT IMPLEMENTED)
+                        <input type="checkbox" v-model="longTimeChecked" /> Long-Time
                     </label>
                 </div>
 
@@ -69,19 +69,21 @@ const applyFilters = async () => {
         const token = authStore.accessToken;
         const config = {
             headers: {
-                Authorization: `Bearer ${token}`
-            }
+                Authorization: `Bearer ${token}`,
+            },
         };
 
         // Send updated timestamp filters to backend
-        await axios.put('http://localhost:3500/api/settings', {
-            timestampFilters: {
-                mode: filters.value.mode,
-                validPosition: filters.value.validPosition
-            }
-        }, config);
-
-
+        await axios.put(
+            'http://localhost:3500/api/settings',
+            {
+                timestampFilters: {
+                    mode: filters.value.mode, // Selected modes (LTE, GPS)
+                    validPosition: filters.value.validPosition, // Valid position filter
+                },
+            },
+            config
+        );
 
         // Refresh user data to get the latest settings
         await authStore.getUser();
@@ -93,6 +95,7 @@ const applyFilters = async () => {
         console.error('Failed to update timestamp filters:', error);
     }
 };
+
 </script>
 
 <style scoped>
@@ -153,6 +156,18 @@ const applyFilters = async () => {
     font-size: 1.5rem;
     cursor: pointer;
     color: #851515;
+}
+
+/* Default mode styling */
+input[type="checkbox"] {
+    accent-color: #00543D;
+    /* Default color */
+}
+
+/* Dark mode styling */
+.dark-mode input[type="checkbox"] {
+    accent-color: #E69543;
+    /* Dark mode color */
 }
 
 .close-btn:hover {

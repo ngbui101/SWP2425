@@ -9,6 +9,7 @@
 #define _BG96_COMMEN_H_
 
 #include "BG96_Serial.h"
+#include "Cell.h"
 
 #define POWKEY_PIN 4
 #define RESET_PIN 5
@@ -92,7 +93,7 @@ class _BG96_Common : public _BG96_Serial
 
     Cmd_Response_t ScanOperatorNetwork(char *net);
 
-    Cmd_Response_t DevOperatorNetwork(unsigned int &mode, unsigned int &format, char *oper, Net_Type_t &act, Cmd_Status_t status);
+    Cmd_Response_t DevOperatorNetwork(unsigned int &mode, unsigned int &format, const char *&oper, Net_Type_t &act, Cmd_Status_t status);
 
     bool GetDevNetworkInformation(char *type, char *oper, char *band, char *channel);
 
@@ -108,17 +109,23 @@ class _BG96_Common : public _BG96_Serial
 
     time_t parseTimestamp(const char *timestamp);
 
-    bool ReportCellInformation(char *celltype, char* infos);
+    Cell* ReportCellInformation(const char *celltype);
 
+    int ReportNeighbourCellInformation(Cell* cells[], int max_cells);
     bool LTENetworkCategoryConfig(int mode);
 
     bool BandConfig(const char *gsmbandval, const char * catm1bandval, const char * catnb1bandval);
 
     bool ConfigNetworks();
 
+    bool ResetFunctionality();
+
     bool ServiceDomainConfig(int service);
 
     bool NetworkRegistrationCodeConfig(int n);
+
+    int ScanCells(const char* rat, Cell* cells[]);
+
   private:
     char currenttime[64];
 };

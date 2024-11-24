@@ -1,4 +1,5 @@
 struct TrackerModes {
+    //Mode
     bool GnssMode = false;
     bool CellInfosMode = false;
     bool BatteryMode = false;
@@ -6,11 +7,13 @@ struct TrackerModes {
     bool NmeaMode = false;
     bool GeoFenMode = false;
     bool RequestMode = true;
+    bool Modem_Off = false;
     unsigned int frequenz = 5000UL;
-
+    //GeoFencing
     float geoLatitude = 0;
     float geoLongitude = 0;
     unsigned int geoRadius = 0;
+    //Information
 
     // Methode zum Zurücksetzen aller Modi auf Standardwerte
     void resetModes() {

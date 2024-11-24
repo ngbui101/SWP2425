@@ -1,54 +1,84 @@
 <template>
     <div class="popup-overlay" @click.self="closePopup">
-        <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
-            <div class="popup-header">
-                <h2>Edit Tracker Settings</h2>
-                <button class="close-btn" @click="closePopup">✖</button>
-            </div>
-
-            <div class="popup-body">
-                <!-- Track Name Editing -->
-                <div class="popup-section">
-                    <label for="tracker-name">Tracker Name</label>
-                    <input type="text" id="tracker-name" v-model="trackerName" class="popup-input" />
-                </div>
-
-                <!-- Mode Toggle -->
-                <div class="popup-section">
-                    <h3>Tracking Mode</h3>
-                    <div class="mode-toggle">
-                        <button :class="{ active: !isLongTimeTracking }" @click="setRealTimeTracking">
-                            Real-Time-Tracking
-                        </button>
-                        <button :class="{ active: isLongTimeTracking }" @click="setLongTimeTracking">
-                            Long-Time-Tracking
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Frequency Slider for Real-Time Mode -->
-                <div class="popup-section" v-if="!isLongTimeTracking">
-                    <h3>Sending Frequency (Real-Time)</h3>
-                    <input type="range" class="frequency-slider" v-model.number="selectedRealTimeStep" :min="0"
-                        :max="realTimeSteps.length - 1" step="1" />
-                    <p>{{ formattedRealTimeInterval }}</p>
-                </div>
-
-                <!-- Frequency Slider for Long-Time Mode -->
-                <div class="popup-section" v-else>
-                    <h3>Sending Frequency (Long-Time)</h3>
-                    <input type="range" class="frequency-slider" v-model.number="trackingInterval" min="1" max="24"
-                        step="1" />
-                    <p>{{ trackingInterval }} hour(s)</p>
-                </div>
-            </div>
-
-            <div class="popup-footer">
-                <button class="popup-save-btn" @click="saveChanges">Save</button>
-            </div>
+      <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+        <div class="popup-header">
+          <h2>{{ $t('TrackersettingsPopup-EditTrackerSettings') }}</h2>
+          <button class="close-btn" @click="closePopup">✖</button>
         </div>
+  
+        <div class="popup-body">
+          <!-- Track Name Editing -->
+          <div class="popup-section">
+            <label for="tracker-name">{{ $t('TrackersettingsPopup-TrackerName') }}</label>
+            <input type="text" id="tracker-name" v-model="trackerName" class="popup-input" />
+          </div>
+  
+          <!-- Mode Toggle -->
+          <div class="popup-section">
+            <h3>{{ $t('TrackersettingsPopup-TrackingMode') }}</h3>
+            <div class="mode-toggle">
+              <button :class="{ active: !isLongTimeTracking }" @click="setRealTimeTracking">
+                {{ $t('TrackersettingsPopup-RealTimeTracking') }}
+              </button>
+              <button :class="{ active: isLongTimeTracking }" @click="setLongTimeTracking">
+                {{ $t('TrackersettingsPopup-LongTimeTracking') }}
+              </button>
+            </div>
+          </div>
+  
+          <!-- Battery Data Checkbox -->
+          <div class="popup-section">
+            <label>
+              <input type="checkbox" v-model="sendBatteryData" />
+              {{ $t('TrackersettingsPopup-SendBatteryData') }}
+            </label>
+          </div>
+  
+          <!-- Humidity Data Checkbox -->
+          <div class="popup-section">
+            <label>
+              <input type="checkbox" v-model="sendTemperatureData" />
+              {{ $t('TrackersettingsPopup-SendHumidityData') }}
+            </label>
+          </div>
+  
+          <!-- Frequency Slider for Real-Time Mode -->
+          <div class="popup-section" v-if="!isLongTimeTracking">
+            <h3>{{ $t('TrackersettingsPopup-RealTimeFrequency') }}</h3>
+            <input
+              type="range"
+              class="frequency-slider"
+              v-model.number="selectedRealTimeStep"
+              :min="0"
+              :max="realTimeSteps.length - 1"
+              step="1"
+            />
+            <p>{{ formattedRealTimeInterval }}</p>
+          </div>
+  
+          <!-- Frequency Slider for Long-Time Mode -->
+          <div class="popup-section" v-else>
+            <h3>{{ $t('TrackersettingsPopup-LongTimeFrequency') }}</h3>
+            <input
+              type="range"
+              class="frequency-slider"
+              v-model.number="trackingInterval"
+              min="1"
+              max="24"
+              step="1"
+            />
+            <p>{{ trackingInterval }} {{ $t('TrackersettingsPopup-Hours') }}</p>
+          </div>
+        </div>
+  
+        <div class="popup-footer">
+          <button class="popup-save-btn" @click="saveChanges">
+            {{ $t('TrackersettingsPopup-Save') }}
+          </button>
+        </div>
+      </div>
     </div>
-</template>
+  </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -69,7 +99,9 @@ const emit = defineEmits(['updateTracker']);
 const trackerName = ref(props.trackerNameInitial);
 const isLongTimeTracking = ref(props.trackerModeInitial === 'LT');
 const trackingInterval = ref(props.sendingFrequencyInitial || 1); // Default to 1 hour if not provided
-
+// Add new reactive variables for checkboxes
+const sendBatteryData = ref(props.trackerModeInitial.BatteryMode || false);
+const sendTemperatureData = ref(props.trackerModeInitial.TemperatureMode || false);
 // Real-time mode frequency steps (in seconds)
 const realTimeSteps = [5, 10, 20, 30, 60, 120, 300, 600, 1800]; // 5s, 10s, 20s, 30s, 1min, 2min, 5min, 10min, 30min
 const selectedRealTimeStep = ref(0);
@@ -83,13 +115,15 @@ const formattedRealTimeInterval = computed(() => {
     return seconds < 60 ? `${seconds} seconds` : `${Math.round(seconds / 60)} min${seconds / 60 > 1 ? 's' : ''}`;
 });
 
-// Fetch initial tracker settings when the component is mounted
 onMounted(async () => {
     try {
         if (!props.selectedTrackerId) {
             throw new Error('selectedTrackerId is undefined');
         }
+
         const { data } = await api.get(`http://localhost:3500/api/mode/${props.selectedTrackerId}`);
+
+        // Populate the tracking mode
         isLongTimeTracking.value = data.CellInfosMode;
         if (data.GnssMode) {
             const frequency = data.frequenz / 1000; // Convert milliseconds to seconds
@@ -98,10 +132,15 @@ onMounted(async () => {
         } else {
             trackingInterval.value = Math.round(data.frequenz / (60 * 60 * 1000)); // Convert milliseconds to hours
         }
+
+        // Populate BatteryMode and TemperatureMode
+        sendBatteryData.value = data.BatteryMode || false;
+        sendTemperatureData.value = data.TemperatureMode || false;
     } catch (error) {
         console.error('Failed to fetch tracker mode:', error);
     }
 });
+
 
 const setRealTimeTracking = () => {
     isLongTimeTracking.value = false;
@@ -117,18 +156,30 @@ const saveChanges = async () => {
         if (!props.selectedTrackerId) {
             throw new Error('selectedTrackerId is undefined');
         }
+
+        // Update tracker name if changed
         if (trackerName.value !== props.trackerNameInitial) {
             await api.put(`http://localhost:3500/api/tracker/${props.selectedTrackerId}`, { name: trackerName.value });
             console.log('Tracker name updated successfully');
         }
 
+        // Prepare mode update payload
         const realTimeFrequency = realTimeSteps[selectedRealTimeStep.value];
-        await store.updateTrackerMode(
-            props.selectedTrackerId,
-            !isLongTimeTracking.value,
-            isLongTimeTracking.value ? undefined : realTimeFrequency,
-            isLongTimeTracking.value ? trackingInterval.value : undefined
-        );
+
+        const updateData = {
+            GnssMode: !isLongTimeTracking.value,
+            CellInfosMode: isLongTimeTracking.value,
+            BatteryMode: sendBatteryData.value, // Include battery mode
+            TemperatureMode: sendTemperatureData.value, // Include temperature mode
+            frequenz: isLongTimeTracking.value
+                ? trackingInterval.value * 60 * 60 * 1000 // Long-Time Mode frequency in milliseconds
+                : realTimeFrequency * 1000, // Real-Time Mode frequency in milliseconds
+        };
+
+        console.log('Update Data:', updateData); // Debug the payload
+
+        await api.put(`http://localhost:3500/api/mode/${props.selectedTrackerId}`, updateData);
+
         console.log('Mode updated successfully');
 
         // Emit updated data to parent
@@ -136,18 +187,18 @@ const saveChanges = async () => {
             id: props.selectedTrackerId,
             name: trackerName.value,
             mode: isLongTimeTracking.value ? 'LT' : 'RT',
-            frequency: isLongTimeTracking.value ? trackingInterval.value * 60 * 60 * 1000 : realTimeFrequency * 1000,
+            frequency: updateData.frequenz,
+            BatteryMode: sendBatteryData.value,
+            TemperatureMode: sendTemperatureData.value,
         });
 
         props.closePopup();
     } catch (error) {
         console.error('Failed to save changes:', error);
-        if (error.response) {
-            console.error('Error response data:', error.response.data);
-            console.error('Error response status:', error.response.status);
-        }
     }
 };
+
+
 </script>
 
 
@@ -265,7 +316,8 @@ const saveChanges = async () => {
     border-radius: 6px;
     border: 1px solid #ddd;
     outline: none;
-    background: #ddd;
+    background: #ffffff;
+    box-sizing: border-box;
 }
 
 .popup-input:focus {
@@ -334,7 +386,16 @@ const saveChanges = async () => {
     font-weight: bold;
 }
 
+.popup-body input[type="checkbox"] {
+    accent-color: #00543D;
+    /* Orange color */
+}
 
+/* Dark mode checkbox accent color */
+.dark-mode .popup-body input[type="checkbox"] {
+    accent-color: #E69543;
+    /* Orange color */
+}
 
 .frequency-slider input[type="range"] {
     width: 100%;
