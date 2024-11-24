@@ -40,15 +40,12 @@ void setup()
 void DailyUpdates()
 {
   GPSOneXtraCheckForUpdate();
-  /*
-  if we want to do the same for low/high temperature or humidity:
-  humidity = _TInstance().readHumidity();
-  temperature = _TInstance().readTemperature();
-  if abfragen  
-  -40 bis 85 c* temperatur
-  humidity: 5-95% in non condensing humidity: no waterdroplets
-
-  */
+  temperature = _TInstance.readTemperature();
+  if (temperature < -20){
+    docInput["TemperatureLow"] = true;
+  } else  if (temperature > 60){
+    docInput["TemperatureHigh"] = true;
+  }
   batterypercentage = _BoardBattery.calculateBatteryPercentage();
   if (batterypercentage <= 10)
   {
