@@ -3,7 +3,7 @@
 _Board::_Board()
 {
 }
-boolean _Board::initBoard()
+bool _Board::initBoard()
 {
     if (initBattery() && initTemp())
         return true;
@@ -11,22 +11,30 @@ boolean _Board::initBoard()
         return false;
 }
 
-boolean _Board::setupRTC(uint8_t hh, uint8_t mm, uint8_t ss, uint8_t _dd, uint8_t _mm, uint8_t _yyyy)
-{
-    rtc.setHours(hh);
-    rtc.setMinutes(mm);
-    rtc.setSeconds(ss);
+bool _Board::setupRTCFromModem(const char* modemTime) {
+    uint16_t year;
+    uint8_t month, day, hour, minute, second;
 
-    rtc.setDay(_dd);
-    rtc.setMonth(_mm);
-    rtc.setYear(_yyyy);
+    if (sscanf(modemTime, "%4hu/%2hhu/%2hhu,%2hhu:%2hhu:%2hhu", &year, &month, &day, &hour, &minute, &second) == 6) {
+        // RTC konfigurieren
+        rtc.setYear(year);
+        rtc.setMonth(month);
+        rtc.setDay(day);
+        rtc.setHours(hour);
+        rtc.setMinutes(minute);
+        rtc.setSeconds(second);
+        return true; 
+    }
+
+    return false; 
 }
 
-bool _Board::getDateTime(JsonDocument &docInput)
-{
+char* _Board::getDateTime() {
     uint32_t unixTime = rtc.getEpoch();
-    
-    docInput["Timestamp"] = unixTime;
 
-    return true;
+    static char buffer[11]; 
+
+    snprintf(buffer, sizeof(buffer), "%lu", unixTime);
+
+    return buffer;
 }

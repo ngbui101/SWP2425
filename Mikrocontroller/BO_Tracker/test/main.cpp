@@ -1,4 +1,4 @@
-#include <board.h>
+#include <BG96_Common.h>
 #define DSerial SerialUSB
 #define ATSerial Serial1
 _BG96_Common _BG96(ATSerial, DSerial);
