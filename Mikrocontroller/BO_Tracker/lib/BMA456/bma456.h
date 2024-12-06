@@ -87,11 +87,13 @@
 #ifndef BMA456_H
 #define BMA456_H
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 #include "bma4.h"
 
+#define BMA4_WAKEUP_INT 0x4000
 /**\name Chip ID of BMA456 sensor */
 #define	BMA456_CHIP_ID				UINT8_C(0x16)
 

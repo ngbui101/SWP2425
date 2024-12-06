@@ -1172,7 +1172,6 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
                 }
                 if (isNewCell && cellCount < max_cells)
                 {
-                    Serial.println("Add Zelle");
                     cells[cellCount++] = cell;
                 }
             }

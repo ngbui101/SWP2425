@@ -137,4 +137,21 @@ uint32_t BMA456::getStepCounterOutput(void) {
     return step;
 }
 
+void BMA456::enableWakeOnMotion(bool enable, uint8_t sensitivity) {
+    uint16_t rslt;
+    // Wakeup-Feature aktivieren/deaktivieren
+    rslt = bma456_feature_enable(BMA456_WAKEUP, enable, &accel);
+    if (enable) {
+        // Optional Sensitivität setzen (0=Standard, Bereich siehe Dokumentation)
+        rslt |= bma456_wakeup_set_sensitivity(sensitivity, &accel);
+    }
+}
+
+void BMA456::attachInterruptWakeOnMotion(uint8_t int_line) {
+    // Wake-up Interrupt auf gewählte Leitung mappen
+    uint16_t rslt = bma456_map_interrupt(int_line, BMA4_WAKEUP_INT, BMA4_ENABLE, &accel);
+    // Jetzt kann der Nutzer z.B. attachInterrupt(digitalPinToInterrupt(PA22), ISR, RISING);
+    // im Hauptsketch ausführen, um auf den Interrupt zu reagieren.
+}
+
 BMA456 bma456;

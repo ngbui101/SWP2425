@@ -56,20 +56,6 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
 }
 
 
-function convertTimestamp(timestamp) {
-    try {
-        const [datePart, timePartWithZone] = timestamp.split(",");
-        const timePart = timePartWithZone.slice(0, 8);
-        const [year, month, day] = datePart.split("/");
-        const fullYear = `20${year}`;
-        const isoString = `${fullYear}-${month}-${day}T${timePart}Z`;
-        return new Date(isoString);
-    } catch (error) {
-        console.error("Timestamp conversion error:", error);
-        return null;
-    }
-}
-
 async function getCellLocationAndEstimatedPositionFromUnwiredLabs(cells) {
     const apiUrl = "https://eu1.unwiredlabs.com/v2/process";
     const token = "pk.11e2626f93a4d4ee0bb5ab37ee6b25a4";
@@ -133,18 +119,9 @@ export const handler = async (event) => {
     const mongoURI = process.env.MONGO_URI;
     const client = new MongoClient(mongoURI);
 
-    const convertedTimestamp = convertTimestamp(event.Timestamp);
-
-    if (!convertedTimestamp || isNaN(convertedTimestamp.getTime())) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify("Invalid timestamp format")
-        };
-    }
-
     const data = {
         IMEI: event.IMEI,
-        Timestamp: convertedTimestamp,
+        Timestamp: event.Timestamp,
         Cells: event.cells,
         Temperature: event.Temperature,
         Humidity: event.Humidity,
