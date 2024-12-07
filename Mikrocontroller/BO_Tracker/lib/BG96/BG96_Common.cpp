@@ -1038,7 +1038,7 @@ int _BG96_Common::ReportNeighbourCellInformation(Cell *cells[], int max_cells)
 
                         // Get rxlev and calculate signal
                         int rxlev = atoi(strtok_r(NULL, ",", &rest_line));
-                        int signal = rxlev ;
+                        int signal = rxlev;
 
                         // Create and add Cell object
                         cells[cellCount++] = new Cell("gsm", mcc, mnc, lac, cellid, signal);
@@ -1058,9 +1058,7 @@ bool _BG96_Common::ResetFunctionality()
     if (!SetDevFunctionality(RESET_FUNCTIONALITY))
         return false;
     while (readResponseAndSearch(RESPONSE_READY, 3) != SUCCESS_RESPONSE)
-    {
-        Serial.println("wait");
-    }; // Restart Funktionalität
+        ;
     SetDevOutputformat(true);
     delay(300);
     return true;
@@ -1130,13 +1128,13 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
         for (int i = 0; i < numOperators + 1 && cellCount < max_cells; i++)
         {
             // Configure operator network
-            unsigned int mode = 1;   // Manual mode
+            unsigned int mode = 1; // Manual mode
             unsigned int resetmode = 4;
             unsigned int format = 2; // Numeric format
             if (i < numOperators)
                 DevOperatorNetwork(mode, format, operators[i], act, WRITE_MODE);
             else
-            {   
+            {
                 SetDevFunctionality(MINIMUM_FUNCTIONALITY);
                 ScanmodeConfig(0);
                 ResetFunctionality();
@@ -1196,7 +1194,7 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
         // Regardless of registration status, proceed to scan neighbour cells
 
         // Get neighbour cell information
-        delay(10000); 
+        delay(10000);
         int neighbourCellCount = ReportNeighbourCellInformation(cells, max_cells);
 
         cellCount = neighbourCellCount > max_cells ? max_cells : neighbourCellCount;

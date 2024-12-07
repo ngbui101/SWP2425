@@ -5,9 +5,9 @@
 #include "TrackerMode.cpp"
 #include <Board.h>
 // APN
-// char APN[] = "internet.m2mportal.de";
+char APN[] = "internet.m2mportal.de";
 // char APN[] = "wm";
-char APN[] = "iot.1nce.net";
+// char APN[] = "iot.1nce.net";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 char ModemIMEI[20];
