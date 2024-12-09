@@ -16,18 +16,26 @@ char RAT[] = "lte";
 unsigned int PDPIndex = 1;
 Cell *cells[6] = {nullptr};
 
-bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem)
+bool setRTC(_BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
+{
+
+    const char *modemTime = _Modem.GetCurrentTime();
+    if (_ArdruinoZero.setupRTCFromModem(modemTime))
+        return true;
+    else
+        return false;
+}
+
+bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
 {
     if (_Modem.InitModule())
     {
         _Modem.SetDevOutputformat(true);
         _Modem.SetDevCommandEcho(false);
-        DSerial.println("Init Module...");
-        // _AWS.ConfigNetworks();
     }
     else
     {
-        DSerial.println("Fail to Init Module...");
+        DSerial.println("Fail to Init Modem...");
         return false;
     }
     // IMEI
@@ -47,6 +55,14 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem)
         return false;
     }
     DSerial.println(apn_error);
+
+    if(setRTC(_Modem, _ArdruinoZero)){
+        DSerial.println("RTC Set from Modem");
+    }else{
+        DSerial.println("RTC Set from Modem failed");
+    }
+
     return true;
 }
+
 #endif

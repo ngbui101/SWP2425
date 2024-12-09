@@ -2,14 +2,14 @@
 #define __Mode_Handle_H
 #include <GNSS.hpp>
 
-void initModul(Stream &DSerial, _BG96_Module &_BG96,_Board _ArdruinoZero)
-{   
-    initModem(DSerial, _BG96);
-    InitModemMQTT(DSerial, _BG96);
-    InitGNSS(DSerial, _BG96);
-    _ArdruinoZero.initBoard();
+void initModul(Stream &DSerial, _BG96_Module &_BG96, _Board &_ArdruinoZero)
+{
+    if (initModem(DSerial, _BG96, _ArdruinoZero) && InitModemMQTT(DSerial, _BG96) && InitGNSS(DSerial, _BG96) && _ArdruinoZero.initBoard())
+    {
+        Serial.println("Modul initialized");
+    }
 }
-void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _Board _ArdruinoZero)
+void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _Board &_ArdruinoZero)
 {
     pub_time = millis();
     // GNSS-Modus verwalten
@@ -60,7 +60,7 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
         docInput["RequestMode"] = true;
     }
     // Zeitstempel hinzufügen
-    docInput["Timestamp"] = _BG96.GetCurrentTime();
+    docInput["Timestamp"] = _ArdruinoZero.getDateTime();
     // Daten veröffentlichen
     if (publishData(DSerial, _BG96, docInput, pub_time, AT_LEAST_ONCE, "/pub"))
     {
@@ -97,9 +97,12 @@ void DailyUpdates(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, 
 {
     GPSOneXtraCheckForUpdate(DSerial, _BG96);
     double temperature = _BoardTemperature.readTemperature();
-    if(temperature < -20){
+    if (temperature < -20)
+    {
         docInput["TemperatureLow"] = true;
-    } else if (temperature > 60){
+    }
+    else if (temperature > 60)
+    {
         docInput["TemperatureHigh"] = true;
     }
     if (_BoardBattery.calculateBatteryPercentage() <= 10)
