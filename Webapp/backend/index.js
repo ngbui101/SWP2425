@@ -20,7 +20,8 @@ app.use(credentials);
 const device = require('./models/mqttDevice');
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: true,
+  credentials: true,
 };
 
 // CORS
