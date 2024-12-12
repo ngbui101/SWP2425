@@ -98,7 +98,7 @@ public:
 
     uint32_t getStepCounterOutput(void);
 
-    void enableWakeOnMotion(bool enable, uint8_t sensitivity = 0);
+    void enableWakeOnMotion();
     void attachInterruptWakeOnMotion(uint8_t int_line = 0);
 
 private:

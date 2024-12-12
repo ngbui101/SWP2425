@@ -31,14 +31,16 @@
 
 #ifdef __AVR__
 
-uint8_t config_file[8] = { 0 };
+uint8_t config_file[8] = {0};
 
 #endif
 
-static uint16_t bma_i2c_write(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t len) {
+static uint16_t bma_i2c_write(uint8_t addr, uint8_t reg, uint8_t *data, uint16_t len)
+{
     Wire.beginTransmission(addr);
     Wire.write(reg);
-    for (uint16_t i = 0; i < len; i++) {
+    for (uint16_t i = 0; i < len; i++)
+    {
         Wire.write(data[i]);
     }
     Wire.endTransmission();
@@ -46,7 +48,8 @@ static uint16_t bma_i2c_write(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t
     return 0;
 }
 
-static uint16_t bma_i2c_read(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t len) {
+static uint16_t bma_i2c_read(uint8_t addr, uint8_t reg, uint8_t *data, uint16_t len)
+{
     uint16_t i = 0;
 
     Wire.beginTransmission(addr);
@@ -54,28 +57,31 @@ static uint16_t bma_i2c_read(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t 
     Wire.endTransmission();
 
     Wire.requestFrom((int16_t)addr, len);
-    while (Wire.available()) {
+    while (Wire.available())
+    {
         data[i++] = Wire.read();
     }
 
     return 0;
 }
 
-static void bma_delay_ms(uint32_t ms) {
+static void bma_delay_ms(uint32_t ms)
+{
     delay(ms);
 }
 
-void BMA456::initialize(MA456_RANGE range, MBA456_ODR odr, MA456_BW bw, MA456_PERF_MODE mode) {
+void BMA456::initialize(MA456_RANGE range, MBA456_ODR odr, MA456_BW bw, MA456_PERF_MODE mode)
+{
     Wire.begin();
 
-    accel.dev_addr        = BMA4_I2C_ADDR_SECONDARY;
-    accel.interface       = BMA4_I2C_INTERFACE;
-    accel.bus_read        = bma_i2c_read;
-    accel.bus_write       = bma_i2c_write;
-    accel.delay           = bma_delay_ms;
-    accel.read_write_len  = 8;
-    accel.resolution      = 16;
-    accel.feature_len     = BMA456_FEATURE_SIZE;
+    accel.dev_addr = BMA4_I2C_ADDR_SECONDARY;
+    accel.interface = BMA4_I2C_INTERFACE;
+    accel.bus_read = bma_i2c_read;
+    accel.bus_write = bma_i2c_write;
+    accel.delay = bma_delay_ms;
+    accel.read_write_len = 8;
+    accel.resolution = 16;
+    accel.feature_len = BMA456_FEATURE_SIZE;
 
     bma456_init(&accel);
 
@@ -92,26 +98,35 @@ void BMA456::initialize(MA456_RANGE range, MBA456_ODR odr, MA456_BW bw, MA456_PE
 
     bma4_set_accel_config(&accel_conf, &accel);
 
-    if (range == RANGE_2G) {
+    if (range == RANGE_2G)
+    {
         devRange = 2000;
-    } else if (range == RANGE_4G) {
+    }
+    else if (range == RANGE_4G)
+    {
         devRange = 4000;
-    } else if (range == RANGE_8G) {
+    }
+    else if (range == RANGE_8G)
+    {
         devRange = 8000;
-    } else if (range == RANGE_16G) {
+    }
+    else if (range == RANGE_16G)
+    {
         devRange = 16000;
     }
 
     bma4_set_accel_enable(BMA4_ENABLE, &accel);
 }
 
-void BMA456::stepCounterEnable(MA456_PLATFORM_CONF conf, bool cmd) {
+void BMA456::stepCounterEnable(MA456_PLATFORM_CONF conf, bool cmd)
+{
     bma456_reset_step_counter(&accel);
     bma456_select_platform(conf, &accel);
     bma456_feature_enable(BMA456_STEP_CNTR, cmd, &accel);
 }
 
-void BMA456::getAcceleration(float* x, float* y, float* z) {
+void BMA456::getAcceleration(float *x, float *y, float *z)
+{
     struct bma4_accel sens_data;
 
     bma4_read_accel_xyz(&sens_data, &accel);
@@ -121,7 +136,8 @@ void BMA456::getAcceleration(float* x, float* y, float* z) {
     *z = (float)sens_data.z * devRange / 32768;
 }
 
-int32_t BMA456::getTemperature(void) {
+int32_t BMA456::getTemperature(void)
+{
     int32_t temp = 0;
 
     bma4_get_temperature(&temp, BMA4_DEG, &accel);
@@ -129,7 +145,8 @@ int32_t BMA456::getTemperature(void) {
     return (temp / 1000);
 }
 
-uint32_t BMA456::getStepCounterOutput(void) {
+uint32_t BMA456::getStepCounterOutput(void)
+{
     uint32_t step = 0;
 
     bma456_step_counter_output(&step, &accel);
@@ -137,17 +154,43 @@ uint32_t BMA456::getStepCounterOutput(void) {
     return step;
 }
 
-void BMA456::enableWakeOnMotion(bool enable, uint8_t sensitivity) {
+void BMA456::enableWakeOnMotion()
+{
     uint16_t rslt;
+    uint16_t int_status = 0;
     // Wakeup-Feature aktivieren/deaktivieren
-    rslt = bma456_feature_enable(BMA456_WAKEUP, enable, &accel);
-    if (enable) {
-        // Optional Sensitivität setzen (0=Standard, Bereich siehe Dokumentation)
-        rslt |= bma456_wakeup_set_sensitivity(sensitivity, &accel);
+    rslt = bma4_set_accel_enable(BMA4_ENABLE, &accel);
+    if (rslt == BMA4_OK)
+    {
+        rslt = bma456_map_interrupt(BMA4_INTR1_MAP, BMA456_SIG_MOT_INT, BMA4_ENABLE, &accel);
+        if (rslt == BMA4_OK)
+        {
+            rslt = bma456_feature_enable(BMA456_SIG_MOTION, BMA4_ENABLE, &accel);
+        }
+        if (rslt == BMA4_OK)
+        {
+            Serial.println("Shake the sensor for greater than 3 sec to detect sig-motion interrupt\n");
+
+            for (;;)
+            {
+                /* Read the interrupt status */
+                rslt = bma456_read_int_status(&int_status, &accel);
+
+                /* Check if sig-motion interrupt is received */
+                if ((rslt == BMA4_OK) && (int_status & BMA456_SIG_MOT_INT))
+                {
+                    Serial.println("\nReceived Sig-motion interrupt\n");
+                    break;
+                }
+
+                int_status = 0;
+            }
+        }
     }
 }
 
-void BMA456::attachInterruptWakeOnMotion(uint8_t int_line) {
+void BMA456::attachInterruptWakeOnMotion(uint8_t int_line)
+{
     // Wake-up Interrupt auf gewählte Leitung mappen
     uint16_t rslt = bma456_map_interrupt(int_line, BMA4_WAKEUP_INT, BMA4_ENABLE, &accel);
     // Jetzt kann der Nutzer z.B. attachInterrupt(digitalPinToInterrupt(PA22), ISR, RISING);

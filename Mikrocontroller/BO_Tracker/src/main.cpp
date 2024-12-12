@@ -1,51 +1,26 @@
-#include <Mode_Handle.hpp>
 
-#define DSerial SerialUSB
-#define ATSerial Serial1
+#include "arduino_bma456.h"
 
-// De- und Serialisation
-JsonDocument docInput;
-JsonDocument docOutput;
-
-// Zeitintervall für das tägliche Update (24 Stunden in Millisekunden)
-const unsigned long UPDATE_INTERVAL = 86400000UL;
-unsigned long lastUpdateCheck = 0;
-
-_Board _ArdruinoZero;
-
-_BG96_Module _BG96(ATSerial,DSerial);
-
-void setup()
+uint32_t step = 0;
+float x = 0, y = 0, z = 0;
+void setup(void)
 {
-  DSerial.begin(115200);
-  while (DSerial.read() >= 0)
-    ;
-  ATSerial.begin(115200);
-  while (ATSerial.read() >= 0)
-    ;
-  delay(3000);
-  
-  initModul(DSerial,_BG96,_ArdruinoZero);
-  
+  Serial.begin(115200);
+  Serial.println("BMA456 Step Counter");
+
+  // bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
+  bma456.initialize();
+  // bma456.enableWakeOnMotion();
 }
 
-void loop()
+void loop(void)
 {
-  if (millis() - pub_time < trackerModes.frequenz)
-    return;
-  if (trackerModes.Modem_Off)
-  {
-    InitModemMQTT(DSerial, _BG96);
-    trackerModes.Modem_Off = false;
-  }
-  else
-  {
-    waitAndCheck(DSerial, _BG96, docOutput);
-    modeHandle(DSerial, _BG96, docInput, _ArdruinoZero);
-  }
-  if (millis() - lastUpdateCheck >= UPDATE_INTERVAL)
-  {
-    lastUpdateCheck = millis();
-    DailyUpdates(DSerial, _BG96, docInput, _ArdruinoZero,_ArdruinoZero);
-  }
+  bma456.getAcceleration(&x, &y, &z);
+
+  Serial.print("X: ");
+  Serial.print(x);
+  Serial.print(", Y: ");
+  Serial.print(y);
+  Serial.print(", Z: ");
+  Serial.print(z);
 }
