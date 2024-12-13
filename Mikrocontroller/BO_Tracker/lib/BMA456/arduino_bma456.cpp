@@ -154,47 +154,49 @@ uint32_t BMA456::getStepCounterOutput(void)
     return step;
 }
 
-void BMA456::enableWakeOnMotion()
+int BMA456::enableWakeOnMotion()
 {
     uint16_t rslt;
-    uint16_t int_status = 0;
+
     // Wakeup-Feature aktivieren/deaktivieren
-    rslt = bma4_set_accel_enable(BMA4_ENABLE, &accel);
+
+    rslt = bma456_map_interrupt(BMA4_INTR1_MAP, BMA456_WAKEUP_INT, BMA4_ENABLE, &accel);
     if (rslt == BMA4_OK)
     {
-        rslt = bma456_map_interrupt(BMA4_INTR1_MAP, BMA456_SIG_MOT_INT, BMA4_ENABLE, &accel);
-        if (rslt == BMA4_OK)
-        {
-            rslt = bma456_feature_enable(BMA456_SIG_MOTION, BMA4_ENABLE, &accel);
-        }
-        if (rslt == BMA4_OK)
-        {
-            Serial.println("Shake the sensor for greater than 3 sec to detect sig-motion interrupt\n");
-
-            for (;;)
-            {
-                /* Read the interrupt status */
-                rslt = bma456_read_int_status(&int_status, &accel);
-
-                /* Check if sig-motion interrupt is received */
-                if ((rslt == BMA4_OK) && (int_status & BMA456_SIG_MOT_INT))
-                {
-                    Serial.println("\nReceived Sig-motion interrupt\n");
-                    break;
-                }
-
-                int_status = 0;
-            }
-        }
+        rslt = bma456_feature_enable(BMA456_WAKEUP, BMA4_ENABLE, &accel);
     }
+    return rslt;
 }
 
+void BMA456::waitForMotion()
+{
+    Serial.println("Shake the sensor for greater than 3 sec to detect sig-motion interrupt\n");
+    uint16_t rslt;
+    uint16_t int_status = 0;
+    for (;;)
+    {
+        /* Read the interrupt status */
+        rslt = bma456_read_int_status(&int_status, &accel);
+        /* Check if sig-motion interrupt is received */
+        if ((rslt == BMA4_OK) && (int_status & BMA456_WAKEUP_INT))
+        {
+            Serial.println("\nMotion interrupt\n");
+            break;
+        }
+
+        int_status = 0;
+    }
+}
 void BMA456::attachInterruptWakeOnMotion(uint8_t int_line)
 {
     // Wake-up Interrupt auf gewählte Leitung mappen
     uint16_t rslt = bma456_map_interrupt(int_line, BMA4_WAKEUP_INT, BMA4_ENABLE, &accel);
     // Jetzt kann der Nutzer z.B. attachInterrupt(digitalPinToInterrupt(PA22), ISR, RISING);
     // im Hauptsketch ausführen, um auf den Interrupt zu reagieren.
+}
+
+int BMA456::readPinStatus(uint8_t *data){
+    return bma4_read_regs(BMA4_WAKEUP_INT,data,2, &accel);
 }
 
 BMA456 bma456;

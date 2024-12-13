@@ -98,9 +98,11 @@ public:
 
     uint32_t getStepCounterOutput(void);
 
-    void enableWakeOnMotion();
+    int enableWakeOnMotion();
     void attachInterruptWakeOnMotion(uint8_t int_line = 0);
 
+    int readPinStatus(uint8_t *data);
+    void waitForMotion();
 private:
     float devRange;
     struct bma4_dev accel;
