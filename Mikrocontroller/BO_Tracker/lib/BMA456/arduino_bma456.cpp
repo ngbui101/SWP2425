@@ -161,6 +161,7 @@ int BMA456::enableWakeOnMotion()
     // Wakeup-Feature aktivieren/deaktivieren
 
     rslt = bma456_map_interrupt(BMA4_INTR1_MAP, BMA456_WAKEUP_INT, BMA4_ENABLE, &accel);
+    rslt =  bma456_wakeup_set_sensitivity(0x00,&accel);
     if (rslt == BMA4_OK)
     {
         rslt = bma456_feature_enable(BMA456_WAKEUP, BMA4_ENABLE, &accel);
@@ -168,23 +169,47 @@ int BMA456::enableWakeOnMotion()
     return rslt;
 }
 
-void BMA456::waitForMotion()
+int BMA456::enableAnyNoMotion(){
+    uint16_t rslt;
+
+    // Wakeup-Feature aktivieren/deaktivieren
+
+    rslt = bma456_map_interrupt(BMA4_INTR1_MAP, BMA456_ANY_NO_MOTION_INT, BMA4_ENABLE, &accel);
+    if (rslt == BMA4_OK)
+    {
+        rslt = bma456_feature_enable(BMA456_ANY_MOTION, BMA4_ENABLE, &accel);
+    }
+    return rslt;
+}
+
+bool BMA456::waitForMotion()
 {
-    Serial.println("Shake the sensor for greater than 3 sec to detect sig-motion interrupt\n");
     uint16_t rslt;
     uint16_t int_status = 0;
-    for (;;)
-    {
-        /* Read the interrupt status */
-        rslt = bma456_read_int_status(&int_status, &accel);
-        /* Check if sig-motion interrupt is received */
-        if ((rslt == BMA4_OK) && (int_status & BMA456_WAKEUP_INT))
-        {
-            Serial.println("\nMotion interrupt\n");
-            break;
-        }
 
-        int_status = 0;
+    /* Read the interrupt status */
+    rslt = bma456_read_int_status(&int_status, &accel);
+    /* Check if sig-motion interrupt is received */
+    if ((rslt == BMA4_OK) && (int_status & BMA456_WAKEUP_INT))
+    {   
+        Serial.println(int_status);
+        Serial.println("\nMotion interrupt\n");
+        return true;
+    }
+    return false;
+}
+
+void BMA456::checkForAnyMotion(){
+    uint16_t rslt;
+    uint16_t int_status = 0;
+
+    /* Read the interrupt status */
+    rslt = bma456_read_int_status(&int_status, &accel);
+    /* Check if sig-motion interrupt is received */
+    Serial.println(int_status);
+    if ((rslt == BMA4_OK) && (int_status & BMA456_ANY_NO_MOTION_INT))
+    {
+        Serial.println("\nAny Motion interrupt\n");
     }
 }
 void BMA456::attachInterruptWakeOnMotion(uint8_t int_line)
@@ -195,8 +220,9 @@ void BMA456::attachInterruptWakeOnMotion(uint8_t int_line)
     // im Hauptsketch ausführen, um auf den Interrupt zu reagieren.
 }
 
-int BMA456::readPinStatus(uint8_t *data){
-    return bma4_read_regs(BMA4_WAKEUP_INT,data,2, &accel);
+int BMA456::readPinStatus(uint8_t *data)
+{
+    return bma4_read_regs(BMA4_WAKEUP_INT, data, 2, &accel);
 }
 
 BMA456 bma456;
