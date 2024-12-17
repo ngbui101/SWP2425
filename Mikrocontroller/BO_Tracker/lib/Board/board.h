@@ -18,6 +18,9 @@ public:
 
     char *getDateTime();
 
+    bool waitWakeOnMotions();
+
+    void deepSleep();
 private:
     RTCZero rtc;
 };

@@ -176,7 +176,8 @@ int BMA456::enableAnyNoMotion(){
 
     rslt = bma456_map_interrupt(BMA4_INTR1_MAP, BMA456_ANY_NO_MOTION_INT, BMA4_ENABLE, &accel);
     if (rslt == BMA4_OK)
-    {
+    {   
+        rslt = bma456_step_detector_enable(BMA456_ALL_AXIS_EN,&accel);
         rslt = bma456_feature_enable(BMA456_ANY_MOTION, BMA4_ENABLE, &accel);
     }
     return rslt;
@@ -192,14 +193,12 @@ bool BMA456::waitForMotion()
     /* Check if sig-motion interrupt is received */
     if ((rslt == BMA4_OK) && (int_status & BMA456_WAKEUP_INT))
     {   
-        Serial.println(int_status);
-        Serial.println("\nMotion interrupt\n");
         return true;
     }
     return false;
 }
 
-void BMA456::checkForAnyMotion(){
+bool BMA456::checkForAnyMotion(){
     uint16_t rslt;
     uint16_t int_status = 0;
 
@@ -207,16 +206,9 @@ void BMA456::checkForAnyMotion(){
     rslt = bma456_read_int_status(&int_status, &accel);
     /* Check if sig-motion interrupt is received */
     Serial.println(int_status);
-    if ((rslt == BMA4_OK) && (int_status & BMA456_ANY_NO_MOTION_INT))
-    {
-        Serial.println("\nAny Motion interrupt\n");
-    }
+    return ((rslt == BMA4_OK) && (int_status & BMA456_ANY_NO_MOTION_INT));
 }
 
-int BMA456::readPinStatus(uint8_t *data)
-{
-    return bma4_read_regs(BMA4_WAKEUP_INT, data, 2, &accel);
-}
 
 bool BMA456::isMovementAboveThreshold(float threshold)
 {
@@ -229,5 +221,24 @@ bool BMA456::isMovementAboveThreshold(float threshold)
     // Wenn der Betrag die Grenze überschreitet, geben wir true zurück
     return (magnitude > threshold);
 }
+bool BMA456::isMovementAboveThresholdFor10S(float threshold)
+{
+    float x, y, z;
+    int count = 0;
+    float sumMagnitude = 0;
+    float avgMagnitude = 0;
+    // unsigned long current = millis();
+    while (count <= 10)
+    {
+        getAcceleration(&x, &y, &z);
+        float magnitude = sqrt((x * x) + (y * y) + (z * z));
+        sumMagnitude += magnitude;
+        count++;
+        delay(1000);
+    }
+    avgMagnitude = sumMagnitude / count;
+    getAcceleration(&x, &y, &z);
 
+    return (avgMagnitude > threshold);
+}
 BMA456 bma456;

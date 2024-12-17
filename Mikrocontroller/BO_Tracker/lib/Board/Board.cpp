@@ -22,8 +22,9 @@ _Board::_Board()
 
 bool _Board::initBoard()
 {
-    bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
-    if (initBattery() && initTemp() && bma456.enableWakeOnMotion())
+    pinMode(LED_BUILTIN, OUTPUT);
+    // bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
+    if (initBattery() && initTemp()) // && bma456.enableWakeOnMotion())
     {
         return true; // Erfolgreich initialisiert
     }
@@ -115,4 +116,19 @@ char *_Board::getDateTime()
              year, month, day, hour, minute, second);
 
     return buffer; // Rückgabe des Strings
+}
+
+bool _Board::waitWakeOnMotions()
+{
+    if (bma456.waitForMotion())
+    {
+        digitalWrite(LED_BUILTIN, HIGH); 
+        delay(1000);                     
+        digitalWrite(LED_BUILTIN, LOW);
+        return true;
+    }
+}
+
+void _Board::deepSleep(){
+    LowPower.deepSleep(10000); 
 }

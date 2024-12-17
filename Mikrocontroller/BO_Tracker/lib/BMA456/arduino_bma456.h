@@ -101,14 +101,13 @@ public:
     int enableWakeOnMotion();
 
     int enableAnyNoMotion();
-    void attachInterruptWakeOnMotion(uint8_t int_line = 0);
-
-    int readPinStatus(uint8_t *data);
     bool waitForMotion();
 
-    void checkForAnyMotion();
+    bool checkForAnyMotion();
 
     bool isMovementAboveThreshold(float threshold);
+
+    bool isMovementAboveThresholdFor10S(float threshold);
 private:
     float devRange;
     struct bma4_dev accel;

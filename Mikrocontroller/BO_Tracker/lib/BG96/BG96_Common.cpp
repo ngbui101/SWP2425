@@ -62,7 +62,7 @@ bool _BG96_Common::InitModule()
     pinMode(POWKEY_PIN, OUTPUT);
     PowOnModule();
     digitalWrite(RESET_PIN, LOW);
-    TurnOnModule();
+    // TurnOnModule();
     // Serial.println("Initialized");
     // ResetModule();
     while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
