@@ -585,7 +585,8 @@ bool _BG96_GNSS::GetEstimationError(float &accuracy)
                 token = strtok(nullptr, ",");
                 index++;
             }
-            accuracy = sqrt(pow(hori_unc, 2) + pow(vert_unc, 2));
+            // accuracy = sqrt(pow(hori_unc, 2) + pow(vert_unc, 2));
+            accuracy = hori_unc;
             return true;
         }
     }
@@ -677,6 +678,7 @@ bool _BG96_GNSS::QueryGeoFence(unsigned int geoID)
     }
     return false;
 }
+
 GEOFENCE_STATUS_t _BG96_GNSS::getGeoFencingStatus(unsigned int geoID)
 {
     char position[128];

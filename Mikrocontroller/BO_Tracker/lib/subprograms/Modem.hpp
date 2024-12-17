@@ -5,9 +5,9 @@
 #include "TrackerMode.cpp"
 #include <Board.h>
 // APN
-// char APN[] = "internet.m2mportal.de";
+char APN[] = "internet.m2mportal.de";
 // char APN[] = "wm";
-char APN[] = "iot.1nce.net";
+// char APN[] = "iot.1nce.net";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 char ModemIMEI[20];
@@ -20,6 +20,10 @@ bool setRTC(_BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
 {
 
     const char *modemTime = _Modem.GetCurrentTime();
+
+    // const char *modemTime = "24/12/06,21:43:26+04";
+    Serial.println(modemTime);
+    
     if (_ArdruinoZero.setupRTCFromModem(modemTime))
         return true;
     else
