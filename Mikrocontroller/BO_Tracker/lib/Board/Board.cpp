@@ -1,4 +1,6 @@
 #include "Board.h"
+#include "arduino_bma456.h"
+#include <ArduinoLowPower.h>
 
 /**
  * @brief Konstruktor der Klasse _Board.
@@ -17,14 +19,22 @@ _Board::_Board()
  * @return true, wenn sowohl die Batterie- als auch die Temperatursensorinitialisierung erfolgreich sind.
  * @return false, wenn eine der Initialisierungen fehlschlägt.
  */
+
 bool _Board::initBoard()
 {
-    if (initBattery() && initTemp())
+    bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
+    if (initBattery() && initTemp() && bma456.enableWakeOnMotion())
+    {
+        LowPower.attachInterruptWakeup(digitalPinToInterrupt(wakeUpPin), onMotion, CHANGE);
         return true; // Erfolgreich initialisiert
+    }
     else
         return false; // Fehler bei der Initialisierung
 }
-
+void onMotion()
+{
+    motion = true;
+}
 /**
  * @brief Konfiguriert die Echtzeituhr (RTC) basierend auf einem Zeitstempel vom Modem.
  *
@@ -39,14 +49,15 @@ bool _Board::setupRTCFromModem(const char *modemTime)
 {
     // Überprüfen, ob der String das richtige Format hat
     size_t len = strlen(modemTime);
-    if (len < 17) {
+    if (len < 17)
+    {
         return false;
     }
     // Zeit und Datum aus dem String extrahieren
     char buf[3] = {0};
     buf[0] = modemTime[0];
     buf[1] = modemTime[1];
-    int year = atoi(buf);  // Jahr
+    int year = atoi(buf); // Jahr
 
     buf[0] = modemTime[3];
     buf[1] = modemTime[4];
@@ -54,11 +65,11 @@ bool _Board::setupRTCFromModem(const char *modemTime)
 
     buf[0] = modemTime[6];
     buf[1] = modemTime[7];
-    int day = atoi(buf);   // Tag
+    int day = atoi(buf); // Tag
 
     buf[0] = modemTime[9];
     buf[1] = modemTime[10];
-    int hour = atoi(buf);  // Stunde
+    int hour = atoi(buf); // Stunde
 
     buf[0] = modemTime[12];
     buf[1] = modemTime[13];
@@ -79,10 +90,8 @@ bool _Board::setupRTCFromModem(const char *modemTime)
     rtc.setMinutes(minute);
     rtc.setSeconds(second);
 
-   
     return true;
 }
-
 
 /**
  * @brief Gibt die aktuelle Unix-Zeit (Epochenzeit) der RTC als Zeichenkette zurück.
@@ -98,7 +107,7 @@ char *_Board::getDateTime()
     static char buffer[20]; // Für "YYYY/MM/DD HH:MM:SS"
 
     // RTC-Werte auslesen
-    uint16_t year = rtc.getYear() + 2000; 
+    uint16_t year = rtc.getYear() + 2000;
     uint8_t month = rtc.getMonth();
     uint8_t day = rtc.getDay();
     uint8_t hour = rtc.getHours();

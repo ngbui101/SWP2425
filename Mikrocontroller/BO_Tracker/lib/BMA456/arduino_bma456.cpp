@@ -212,17 +212,22 @@ void BMA456::checkForAnyMotion(){
         Serial.println("\nAny Motion interrupt\n");
     }
 }
-void BMA456::attachInterruptWakeOnMotion(uint8_t int_line)
-{
-    // Wake-up Interrupt auf gewählte Leitung mappen
-    uint16_t rslt = bma456_map_interrupt(int_line, BMA4_WAKEUP_INT, BMA4_ENABLE, &accel);
-    // Jetzt kann der Nutzer z.B. attachInterrupt(digitalPinToInterrupt(PA22), ISR, RISING);
-    // im Hauptsketch ausführen, um auf den Interrupt zu reagieren.
-}
 
 int BMA456::readPinStatus(uint8_t *data)
 {
     return bma4_read_regs(BMA4_WAKEUP_INT, data, 2, &accel);
+}
+
+bool BMA456::isMovementAboveThreshold(float threshold)
+{
+    float x, y, z;
+    getAcceleration(&x, &y, &z);
+
+    // Berechnung des Betrags der Beschleunigung aus den drei Achsen
+    float magnitude = sqrt((x * x) + (y * y) + (z * z));
+    
+    // Wenn der Betrag die Grenze überschreitet, geben wir true zurück
+    return (magnitude > threshold);
 }
 
 BMA456 bma456;
