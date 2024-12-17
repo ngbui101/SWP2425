@@ -5,15 +5,12 @@
 #include "Temperature.h"
 #include "ArduinoJson.h"
 
-#define WAKE_UP_INT_PIN 0u;
 const int wakeUpPin = 0;
-bool motion = false;
-
-void onMotion();
 
 class _Board : public _Temperature
 {
 public:
+    bool wake_up = false;
     _Board();
     bool initBoard();
 
@@ -21,10 +18,8 @@ public:
 
     char *getDateTime();
 
-    
 private:
     RTCZero rtc;
-    
 };
 
 #endif

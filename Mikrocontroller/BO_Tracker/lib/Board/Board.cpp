@@ -25,16 +25,12 @@ bool _Board::initBoard()
     bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
     if (initBattery() && initTemp() && bma456.enableWakeOnMotion())
     {
-        LowPower.attachInterruptWakeup(digitalPinToInterrupt(wakeUpPin), onMotion, CHANGE);
         return true; // Erfolgreich initialisiert
     }
     else
         return false; // Fehler bei der Initialisierung
 }
-void onMotion()
-{
-    motion = true;
-}
+
 /**
  * @brief Konfiguriert die Echtzeituhr (RTC) basierend auf einem Zeitstempel vom Modem.
  *
