@@ -42,7 +42,9 @@ bool _BG96_Common::TurnOnModule()
 {
     digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf LOW setzen
     delay(2000);
-    digitalWrite(POWKEY_PIN, HIGH); // Powkey-Pin auf HIGH setzen
+    digitalWrite(POWKEY_PIN, HIGH);
+    delay(2000);
+    digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf HIGH setzen
     return true;
 }
 
@@ -60,9 +62,9 @@ bool _BG96_Common::InitModule()
     pinMode(ENABLE_PWR, OUTPUT);
     pinMode(RESET_PIN, OUTPUT);
     pinMode(POWKEY_PIN, OUTPUT);
-    PowOnModule();
+    PowerOnModule();
     digitalWrite(RESET_PIN, LOW);
-    // TurnOnModule();
+    TurnOnModule();
     // Serial.println("Initialized");
     // ResetModule();
     while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
@@ -70,12 +72,14 @@ bool _BG96_Common::InitModule()
     return true;
 }
 
-bool _BG96_Common::PowOffModule()
+bool _BG96_Common::PowerOffModule()
 {
     digitalWrite(ENABLE_PWR, LOW);
+    digitalWrite(POWKEY_PIN, LOW);
+
     return true;
 }
-bool _BG96_Common::PowOnModule()
+bool _BG96_Common::PowerOnModule()
 {
     digitalWrite(ENABLE_PWR, HIGH);
     return true;

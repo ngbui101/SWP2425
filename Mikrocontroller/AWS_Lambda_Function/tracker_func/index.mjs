@@ -39,7 +39,7 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
         } : null;
 
         // Hole Geofence-Informationen
-        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId)), active: true });
+        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId))});
         const geofences = await geofencesCursor.toArray();
         const geofenceData = geofences.map(geo => ({
             geoRadius: parseInt(geo.radius),

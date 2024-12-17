@@ -21,6 +21,8 @@ public:
     bool waitWakeOnMotions();
 
     void deepSleep();
+
+    bool stillOnMotions();
 private:
     RTCZero rtc;
 };

@@ -23,8 +23,8 @@ _Board::_Board()
 bool _Board::initBoard()
 {
     pinMode(LED_BUILTIN, OUTPUT);
-    // bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
-    if (initBattery() && initTemp()) // && bma456.enableWakeOnMotion())
+    bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
+    if (initBattery() && initTemp()  && bma456.enableWakeOnMotion())
     {
         return true; // Erfolgreich initialisiert
     }
@@ -126,9 +126,12 @@ bool _Board::waitWakeOnMotions()
         delay(1000);                     
         digitalWrite(LED_BUILTIN, LOW);
         return true;
-    }
+    }else return false;
 }
 
+bool _Board::stillOnMotions(){
+    return bma456.isMovementAboveThreshold(1000);
+}
 void _Board::deepSleep(){
     LowPower.deepSleep(10000); 
 }

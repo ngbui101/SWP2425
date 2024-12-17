@@ -80,17 +80,12 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
                 delay(300);
             }
             break;
-        case INSIDE_GEOFENCE || NOFIX:
+        case INSIDE_GEOFENCE:
+        case NOFIX:
             break;
         default:
             break;
         }
-    }
-    if (trackerModes.frequenz > 600000)
-    {
-        _BG96.PowOffModule();
-        trackerModes.Modem_Off = true;
-        DSerial.println("Power Off Module");
     }
 }
 void DailyUpdates(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _Battery _BoardBattery, _Temperature _BoardTemperature)

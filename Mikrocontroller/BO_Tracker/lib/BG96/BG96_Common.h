@@ -53,9 +53,9 @@ class _BG96_Common : public _BG96_Serial
 
     _BG96_Common(Stream &atserial, Stream &dserial);
     
-    bool PowOffModule();
+    bool PowerOffModule();
 
-    bool PowOnModule();
+    bool PowerOnModule();
 
     bool TurnOnModule();
 	
