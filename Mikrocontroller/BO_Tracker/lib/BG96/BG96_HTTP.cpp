@@ -186,6 +186,33 @@ bool _BG96_HTTP::HTTPGET(unsigned int timeout)
     }
     return false;
 }
+bool _BG96_HTTP::HTTPGET(char *post_data, unsigned int timeout)
+{
+    char cmd[32], buf[16];
+    strcpy(cmd, HTTP_GET_REQUEST);
+    sprintf(buf, "=%d,%d", timeout ,strlen(post_data));
+    strcat(cmd, buf);
+    if(sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, 10)){
+        if(sendDataAndCheck(post_data, HTTP_POST_REQUEST, RESPONSE_ERROR, timeout)){
+            unsigned long start_time = millis();
+            errorCode = -1;
+            while(millis() - start_time < 200UL){
+                if(serialAvailable()){
+                    readResponseByteToBuffer();
+                }
+            }
+            char *sta_buf = searchStrBuffer(": ");
+            char *end_buf = searchChrBuffer(',');
+            *end_buf = '\0';
+            if (atoi(sta_buf + 2) == 0) {
+                return true;
+            } else {
+                errorCode = atoi(sta_buf + 2);
+            }
+        }
+    }
+    return false;
+}
 /**
  * @brief Führt eine HTTP-GET-Anfrage aus.
  *

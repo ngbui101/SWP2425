@@ -8,9 +8,15 @@
 char APN[] = "internet.m2mportal.de";
 // char APN[] = "wm";
 // char APN[] = "iot.1nce.net";
+
 char LOGIN[] = "";
 char PASSWORD[] = "";
 char ModemIMEI[20];
+HTTP_Body_Data_Type_t http_type = APPLICATION_X_WWW_FORM_URLENCODED;
+// TEXT_PLAIN = 1,
+//     APPLICATION_OCTET_STREAM = 2,
+//     MULTIPART_FORM_DATA = 3,
+char http_url[] = "https://xsq63wtz3xaoay5zkbxofnlymq0dpgag.lambda-url.eu-central-1.on.aws/";
 
 char RAT[] = "lte";
 unsigned int PDPIndex = 1;
@@ -23,14 +29,14 @@ bool setRTC(_BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
 
     // const char *modemTime = "24/12/06,21:43:26+04";
     Serial.println(modemTime);
-    
+
     if (_ArdruinoZero.setupRTCFromModem(modemTime))
         return true;
     else
         return false;
 }
 
-bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
+bool initModem(Stream &DSerial, _BG96_HTTP &_Modem, _Board &_ArdruinoZero)
 {
     if (_Modem.InitModule())
     {
@@ -53,17 +59,28 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
         DSerial.println(ModemIMEI);
     }
     char apn_error[64];
-    if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error, RAT, cells))
+    if (!_Modem.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
     {
         DSerial.println(apn_error);
         return false;
     }
     DSerial.println(apn_error);
 
-    if(setRTC(_Modem, _ArdruinoZero)){
+    if (setRTC(_Modem, _ArdruinoZero))
+    {
         DSerial.println("RTC Set from Modem");
-    }else{
+    }
+    else
+    {
         DSerial.println("RTC Set from Modem failed");
+    }
+
+    if (_Modem.SetHTTPConfigParameters(PDPIndex, false, false, http_type))
+    {
+        DSerial.println("\r\nConfig the HTTP Parameter Success!");
+    }
+    if(_Modem.HTTPURL(http_url, WRITE_MODE)){
+        DSerial.println("\r\nSet the HTTP URL Success!");
     }
 
     return true;

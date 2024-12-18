@@ -4,7 +4,7 @@
 
 void initModul(Stream &DSerial, _BG96_Module &_BG96, _Board &_ArdruinoZero)
 {
-    if (initModem(DSerial, _BG96, _ArdruinoZero) && InitModemMQTT(DSerial, _BG96) && InitGNSS(DSerial, _BG96) && _ArdruinoZero.initBoard())
+    if (initModem(DSerial, _BG96, _ArdruinoZero) && InitGNSS(DSerial, _BG96) && _ArdruinoZero.initBoard())//&& InitModemMQTT(DSerial, _BG96)
     {
         Serial.println("Modul initialized");
     }
