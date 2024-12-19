@@ -43,7 +43,7 @@ bool _BG96_Common::TurnOnModule()
     digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf LOW setzen
     delay(2000);
     digitalWrite(POWKEY_PIN, HIGH);
-    delay(2000);
+    delay(3000);
     digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf HIGH setzen
     return true;
 }
