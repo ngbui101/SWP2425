@@ -27,8 +27,9 @@ void setup()
   while (ATSerial.read() >= 0)
     ; // Buffer leeren
   delay(3000);
-
+  
   initModul(DSerial, _BG96, _ArdruinoZero);
+ 
   modemOff = false;
   motionDetected = false;
 }
