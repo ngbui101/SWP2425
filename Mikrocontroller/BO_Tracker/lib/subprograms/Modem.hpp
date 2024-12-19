@@ -29,19 +29,8 @@ bool setRTC(_BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
     else
         return false;
 }
-bool turnOnModem(Stream &DSerial, _BG96_TCPIP &_Modem){
-    char apn_error[64];
-    if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error, RAT, cells))
-    {
-        DSerial.println(apn_error);
-        return false;
-    }
-    DSerial.println(apn_error);
-    return true;
-}
 
-bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
-{
+bool startModem(Stream &DSerial, _BG96_TCPIP &_Modem){
     if (_Modem.InitModule())
     {
         _Modem.SetDevOutputformat(true);
@@ -52,6 +41,12 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
         DSerial.println("Fail to Init Modem...");
         return false;
     }
+    return true;
+}
+
+bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
+{
+    startModem(DSerial, _Modem);
     // IMEI
     char imei_tmp[64];
 
@@ -64,11 +59,12 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
     }
     char apn_error[64];
 
-    if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
+    if (!_Modem.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
     {
         DSerial.println(apn_error);
         return false;
     }
+    _Modem.ScanCells(RAT,cells);
     DSerial.println(apn_error);
     if(setRTC(_Modem, _ArdruinoZero)){
         DSerial.println("RTC Set from Modem");

@@ -86,6 +86,68 @@ CQGMG6NhAoGAezE/QTa9TyZZCwPsH1lNfyYiDrgcU9hpIo8pp4TOdMxE4109XKqJ\n\
 gP5HpbKQB0mBEADXAwWVXj2i8UL2nW9lo0xObxbqVSZJE8Xj+zKJCksacTq+we4/\n\
 f1ekEo4pJ+I1iQkqLLspRGJQziDcstLWuH+62b/f9wS9P3sKrcTb5PE=\n\
 -----END RSA PRIVATE KEY-----\n";
+bool startMQTT(Stream &DSerial, _BG96_MQTT &_AWS){
+  
+  if (_AWS.OpenMQTTNetwork(MQTTIndex, MQTTServer, MQTTPort) != 0 )
+  {
+    DSerial.println("\r\nSet the MQTT Service Address Fail!");
+    int e_code;
+    if (_AWS.returnErrorCode(e_code))
+    {
+      DSerial.print("\r\nERROR CODE: ");
+      DSerial.println(e_code);
+      DSerial.println("Please check the documentation for error details.");
+    }
+  }
+  DSerial.println("\r\nSet the MQTT Service Address Success!");
+
+  DSerial.println("\r\nConfigure Timeout!");
+  if (!_AWS.SetMQTTMessageTimeout(MQTTIndex, 10, 5, 1))
+  {
+    DSerial.println("\r\nMQTT Timeout Fail!");
+    int e_code;
+    if (_AWS.returnErrorCode(e_code))
+    {
+      DSerial.print("\r\nERROR CODE: ");
+      DSerial.println(e_code);
+      DSerial.println("Please check the documentation for error details.");
+    }
+  }
+
+  DSerial.println("\r\nStart Create a MQTT Client!");
+  if (_AWS.CreateMQTTClient(MQTTIndex, MQTTClientId, "", "") != 0)
+  {
+    DSerial.println("\r\nCreate a MQTT Client Fail!");
+    int e_code;
+    if (_AWS.returnErrorCode(e_code))
+    {
+      DSerial.print("\r\nERROR CODE: ");
+      DSerial.println(e_code);
+      DSerial.println("Please check the documentation for error details.");
+    }
+  }
+  
+  DSerial.println("\r\nCreate a MQTT Client Success!");
+
+  DSerial.println("\r\nStart MQTT Subscribe Topic!");
+  char mqtt_sub_topic[64];
+  strcpy(mqtt_sub_topic, mqtt_base_topic);
+  strcat(mqtt_sub_topic, "/sub");
+
+  if (_AWS.MQTTSubscribeTopic(MQTTIndex, 1, mqtt_sub_topic, MQTT_QoS) != 0)
+  {
+    DSerial.println("\r\nMQTT Subscribe Topic Fail!");
+    int e_code;
+    if (_AWS.returnErrorCode(e_code))
+    {
+      DSerial.print("\r\nERROR CODE: ");
+      DSerial.println(e_code);
+      DSerial.println("Please check the documentation for error details.");
+    }
+  }
+  DSerial.println("\r\nMQTT Subscribe Topic Success!");
+  return true;
+}
 
 bool InitModemMQTT(Stream &DSerial, _BG96_MQTT &_AWS)
 {
@@ -129,65 +191,11 @@ bool InitModemMQTT(Stream &DSerial, _BG96_MQTT &_AWS)
   }
   DSerial.println("\r\nConfig the MQTT Parameter Success!");
 
-  while (_AWS.OpenMQTTNetwork(MQTTIndex, MQTTServer, MQTTPort) != 0)
-  {
-    DSerial.println("\r\nSet the MQTT Service Address Fail!");
-    int e_code;
-    if (_AWS.returnErrorCode(e_code))
-    {
-      DSerial.print("\r\nERROR CODE: ");
-      DSerial.println(e_code);
-      DSerial.println("Please check the documentation for error details.");
-    }
-  }
-  DSerial.println("\r\nSet the MQTT Service Address Success!");
-
-  DSerial.println("\r\nConfigure Timeout!");
-  while (!_AWS.SetMQTTMessageTimeout(MQTTIndex, 10, 5, 1))
-  {
-    DSerial.println("\r\nMQTT Timeout Fail!");
-    int e_code;
-    if (_AWS.returnErrorCode(e_code))
-    {
-      DSerial.print("\r\nERROR CODE: ");
-      DSerial.println(e_code);
-      DSerial.println("Please check the documentation for error details.");
-    }
-  }
-
-  DSerial.println("\r\nStart Create a MQTT Client!");
-  while (_AWS.CreateMQTTClient(MQTTIndex, MQTTClientId, "", "") != 0)
-  {
-    DSerial.println("\r\nCreate a MQTT Client Fail!");
-    int e_code;
-    if (_AWS.returnErrorCode(e_code))
-    {
-      DSerial.print("\r\nERROR CODE: ");
-      DSerial.println(e_code);
-      DSerial.println("Please check the documentation for error details.");
-    }
-  }
-  DSerial.println("\r\nCreate a MQTT Client Success!");
-
-  DSerial.println("\r\nStart MQTT Subscribe Topic!");
-  char mqtt_sub_topic[64];
-  strcpy(mqtt_sub_topic, mqtt_base_topic);
-  strcat(mqtt_sub_topic, "/sub");
-
-  while (_AWS.MQTTSubscribeTopic(MQTTIndex, 1, mqtt_sub_topic, MQTT_QoS) != 0)
-  {
-    DSerial.println("\r\nMQTT Subscribe Topic Fail!");
-    int e_code;
-    if (_AWS.returnErrorCode(e_code))
-    {
-      DSerial.print("\r\nERROR CODE: ");
-      DSerial.println(e_code);
-      DSerial.println("Please check the documentation for error details.");
-    }
-  }
-  DSerial.println("\r\nMQTT Subscribe Topic Success!");
+  startMQTT(DSerial,_AWS);
+  
   return true;
 }
+
 
 void handleMQTTStatusEvent(Stream &DSerial, _BG96_MQTT &_AWS, char *payload)
 {

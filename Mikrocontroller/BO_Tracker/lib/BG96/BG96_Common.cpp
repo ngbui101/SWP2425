@@ -43,7 +43,7 @@ bool _BG96_Common::TurnOnModule()
     digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf LOW setzen
     delay(2000);
     digitalWrite(POWKEY_PIN, HIGH);
-    delay(3000);
+    delay(2000);
     digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf HIGH setzen
     return true;
 }
@@ -61,9 +61,9 @@ bool _BG96_Common::InitModule()
 {
     pinMode(ENABLE_PWR, OUTPUT);
     pinMode(RESET_PIN, OUTPUT);
+    digitalWrite(RESET_PIN, LOW);
     pinMode(POWKEY_PIN, OUTPUT);
     PowerOnModule();
-    digitalWrite(RESET_PIN, LOW);
     TurnOnModule();
     // Serial.println("Initialized");
     // ResetModule();
