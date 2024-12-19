@@ -12,7 +12,6 @@ char SUPURL[]  = "supl.google.com:7276";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 char ModemIMEI[20];
-
 char RAT[] = "lte";
 unsigned int PDPIndex = 1;
 Cell *cells[6] = {nullptr};
@@ -63,6 +62,14 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
         s.toCharArray(ModemIMEI, 64);
         DSerial.println(ModemIMEI);
     }
+    char apn_error[64];
+
+    if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
+    {
+        DSerial.println(apn_error);
+        return false;
+    }
+    DSerial.println(apn_error);
     if(setRTC(_Modem, _ArdruinoZero)){
         DSerial.println("RTC Set from Modem");
     }else{
