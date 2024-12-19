@@ -6,6 +6,7 @@
 #include <Board.h>
 // APN
 char APN[] = "internet.m2mportal.de";
+char SUPURL[]  = "supl.google.com:7276";
 // char APN[] = "wm";
 // char APN[] = "iot.1nce.net";
 char LOGIN[] = "";

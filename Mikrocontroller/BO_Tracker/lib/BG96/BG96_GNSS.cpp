@@ -703,3 +703,44 @@ GEOFENCE_STATUS_t _BG96_GNSS::getGeoFencingStatus(unsigned int geoID)
         return NOFIX;
     }
 }
+
+bool _BG96_GNSS::SetAGPSPlan(int mode){
+    char cmd[32], buf[32];
+    strcpy(cmd, GNSS_CONFIGURATION);
+    sprintf(buf, "=\"plane\",%d",mode);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
+    {
+        return true;
+    }
+    return false;
+}
+bool _BG96_GNSS::SetAGPSUrl(const char *supurl){
+    char cmd[32], buf[32];
+    strcpy(cmd, GNSS_AGPS_SUPURL);
+    sprintf(buf, "=\"%s\"",supurl);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool _BG96_GNSS::SetAGPSAPN(const char *apn){
+    char cmd[32], buf[32];
+    strcpy(cmd, GNSS_CONFIGURATION);
+    sprintf(buf, "=\"lbsapn\",16,1,\"%s\"",apn);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool _BG96_GNSS::InitAGPS(const char *supurl, const char *apn){
+    if(SetAGPSPlan() && SetAGPSAPN(apn) && SetAGPSUrl(supurl))
+        return true;
+    return false;
+}
