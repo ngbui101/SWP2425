@@ -61,6 +61,7 @@ void loop()
         delay(10000); // warte 10s
         if (_ArdruinoZero.stillOnMotions())
         { 
+          DSerial.println("Wake Up.....");
           onSleep = false;
           handleWakeUp(DSerial, _BG96);
         }
