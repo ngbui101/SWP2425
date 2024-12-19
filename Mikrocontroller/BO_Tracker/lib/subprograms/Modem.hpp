@@ -30,6 +30,16 @@ bool setRTC(_BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
     else
         return false;
 }
+bool turnOnModem(Stream &DSerial, _BG96_TCPIP &_Modem){
+    char apn_error[64];
+    if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error, RAT, cells))
+    {
+        DSerial.println(apn_error);
+        return false;
+    }
+    DSerial.println(apn_error);
+    return true;
+}
 
 bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
 {
@@ -53,14 +63,6 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
         s.toCharArray(ModemIMEI, 64);
         DSerial.println(ModemIMEI);
     }
-    char apn_error[64];
-    if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error, RAT, cells))
-    {
-        DSerial.println(apn_error);
-        return false;
-    }
-    DSerial.println(apn_error);
-
     if(setRTC(_Modem, _ArdruinoZero)){
         DSerial.println("RTC Set from Modem");
     }else{
