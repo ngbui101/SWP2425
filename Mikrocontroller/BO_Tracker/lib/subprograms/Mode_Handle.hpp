@@ -147,9 +147,9 @@ void handleEvent(Stream &DSerial, JsonDocument &docOutput, char *payload)
             unsigned int newFrequenz = docOutput["frequenz"];
             if (newFrequenz > 0)
             {
-                trackerModes.frequenz = newFrequenz;
+                trackerModes.period = newFrequenz;
                 DSerial.print("Updated publishing frequency to: ");
-                DSerial.println(trackerModes.frequenz);
+                DSerial.println(trackerModes.period);
             }
         }
         if (docOutput["geoRadius"].is<int>())
@@ -206,15 +206,13 @@ bool handleWakeUp(Stream &DSerial, _BG96_Module &_BG96)
         DSerial.println("Fail to startModem");
         return false;
     }
+    _BG96.ScanCells(RAT,cells);
     char apn_error[64];
     if (!_BG96.TurnOnInternet(PDPIndex, apn_error))
     {
         DSerial.println(apn_error);
         return false;
     }
-    
-    _BG96.ScanCells(RAT,cells);
-
     if(!InitModemMQTT(DSerial,_BG96)){
         DSerial.println("Fail to start MQTT");
         return false;

@@ -515,7 +515,7 @@ Cmd_Response_t _BG96_Common::ScanOperatorNetwork(char *net)
  * @param status Der Modus der Operation (READ_MODE zum Lesen, WRITE_MODE zum Schreiben).
  * @return Cmd_Response_t Der Status der Antwort (SUCCESS_RESPONSE, FIAL_RESPONSE, UNKNOWN_RESPONSE, TIMEOUT_RESPONSE).
  */
-Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int &format, const char *&oper, Net_Type_t &act, Cmd_Status_t status)
+Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int &format, const char *oper, Net_Type_t &act, Cmd_Status_t status)
 {
     char cmd[16];
     Cmd_Response_t oper_status = UNKNOWN_RESPONSE;
@@ -548,10 +548,10 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
             format = atoi(p[1]);
 
             // Lokalen Puffer für oper verwenden
-            static char local_oper[32];
-            strncpy(local_oper, p[2], sizeof(local_oper) - 1);
-            local_oper[sizeof(local_oper) - 1] = '\0';
-            oper = local_oper; // oper zeigt jetzt auf den lokalen Puffer
+            // static char local_oper[32];
+            // strncpy(local_oper, p[2], sizeof(local_oper) - 1);
+            // local_oper[sizeof(local_oper) - 1] = '\0';
+            // oper = local_oper; // oper zeigt jetzt auf den lokalen Puffer
 
             act = (Net_Type_t)atoi(p[3]);
         }
@@ -1073,16 +1073,21 @@ bool _BG96_Common::ConfigNetworks(const char *rat)
     LTENetworkCategoryConfig(2);       // LTE Cat M1 and Cat NB1
     ServiceDomainConfig(1);            // Nur Datenumtausch
     BandConfig("F", "80084", "80084"); // LTE-M + NBIoT on B3/B8/B20 only
-    
-    if (strcmp(rat, "gsm") == 0){
+
+    if (strcmp(rat, "gsm") == 0)
+    {
         SearchingConfig("01");
         ScanmodeConfig(1);
-    }else if(strcmp(rat, "nbiot") == 0){
+    }
+    else if (strcmp(rat, "nbiot") == 0)
+    {
         SearchingConfig("03");
         ScanmodeConfig(3);
-    }else{
+    }
+    else
+    {
         SearchingConfig("00");
-        ScanmodeConfig(0);                 // LTE-M fallback NBIoT,LTE
+        ScanmodeConfig(0); // LTE-M fallback NBIoT,LTE
     }
     ResetFunctionality();
     return true;
@@ -1106,37 +1111,20 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
     int cellCount = 0;       // Counter for the number of cells found
 
     // Determine scan mode based on 'rat'
-    int scanMode = 0;
-    
-    // Set scan mode
-    if (!ScanmodeConfig(scanMode))
-    {
-        return cellCount; // Return if scan mode could not be set
-    }
 
     if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
     {
         Net_Type_t act = strcmp(rat, "lte") == 0 ? LTE_CAT_M1 : LTE_CAT_NB1; // LTE network type
         // --- LTE Scanning ---
         // List of operators to scan
-        const char *operators[] = {"26201", "26202", "26203"};
-        const int numOperators = sizeof(operators) / sizeof(operators[0]);
+        // int operators[3] = {26201, 26202, 26203};
 
-        for (int i = 0; i < numOperators + 1 && cellCount < max_cells; i++)
+        bool telekom = false;
+        bool vodafone = false;
+        bool o2 = false;
+
+        for (int i = 0; i < 3; i++)
         {
-            // Configure operator network
-            unsigned int mode = 1; // Manual mode
-            unsigned int resetmode = 4;
-            unsigned int format = 2; // Numeric format
-            if (i < numOperators)
-                DevOperatorNetwork(mode, format, operators[i], act, WRITE_MODE);
-            else
-            {
-                SetDevFunctionality(MINIMUM_FUNCTIONALITY);
-                ScanmodeConfig(0);
-                ResetFunctionality();
-                DevOperatorNetwork(resetmode, format, operators[0], act, WRITE_MODE);
-            }
             // Wait for registration with a maximum timeout of 30 seconds
             Net_Status_t i_status = NOT_REGISTERED;
             unsigned long start_time = millis();
@@ -1145,7 +1133,6 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
                 i_status = DevNetRegistrationStatus();
                 if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
                 {
-                    // Proceed to the next operator
                     break;
                 }
                 delay(3000); // Wait 3 seconds
@@ -1169,6 +1156,41 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
                 {
                     cells[cellCount++] = cell;
                 }
+                int act_operator = cell->getOperator();
+                // Serial.println(act_operator);
+                if (act_operator == 26201)
+                {
+                    telekom = true;
+                    // Serial.println("Telekom");
+                }
+                if (act_operator == 26202)
+                {
+                    vodafone = true;
+                    // Serial.println("Vodafone");
+                }
+                if (act_operator == 26203)
+                {
+                    o2 = true;
+                    // Serial.println("o2");
+                }
+            }
+            // Configure operator network
+            unsigned int mode = 1;   // Manual mode
+            unsigned int format = 2; // Numeric format
+            if (!o2)
+            {
+                DevOperatorNetwork(mode, format, "26203", act, WRITE_MODE);
+                continue;
+            }
+            if (!vodafone)
+            {
+                DevOperatorNetwork(mode, format, "26202", act, WRITE_MODE);
+                continue;
+            }
+            if (!telekom)
+            {
+                DevOperatorNetwork(mode, format, "26201", act, WRITE_MODE);
+                continue;
             }
         }
     }

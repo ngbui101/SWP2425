@@ -30,54 +30,56 @@ void setup()
   initModul(DSerial, _BG96, _ArdruinoZero);
 }
 
-// Funktion, um nach dem Aufwachen nur die benötigten Komponenten neu zu initialisieren
 
-void goToSleep()
+void goToSleep(int millis)
 {
-  // Modem ausschalten, MC in DeepSleep versetzen
   _BG96.CloseMQTTNetwork(MQTTIndex);
   _BG96.DeactivateDevAPN(PDPIndex);
   _BG96.PowerOffModule();
   onSleep = true;
   DSerial.println("\nPower Off Module");
-  // _ArdruinoZero.deepSleep();
-  // Ab hier schläft der MC, bis ein Wake-Up Interrupt erfolgt
+  _ArdruinoZero.deepSleep(millis);
 }
 
 void loop()
 {
-  // Prüfe, ob die Frequenz hoch ist (z.B. > 600s)
-  if (trackerModes.frequenz > 600000UL)
-  { 
-    if (onSleep)
+
+
+  if (onSleep)
+  {
+    // Versuche Aufwach-Event über Bewegung
+    if (!_ArdruinoZero.waitWakeOnMotions())
     {
-      // Versuche Aufwach-Event über Bewegung
-      if (!_ArdruinoZero.waitWakeOnMotions())
+      if (millis() - pub_time > trackerModes.period)
       {
-        return;
+        DSerial.println("Wake Up.....");
+        onSleep = false;
+        handleWakeUp(DSerial, _BG96);
       }
       else
+        return;
+    }
+    else
+    {
+      if (!_ArdruinoZero.checkOnMotionsfor10s())
       {
-        delay(10000); // warte 10s
-        if (_ArdruinoZero.stillOnMotions())
-        { 
-          DSerial.println("Wake Up.....");
-          onSleep = false;
-          handleWakeUp(DSerial, _BG96);
-        }
-        goToSleep();
+        goToSleep(0);
         return;
       }
-    }else{
-      if (millis() - pub_time < 600000UL){
-        goToSleep();
-      }
+      DSerial.println("Wake Up.....");
+      onSleep = false;
+      handleWakeUp(DSerial, _BG96);
     }
   }
   else
   {
-    if (millis() - pub_time < trackerModes.frequenz)
-      return;
+    if (trackerModes.period <= 600000)
+    {
+      if (millis() - pub_time < trackerModes.period)
+      {
+        return;
+      }
+    }
   }
 
   // Auf neue MQTT-Nachrichten prüfen
@@ -86,6 +88,8 @@ void loop()
   // Modus-abhängige Daten erfassen und versenden
   modeHandle(DSerial, _BG96, docInput, _ArdruinoZero);
 
+  if (trackerModes.period > 600000 && !_ArdruinoZero.checkOnMotionsfor10s())
+    goToSleep(0);
   // Tägliches Update prüfen
   // if (millis() - lastUpdateCheck >= UPDATE_INTERVAL)
   // {

@@ -129,9 +129,12 @@ bool _Board::waitWakeOnMotions()
     }else return false;
 }
 
-bool _Board::stillOnMotions(){
-    return bma456.isMovementAboveThreshold(1000);
+bool _Board::checkOnMotionsfor10s(){
+    return bma456.isMovementAboveThresholdFor10S(1000);
 }
-void _Board::deepSleep(){
-    LowPower.deepSleep(10000); 
+void _Board::deepSleep(int millis){
+    if(millis <= 10000){
+        LowPower.deepSleep(10000); 
+    }
+    LowPower.deepSleep(millis); 
 }

@@ -93,7 +93,7 @@ class _BG96_Common : public _BG96_Serial
 
     Cmd_Response_t ScanOperatorNetwork(char *net);
 
-    Cmd_Response_t DevOperatorNetwork(unsigned int &mode, unsigned int &format, const char *&oper, Net_Type_t &act, Cmd_Status_t status);
+    Cmd_Response_t DevOperatorNetwork(unsigned int &mode, unsigned int &format, const char *oper, Net_Type_t &act, Cmd_Status_t status);
 
     bool GetDevNetworkInformation(char *type, char *oper, char *band, char *channel);
 
