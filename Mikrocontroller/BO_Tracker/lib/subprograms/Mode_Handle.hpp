@@ -2,6 +2,8 @@
 #define __Mode_Handle_H
 #include <GNSS.hpp>
 
+bool modemOff;
+
 void initModul(Stream &DSerial, _BG96_Module &_BG96, _Board &_ArdruinoZero)
 {
     if (initModem(DSerial, _BG96, _ArdruinoZero) && InitModemMQTT(DSerial, _BG96) && InitGNSS(DSerial, _BG96) && _ArdruinoZero.initBoard())
@@ -40,7 +42,7 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
 
     // Zellinformationen erfassen
     if (trackerModes.CellInfosMode)
-    {
+    {   
         JsonArray cellsArray = docInput["cells"].to<JsonArray>();
         for (Cell *&cell : cells)
         {
@@ -196,5 +198,28 @@ void waitAndCheck(Stream &DSerial, _BG96_Module &_AWS, JsonDocument &docOutput)
     default:
         break;
     }
+}
+
+bool handleWakeUp(Stream &DSerial, _BG96_Module &_BG96)
+{   
+    if(!startModem(DSerial,_BG96)){
+        DSerial.println("Fail to startModem");
+        return false;
+    }
+    char apn_error[64];
+    if (!_BG96.TurnOnInternet(PDPIndex, apn_error))
+    {
+        DSerial.println(apn_error);
+        return false;
+    }
+    
+    _BG96.ScanCells(RAT,cells);
+
+    if(!InitModemMQTT(DSerial,_BG96)){
+        DSerial.println("Fail to start MQTT");
+        return false;
+    }
+    modemOff = false;
+    return true;
 }
 #endif

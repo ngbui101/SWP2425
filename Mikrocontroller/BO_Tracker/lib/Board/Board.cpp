@@ -101,7 +101,7 @@ bool _Board::setupRTCFromModem(const char *modemTime)
 char *_Board::getDateTime()
 {
     // Statischer Puffer für die formattierte Zeichenkette
-    static char buffer[20]; // Für "YYYY/MM/DD HH:MM:SS"
+    static char buffer[30]; // Für "YYYY/MM/DD HH:MM:SS"
 
     // RTC-Werte auslesen
     uint16_t year = rtc.getYear() + 2000;

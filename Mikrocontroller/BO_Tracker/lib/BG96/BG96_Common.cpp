@@ -61,9 +61,9 @@ bool _BG96_Common::InitModule()
 {
     pinMode(ENABLE_PWR, OUTPUT);
     pinMode(RESET_PIN, OUTPUT);
+    digitalWrite(RESET_PIN, LOW);
     pinMode(POWKEY_PIN, OUTPUT);
     PowerOnModule();
-    digitalWrite(RESET_PIN, LOW);
     TurnOnModule();
     // Serial.println("Initialized");
     // ResetModule();

@@ -118,6 +118,14 @@ class _BG96_GNSS : public _BG96_MQTT
 
     GEOFENCE_STATUS_t getGeoFencingStatus(unsigned int geoID);
 
+    bool SetAGPSPlan(int mode = 0);
+    
+    bool SetAGPSUrl(const char *supurl);
+    
+    bool SetAGPSAPN(const char *apn);
+
+    bool InitAGPS(const char *supurl, const char *apn);
+
    private:
    ///GPSOneXTRA Update Liste
     const char* xtra_links[3] = {

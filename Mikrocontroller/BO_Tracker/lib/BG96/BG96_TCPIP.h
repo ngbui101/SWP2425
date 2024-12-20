@@ -88,6 +88,8 @@ class _BG96_TCPIP : public _BG96_Common
 
     Socket_Event_t WaitCheckSocketEvent(char *event, unsigned int timeout);
 
+    bool TurnOnInternet(unsigned int pdp_index, char* err_code);
+
   private:
   
 };

@@ -18,13 +18,16 @@ bool InitGNSS(Stream &DSerial, _BG96_GNSS &_GNSS) {
     char currentTimestamp[64];
     _GNSS.GetLatestGMTTime(currentTimestamp);
 
-    if (_GNSS.InitGpsOneXTRA(currentTimestamp)) {
-        DSerial.println("\r\nInit GpsOneXTRA Success!");
+    if (!_GNSS.InitGpsOneXTRA(currentTimestamp)) {
+        DSerial.println("\r\nError: Init GpsOneXTRA fail!");
+    }
+    if(!_GNSS.InitAGPS(SUPURL, APN)){
+        DSerial.println("\r\nError: Init AGPS fail");
+    }
+    if (!_GNSS.SetGNSSEnableNMEASentences(true)) {
+        DSerial.println("\r\nError: SetEnableNMEASentences fail");
     }
 
-    if (_GNSS.SetGNSSEnableNMEASentences(true)) {
-        DSerial.println("\r\nEnable NMEA Sentences Success!");
-    }
     return true;
 }
 
