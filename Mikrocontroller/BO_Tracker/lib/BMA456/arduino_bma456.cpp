@@ -222,7 +222,7 @@ bool BMA456::isMovementAboveThreshold(float threshold)
     return (magnitude > threshold);
 }
 bool BMA456::isMovementAboveThresholdFor10S(float threshold)
-{
+{   
     float x, y, z;
     int count = 0;
     float sumMagnitude = 0;

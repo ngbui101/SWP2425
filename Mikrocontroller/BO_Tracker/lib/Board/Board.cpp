@@ -23,8 +23,8 @@ _Board::_Board()
 bool _Board::initBoard()
 {
     pinMode(LED_BUILTIN, OUTPUT);
-    // bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
-    if (initBattery() && initTemp()) // && bma456.enableWakeOnMotion())
+    bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
+    if (initBattery() && initTemp()  && bma456.enableWakeOnMotion())
     {
         return true; // Erfolgreich initialisiert
     }
@@ -101,7 +101,7 @@ bool _Board::setupRTCFromModem(const char *modemTime)
 char *_Board::getDateTime()
 {
     // Statischer Puffer für die formattierte Zeichenkette
-    static char buffer[20]; // Für "YYYY/MM/DD HH:MM:SS"
+    static char buffer[30]; // Für "YYYY/MM/DD HH:MM:SS"
 
     // RTC-Werte auslesen
     uint16_t year = rtc.getYear() + 2000;
@@ -126,9 +126,15 @@ bool _Board::waitWakeOnMotions()
         delay(1000);                     
         digitalWrite(LED_BUILTIN, LOW);
         return true;
-    }
+    }else return false;
 }
 
-void _Board::deepSleep(){
-    LowPower.deepSleep(10000); 
+bool _Board::checkOnMotionsfor10s(){
+    return bma456.isMovementAboveThresholdFor10S(1000);
+}
+void _Board::deepSleep(int millis){
+    if(millis <= 10000){
+        LowPower.deepSleep(10000); 
+    }
+    LowPower.deepSleep(millis); 
 }

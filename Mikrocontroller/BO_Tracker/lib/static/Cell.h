@@ -51,5 +51,7 @@ public:
     int getLac() const { return lac; }
     long getCellID() const { return cellid; }
     int getSignal() const { return signal; }
+
+    int getOperator() { return (mcc*100+mnc);}
 };
 #endif 

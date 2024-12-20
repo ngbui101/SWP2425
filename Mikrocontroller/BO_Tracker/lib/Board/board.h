@@ -20,7 +20,9 @@ public:
 
     bool waitWakeOnMotions();
 
-    void deepSleep();
+    void deepSleep(int millis);
+
+    bool checkOnMotionsfor10s();
 private:
     RTCZero rtc;
 };

@@ -569,7 +569,7 @@ bool _BG96_GNSS::GetEstimationError(float &accuracy)
             sta_buf += 2;
             char *token = strtok(sta_buf, ",");
             int index = 0;
-            float hori_unc = 0.0, vert_unc = 0.0;
+            float hori_unc = 0.0;
 
             while (token != nullptr)
             {
@@ -577,11 +577,7 @@ bool _BG96_GNSS::GetEstimationError(float &accuracy)
                 {
                     hori_unc = atof(token);
                 }
-                else if (index == 2)
-                {
-                    vert_unc = atof(token);
-                    break;
-                }
+
                 token = strtok(nullptr, ",");
                 index++;
             }
@@ -702,4 +698,50 @@ GEOFENCE_STATUS_t _BG96_GNSS::getGeoFencingStatus(unsigned int geoID)
     {
         return NOFIX;
     }
+}
+
+bool _BG96_GNSS::SetAGPSPlan(int mode)
+{
+    char cmd[32], buf[32];
+    strcpy(cmd, GNSS_CONFIGURATION);
+    sprintf(buf, "=\"plane\",%d", mode);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
+    {
+        return true;
+    }
+    return false;
+}
+bool _BG96_GNSS::SetAGPSUrl(const char *supurl)
+{
+    char cmd[32], buf[32];
+    strcpy(cmd, GNSS_AGPS_SUPURL);
+    sprintf(buf, "=\"%s\"", supurl);
+    strcat(cmd, buf);
+
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool _BG96_GNSS::SetAGPSAPN(const char *apn)
+{
+    char cmd[32], buf[32];
+    strcpy(cmd, GNSS_CONFIGURATION);
+    sprintf(buf, "=\"lbsapn\",16,1,\"%s\"", apn);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool _BG96_GNSS::InitAGPS(const char *supurl, const char *apn)
+{
+    if (SetAGPSPlan() && SetAGPSUrl(supurl) && SetAGPSAPN(apn))
+        return true;
+    return false;
 }

@@ -8,7 +8,7 @@ struct TrackerModes {
     bool GeoFenMode = false;
     bool RequestMode = true;
     bool Modem_Off = false;
-    unsigned int frequenz = 5000UL;
+    unsigned int period = 5000UL;
     //GeoFencing
     float geoLatitude = 0;
     float geoLongitude = 0;
@@ -24,7 +24,7 @@ struct TrackerModes {
         NmeaMode = false;
         GeoFenMode = false;
         RequestMode = true;
-        frequenz = 5000UL;
+        period = 5000UL;
         geoLatitude = 0;
         geoLongitude = 0;
         geoRadius = 0;
