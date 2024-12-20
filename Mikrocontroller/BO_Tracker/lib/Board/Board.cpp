@@ -130,7 +130,7 @@ bool _Board::waitWakeOnMotions()
 }
 
 bool _Board::checkOnMotionsfor10s(){
-    return bma456.isMovementAboveThresholdFor10S(1000);
+    return bma456.isMovementAboveThresholdFor10S(100);
 }
 void _Board::deepSleep(int millis){
     if(millis <= 10000){

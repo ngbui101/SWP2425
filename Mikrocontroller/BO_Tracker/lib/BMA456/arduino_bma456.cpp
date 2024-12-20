@@ -223,21 +223,23 @@ bool BMA456::isMovementAboveThreshold(float threshold)
 }
 bool BMA456::isMovementAboveThresholdFor10S(float threshold)
 {   
+    float x0,y0,z0;
     float x, y, z;
     int count = 0;
     float sumMagnitude = 0;
     float avgMagnitude = 0;
+    getAcceleration(&x0, &y0, &z0);
     // unsigned long current = millis();
     while (count <= 10)
-    {
+    {   
         getAcceleration(&x, &y, &z);
-        float magnitude = sqrt((x * x) + (y * y) + (z * z));
+        float magnitude = sqrt(((x - x0)* (x-x0)) + ((y-y0)*(y-y0)) + ((z - z0)-(z - z0)));
         sumMagnitude += magnitude;
         count++;
+        // Serial.println(magnitude);
         delay(1000);
     }
     avgMagnitude = sumMagnitude / count;
-    getAcceleration(&x, &y, &z);
 
     return (avgMagnitude > threshold);
 }

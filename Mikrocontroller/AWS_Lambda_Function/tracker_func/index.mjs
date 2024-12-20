@@ -42,12 +42,12 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
         const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId))});
         const geofences = await geofencesCursor.toArray();
         const geofenceData = geofences.map(geo => ({
-            geoRadius: parseInt(geo.radius),
-            geoLongitude: parseFloat(geo.longitude),
-            geoLatitude: parseFloat(geo.latitude),
+            geoRadius: parseInt(geo.radius, 10),
+            geoLongitude: isValidNumber(geo.longitude) ? parseFloat(geo.longitude) : null,
+            geoLatitude: isValidNumber(geo.latitude) ? parseFloat(geo.latitude) : null,
             GeoFenMode: geo.active
         }));
-
+        // const geofenceData = null;
         return { modeData, geofenceData };
     } catch (error) {
         console.error("Error fetching mode and geofences from MongoDB:", error);

@@ -4,7 +4,6 @@
 #include "MQTT_AWS.hpp"
 
 struct GNSS_Tracker {
-    bool geoFenceInit = false;
     char gsa[128];
     char gsv[516];
     unsigned long startMillis = 0;
@@ -66,8 +65,8 @@ void handleGNSSMode(Stream &DSerial, _BG96_GNSS &_GNSS, JsonDocument &docInput) 
 }
 
 boolean addGeo(Stream &DSerial, _BG96_GNSS &_GNSS){
+
     if(_GNSS.AddGeoFence(gnssTracker.geoID,DISABLE_GEOFENCE,CIRLE,trackerModes.geoLatitude,trackerModes.geoLongitude,trackerModes.geoRadius)){
-        gnssTracker.geoFenceInit = true;
         DSerial.println("GeoFence added successfully");
         return true;
     }

@@ -42,7 +42,7 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
 
     // Zellinformationen erfassen
     if (trackerModes.CellInfosMode)
-    {   
+    {
         JsonArray cellsArray = docInput["cells"].to<JsonArray>();
         for (Cell *&cell : cells)
         {
@@ -70,8 +70,6 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
     }
     if (trackerModes.GeoFenMode)
     {
-        if (!gnssTracker.geoFenceInit)
-            addGeo(DSerial, _BG96);
         GEOFENCE_STATUS_t status = _BG96.getGeoFencingStatus(gnssTracker.geoID);
         switch (status)
         {
@@ -111,7 +109,7 @@ void DailyUpdates(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, 
         delay(300);
     }
 }
-void handleEvent(Stream &DSerial, JsonDocument &docOutput, char *payload)
+void eventHandle(Stream &DSerial, _BG96_Module &_BG96,JsonDocument &docOutput, char *payload)
 {
     DeserializationError error = deserializeJson(docOutput, payload);
 
@@ -152,25 +150,54 @@ void handleEvent(Stream &DSerial, JsonDocument &docOutput, char *payload)
                 DSerial.println(trackerModes.period);
             }
         }
-        if (docOutput["geoRadius"].is<int>())
+        // GeoUpdate
+        if (docOutput["geofences"].is<JsonArray>())
         {
-            trackerModes.geoRadius = docOutput["geoRadius"].as<unsigned int>();
-            DSerial.print("Updated geoRadius to: ");
-            DSerial.println(trackerModes.geoRadius);
-        }
+            JsonArray geofences = docOutput["geofences"].as<JsonArray>();
+            if (geofences.size() > 0) // Prüfen, ob das Array nicht leer ist
+            {
+                JsonObject geofence = geofences[0];
+                if (geofence["geoRadius"].is<int>())
+                {
+                    trackerModes.geoRadius = geofence["geoRadius"].as<unsigned int>();
+                    DSerial.print("Updated geoRadius to: ");
+                    DSerial.println(trackerModes.geoRadius);
+                }
 
-        if (docOutput["geoLatitude"].is<float>())
-        {
-            trackerModes.geoLatitude = docOutput["geoLatitude"];
-            DSerial.print("Updated geoLatitude to: ");
-            DSerial.println(trackerModes.geoLatitude);
-        }
+                if (geofence["geoLatitude"].is<float>())
+                {
+                    trackerModes.geoLatitude = geofence["geoLatitude"];
+                    DSerial.print("Updated geoLatitude to: ");
+                    DSerial.println(trackerModes.geoLatitude);
+                }
 
-        if (docOutput["geoLongitude"].is<float>())
+                if (geofence["geoLongitude"].is<float>())
+                {
+                    trackerModes.geoLongitude = geofence["geoLongitude"];
+                    DSerial.print("Updated geoLongitude to: ");
+                    DSerial.println(trackerModes.geoLongitude);
+                }
+
+                if (geofence["GeoFenMode"].is<boolean>())
+                {
+                    trackerModes.GeoFenMode = geofence["GeoFenMode"];
+                    DSerial.print("Updated GeoFenMode to: ");
+                    DSerial.println(trackerModes.GeoFenMode);
+                }
+                if(addGeo(DSerial, _BG96)){
+                    DSerial.println("Geo added successfully!");
+                }else{
+                    DSerial.println("Failed to add geo!");
+                };
+            }
+            else
+            {
+                DSerial.println("Geofences array is empty!");
+            }
+        }
+        else
         {
-            trackerModes.geoLongitude = docOutput["geoLongitude"];
-            DSerial.print("Updated geoLongitude to: ");
-            DSerial.println(trackerModes.geoLongitude);
+            DSerial.println("Geofences not found or invalid format!");
         }
     }
     else
@@ -189,7 +216,7 @@ void waitAndCheck(Stream &DSerial, _BG96_Module &_AWS, JsonDocument &docOutput)
     {
     case MQTT_RECV_DATA_EVENT:
         DSerial.println("RECV_DATA_EVENT");
-        handleEvent(DSerial, docOutput, payload);
+        eventHandle(DSerial, _AWS,docOutput, payload);
         // modeHandle(docInput,_BoardBattery);
         break;
     case MQTT_STATUS_EVENT:
@@ -201,19 +228,21 @@ void waitAndCheck(Stream &DSerial, _BG96_Module &_AWS, JsonDocument &docOutput)
 }
 
 bool handleWakeUp(Stream &DSerial, _BG96_Module &_BG96)
-{   
-    if(!startModem(DSerial,_BG96)){
+{
+    if (!startModem(DSerial, _BG96))
+    {
         DSerial.println("Fail to startModem");
         return false;
     }
-    _BG96.ScanCells(RAT,cells);
+    _BG96.ScanCells(RAT, cells);
     char apn_error[64];
     if (!_BG96.TurnOnInternet(PDPIndex, apn_error))
     {
         DSerial.println(apn_error);
         return false;
     }
-    if(!InitModemMQTT(DSerial,_BG96)){
+    if (!InitModemMQTT(DSerial, _BG96))
+    {
         DSerial.println("Fail to start MQTT");
         return false;
     }

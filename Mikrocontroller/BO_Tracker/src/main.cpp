@@ -63,7 +63,7 @@ void loop()
     {
       if (!_ArdruinoZero.checkOnMotionsfor10s())
       {
-        goToSleep(0);
+        _ArdruinoZero.deepSleep(0);
         return;
       }
       DSerial.println("Wake Up.....");
