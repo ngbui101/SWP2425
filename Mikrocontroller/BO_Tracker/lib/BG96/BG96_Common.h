@@ -116,7 +116,7 @@ class _BG96_Common : public _BG96_Serial
 
     bool BandConfig(const char *gsmbandval, const char * catm1bandval, const char * catnb1bandval);
 
-    bool ConfigNetworks();
+    bool ConfigNetworks(const char *rat);
 
     bool ResetFunctionality();
 

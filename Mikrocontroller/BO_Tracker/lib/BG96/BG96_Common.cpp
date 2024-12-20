@@ -1067,14 +1067,23 @@ bool _BG96_Common::ResetFunctionality()
     delay(300);
     return true;
 }
-bool _BG96_Common::ConfigNetworks()
+bool _BG96_Common::ConfigNetworks(const char *rat)
 {
     SetDevFunctionality(MINIMUM_FUNCTIONALITY);
     LTENetworkCategoryConfig(2);       // LTE Cat M1 and Cat NB1
-    ScanmodeConfig(0);                 // LTE*GSM
     ServiceDomainConfig(1);            // Nur Datenumtausch
     BandConfig("F", "80084", "80084"); // LTE-M + NBIoT on B3/B8/B20 only
-    SearchingConfig("00");             // LTE-M,NBIoT,LTE
+    
+    if (strcmp(rat, "gsm") == 0){
+        SearchingConfig("01");
+        ScanmodeConfig(1);
+    }else if(strcmp(rat, "nbiot") == 0){
+        SearchingConfig("03");
+        ScanmodeConfig(3);
+    }else{
+        SearchingConfig("00");
+        ScanmodeConfig(0);                 // LTE-M fallback NBIoT,LTE
+    }
     ResetFunctionality();
     return true;
 }
@@ -1098,28 +1107,12 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
 
     // Determine scan mode based on 'rat'
     int scanMode = 0;
-    if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
-    {
-        scanMode = 3; // LTE-only mode
-    }
-    else if (strcmp(rat, "gsm") == 0)
-    {
-        scanMode = 1; // GSM-only mode
-    }
-    else
-    {
-        // Invalid 'rat' parameter
-        return cellCount;
-    }
-
+    
     // Set scan mode
     if (!ScanmodeConfig(scanMode))
     {
         return cellCount; // Return if scan mode could not be set
     }
-
-    // Reset functionality
-    ResetFunctionality();
 
     if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
     {
