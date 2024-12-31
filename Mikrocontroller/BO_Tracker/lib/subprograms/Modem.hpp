@@ -5,19 +5,19 @@
 #include "TrackerMode.cpp"
 #include <Board.h>
 // APN
-char APN[] = "internet.m2mportal.de";
+// char APN[] = "internet.m2mportal.de";
 // char APN[] = "wm";
-// char APN[] = "iot.1nce.net";
+char APN[] = "iot.1nce.net";
 
 char LOGIN[] = "";
 char PASSWORD[] = "";
 char ModemIMEI[20];
-HTTP_Body_Data_Type_t http_type = APPLICATION_X_WWW_FORM_URLENCODED;
+HTTP_Body_Data_Type_t http_type = TEXT_PLAIN;
 // TEXT_PLAIN = 1,
 //     APPLICATION_OCTET_STREAM = 2,
 //     MULTIPART_FORM_DATA = 3,
+// char http_url[] = "https://eu1.unwiredlabs.com/v2/process";
 char http_url[] = "https://xsq63wtz3xaoay5zkbxofnlymq0dpgag.lambda-url.eu-central-1.on.aws/";
-
 char RAT[] = "lte";
 unsigned int PDPIndex = 1;
 Cell *cells[6] = {nullptr};
@@ -75,11 +75,12 @@ bool initModem(Stream &DSerial, _BG96_HTTP &_Modem, _Board &_ArdruinoZero)
         DSerial.println("RTC Set from Modem failed");
     }
 
-    if (_Modem.SetHTTPConfigParameters(PDPIndex, false, false, http_type))
+    if (_Modem.SetHTTPConfigParameters(PDPIndex, true, false, http_type))
     {
         DSerial.println("\r\nConfig the HTTP Parameter Success!");
     }
-    if(_Modem.HTTPURL(http_url, WRITE_MODE)){
+    if (_Modem.HTTPURL(http_url, WRITE_MODE))
+    {
         DSerial.println("\r\nSet the HTTP URL Success!");
     }
 
