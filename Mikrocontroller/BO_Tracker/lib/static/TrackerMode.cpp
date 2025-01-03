@@ -1,6 +1,6 @@
 struct TrackerModes {
     //Mode
-    bool GnssMode = true;
+    bool GnssMode = false;
     bool CellInfosMode = false;
     bool BatteryMode = false;
     bool TemperatureMode = false;
@@ -8,7 +8,7 @@ struct TrackerModes {
     bool GeoFenMode = false;
     bool RequestMode = true;
     bool Modem_Off = false;
-    unsigned int period = 1000UL;
+    unsigned int period = 5000UL;
     //GeoFencing
     float geoLatitude = 0;
     float geoLongitude = 0;

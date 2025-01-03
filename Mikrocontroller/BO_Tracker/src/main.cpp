@@ -28,10 +28,8 @@ void setup()
     ; // Buffer leeren
   delay(3000);
   initModul(DSerial, _BG96, _ArdruinoZero);
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(1000);
-  digitalWrite(LED_BUILTIN, LOW);
 }
+
 
 void goToSleep(int millis)
 {
@@ -46,51 +44,52 @@ void goToSleep(int millis)
 void loop()
 {
 
-  // if (onSleep)
-  // {
-  //   // Versuche Aufwach-Event über Bewegung
-  //   if (!_ArdruinoZero.waitWakeOnMotions())
-  //   {
-  //     if (millis() - pub_time > trackerModes.period)
-  //     {
-  //       DSerial.println("Wake Up.....");
-  //       onSleep = false;
-  //       handleWakeUp(DSerial, _BG96);
-  //     }
-  //     else
-  //       return;
-  //   }
-  //   else
-  //   {
-  //     if (!_ArdruinoZero.checkOnMotionsfor10s())
-  //     {
-  //       goToSleep(0);
-  //       return;
-  //     }
-  //     DSerial.println("Wake Up.....");
-  //     onSleep = false;
-  //     handleWakeUp(DSerial, _BG96);
-  //   }
-  // }
-  // else
-  // {
-  //   if (trackerModes.period <= 600000)
-  //   {
-  //     if (millis() - pub_time < trackerModes.period)
-  //     {
-  //       return;
-  //     }
-  //   }
-  // }
+
+  if (onSleep)
+  {
+    // Versuche Aufwach-Event über Bewegung
+    if (!_ArdruinoZero.waitWakeOnMotions())
+    {
+      if (millis() - pub_time > trackerModes.period)
+      {
+        DSerial.println("Wake Up.....");
+        onSleep = false;
+        handleWakeUp(DSerial, _BG96);
+      }
+      else
+        return;
+    }
+    else
+    {
+      if (!_ArdruinoZero.checkOnMotionsfor10s())
+      {
+        goToSleep(0);
+        return;
+      }
+      DSerial.println("Wake Up.....");
+      onSleep = false;
+      handleWakeUp(DSerial, _BG96);
+    }
+  }
+  else
+  {
+    if (trackerModes.period <= 600000)
+    {
+      if (millis() - pub_time < trackerModes.period)
+      {
+        return;
+      }
+    }
+  }
 
   // Auf neue MQTT-Nachrichten prüfen
-  // waitAndCheck(DSerial, _BG96, docOutput);
+  waitAndCheck(DSerial, _BG96, docOutput);
 
   // Modus-abhängige Daten erfassen und versenden
   modeHandle(DSerial, _BG96, docInput, _ArdruinoZero);
 
-  // if (trackerModes.period > 600000 && !_ArdruinoZero.checkOnMotionsfor10s())
-  //   goToSleep(0);
+  if (trackerModes.period > 600000 && !_ArdruinoZero.checkOnMotionsfor10s())
+    goToSleep(0);
   // Tägliches Update prüfen
   // if (millis() - lastUpdateCheck >= UPDATE_INTERVAL)
   // {

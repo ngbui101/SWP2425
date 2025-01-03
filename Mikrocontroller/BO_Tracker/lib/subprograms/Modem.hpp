@@ -59,12 +59,7 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
     }
     char apn_error[64];
 
-    // if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error,RAT,cells))
-    // {
-    //     DSerial.println(apn_error);
-    //     return false;
-    // }
-    if (!_Modem.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
+    if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error,RAT,cells))
     {
         DSerial.println(apn_error);
         return false;
