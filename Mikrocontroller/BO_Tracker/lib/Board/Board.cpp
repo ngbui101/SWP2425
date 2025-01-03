@@ -20,48 +20,17 @@ _Board::_Board()
  * @return false, wenn eine der Initialisierungen fehlschlägt.
  */
 
-bool _Board::initBoard(Stream &DSerial)
+bool _Board::initBoard()
 {
-    DSerial.println("Beginne Initialisierung des Boards...");
-
-    // LED-Pin-Modus setzen
     pinMode(LED_BUILTIN, OUTPUT);
-    DSerial.println("LED-Pin initialisiert.");
-
-    // BMA456 initialisieren
-    DSerial.println("Initialisiere BMA456...");
     bma456.initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
-    DSerial.println("BMA456 erfolgreich initialisiert.");
-
-    // Batterie initialisieren
-    DSerial.println("Initialisiere Batterie...");
-    if (!initBattery())
+    if (initBattery() && initTemp()  && bma456.enableWakeOnMotion())
     {
-        DSerial.println("Fehler bei der Initialisierung der Batterie.");
-        return false;
+        return true; // Erfolgreich initialisiert
     }
-    DSerial.println("Batterie erfolgreich initialisiert.");
-
-    // Temperatur initialisieren
-    DSerial.println("Initialisiere Temperatursensor...");
-    if (!initTemp())
-    {
-        DSerial.println("Fehler bei der Initialisierung des Temperatursensors.");
-        return false;
-    }
-    DSerial.println("Temperatursensor erfolgreich initialisiert.");
-
-    // Wake-On-Motion aktivieren
-    DSerial.println("Aktiviere Wake-On-Motion...");
-    if (!(bma456.enableWakeOnMotion() == 0))
-    {
-        DSerial.println("Fehler bei der Aktivierung von Wake-On-Motion.");
-        return false;
-    }
-    DSerial.println("Wake-On-Motion erfolgreich aktiviert.");
-    return true; // Erfolgreich initialisiert
+    else
+        return false; // Fehler bei der Initialisierung
 }
-
 
 /**
  * @brief Konfiguriert die Echtzeituhr (RTC) basierend auf einem Zeitstempel vom Modem.

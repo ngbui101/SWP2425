@@ -6,55 +6,11 @@ bool modemOff;
 
 void initModul(Stream &DSerial, _BG96_Module &_BG96, _Board &_ArdruinoZero)
 {
-    DSerial.println("Beginne Initialisierung des Moduls...");
-
-    // Schritt 1: Modem initialisieren
-    if (initModem(DSerial, _BG96, _ArdruinoZero))
+    if (initModem(DSerial, _BG96, _ArdruinoZero) && InitModemMQTT(DSerial, _BG96) && InitGNSS(DSerial, _BG96) && _ArdruinoZero.initBoard())
     {
-        DSerial.println("Modem erfolgreich initialisiert.");
+        Serial.println("Modul initialized");
     }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung des Modems.");
-        return;
-    }
-    
-    // Schritt 2: Board initialisieren
-    if (_ArdruinoZero.initBoard(DSerial))
-    {
-        DSerial.println("Board erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung des Boards.");
-        return;
-    }
-
-    // Schritt 3: GNSS initialisieren
-    if (InitGNSS(DSerial, _BG96))
-    {
-        DSerial.println("GNSS erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung von GNSS.");
-        return;
-    }
-     // Schritt 4: MQTT initialisieren
-    if (InitModemMQTT(DSerial, _BG96))
-    {
-        DSerial.println("MQTT erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung von MQTT.");
-        return;
-    }
-    
-    
-    DSerial.println("Alle Module erfolgreich initialisiert.");
 }
-
 void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _Board &_ArdruinoZero)
 {
     pub_time = millis();
@@ -110,7 +66,7 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
     // Daten veröffentlichen
     if (publishData(DSerial, _BG96, docInput, pub_time, AT_LEAST_ONCE, "/pub"))
     {
-        // delay(300);
+        delay(300);
     }
     if (trackerModes.GeoFenMode)
     {
