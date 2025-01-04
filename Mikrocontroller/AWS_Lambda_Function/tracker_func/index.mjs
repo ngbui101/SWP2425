@@ -39,13 +39,14 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
         } : null;
 
         // Hole Geofence-Informationen
-        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId))});
+        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId)) });
         const geofences = await geofencesCursor.toArray();
+        const isValidNumber = (value) => !isNaN(value) && value.trim() !== '';
         const geofenceData = geofences.map(geo => ({
             geoRadius: parseInt(geo.radius, 10),
             geoLongitude: isValidNumber(geo.longitude) ? parseFloat(geo.longitude) : null,
-            geoLatitude: isValidNumber(geo.latitude) ? parseFloat(geo.latitude) : null,
-            GeoFenMode: geo.active
+            geoLatitude: isValidNumber(geo.latitude) ? parseFloat(geo.latitude) : null
+            // ,GeoFenMode: geo.active
         }));
         // const geofenceData = null;
         return { modeData, geofenceData };
@@ -126,7 +127,7 @@ export const handler = async (event) => {
         Temperature: event.Temperature,
         Humidity: event.Humidity,
         BatteryPercentage: event.BatteryPercentage,
-        Position: event.Position,
+        gnss: event.gnss,
         GSA: event.GSA,
         GSV: event.GSV,
         Accuracy: event.Accuracy,
@@ -153,38 +154,38 @@ export const handler = async (event) => {
         const collection = database.collection('measurements');
         const documentsToInsert = [];
 
-        if (data.Position) {
-            const [_, latitudeStr, longitudeStr, hdopStr, __, fixStr, ___, ____, _____, ______, nsatStr] = data.Position.split(",");
-            const latitude = parseFloat(latitudeStr);
-            const longitude = parseFloat(longitudeStr);
 
+        if (data.gnss) {
             documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "GPS",
-                latitude,
-                longitude,
+                latitude: data.gnss.latitude,
+                longitude: data.gnss.longitude,
+                hdop: data.gnss.hdop,
+                nsat: data.gnss.nsat,
                 tracker: new ObjectId(trackerId),
-                accuracy: data.Accuracy,
-                timeToGetFirstFix: data.TimeToGetFirstFix,
+                accuracy: data.gnss.accuracy,
+                timeToGetFirstFix: data.gnss.TTFF,
                 createdAt: data.Timestamp,
                 updatedAt: data.Timestamp
             });
         }
+
 
         if (data.Cells && Array.isArray(data.Cells) && data.Cells.length > 0) {
             const location = await getCellLocationAndEstimatedPositionFromUnwiredLabs(data.Cells);
             if (location) {
                 // Das 'radio'-Feld aus der ersten Zelle extrahieren
                 const radioType = data.Cells[0].radio || "unknown";
-                
+
                 const modeMap = {
                     "lte": "LTE",
                     "gsm": "GSM",
-                    "nbiot":"NBIOT"
-                    
+                    "nbiot": "NBIOT"
+
                 };
                 const mode = modeMap[radioType.toLowerCase()] || radioType.toUpperCase();
-        
+
                 documentsToInsert.push({
                     imei: data.IMEI,
                     mode: mode,

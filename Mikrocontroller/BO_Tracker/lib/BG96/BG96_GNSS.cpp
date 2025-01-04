@@ -202,7 +202,7 @@ bool _BG96_GNSS::GetGnssJsonPositionInformation(JsonDocument &json, unsigned lon
     char position[256];
     float accuracy;
     if (!GetGNSSPositionInformation(position))
-    {
+    {   
         return false;
     }
     GetEstimationError(accuracy);
@@ -247,8 +247,10 @@ bool _BG96_GNSS::GetGnssJsonPositionInformation(JsonDocument &json, unsigned lon
     // {
     //     return false;
     // }
-    unsigned long currentTime = millis();
-    unsigned long TTFF = currentTime - starttime;
+    if(TTFF == 0){
+        currentTime = millis();
+        TTFF = currentTime - starttime;
+    }
     // Erstellen des verschachtelten "gnss" Objekts
     JsonObject gnss = json["gnss"].to<JsonObject>();
     gnss["latitude"] = latitude;

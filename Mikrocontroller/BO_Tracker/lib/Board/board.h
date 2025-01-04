@@ -12,7 +12,7 @@ class _Board : public _Temperature
 public:
     bool wake_up = false;
     _Board();
-    bool initBoard();
+    bool initBoard(Stream &DSerial);
 
     bool setupRTCFromModem(const char *modemTime);
 
