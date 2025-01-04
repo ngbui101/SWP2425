@@ -566,7 +566,13 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
         else
             sprintf(buf, "=%d", mode);
         strcat(cmd, buf);
-        oper_status = sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 30);
+        // oper_status = sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 30);
+        if(sendATcommand(cmd)){
+            oper_status = SUCCESS_RESPONSE;
+        }else
+        {
+            oper_status = FIAL_RESPONSE;
+        }
     }
     return oper_status;
 }
@@ -1222,10 +1228,17 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
 }
  bool _BG96_Common::FactoryReset(){
     char reset_cmd[32];
-    char save_cmd[32];
     sprintf(reset_cmd, "&F");
+    if (sendATcommand(reset_cmd))
+    {
+        return true;
+    }
+    return false;
+ }
+  bool _BG96_Common::SaveSetting(){
+    char save_cmd[32];
     sprintf(save_cmd, "&W");
-    if (sendATcommand(reset_cmd) && sendATcommand(save_cmd))
+    if ( sendATcommand(save_cmd))
     {
         return true;
     }

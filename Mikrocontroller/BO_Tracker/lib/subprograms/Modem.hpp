@@ -5,10 +5,10 @@
 #include "TrackerMode.cpp"
 #include <Board.h>
 // APN
-// char APN[] = "internet.m2mportal.de";
+char APN[] = "internet.m2mportal.de";
 char SUPURL[]  = "supl.google.com:7276";
 // char APN[] = "wm";
-char APN[] = "iot.1nce.net";
+// char APN[] = "iot.1nce.net";
 char LOGIN[] = "";
 char PASSWORD[] = "";
 char ModemIMEI[20];
@@ -35,6 +35,7 @@ bool startModem(Stream &DSerial, _BG96_TCPIP &_Modem){
     {
         _Modem.SetDevOutputformat(true);
         _Modem.SetDevCommandEcho(false);
+        _Modem.SaveSetting();
     }
     else
     {
@@ -48,6 +49,7 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
 {
     startModem(DSerial, _Modem);
     // IMEI
+    _Modem.ConfigNetworks(RAT);
     char imei_tmp[64];
 
     if (_Modem.GetDevIMEI(imei_tmp))
@@ -59,7 +61,7 @@ bool initModem(Stream &DSerial, _BG96_TCPIP &_Modem, _Board &_ArdruinoZero)
     }
     char apn_error[64];
 
-    if (!_Modem.InitAPNWithNetworkScanning(PDPIndex, APN, LOGIN, PASSWORD, apn_error,RAT,cells))
+    if (!_Modem.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
     {
         DSerial.println(apn_error);
         return false;
