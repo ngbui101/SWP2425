@@ -76,8 +76,11 @@ void loop()
   char fullRequest[2056];
   char payload[1024];
   snprintf(header, sizeof(header),
-        "GET / HTTP/1.0\r\n\r\n"
-        "Host: https://xsq63wtz3xaoay5zkbxofnlymq0dpgag.lambda-url.eu-central-1.on.aws/\r\n\r\n"
+        "POST / HTTP/1.1 <CR><LF> "
+        "Host: <CR><LF>"
+        "Content-Type: application/json<CR><LF>"
+        "Accept:  */*<CR><LF>"
+        "<CR><LF>"
         ); // Content-Length basierend auf Payload
 
     // Beispiel-Payload
@@ -94,8 +97,8 @@ void loop()
     // Ausgabe des kombinierten Requests
     // printf("Full HTTP Request:\n%s", fullRequest);
   // serializeJsonPretty(docInput, payload);
-  // _BG96.HTTPPOST(fullRequest, 80);
-  _BG96.HTTPGET(fullRequest, 80);
+  _BG96.HTTPPOST(payload, 80);
+  // _BG96.HTTPGET(fullRequest, 80);
   // _BG96.HTTPGET(80);
 
   if (_BG96.HTTPRead(recv_data, 80))
