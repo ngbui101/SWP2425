@@ -1063,7 +1063,6 @@ bool _BG96_Common::ResetFunctionality()
         return false;
     while (readResponseAndSearch(RESPONSE_READY, 3) != SUCCESS_RESPONSE)
         ;
-    SetDevOutputformat(true);
     delay(300);
     return true;
 }
@@ -1221,3 +1220,14 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
 
     return cellCount; // Return the total number of cells found
 }
+ bool _BG96_Common::FactoryReset(){
+    char reset_cmd[32];
+    char save_cmd[32];
+    sprintf(reset_cmd, "&F");
+    sprintf(save_cmd, "&W");
+    if (sendATcommand(reset_cmd) && sendATcommand(save_cmd))
+    {
+        return true;
+    }
+    return false;
+ }
