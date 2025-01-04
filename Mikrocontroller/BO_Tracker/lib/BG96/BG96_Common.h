@@ -126,6 +126,9 @@ class _BG96_Common : public _BG96_Serial
 
     int ScanCells(const char* rat, Cell* cells[]);
 
+    bool FactoryReset();
+    bool SaveSetting();
+
   private:
     char currenttime[64];
 };
