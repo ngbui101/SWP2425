@@ -155,7 +155,7 @@ void DailyUpdates(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, 
         delay(300);
     }
 }
-void handleEvent(Stream &DSerial, JsonDocument &docOutput, char *payload)
+void payloadDeserialization(Stream &DSerial, JsonDocument &docOutput, char *payload)
 {
     DeserializationError error = deserializeJson(docOutput, payload);
 
@@ -233,7 +233,7 @@ void waitAndCheck(Stream &DSerial, _BG96_Module &_AWS, JsonDocument &docOutput)
     {
     case MQTT_RECV_DATA_EVENT:
         DSerial.println("RECV_DATA_EVENT");
-        handleEvent(DSerial, docOutput, payload);
+        payloadDeserialization(DSerial, docOutput, payload);
         // modeHandle(docInput,_BoardBattery);
         break;
     case MQTT_STATUS_EVENT:
