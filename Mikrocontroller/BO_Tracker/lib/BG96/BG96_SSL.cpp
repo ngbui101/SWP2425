@@ -254,7 +254,7 @@ bool _BG96_SSL::SetSSLCertificate(unsigned int ssl_index, const char *ca_cert_pa
  * @return true bei Erfolg, sonst false
  */
 
-bool _BG96_SSL::InitSSL(unsigned int ssl_index, char *ca_cert, char *client_cert, char *client_key, char *err_code)
+bool _BG96_SSL::InitSSL(unsigned int ssl_index, const char *ca_cert,const char *client_cert,const char *client_key, char *err_code)
 {
     unsigned long start_time;
     int f_err_code;

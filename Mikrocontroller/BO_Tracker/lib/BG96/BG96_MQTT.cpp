@@ -157,7 +157,7 @@ bool _BG96_MQTT::SetMQTTMessageTimeout(unsigned int mqtt_index, unsigned int pkt
  *
  * @see Quectel BG96 MQTT Application Note, Abschnitt 3.3.2 (Seite 15)
  */
-Mqtt_Network_Result_t _BG96_MQTT::OpenMQTTNetwork(unsigned int mqtt_index, char *host_name, unsigned int port)
+Mqtt_Network_Result_t _BG96_MQTT::OpenMQTTNetwork(unsigned int mqtt_index,const char *host_name, unsigned int port)
 {
     char cmd[128], buf[128];
     strcpy(cmd, MQTT_OPEN_NETWORK);

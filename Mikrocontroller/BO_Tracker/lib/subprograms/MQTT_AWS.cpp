@@ -117,3 +117,6 @@ void MQTT_AWS::handleMQTTStatusEvent(char *payload)
         DSerial.println(atoi(sta_buf + 1));
     }
 }
+unsigned long MQTT_AWS::getPub_time(){
+    return pub_time;
+}

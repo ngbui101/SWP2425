@@ -4,17 +4,16 @@
 
 #include "BG96_MQTT.h"
 
-char MQTTServer[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
-unsigned int MQTTPort = 8883;
-char MQTTClientId[] = "BG96";
+const char MQTTServer[] = "a336z3b6pu6hdu-ats.iot.eu-central-1.amazonaws.com";
+const unsigned int MQTTPort = 8883;
+const char MQTTClientId[] = "BG96";
 // char mqtt_base_topic[32];
-Mqtt_Qos_t MQTT_QoS = AT_LEAST_ONCE;
-unsigned long pub_time = 0;
-unsigned int MQTTIndex = 0;
-unsigned int SSLIndex = 2;
-Mqtt_Version_t version = MQTT_V4;
+const Mqtt_Qos_t MQTT_QoS = AT_LEAST_ONCE;
+const unsigned int MQTTIndex = 0;
+const unsigned int SSLIndex = 2;
+const Mqtt_Version_t version = MQTT_V4;
 
-char aws_root_ca_pem[] = "-----BEGIN CERTIFICATE-----\n\
+const char aws_root_ca_pem[] = "-----BEGIN CERTIFICATE-----\n\
 MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF\n\
 ADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6\n\
 b24gUm9vdCBDQSAxMB4XDTE1MDUyNjAwMDAwMFoXDTM4MDExNzAwMDAwMFowOTEL\n\
@@ -36,7 +35,7 @@ rqXRfboQnoZsG4q5WTP468SQvvG5\n\
 -----END CERTIFICATE-----\n";
 
 // "The certificate for this thing"
-char certificate_pem_crt[] = "-----BEGIN CERTIFICATE-----\n\
+const char certificate_pem_crt[] = "-----BEGIN CERTIFICATE-----\n\
 MIIDWjCCAkKgAwIBAgIVAPSEr1W2DcQ3C/9HbHbIdtOJTZ9uMA0GCSqGSIb3DQEB\n\
 CwUAME0xSzBJBgNVBAsMQkFtYXpvbiBXZWIgU2VydmljZXMgTz1BbWF6b24uY29t\n\
 IEluYy4gTD1TZWF0dGxlIFNUPVdhc2hpbmd0b24gQz1VUzAeFw0yNDEwMjkxNjAy\n\
@@ -58,7 +57,7 @@ nm0NpoBIUayAIAk1kJw/HABLmJ81BAKpqWH2O8d6OQ2M5PGj6BcrMJrCPLYWeU6N\n\
 -----END CERTIFICATE-----\n";
 
 // "The private key of the thing".
-char private_pem_key[] = "-----BEGIN RSA PRIVATE KEY-----\n\
+const char private_pem_key[] = "-----BEGIN RSA PRIVATE KEY-----\n\
 MIIEpQIBAAKCAQEAw95PIy3jzkIb4X7ksEv9j/jAq2AAALcXw+tV1gFwyQmzll1q\n\
 PgqyqydUFTCJCwjrQ0hIZeRXSVoAb1/SHB3H7Cpo1Ds9dUJjKGKQ5Jxz9PLYxh1T\n\
 4iZsnc0voAWHYu7FuDgGpzl0lncHzbHFvEnMZ70Fyvn83iBhS3SiHqLWdhwb8u0s\n\

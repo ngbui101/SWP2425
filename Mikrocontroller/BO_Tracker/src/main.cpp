@@ -51,7 +51,7 @@ void loop()
     // Versuche Aufwach-Event über Bewegung
     if (!_ArdruinoZero.waitWakeOnMotions())
     {
-      if (millis() - pub_time > trackerModes.period)
+      if (millis() - modeHandler.getPub_time() > trackerModes.period)
       {
         DSerial.println("Wake Up.....");
         onSleep = false;
@@ -76,7 +76,7 @@ void loop()
   {
     if (trackerModes.period <= 600000)
     {
-      if (millis() - pub_time < trackerModes.period)
+      if (millis() - modeHandler.getPub_time() < trackerModes.period)
       {
         return;
       }

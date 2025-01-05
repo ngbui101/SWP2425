@@ -6,80 +6,53 @@ Mode_Handle::Mode_Handle(Stream &serial, _BG96_Module &_BG96, JsonDocument &docI
 
 // Initialisiert alle Module
 void Mode_Handle::initModul() {
-    pub_time = millis();
-    // GNSS-Modus verwalten
-    if (trackerModes.GnssMode)
+     DSerial.println("Beginne Initialisierung des Moduls...");
+
+    // Schritt 1: Modem initialisieren
+    if (initModem())
     {
-        handleGNSSMode();
+        DSerial.println("Modem erfolgreich initialisiert.");
     }
-    else if (gnssTracker.isOn)
+    else
     {
-        _BG96.TurnOffGNSS();
-        gnssTracker.isOn = false;
-        gnssTracker.startMillis = 0;
+        DSerial.println("Fehler bei der Initialisierung des Modems.");
+        return;
+    }
+    
+    // Schritt 2: Board initialisieren
+    if (initBoard())
+    {
+        DSerial.println("Board erfolgreich initialisiert.");
+    }
+    else
+    {
+        DSerial.println("Fehler bei der Initialisierung des Boards.");
+        return;
     }
 
-    // Temperatur- und Feuchtigkeitsdaten sammeln
-    if (trackerModes.TemperatureMode)
+    // Schritt 3: GNSS initialisieren
+    if (InitGNSS())
     {
-        docInput["Temperature"] = readTemperature();
-        docInput["Humidity"] = readHumidity();
+        DSerial.println("GNSS erfolgreich initialisiert.");
     }
-
-    // Batteriestand erfassen
-    if (trackerModes.BatteryMode)
+    else
     {
-        docInput["BatteryPercentage"] = calculateBatteryPercentage();
-        ;
+        DSerial.println("Fehler bei der Initialisierung von GNSS.");
+        return;
     }
-
-    // Zellinformationen erfassen
-    if (trackerModes.CellInfosMode)
+     // Schritt 4: MQTT initialisieren
+    if (initMQTT())
     {
-        JsonArray cellsArray = docInput["cells"].to<JsonArray>();
-        for (Cell *&cell : cells)
-        {
-            if (cell != nullptr)
-            {
-                // JSON-Objekt für jede Zelle erstellen
-                JsonObject cellObj = cellsArray.add<JsonObject>();
-                cell->toJson(cellObj);
-            }
-        }
+        DSerial.println("MQTT erfolgreich initialisiert.");
     }
-
-    // Request-Modus setzen
-    trackerModes.updateRequestMode();
-    if (trackerModes.RequestMode)
+    else
     {
-        docInput["RequestMode"] = true;
+        DSerial.println("Fehler bei der Initialisierung von MQTT.");
+        return;
     }
-    // Zeitstempel hinzufügen
-    docInput["Timestamp"] = getDateTime();
-    // Daten veröffentlichen
-    if (publishData(pub_time, AT_LEAST_ONCE, "/pub"))
-    {
-        // delay(300);
-    }
-    if (trackerModes.GeoFenMode)
-    {
-        GEOFENCE_STATUS_t status = _BG96.getGeoFencingStatus(gnssTracker.geoID);
-        switch (status)
-        {
-        case OUTSIDE_GEOFENCE:
-            docInput["LeavingGeo"] = true;
-            if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
-            {
-                delay(300);
-            }
-            break;
-        case INSIDE_GEOFENCE:
-        case NOFIX:
-            break;
-        default:
-            break;
-        }
-    }
+    
+    
+    DSerial.println("Alle Module erfolgreich initialisiert.");
 }
 
 // Tägliche Updates
