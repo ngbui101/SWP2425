@@ -1,4 +1,4 @@
-#include <Mode_Handle.hpp>
+#include <Mode_Handle.h>
 
 #define DSerial SerialUSB
 #define ATSerial Serial1
@@ -14,6 +14,7 @@ unsigned long lastUpdateCheck = 0;
 _Board _ArdruinoZero(DSerial);
 _BG96_Module _BG96(ATSerial, DSerial);
 
+Mode_Handle modeHandler(DSerial, _BG96, docInput, docOutput);
 // Status-Flags
 bool onSleep = false;
 
@@ -27,7 +28,7 @@ void setup()
   while (ATSerial.read() >= 0)
     ; // Buffer leeren
   delay(3000);
-  initModul(DSerial, _BG96, _ArdruinoZero);
+  modeHandler.initModul();
 }
 
 
@@ -54,7 +55,7 @@ void loop()
       {
         DSerial.println("Wake Up.....");
         onSleep = false;
-        handleWakeUp(DSerial, _BG96);
+        modeHandler.handleWakeUp();
       }
       else
         return;
@@ -68,7 +69,7 @@ void loop()
       }
       DSerial.println("Wake Up.....");
       onSleep = false;
-      handleWakeUp(DSerial, _BG96);
+      modeHandler.handleWakeUp();
     }
   }
   else
@@ -83,10 +84,10 @@ void loop()
   }
 
   // Auf neue MQTT-Nachrichten prüfen
-  waitAndCheck(DSerial, _BG96, docOutput);
+  modeHandler.waitAndCheck();
 
   // Modus-abhängige Daten erfassen und versenden
-  modeHandle(DSerial, _BG96, docInput, _ArdruinoZero);
+  modeHandler.modeHandle();
 
   if (trackerModes.period > 600000 && !_ArdruinoZero.checkOnMotionsfor10s())
     goToSleep(120000);

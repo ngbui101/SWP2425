@@ -2,8 +2,7 @@
 #define __MQTT_AWS_H_
 
 #include "Modem.h"
-#include "MQTT_Infos.h"
-#include <ArduinoJson.h>
+
 
 class MQTT_AWS : public Modem {
 protected:

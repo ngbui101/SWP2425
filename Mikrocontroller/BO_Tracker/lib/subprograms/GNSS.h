@@ -2,10 +2,6 @@
 #define __GNSS_H_
 
 #include "MQTT_AWS.h"  // GNSS erbt von MQTT_AWS
-#include "BG96_GNSS.h"
-#include "TrackerMode.cpp"
-#include "Network_Infos.h"
-#include <ArduinoJson.h>
 
 class GNSS : public MQTT_AWS {
 protected:

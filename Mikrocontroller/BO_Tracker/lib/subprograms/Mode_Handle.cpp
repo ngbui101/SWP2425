@@ -244,3 +244,80 @@ bool Mode_Handle::handleWakeUp() {
     modemOff = false;
     return true;
 }
+
+void Mode_Handle::modeHandle(){
+    pub_time = millis();
+    // GNSS-Modus verwalten
+    if (trackerModes.GnssMode)
+    {
+        handleGNSSMode();
+    }
+    else if (gnssTracker.isOn)
+    {
+        _BG96.TurnOffGNSS();
+        gnssTracker.isOn = false;
+        gnssTracker.startMillis = 0;
+    }
+
+    // Temperatur- und Feuchtigkeitsdaten sammeln
+    if (trackerModes.TemperatureMode)
+    {
+        docInput["Temperature"] = readTemperature();
+        docInput["Humidity"] = readHumidity();
+    }
+
+    // Batteriestand erfassen
+    if (trackerModes.BatteryMode)
+    {
+        docInput["BatteryPercentage"] = calculateBatteryPercentage();
+        ;
+    }
+
+    // Zellinformationen erfassen
+    if (trackerModes.CellInfosMode)
+    {
+        JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+        for (Cell *&cell : cells)
+        {
+            if (cell != nullptr)
+            {
+                // JSON-Objekt für jede Zelle erstellen
+                JsonObject cellObj = cellsArray.add<JsonObject>();
+                cell->toJson(cellObj);
+            }
+        }
+    }
+
+    // Request-Modus setzen
+    trackerModes.updateRequestMode();
+    if (trackerModes.RequestMode)
+    {
+        docInput["RequestMode"] = true;
+    }
+    // Zeitstempel hinzufügen
+    docInput["Timestamp"] = getDateTime();
+    // Daten veröffentlichen
+    if (publishData(pub_time, AT_LEAST_ONCE, "/pub"))
+    {
+        // delay(300);
+    }
+    if (trackerModes.GeoFenMode)
+    {
+        GEOFENCE_STATUS_t status = _BG96.getGeoFencingStatus(gnssTracker.geoID);
+        switch (status)
+        {
+        case OUTSIDE_GEOFENCE:
+            docInput["LeavingGeo"] = true;
+            if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
+            {
+                delay(300);
+            }
+            break;
+        case INSIDE_GEOFENCE:
+        case NOFIX:
+            break;
+        default:
+            break;
+        }
+    }
+}

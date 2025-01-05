@@ -2,7 +2,6 @@
 #define __MODE_HANDLE_H_
 
 #include "GNSS.h"
-#include <ArduinoJson.h>
 
 class Mode_Handle : public GNSS {
 private:

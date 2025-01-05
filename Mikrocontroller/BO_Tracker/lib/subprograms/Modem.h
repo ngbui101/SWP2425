@@ -4,6 +4,8 @@
 #include "BG96_Module.h"
 #include "board.h"
 #include "Network_Infos.h"
+#include "MQTT_Infos.h"
+#include "TrackerMode.cpp"
 
 // Modem-Klasse zur Verwaltung der Modem-Operationen
 class Modem : public _Board {
