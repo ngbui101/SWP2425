@@ -63,7 +63,7 @@ void loop()
     {
       if (!_ArdruinoZero.checkOnMotionsfor10s())
       {
-        _ArdruinoZero.deepSleep(0);
+        goToSleep(120000);
         return;
       }
       DSerial.println("Wake Up.....");
@@ -89,7 +89,7 @@ void loop()
   modeHandle(DSerial, _BG96, docInput, _ArdruinoZero);
 
   if (trackerModes.period > 600000 && !_ArdruinoZero.checkOnMotionsfor10s())
-    goToSleep(0);
+    goToSleep(120000);
   // Tägliches Update prüfen
   // if (millis() - lastUpdateCheck >= UPDATE_INTERVAL)
   // {
