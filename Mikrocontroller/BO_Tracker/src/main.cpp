@@ -11,7 +11,7 @@ JsonDocument docOutput;
 const unsigned long UPDATE_INTERVAL = 86400000UL;
 unsigned long lastUpdateCheck = 0;
 
-_Board _ArdruinoZero;
+_Board _ArdruinoZero(DSerial);
 _BG96_Module _BG96(ATSerial, DSerial);
 
 // Status-Flags

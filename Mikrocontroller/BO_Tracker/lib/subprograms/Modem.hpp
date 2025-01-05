@@ -5,16 +5,9 @@
 #include "TrackerMode.cpp"
 #include <Board.h>
 #include "Network_Infos.h"
-// APN
-// char APN[] = "internet.m2mportal.de";
-// char SUPURL[]  = "supl.google.com:7276";
-// char APN[] = "wm";
-// char APN[] = "iot.1nce.net";
-// char LOGIN[] = "";
-// char PASSWORD[] = "";
+
 char ModemIMEI[20];
-// char RAT[] = "gsm";
-// unsigned int PDPIndex = 1;
+
 Cell *cells[6] = {nullptr};
 
 bool setRTC(_BG96_TCPIP &_Modem, _Board &_ArdruinoZero)

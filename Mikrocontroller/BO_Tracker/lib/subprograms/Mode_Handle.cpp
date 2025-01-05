@@ -1,67 +1,16 @@
-#ifndef __Mode_Handle_H
-#define __Mode_Handle_H
-#include <GNSS.hpp>
+#include "Mode_Handle.h"
 
-bool modemOff;
+// Konstruktor der Klasse Mode_Handle
+Mode_Handle::Mode_Handle(Stream &serial, _BG96_Module &_BG96, JsonDocument &docInput, JsonDocument &docOutput)
+    : GNSS(serial, _BG96, docInput), docOutput(docOutput) {}
 
-void initModul(Stream &DSerial, _BG96_Module &_BG96, _Board &_ArdruinoZero)
-{
-    DSerial.println("Beginne Initialisierung des Moduls...");
-
-    // Schritt 1: Modem initialisieren
-    if (initModem(DSerial, _BG96, _ArdruinoZero))
-    {
-        DSerial.println("Modem erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung des Modems.");
-        return;
-    }
-    
-    // Schritt 2: Board initialisieren
-    if (_ArdruinoZero.initBoard())
-    {
-        DSerial.println("Board erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung des Boards.");
-        return;
-    }
-
-    // Schritt 3: GNSS initialisieren
-    if (InitGNSS(DSerial, _BG96))
-    {
-        DSerial.println("GNSS erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung von GNSS.");
-        return;
-    }
-     // Schritt 4: MQTT initialisieren
-    if (InitModemMQTT(DSerial, _BG96))
-    {
-        DSerial.println("MQTT erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung von MQTT.");
-        return;
-    }
-    
-    
-    DSerial.println("Alle Module erfolgreich initialisiert.");
-}
-
-void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _Board &_ArdruinoZero)
-{
+// Initialisiert alle Module
+void Mode_Handle::initModul() {
     pub_time = millis();
     // GNSS-Modus verwalten
     if (trackerModes.GnssMode)
     {
-        handleGNSSMode(DSerial, _BG96, docInput);
+        handleGNSSMode();
     }
     else if (gnssTracker.isOn)
     {
@@ -73,14 +22,14 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
     // Temperatur- und Feuchtigkeitsdaten sammeln
     if (trackerModes.TemperatureMode)
     {
-        docInput["Temperature"] = _ArdruinoZero.readTemperature();
-        docInput["Humidity"] = _ArdruinoZero.readHumidity();
+        docInput["Temperature"] = readTemperature();
+        docInput["Humidity"] = readHumidity();
     }
 
     // Batteriestand erfassen
     if (trackerModes.BatteryMode)
     {
-        docInput["BatteryPercentage"] = _ArdruinoZero.calculateBatteryPercentage();
+        docInput["BatteryPercentage"] = calculateBatteryPercentage();
         ;
     }
 
@@ -106,9 +55,9 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
         docInput["RequestMode"] = true;
     }
     // Zeitstempel hinzufügen
-    docInput["Timestamp"] = _ArdruinoZero.getDateTime();
+    docInput["Timestamp"] = getDateTime();
     // Daten veröffentlichen
-    if (publishData(DSerial, _BG96, docInput, pub_time, AT_LEAST_ONCE, "/pub"))
+    if (publishData(pub_time, AT_LEAST_ONCE, "/pub"))
     {
         // delay(300);
     }
@@ -119,7 +68,7 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
         {
         case OUTSIDE_GEOFENCE:
             docInput["LeavingGeo"] = true;
-            if (publishData(DSerial, _BG96, docInput, pub_time, AT_LEAST_ONCE, "/notifications"))
+            if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
             {
                 delay(300);
             }
@@ -132,10 +81,11 @@ void modeHandle(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _B
         }
     }
 }
-void DailyUpdates(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, _Battery _BoardBattery, _Temperature _BoardTemperature)
-{
-    GPSOneXtraCheckForUpdate(DSerial, _BG96);
-    double temperature = _BoardTemperature.readTemperature();
+
+// Tägliche Updates
+void Mode_Handle::dailyUpdates() {
+    GPSOneXtraCheckForUpdate();
+    double temperature = readTemperature();
     if (temperature < -20)
     {
         docInput["TemperatureLow"] = true;
@@ -144,17 +94,18 @@ void DailyUpdates(Stream &DSerial, _BG96_Module &_BG96, JsonDocument &docInput, 
     {
         docInput["TemperatureHigh"] = true;
     }
-    if (_BoardBattery.calculateBatteryPercentage() <= 10)
+    if (calculateBatteryPercentage() <= 10)
     {
         docInput["BatteryLow"] = true;
     }
-    if (publishData(DSerial, _BG96, docInput, pub_time, AT_LEAST_ONCE, "/notifications"))
+    if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
     {
         delay(300);
     }
 }
-void eventHandle(Stream &DSerial, _BG96_Module &_BG96,JsonDocument &docOutput, char *payload)
-{
+
+// Behandelt MQTT-Ereignisse
+void Mode_Handle::eventHandle(char *payload) {
     DeserializationError error = deserializeJson(docOutput, payload);
 
     if (error == DeserializationError::Ok)
@@ -228,7 +179,7 @@ void eventHandle(Stream &DSerial, _BG96_Module &_BG96,JsonDocument &docOutput, c
                     DSerial.print("Updated GeoFenMode to: ");
                     DSerial.println(trackerModes.GeoFenMode);
                 }
-                if(addGeo(DSerial, _BG96)){
+                if(addGeo()){
                     DSerial.println("Geo added successfully!");
                 }else{
                     DSerial.println("Failed to add geo!");
@@ -251,46 +202,45 @@ void eventHandle(Stream &DSerial, _BG96_Module &_BG96,JsonDocument &docOutput, c
     }
     docOutput.clear();
 }
-void waitAndCheck(Stream &DSerial, _BG96_Module &_AWS, JsonDocument &docOutput)
-{
-    char payload[1028];
-    Mqtt_URC_Event_t ret = _AWS.WaitCheckMQTTURCEvent(payload, 2);
 
-    switch (ret)
-    {
+// Wartet und prüft MQTT-URC-Events
+void Mode_Handle::waitAndCheck() {
+    char payload[1028];
+    Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(payload, 2);
+
+    switch (ret) {
     case MQTT_RECV_DATA_EVENT:
         DSerial.println("RECV_DATA_EVENT");
-        eventHandle(DSerial, _AWS,docOutput, payload);
-        // modeHandle(docInput,_BoardBattery);
+        eventHandle(payload);
         break;
     case MQTT_STATUS_EVENT:
-        handleMQTTStatusEvent(DSerial, _AWS, payload);
+        handleMQTTStatusEvent(payload);
         break;
     default:
         break;
     }
 }
 
-bool handleWakeUp(Stream &DSerial, _BG96_Module &_BG96)
-{
-    if (!startModem(DSerial, _BG96))
-    {
-        DSerial.println("Fail to startModem");
+// Handhabt das Aufwachen aus dem Schlafmodus
+bool Mode_Handle::handleWakeUp() {
+    if (!startModem()) {
+        DSerial.println("Fehler beim Starten des Modems.");
         return false;
     }
+
     _BG96.ScanCells(RAT, cells);
+
     char apn_error[64];
-    if (!_BG96.TurnOnInternet(PDPIndex, apn_error))
-    {
+    if (!_BG96.TurnOnInternet(PDPIndex, apn_error)) {
         DSerial.println(apn_error);
         return false;
     }
-    if (!InitModemMQTT(DSerial, _BG96))
-    {
-        DSerial.println("Fail to start MQTT");
+
+    if (!initMQTT()) {
+        DSerial.println("Fehler beim Starten von MQTT.");
         return false;
     }
+
     modemOff = false;
     return true;
 }
-#endif

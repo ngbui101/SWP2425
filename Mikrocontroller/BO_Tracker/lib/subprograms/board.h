@@ -11,8 +11,8 @@ class _Board : public _Temperature
 {
 public:
     bool wake_up = false;
-    _Board();
-    bool initBoard(Stream &DSerial);
+    _Board(Stream &DSerial);
+    bool initBoard();
 
     bool setupRTCFromModem(const char *modemTime);
 
@@ -25,6 +25,8 @@ public:
     bool checkOnMotionsfor10s();
 private:
     RTCZero rtc;
+protected:  // Hier wird der Zugriffsschutz geändert
+    Stream &DSerial;
 };
 
 #endif

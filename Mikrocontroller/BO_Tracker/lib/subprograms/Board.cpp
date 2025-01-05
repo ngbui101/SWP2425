@@ -7,7 +7,7 @@
  *
  * Initialisiert ein Objekt der Klasse _Board. Aktuell keine spezifischen Aktionen.
  */
-_Board::_Board()
+_Board::_Board(Stream &serial) : DSerial(serial)
 {
 }
 
@@ -20,7 +20,7 @@ _Board::_Board()
  * @return false, wenn eine der Initialisierungen fehlschlägt.
  */
 
-bool _Board::initBoard(Stream &DSerial)
+bool _Board::initBoard()
 {
     DSerial.println("Beginne Initialisierung des Boards...");
 
@@ -61,7 +61,6 @@ bool _Board::initBoard(Stream &DSerial)
     DSerial.println("Wake-On-Motion erfolgreich aktiviert.");
     return true; // Erfolgreich initialisiert
 }
-
 
 /**
  * @brief Konfiguriert die Echtzeituhr (RTC) basierend auf einem Zeitstempel vom Modem.
@@ -153,19 +152,24 @@ bool _Board::waitWakeOnMotions()
 {
     if (bma456.waitForMotion())
     {
-        digitalWrite(LED_BUILTIN, HIGH); 
-        delay(1000);                     
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(1000);
         digitalWrite(LED_BUILTIN, LOW);
         return true;
-    }else return false;
+    }
+    else
+        return false;
 }
 
-bool _Board::checkOnMotionsfor10s(){
+bool _Board::checkOnMotionsfor10s()
+{
     return bma456.isMovementAboveThresholdFor10S(100);
 }
-void _Board::deepSleep(int millis){
-    if(millis <= 10000){
-        LowPower.deepSleep(10000); 
+void _Board::deepSleep(int millis)
+{
+    if (millis <= 10000)
+    {
+        LowPower.deepSleep(10000);
     }
-    LowPower.deepSleep(millis); 
+    LowPower.deepSleep(millis);
 }

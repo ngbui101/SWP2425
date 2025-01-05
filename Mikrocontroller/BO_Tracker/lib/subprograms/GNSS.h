@@ -1,17 +1,14 @@
-#ifndef __GNSS
-#define __GNSS
+#ifndef __GNSS_H_
+#define __GNSS_H_
 
-// #include "MQTT_AWS.hpp"
+#include "MQTT_AWS.h"  // GNSS erbt von MQTT_AWS
 #include "BG96_GNSS.h"
 #include "TrackerMode.cpp"
 #include "Network_Infos.h"
-class GNSS {
-private:
-    // Private Attribute
-    Stream &DSerial;
-    _BG96_GNSS &_GNSS;
-    JsonDocument &docInput;
+#include <ArduinoJson.h>
 
+class GNSS : public MQTT_AWS {
+protected:
     // GNSS-Tracker-Struktur
     struct GNSS_Tracker {
         char gsa[128];
@@ -24,13 +21,13 @@ private:
 
 public:
     // Konstruktor
-    GNSS(Stream &serial, _BG96_GNSS &gnssModule, JsonDocument &doc);
+    GNSS(Stream &serial, _BG96_Module &gnssModule, JsonDocument &doc);
 
     // Methoden
-    bool InitGNSS();
-    void GPSOneXtraCheckForUpdate();
-    void handleGNSSMode();
-    bool addGeo();
+    bool InitGNSS();               // Initialisiert GNSS
+    void GPSOneXtraCheckForUpdate();  // Prüft auf GPSOneXTRA-Updates
+    void handleGNSSMode();          // Handhabt GNSS-Modus
+    bool addGeo();                  // Fügt Geofencing hinzu
 };
 
-#endif
+#endif  // __GNSS_H_
