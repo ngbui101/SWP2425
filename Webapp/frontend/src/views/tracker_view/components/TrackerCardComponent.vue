@@ -38,13 +38,13 @@
 
             <div class="card-body">
                 <!-- Display each key-value pair on its own line -->
-                <p><strong>Mode:</strong> {{ tracker.modeLabel }}</p>
-                <p><strong>Location:</strong> {{ tracker.location }}</p>
-                <p><strong>Latitude:</strong> {{ tracker.detailsWithTimestamps?.latitude?.value }}</p>
-                <p><strong>Longitude:</strong> {{ tracker.detailsWithTimestamps?.longitude?.value }}</p>
-                <p><strong>Temp:</strong> {{ tracker.detailsWithTimestamps?.temperature?.value }}</p>
-                <p><strong>Humidity:</strong> {{ tracker.detailsWithTimestamps?.humidity?.value }}</p>
-                <p><strong>Device ID:</strong> {{ tracker.imei }}</p>
+                <p><strong>{{ $t('TrackerCard-mode') }}:</strong> {{ tracker.modeLabel }}</p>
+                <p><strong>{{ $t('TrackerCard-location') }}:</strong> {{ tracker.location }}</p>
+                <p><strong>{{ $t('TrackerCard-latitude') }}:</strong> {{ tracker.detailsWithTimestamps?.latitude?.value }}</p>
+                <p><strong>{{ $t('TrackerCard-longitude') }}:</strong> {{ tracker.detailsWithTimestamps?.longitude?.value }}</p>
+                <p><strong>{{ $t('TrackerCard-temp') }}:</strong> {{ tracker.detailsWithTimestamps?.temperature?.value }}</p>
+                <p><strong>{{ $t('TrackerCard-humidity') }}:</strong> {{ tracker.detailsWithTimestamps?.humidity?.value }}</p>
+                <p><strong>{{ $t('TrackerCard-deviceID') }}:</strong> {{ tracker.imei }}</p>
             </div>
         </div>
 
