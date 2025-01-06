@@ -116,7 +116,7 @@ bool _BG96_HTTP::SetHTTPEnableSSL(unsigned int ssl_index)
  * @param status Modus (Lesen oder Schreiben der URL)
  * @return true bei Erfolg, false bei Fehler
  */
-bool _BG96_HTTP::HTTPURL(char* url, Cmd_Status_t status)
+bool _BG96_HTTP::HTTPURL(const char* url, Cmd_Status_t status)
 {
     char cmd[32], buf[16];
     strcpy(cmd, HTTP_SET_URL);
@@ -125,14 +125,20 @@ bool _BG96_HTTP::HTTPURL(char* url, Cmd_Status_t status)
         if(sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 2)){
             char *sta_buf = searchStrBuffer(": ");
             if(sta_buf == NULL){
-                url[0] = '\0';  // Setze den Puffer auf einen leeren String
+                char* modifiable_url = const_cast<char*>(url);
+                if(modifiable_url != nullptr && strlen(modifiable_url) > 0) {
+                    modifiable_url[0] = '\0';  // Setze den Puffer auf einen leeren String
+                }
             } else {
                 char *end_buf = searchStrBuffer("\r\nOK");
                 if (end_buf != NULL) {
                     *end_buf = '\0';
-                    strcpy(url, sta_buf + 2);  // URL aus dem Antwortpuffer kopieren
+                    strcpy(const_cast<char*>(url), sta_buf + 2);  // URL aus dem Antwortpuffer kopieren
                 } else {
-                    url[0] = '\0';
+                    char* modifiable_url = const_cast<char*>(url);
+                    if(modifiable_url != nullptr && strlen(modifiable_url) > 0) {
+                        modifiable_url[0] = '\0';
+                    }
                 }
             }
             return true;

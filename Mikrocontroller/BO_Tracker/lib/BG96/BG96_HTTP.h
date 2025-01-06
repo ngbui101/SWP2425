@@ -29,7 +29,7 @@ class _BG96_HTTP : public _BG96_SSL
 
     bool SetHTTPEnableSSL(unsigned int ssl_index);
 
-    bool HTTPURL(char* url, Cmd_Status_t status);
+    bool HTTPURL(const char *url, Cmd_Status_t status);
 
     bool HTTPGET(unsigned int timeout);
 
