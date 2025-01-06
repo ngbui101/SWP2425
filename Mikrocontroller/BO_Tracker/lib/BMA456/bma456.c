@@ -1551,6 +1551,13 @@ static uint16_t feature_enable(uint8_t feature, uint8_t len, uint8_t *feature_co
 		}
 	}
 
+	/* Enable significant motion */
+        if (feature & BMA456_SIG_MOTION)
+        {
+            index = BMA456_SIG_MOTION_EN_OFFSET;
+            feature_config[index] = feature_config[index] | BMA456_SIG_MOTION_EN_MSK;
+        }
+
 	/* Write the feature enable settings in the sensor */
 	rslt = bma4_write_regs(BMA4_FEATURE_CONFIG_ADDR, feature_config, len, dev);
 

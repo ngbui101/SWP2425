@@ -63,6 +63,7 @@ class _BG96_TCPIP : public _BG96_Common
 
     bool InitAPN(unsigned int pdp_index, const char* apn, const char* usr, const char* pwd, char* err_code);
 
+    bool InitAPNWithNetworkScanning(unsigned int pdp_index, const char* apn, const char* usr, const char* pwd, char* err_code, const char* rat, Cell* cells[]);
     bool OpenSocketService(unsigned int pdp_index, unsigned int socket_index, Socket_Type_t socket, char *ip, unsigned int port, unsigned int local_port, Access_Mode_t mode);
 
     bool CloseSocketService(unsigned int socket_index);
@@ -86,6 +87,8 @@ class _BG96_TCPIP : public _BG96_Common
     bool QueryLastErrorCode(char *err_code);
 
     Socket_Event_t WaitCheckSocketEvent(char *event, unsigned int timeout);
+
+    bool TurnOnInternet(unsigned int pdp_index, char* err_code);
 
   private:
   

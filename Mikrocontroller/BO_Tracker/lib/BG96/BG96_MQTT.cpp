@@ -24,7 +24,7 @@ _BG96_MQTT::~_BG96_MQTT()
  * @param atserial Serielle Schnittstelle für AT-Kommandos.
  * @param dserial Serielle Schnittstelle für Debugging.
  */
-_BG96_MQTT::_BG96_MQTT(Stream &atserial, Stream &dserial) : _BG96_SSL(atserial, dserial) 
+_BG96_MQTT::_BG96_MQTT(Stream &atserial, Stream &dserial) : _BG96_HTTP(atserial, dserial) 
 {
 }
 

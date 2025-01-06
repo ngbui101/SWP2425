@@ -28,7 +28,7 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
     try {
         // Hole Modusinformationen
         const modeDoc = await modeCollection.findOne({ tracker: new ObjectId(String(trackerId)) });
-        
+
         const modeData = modeDoc ? {
             GnssMode: modeDoc.GnssMode,
             CellInfosMode: modeDoc.CellInfosMode,
@@ -39,15 +39,16 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
         } : null;
 
         // Hole Geofence-Informationen
-        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId)), active: true });
+        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId)) });
         const geofences = await geofencesCursor.toArray();
+        const isValidNumber = (value) => !isNaN(value) && value.trim() !== '';
         const geofenceData = geofences.map(geo => ({
-            geoRadius: parseInt(geo.radius),
-            geoLongitude: parseFloat(geo.longitude),
-            geoLatitude: parseFloat(geo.latitude),
-            GeoFenMode: geo.active
+            geoRadius: parseInt(geo.radius, 10),
+            geoLongitude: isValidNumber(geo.longitude) ? parseFloat(geo.longitude) : null,
+            geoLatitude: isValidNumber(geo.latitude) ? parseFloat(geo.latitude) : null
+            // ,GeoFenMode: geo.active
         }));
-
+        // const geofenceData = null;
         return { modeData, geofenceData };
     } catch (error) {
         console.error("Error fetching mode and geofences from MongoDB:", error);
@@ -56,124 +57,62 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
 }
 
 
-function convertTimestamp(timestamp) {
-    try {
-        const [datePart, timePartWithZone] = timestamp.split(",");
-        const timePart = timePartWithZone.slice(0, 8);
-        const [year, month, day] = datePart.split("/");
-        const fullYear = `20${year}`;
-        const isoString = `${fullYear}-${month}-${day}T${timePart}Z`;
-        return new Date(isoString);
-    } catch (error) {
-        console.error("Timestamp conversion error:", error);
+async function getCellLocationAndEstimatedPositionFromUnwiredLabs(cells) {
+    const apiUrl = "https://eu1.unwiredlabs.com/v2/process";
+    const token = "pk.11e2626f93a4d4ee0bb5ab37ee6b25a4";
+
+    if (!Array.isArray(cells) || cells.length === 0) {
+        console.error("No valid cell information provided.");
         return null;
     }
-}
 
-function convertBandwidth(bandwidthCode) {
-    switch (bandwidthCode) {
-        case '0': return 1.4;
-        case '1': return 3;
-        case '2': return 5;
-        case '3': return 10;
-        case '4': return 15;
-        case '5': return 20;
-        default: return null;  // Gibt `null` zurück, wenn der Code ungültig ist
+    // Ensure that each cell has the required fields
+    const requiredFields = ['radio', 'mcc', 'mnc', 'lac', 'cid'];
+    for (const cell of cells) {
+        for (const field of requiredFields) {
+            if (!(field in cell)) {
+                console.error(`Cell is missing required field '${field}':`, cell);
+                return null;
+            }
+        }
     }
-}
-
-function calculateDistanceFromRSRP(rsrp, frequencyMHz) {
-    if (isNaN(rsrp) || isNaN(frequencyMHz) || frequencyMHz <= 0) {
-        console.error("Invalid RSRP or frequency provided for distance calculation.");
-        return null;
-    }
-    const frequencyHz = frequencyMHz * 1e6;
-    const speedOfLight = 3e8;  
-
-    // Referenzverlust L0 bei einer Distanz von 1 Meter
-    const L0 = 20 * Math.log10((4 * Math.PI * frequencyHz) / speedOfLight);
-
-    // Typischer Pfadverlustexponent für städtische Gebiete
-    const pathLossExponent = 3.5;
-
-    // Berechnung der Distanz basierend auf RSRP
-    const distance = Math.pow(10, (rsrp - L0) / (10 * pathLossExponent));
-    console.log("Distanz:", distance);
-    return distance > 0 ? distance : null;  // Sicherheitsüberprüfung für realistische Werte
-}
-
-
-
-
-function getRandomOffset(lat, lon, distance) {
-    if (isNaN(distance) || distance <= 0) {
-        console.error("Invalid distance for random offset calculation.");
-        return { latitude: lat, longitude: lon };
-    }
-
-    const earthRadius = 6371000; // Erdradius in Metern
-
-    const angle = Math.random() * 2 * Math.PI;
-    const deltaLat = (distance * Math.cos(angle)) / earthRadius;
-    const deltaLon = (distance * Math.sin(angle)) / (earthRadius * Math.cos((lat * Math.PI) / 180));
-
-    const newLat = lat + (deltaLat * 180) / Math.PI;
-    const newLon = lon + (deltaLon * 180) / Math.PI;
-
-    return {
-        latitude: isNaN(newLat) ? lat : newLat,
-        longitude: isNaN(newLon) ? lon : newLon
+    // Aufbau des JSON-Payloads
+    const payload = {
+        token,
+        cells: cells.slice(0, 6),
+        address: 1
     };
-}
 
-
-async function getCellLocationAndEstimatedPosition(cellInfo) {
-    const cellInfoParts = cellInfo.split(",");
-    const mcc = cellInfoParts[4];
-    const mnc = cellInfoParts[5];
-    const cellid = parseInt(cellInfoParts[6], 16);
-    const lac = parseInt(cellInfoParts[12], 16);
-    const rsrp = parseFloat(cellInfoParts[13]);
-    const frequencyMHz = parseFloat(cellInfoParts[8]);
-
-    // Debug-Ausgabe der Eingabewerte
-    console.log("Parsed Cell Information:", {
-        mcc, mnc, cellid, lac, rsrp, frequencyMHz
-    });
-
-    const apiKey = process.env.OPENCELLID_API_KEY;
-    const url = `https://opencellid.org/cell/get?key=${apiKey}&mcc=${mcc}&mnc=${mnc}&lac=${lac}&cellid=${cellid}&format=json`;
-
+    // POST-Anfrage an die API
     try {
-        const response = await fetch(url);
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
         if (!response.ok) {
-            throw new Error(`Failed to fetch location data: ${response.statusText}`);
+            throw new Error(`API error: ${response.statusText}`);
         }
-        const data = await response.json();
 
-        console.log("Fetched Cell Location Data:", data); // Debug-Ausgabe der Zellstandortdaten
-
-        const distance = calculateDistanceFromRSRP(rsrp, frequencyMHz);
-        if (distance === null) {
-            console.error("Unable to calculate distance, setting default accuracy.");
+        const responseData = await response.json();
+        if (responseData.status === "ok") {
+            console.log("Location data from Unwired Labs API:", responseData);
             return {
-                latitude: data.lat,
-                longitude: data.lon,
-                accuracy: 1000 // Setze eine Standard-Genauigkeit in Metern
+                latitude: responseData.lat,
+                longitude: responseData.lon,
+                accuracy: responseData.accuracy / 5
             };
+        } else {
+            console.error("Unwired Labs API returned an error:", responseData);
+            return null;
         }
-
-        const estimatedPosition = getRandomOffset(data.lat, data.lon, distance);
-        return {
-            latitude: estimatedPosition.latitude,
-            longitude: estimatedPosition.longitude,
-            accuracy: distance * 2
-        };
     } catch (error) {
-        console.error("Error fetching cell location:", error);
+        console.error("Error calling Unwired Labs API:", error);
         return null;
     }
 }
+
 
 
 
@@ -181,28 +120,19 @@ export const handler = async (event) => {
     const mongoURI = process.env.MONGO_URI;
     const client = new MongoClient(mongoURI);
 
-    const convertedTimestamp = convertTimestamp(event.Timestamp);
-
-    if (!convertedTimestamp || isNaN(convertedTimestamp.getTime())) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify("Invalid timestamp format")
-        };
-    }
-
     const data = {
         IMEI: event.IMEI,
-        Timestamp: convertedTimestamp,
-        CellInfos: event.CellInfos,
+        Timestamp: event.Timestamp,
+        Cells: event.cells,
         Temperature: event.Temperature,
         Humidity: event.Humidity,
         BatteryPercentage: event.BatteryPercentage,
-        Position: event.Position,
+        gnss: event.gnss,
         GSA: event.GSA,
         GSV: event.GSV,
         Accuracy: event.Accuracy,
-        RequestMode:event.RequestMode,
-        BatteryLow:event.BatteryLow,
+        RequestMode: event.RequestMode,
+        BatteryLow: event.BatteryLow,
         TimeToGetFirstFix: event.TimeToGetFirstFix
     };
 
@@ -224,33 +154,44 @@ export const handler = async (event) => {
         const collection = database.collection('measurements');
         const documentsToInsert = [];
 
-        if (data.Position && data.GSA && data.GSV) {
-            const [_, latitudeStr, longitudeStr, hdopStr, __, fixStr, ___, ____, _____, ______, nsatStr] = data.Position.split(",");
-            const latitude = parseFloat(latitudeStr);
-            const longitude = parseFloat(longitudeStr);
 
+        if (data.gnss) {
             documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "GPS",
-                latitude,
-                longitude,
+                latitude: data.gnss.latitude,
+                longitude: data.gnss.longitude,
+                hdop: data.gnss.hdop,
+                nsat: data.gnss.nsat,
                 tracker: new ObjectId(trackerId),
-                accuracy: data.Accuracy,
-                timeToGetFirstFix: data.TimeToGetFirstFix,
+                accuracy: data.gnss.accuracy,
+                timeToGetFirstFix: data.gnss.TTFF,
                 createdAt: data.Timestamp,
                 updatedAt: data.Timestamp
             });
         }
 
-        if (data.CellInfos) {
-            const cellLocation = await getCellLocationAndEstimatedPosition(data.CellInfos);
-            if (cellLocation) {
+
+        if (data.Cells && Array.isArray(data.Cells) && data.Cells.length > 0) {
+            const location = await getCellLocationAndEstimatedPositionFromUnwiredLabs(data.Cells);
+            if (location) {
+                // Das 'radio'-Feld aus der ersten Zelle extrahieren
+                const radioType = data.Cells[0].radio || "unknown";
+
+                const modeMap = {
+                    "lte": "LTE",
+                    "gsm": "GSM",
+                    "nbiot": "NBIOT"
+
+                };
+                const mode = modeMap[radioType.toLowerCase()] || radioType.toUpperCase();
+
                 documentsToInsert.push({
                     imei: data.IMEI,
-                    mode: "LTE",
-                    latitude: cellLocation.latitude,
-                    longitude: cellLocation.longitude,
-                    accuracy: cellLocation.accuracy,
+                    mode: mode,
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    accuracy: location.accuracy,
                     tracker: new ObjectId(trackerId),
                     createdAt: data.Timestamp,
                     updatedAt: data.Timestamp
@@ -280,10 +221,10 @@ export const handler = async (event) => {
                 updatedAt: data.Timestamp
             });
         }
-        
+
         if (data.RequestMode === true) {
             const { modeData, geofenceData } = await getModeAndGeofencesFromMongo(trackerId, database);
-        
+
             if ((modeData && Object.keys(modeData).length > 0) || geofenceData.length > 0) {
                 const payload = { ...modeData, geofences: geofenceData };
                 await publishToAwsIoT(data.IMEI, payload);
@@ -291,14 +232,14 @@ export const handler = async (event) => {
                 console.log("No mode or geofence data available for publishing.");
             }
         }
-        
+
         if (documentsToInsert.length > 0) {
             await collection.insertMany(documentsToInsert);
             console.log(`${documentsToInsert.length} document(s) inserted.`);
         } else {
             console.log("No valid measurement data found; no documents were inserted.");
         }
-        
+
         return {
             statusCode: 200,
             body: JSON.stringify('Data successfully processed and inserted')

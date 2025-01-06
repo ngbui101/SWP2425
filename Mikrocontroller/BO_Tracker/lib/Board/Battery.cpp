@@ -8,7 +8,7 @@ _Battery::~_Battery()
 {
 }
 
-bool _Battery::InitBattery()
+bool _Battery::initBattery()
 {
     pinMode(BATVOLTAGE_CTRL_PIN, OUTPUT);
     digitalWrite(BATVOLTAGE_CTRL_PIN, LOW);

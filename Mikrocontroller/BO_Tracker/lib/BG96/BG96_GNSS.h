@@ -6,7 +6,7 @@
 #ifndef __BG96_GNSS_H_
 #define __BG96_GNSS_H_
 
-#include "BG96_HTTP.h"
+#include "BG96_MQTT.h"
 #include <cmath>
 
 typedef enum gnss_work_mode{
@@ -70,7 +70,7 @@ typedef enum geofence_status {
     OUTSIDE_GEOFENCE = 2,
 }GEOFENCE_STATUS_t;
 
-class _BG96_GNSS : public _BG96_HTTP
+class _BG96_GNSS : public _BG96_MQTT
 {
   public:
     _BG96_GNSS();
@@ -89,6 +89,7 @@ class _BG96_GNSS : public _BG96_HTTP
 
     bool GetGNSSPositionInformation(char *position);
 
+    bool GetGnssJsonPositionInformation(JsonDocument &json, unsigned long starttime); 
     bool TurnOffGNSS();
 
     bool GetGNSSNMEASentences(NMEA_Type_t type, char *sentences);
@@ -117,7 +118,17 @@ class _BG96_GNSS : public _BG96_HTTP
 
     GEOFENCE_STATUS_t getGeoFencingStatus(unsigned int geoID);
 
+    bool SetAGPSPlan(int mode = 0);
+    
+    bool SetAGPSUrl(const char *supurl);
+    
+    bool SetAGPSAPN(const char *apn);
+
+    bool InitAGPS(const char *supurl, const char *apn);
+
    private:
+    unsigned long currentTime;
+    unsigned long TTFF = 0;
    ///GPSOneXTRA Update Liste
     const char* xtra_links[3] = {
         "http://xtrapath1.izatcloud.net/xtra2.bin",

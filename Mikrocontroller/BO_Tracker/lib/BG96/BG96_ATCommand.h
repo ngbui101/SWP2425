@@ -15,7 +15,7 @@
 #define __BG96_ATCOMMAND_H_
 
 // AT commands response
-const char RESPONSE_READY[] = "RDY";
+const char RESPONSE_READY[] = "APP RDY";
 const char RESPONSE_OK[] = "OK";
 const char RESPONSE_CRLF_OK[] = "\r\n\r\nOK";
 const char RESPONSE_ERROR[] = "ERROR";
@@ -120,6 +120,7 @@ const char GNSS_INJECT_GPSONEXTRA_TIME[] = "+QGPSXTRATIME";
 const char GNSS_INJECT_GPSONEXTRA_DATA[] = "+QGPSXTRADATA";
 const char GNSS_DELETE_ASSISTANCE_DATA[] = "+QGPSDEL";
 const char GNSS_GEO_FENCE[] = "+QCFGEXT";
+const char GNSS_AGPS_SUPURL[] = "+QGPSSUPLURL";
 // Queccell AT Commands
 const char QUECCELL_ENGINEERING_MODE[] = "+QENG";
 const char QUECCELL_AVAILABLE_NETWORK[] = "+QCOPS";

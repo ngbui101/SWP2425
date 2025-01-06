@@ -158,6 +158,18 @@ const applyFilters = async () => {
     color: #851515;
 }
 
+/* Default mode styling */
+input[type="checkbox"] {
+    accent-color: #00543D;
+    /* Default color */
+}
+
+/* Dark mode styling */
+.dark-mode input[type="checkbox"] {
+    accent-color: #E69543;
+    /* Dark mode color */
+}
+
 .close-btn:hover {
     color: #750f0f;
 }

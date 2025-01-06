@@ -10,7 +10,7 @@
 #ifndef __BG96_MQTT_H_
 #define __BG96_MQTT_H_
 
-#include "BG96_SSL.h"
+#include "BG96_HTTP.h"
 
 typedef enum mqtt_version{
     MQTT_V4 = 4,
@@ -49,7 +49,7 @@ typedef enum mqtt_urc_event{
     MQTT_RECV_DATA_EVENT = 1,
 }Mqtt_URC_Event_t;
 
-class _BG96_MQTT : public _BG96_SSL
+class _BG96_MQTT : public _BG96_HTTP
 {
   public:
     _BG96_MQTT();
