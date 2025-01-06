@@ -10,7 +10,7 @@ Modem::Modem(Stream &atSerial, Stream &dSerial)
 // Initialisiert das Modem (ohne Netzwerkkonfiguration)
 bool Modem::startModem()
 {
-    if (_BG96.InitModule())
+    if (turnOnModem())
     {
         _BG96.SetDevOutputformat(true); // Set output format
         _BG96.SetDevCommandEcho(false); // Disable command echo
@@ -55,5 +55,19 @@ bool Modem::initModem()
 
     // _BG96.ScanCells(RAT, cells); // Uncomment if needed
 
+    return true;
+}
+
+bool Modem::turnOffModem(){
+    if(!_BG96.TurnOffGNSS()){
+        return false;
+    };
+    funkModuleEnable = false;
+}
+bool Modem::turnOnModem(){
+    if (!_BG96.InitModule()){
+        return false;
+    }
+    funkModuleEnable = true;
     return true;
 }

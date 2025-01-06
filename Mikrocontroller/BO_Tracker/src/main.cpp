@@ -5,10 +5,10 @@
 #define ATSerial Serial1
 
 // De- und Serialisation
-JsonDocument docInput;
-// JsonDocument docOutput;
+// JsonDocument docInput;
+JsonDocument docOutput;
 
-Tracker tracker(ATSerial, DSerial,docInput);
+Tracker tracker(ATSerial, DSerial,docOutput);
 
 RealTimeMode realtimeTracker(tracker);
 bool realtime = false;
@@ -24,7 +24,6 @@ void setup()
   delay(3000);
   tracker.firstStart();
 }
-
 
 void loop()
 {

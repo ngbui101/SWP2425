@@ -11,8 +11,11 @@ void Tracker::InitModule()
 {
     initBoard();
 
-    initModem();
-    
+    if (initModem())
+    {
+        funkModuleEnable = true;
+    }
+
     initHTTP();
 
     setCurrentTimeToRTC();
@@ -24,13 +27,11 @@ void Tracker::InitModule()
     DSerial.print("\nTotal Error: ");
     int totalError = initLogger.getErrorCount();
     DSerial.println(totalError);
-    char allErrorsBuffer[440]; 
+    char allErrorsBuffer[440];
     initLogger.getAllError(allErrorsBuffer);
     DSerial.println(allErrorsBuffer);
     initLogger.clear();
 }
-
-
 
 bool Tracker::setCurrentTimeToRTC()
 {
@@ -45,33 +46,42 @@ bool Tracker::setCurrentTimeToRTC()
     return true;
 }
 
-void Tracker::setModeRequest(bool modeRequest){
+void Tracker::setModeRequest(bool modeRequest)
+{
     this->modeRequest = modeRequest;
 }
 
-void Tracker::firstStart(){
+void Tracker::firstStart()
+{
     InitModule();
-    setHTTPURL();
-    docInput["IMEI"] = modemIMEI;
-    docInput["RequestMode"] = true;
+    setHTTPURL(http_url);
+
+    modeHandle();
+
     char payload[1028];
     char response[1028];
 
     serializeJsonPretty(docInput, payload);
-    sendAndReadResponse(payload,response);
 
-    if(setMode(response))
+    sendAndReadResponse(payload, response);
+
+    if (setMode(response))
         setModeRequest(false);
 
     docInput.clear();
 }
 
-bool Tracker::setMode(char *payload){
+bool Tracker::setMode(char *payload)
+{
     JsonDocument docOutput;
     DeserializationError error = deserializeJson(docOutput, payload);
 
     if (error == DeserializationError::Ok)
     {
+        if (docOutput["RequestMode"].is<boolean>())
+        {
+            modeRequest = docOutput["GnssMode"];
+        }
         if (docOutput["GnssMode"].is<boolean>())
         {
             trackerModes.GnssMode = docOutput["GnssMode"];
@@ -117,53 +127,117 @@ bool Tracker::setMode(char *payload){
                 if (geofence["geoRadius"].is<int>())
                 {
                     trackerModes.geoRadius = geofence["geoRadius"].as<unsigned int>();
-                    DSerial.print("Updated geoRadius to: ");
-                    DSerial.println(trackerModes.geoRadius);
                 }
 
                 if (geofence["geoLatitude"].is<float>())
                 {
                     trackerModes.geoLatitude = geofence["geoLatitude"];
-                    DSerial.print("Updated geoLatitude to: ");
-                    DSerial.println(trackerModes.geoLatitude);
                 }
 
                 if (geofence["geoLongitude"].is<float>())
                 {
                     trackerModes.geoLongitude = geofence["geoLongitude"];
-                    DSerial.print("Updated geoLongitude to: ");
-                    DSerial.println(trackerModes.geoLongitude);
                 }
 
                 if (geofence["GeoFenMode"].is<boolean>())
                 {
                     trackerModes.GeoFenMode = geofence["GeoFenMode"];
-                    DSerial.print("Updated GeoFenMode to: ");
-                    DSerial.println(trackerModes.GeoFenMode);
                 }
-        //         if (addGeo())
-        //         {
-        //             DSerial.println("Geo added successfully!");
-        //         }
-        //         else
-        //         {
-        //             DSerial.println("Failed to add geo!");
-        //         };
+                //         if (addGeo())
+                //         {
+                //             DSerial.println("Geo added successfully!");
+                //         }
+                //         else
+                //         {
+                //             DSerial.println("Failed to add geo!");
+                //         };
             }
-            else
-            {
-                DSerial.println("Geofences array is empty!");
-            }
-        }
-        else
-        {
-            DSerial.println("Geofences not found or invalid format!");
         }
     }
     else
     {
         DSerial.println("\r\n Error in Deserialization!");
         DSerial.println(error.c_str());
+        return false;
     }
     docOutput.clear();
+    return true;
+}
+
+bool Tracker::modeHandle()
+{
+    if (modeRequest)
+    {
+        docInput["RequestMode"] = true;
+    }
+    else
+    {
+        if (trackerModes.TemperatureMode)
+        {
+            docInput["Temperature"] = readTemperature();
+            docInput["Humidity"] = readHumidity();
+        }
+
+        // Batteriestand erfassen
+        if (trackerModes.BatteryMode)
+        {
+            docInput["BatteryPercentage"] = calculateBatteryPercentage();
+            ;
+        }
+
+        // Zellinformationen erfassen
+        if (trackerModes.CellInfosMode)
+        {
+            JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+            for (Cell *&cell : cells)
+            {
+                if (cell != nullptr)
+                {
+                    // JSON-Objekt für jede Zelle erstellen
+                    JsonObject cellObj = cellsArray.add<JsonObject>();
+                    cell->toJson(cellObj);
+                }
+            }
+        }
+        if (trackerModes.GnssMode)
+        {
+            handleGNSSMode();
+        }
+    }
+    // GNSS-Modus verwalten
+    // else if (gnssData.isOn)
+    // {
+    //     tracker.TurnOff();
+    // }
+
+    // Temperatur- und Feuchtigkeitsdaten sammeln
+
+    // Zeitstempel hinzufügen
+    docInput["IMEI"] = modemIMEI;
+    docInput["Timestamp"] = getDateTime();
+    // Daten veröffentlichen
+    // if (tracker.publishData("/pub"))
+    // {
+    //     // delay(300);
+    // }
+    // if (trackerModes.GeoFenMode)
+    // {
+    //     GEOFENCE_STATUS_t status = _BG96.getGeoFencingStatus(gnssData.geoID);
+    //     switch (status)
+    //     {
+    //     case OUTSIDE_GEOFENCE:
+    //         docInput["LeavingGeo"] = true;
+    //         if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
+    //         {
+    //             delay(300);
+    //         }
+    //         break;
+    //     case INSIDE_GEOFENCE:
+    //     case NOFIX:
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    // }
+    return true;
 }

@@ -10,7 +10,7 @@ public:
     ~HTTP();
 
     bool initHTTP();
-    bool setHTTPURL();
+    bool setHTTPURL(const char *url);
     bool sendPostRequest(char* payload);
     bool readResponse(char *recv_data);
     bool sendAndReadResponse(char* payload,char *recv_data);

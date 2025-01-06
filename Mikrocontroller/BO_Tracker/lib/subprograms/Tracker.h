@@ -19,9 +19,13 @@ public:
     void firstStart();
 
     bool setMode(char *payload);
+
+    bool modeHandle();
 private:
+    
     bool modeRequest = true;
-    Cell *cells[6] = {nullptr}; 
+    Cell *cells[6] = {nullptr};
+
 };
 
 #endif  // __TRACKER_H_

@@ -17,9 +17,9 @@ bool HTTP::initHTTP()
     return true;
 }
 
-bool HTTP::setHTTPURL()
+bool HTTP::setHTTPURL(const char *url)
 {
-    if (!_BG96.HTTPURL(http_url, WRITE_MODE))
+    if (!_BG96.HTTPURL(url, WRITE_MODE))
     {
         initLogger.logError("HTTP_Set_URL");
         return false;
@@ -29,7 +29,7 @@ bool HTTP::setHTTPURL()
 
 bool HTTP::sendPostRequest(char *payload)
 {
-    if (!_BG96.HTTPPOST(payload, 80))
+    if (!_BG96.HTTPPOST200(payload, 80))
     {
         return false;
     }

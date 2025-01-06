@@ -13,14 +13,16 @@ protected:
     // Das interne _BG96_Module-Objekt
     _BG96_Module _BG96;
     char modemIMEI[20]; 
-    
+    bool funkModuleEnable = false;
 public:
     // Konstruktor (nur zwei Streams)
     Modem(Stream &atSerial, Stream &dSerial);
 
     // Methoden
     bool startModem();         // Initialisiert das Modem
-    bool initModem();          // Führt die vollständige Initialisierung des Modems durch
+    bool initModem();
+    bool turnOffModem();
+    bool turnOnModem();          // Führt die vollständige Initialisierung des Modems durch
 };
 
 #endif  // __MODEM_H_

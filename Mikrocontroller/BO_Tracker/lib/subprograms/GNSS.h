@@ -11,10 +11,11 @@ protected:
         char gsv[516];
         unsigned long startMillis = 0;
         GNSS_Work_Mode_t workMode = MS_BASED;
-        bool isOn = false;
         unsigned int geoID = 1;
     } gnssData;
     JsonDocument &docInput;
+
+    bool gpsModuleEnable = false;
 public:
     // Konstruktor
     GNSS(Stream &atSerial, Stream &dSerial, JsonDocument &docInput);
