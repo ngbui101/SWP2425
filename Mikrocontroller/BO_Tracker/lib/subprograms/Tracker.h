@@ -1,9 +1,9 @@
 #ifndef __TRACKER_H_
 #define __TRACKER_H_
 
-#include "GNSS.h"
+#include "MQTT_AWS.h"
 
-class Tracker : public GNSS {
+class Tracker : public MQTT_AWS {
 
 public:
     // Konstruktor
@@ -12,7 +12,7 @@ public:
     // Methode zum Initialisieren des Trackers
     void InitModule();
 
-    bool setRTC();  
+    bool setCurrentTimeToRTC();  
 
 };
 

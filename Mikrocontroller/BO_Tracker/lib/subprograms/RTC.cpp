@@ -17,7 +17,7 @@ _RTC::~_RTC() {
  * @return true, wenn der Zeitstempel erfolgreich geparst und die RTC konfiguriert wurde.
  * @return false, wenn das Parsen des Zeitstempels fehlschlägt.
  */
-bool _RTC::setupRTCFromModem(const char *modemTime)
+bool _RTC::setcurrentTime(const char *modemTime)
 {
     // Überprüfen, ob der String das richtige Format hat
     size_t len = strlen(modemTime);

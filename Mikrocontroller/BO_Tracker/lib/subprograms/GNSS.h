@@ -1,9 +1,9 @@
 #ifndef __GNSS_H_
 #define __GNSS_H_
 
-#include "MQTT_AWS.h"  // GNSS erbt von MQTT_AWS
+#include "HTTP.h"  // GNSS erbt von MQTT_AWS
 
-class GNSS : public MQTT_AWS {
+class GNSS : public HTTP {
 protected:
     // GNSS-Tracker-Struktur
     struct GNSS_Data {
@@ -14,7 +14,7 @@ protected:
         bool isOn = false;
         unsigned int geoID = 1;
     } gnssData;
-
+    JsonDocument &docInput;
 public:
     // Konstruktor
     GNSS(Stream &atSerial, Stream &dSerial, JsonDocument &docInput);

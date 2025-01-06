@@ -9,7 +9,7 @@ public:
     _RTC();
     ~_RTC();
 
-    bool setupRTCFromModem(const char *modemTime);
+    bool setcurrentTime(const char *modemTime);
 
     char *getDateTime();
 

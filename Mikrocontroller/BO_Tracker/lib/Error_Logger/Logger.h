@@ -2,6 +2,7 @@
 #define _LOGGER_H_
 
 #include <Arduino.h>
+#include "BG96_Serial.h"
 
 #define MAX_ERRORS 20
 #define MAX_ERROR_LENGTH 20
@@ -13,6 +14,8 @@ public:
     bool logError(const char* message);
     void flushErrors(Stream& serial);
     int getErrorCount() const;
+    bool getAllError(char *errors);
+    void clear();
 
 private:
     int errorCount;

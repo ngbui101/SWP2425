@@ -2,86 +2,44 @@
 
 // Konstruktor ruft den Basisklassen-Konstruktor (GNSS) auf
 Tracker::Tracker(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
-    : GNSS(atSerial, dSerial, doc)
+    : MQTT_AWS(atSerial, dSerial, doc)
 {
 }
 
 // Beispiel-Implementierung der InitModule()-Funktion
 void Tracker::InitModule()
 {
-    DSerial.println("Beginne Initialisierung des Moduls...");
-    
-    if (initBoard())
-    {
-        DSerial.println("Board erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung des Boards.");
-        return;
-    }
-    // Schritt 1: Modem initialisieren
-    if (initModem())
-    {
-        DSerial.println("Modem erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung des Modems.");
-        return;
-    }
+    initBoard();
 
-     if (setRTC())
-    {
-        DSerial.println("RTC erfolgreich vom Modem gesetzt.");
-    }
-    else
-    {
-        DSerial.println("Fehler: RTC konnte nicht vom Modem gesetzt werden.");
-        return;
-    }
+    initModem();
     
-    // Schritt 2: Board initialisieren
+    initHTTP();
 
-    // Schritt 3: GNSS initialisieren
-    if (InitGNSS())
-    {
-        DSerial.println("GNSS erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung von GNSS.");
-        return;
-    }
-     // Schritt 4: MQTT initialisieren
-    if (initMQTT())
-    {
-        DSerial.println("MQTT erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung von MQTT.");
-        return;
-    }
-    
-    
-    DSerial.println("Alle Module erfolgreich initialisiert.");
+    setRTC();
+
+    InitGNSS();
+
+    // initMQTT();
+
+    DSerial.print("Total Error: ");
+    int totalError = initLogger.getErrorCount();
+    DSerial.println(totalError);
+    char allErrorsBuffer[440]; 
+    initLogger.getAllError(allErrorsBuffer);
+    DSerial.println(allErrorsBuffer);
+    initLogger.clear();
 }
 
 
-bool Tracker::setRTC()
+bool Tracker::setCurrentTimeToRTC()
 {
     const char *modemTime = _BG96.GetCurrentTime();
     DSerial.println(modemTime); // Ausgabe der Modem-Zeit
 
-    if (setupRTCFromModem(modemTime))
+    if (!setcurrentTime(modemTime))
     { // RTC im Board setzen
-        DSerial.println("RTC erfolgreich gesetzt!");
-        return true;
-    }
-    else
-    {
-        DSerial.println("RTC konnte nicht vom Modem übernommen werden.");
+        initLogger.logError("SetTime");
         return false;
     }
+    return true;
 }

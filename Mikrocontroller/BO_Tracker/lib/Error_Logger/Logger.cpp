@@ -28,3 +28,34 @@ void Logger::flushErrors(Stream& serial) {
 int Logger::getErrorCount() const {
     return errorCount;
 }
+
+bool Logger::getAllError(char *errorsBuffer) {
+    if (errorCount == 0) {
+        errorsBuffer[0] = '\0';
+        return true;
+    }
+
+    int currentPos = 0;
+    for (int i = 0; i < errorCount; i++) {
+        int len = strlen(this->errors[i]);
+        // Append the error
+        strcpy(&errorsBuffer[currentPos], this->errors[i]);
+        currentPos += len;
+
+        // Append comma and space if not the last error
+        if (i < errorCount - 1) {
+            errorsBuffer[currentPos++] = ',';
+            errorsBuffer[currentPos++] = ' ';
+            errorsBuffer[currentPos] = '\0'; 
+        }
+    }
+
+    return true;
+}
+
+void Logger::clear() {
+    errorCount = 0; 
+    for(int i = 0; i < MAX_ERRORS; i++) {
+        errors[i][0] = '\0';
+    }
+}

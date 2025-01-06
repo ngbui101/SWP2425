@@ -2,7 +2,7 @@
 
 // Konstruktor der Klasse GNSS
 GNSS::GNSS(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
-    : MQTT_AWS(atSerial, dSerial, doc) {}
+    : HTTP(atSerial, dSerial), docInput(doc) {}
 
 // Initialisiert GNSS
 bool GNSS::InitGNSS()
@@ -12,23 +12,21 @@ bool GNSS::InitGNSS()
 
     if (!_BG96.InitGpsOneXTRA(currentTimestamp))
     {
-        DSerial.println("Fehler: Init GpsOneXTRA fehlgeschlagen!");
+        initLogger.logError("GPS_OneXTRA");
         return false;
     }
 
     if (!_BG96.InitAGPS(SUPURL, APN))
     {
-        DSerial.println("Fehler: Init AGPS fehlgeschlagen!");
+        initLogger.logError("AGPS");
         return false;
     }
 
     if (!_BG96.SetGNSSEnableNMEASentences(true))
     {
-        DSerial.println("Fehler: NMEA-Sätze konnten nicht aktiviert werden!");
+        initLogger.logError("Enable_NMEA");
         return false;
     }
-
-    DSerial.println("GNSS erfolgreich initialisiert.");
     return true;
 }
 

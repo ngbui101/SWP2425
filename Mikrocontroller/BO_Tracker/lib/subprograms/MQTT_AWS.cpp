@@ -2,7 +2,7 @@
 
 // Konstruktor der MQTT_AWS-Klasse
 MQTT_AWS::MQTT_AWS(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
-    : Modem(atSerial, dSerial), docInput(doc)
+    : GNSS(atSerial, dSerial,doc)
 {
 }
 
@@ -15,24 +15,19 @@ bool MQTT_AWS::initMQTT()
     _BG96.DeleteCertificate("all");
 
     char ssl_error[128];
-    while (!_BG96.InitSSL(SSLIndex, aws_root_ca_pem, certificate_pem_crt, private_pem_key, ssl_error))
+    if (!_BG96.InitSSL(SSLIndex, aws_root_ca_pem, certificate_pem_crt, private_pem_key, ssl_error))
     {
-        DSerial.println(ssl_error);
+        initLogger.logError("MQTT:InitSSL");
     }
-    DSerial.println("SSL-Verbindung erfolgreich initialisiert!");
 
-    while (!_BG96.SetMQTTEnableSSL(MQTTIndex, SSLIndex, true))
+    if (!_BG96.SetMQTTEnableSSL(MQTTIndex, SSLIndex, true))
     {
-        DSerial.println("Fehler: SSL für MQTT konnte nicht aktiviert werden!");
+        initLogger.logError("MQTT:SetSSL");
     }
-    DSerial.println("SSL für MQTT erfolgreich aktiviert!");
-
-    while (!_BG96.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 150, SERVER_STORE_SUBSCRIPTIONS))
+    if (!_BG96.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 150, SERVER_STORE_SUBSCRIPTIONS))
     {
-        DSerial.println("Fehler: MQTT-Parameter konnten nicht konfiguriert werden!");
+        initLogger.logError("MQTT:Set_Parameters");
     }
-    DSerial.println("MQTT-Parameter erfolgreich konfiguriert!");
-
     return true; // Startet MQTT-Verbindung
 }
 
