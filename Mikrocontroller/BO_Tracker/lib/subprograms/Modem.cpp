@@ -10,34 +10,27 @@ Modem::Modem(Stream &atSerial, Stream &dSerial)
 // Initialisiert das Modem (ohne Netzwerkkonfiguration)
 bool Modem::startModem()
 {
-    DSerial.println("Starte Modem...");
     if (_BG96.InitModule())
     {
-        _BG96.SetDevOutputformat(true); // Setzt Ausgabeformat
-        _BG96.SetDevCommandEcho(false); // Deaktiviert Kommandoecho
-        _BG96.SaveSetting();            // Speichert Einstellungen
-        DSerial.println("Modem gestartet!");
+        _BG96.SetDevOutputformat(true); // Set output format
+        _BG96.SetDevCommandEcho(false); // Disable command echo
+        _BG96.SaveSetting();            // Save settings
     }
     else
     {
-        DSerial.println("Fehler: Modem konnte nicht gestartet werden.");
+        initLogger.logError("ModemStart");
         return false;
     }
     return true;
 }
 
-// Führt die vollständige Initialisierung des Modems durch
 bool Modem::initModem()
 {
-    DSerial.println("Beginne Modem-Initialisierung...");
-
-    // Starte das Modem
     if (!startModem())
     {
         return false;
     }
 
-    // Konfiguriere Netzwerkverbindung
     _BG96.ConfigNetworks(RAT);
     char imei_tmp[64];
 
@@ -46,28 +39,21 @@ bool Modem::initModem()
         String s = String(imei_tmp);
         s.trim();
         s.toCharArray(trackerModes.modemIMEI, 64);
-        DSerial.print("Modem IMEI: ");
-        DSerial.println(trackerModes.modemIMEI);
     }
     else
     {
-        DSerial.println("Fehler: Modem-IMEI konnte nicht abgerufen werden.");
+        initLogger.logError("ModemIMEI");
         return false;
     }
 
-    // Konfiguriere APN
     char apn_error[64];
     if (!_BG96.InitAPN(PDPIndex, APN, LOGIN, PASSWORD, apn_error))
     {
-        DSerial.print("APN-Fehler: ");
-        DSerial.println(apn_error);
+        initLogger.logError("APN");
         return false;
     }
 
-    // Scanne Zellinformationen
-    // _BG96.ScanCells(RAT, cells);
-    DSerial.println("Zellinformationen gescannt.");
+    // _BG96.ScanCells(RAT, cells); // Uncomment if needed
 
-    DSerial.println("Modem-Initialisierung abgeschlossen!");
     return true;
 }
