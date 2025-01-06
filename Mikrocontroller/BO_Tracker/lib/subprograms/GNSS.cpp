@@ -97,7 +97,11 @@ bool GNSS::addGeo()
 
 bool GNSS::TurnOff()
 {
-    _BG96.TurnOffGNSS();
-    gnssData.isOn = false;
-    gnssData.startMillis = 0;
+    if (_BG96.TurnOffGNSS())
+    {
+        gnssData.isOn = false;
+        gnssData.startMillis = 0;
+        return true;
+    }
+    return false;
 }
