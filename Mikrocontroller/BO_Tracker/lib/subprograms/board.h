@@ -1,32 +1,22 @@
 
 #ifndef __BOARD_H_
 #define __BOARD_H_
-#include <RTCZero.h>
-#include "Temperature.h"
-#include "ArduinoJson.h"
+
+#include "LowPower.h"
 
 const int wakeUpPin = 0;
 
-class _Board : public _Temperature
-{
+class _Board : public _Lowpower {
+
 public:
-    bool wake_up = false;
     _Board(Stream &DSerial);
+
+    ~_Board();
     bool initBoard();
 
-    bool setupRTCFromModem(const char *modemTime);
-
-    char *getDateTime();
-
-    bool waitWakeOnMotions();
-
-    void deepSleep(int millis);
-
-    bool checkOnMotionsfor10s();
-private:
-    RTCZero rtc;
-protected:  // Hier wird der Zugriffsschutz geändert
+protected:  
     Stream &DSerial;
+   
 };
 
 #endif
