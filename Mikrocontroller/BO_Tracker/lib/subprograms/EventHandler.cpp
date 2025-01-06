@@ -1,64 +1,14 @@
-#include "Mode_Handle.h"
+#include "EventHandler.h"
 
 // Konstruktor der Klasse Mode_Handle
-Mode_Handle::Mode_Handle(Stream &serial, _BG96_Module &_BG96, JsonDocument &docInput, JsonDocument &docOutput)
-    : GNSS(serial, _BG96, docInput), docOutput(docOutput) {}
-
-// Initialisiert alle Module
-void Mode_Handle::initModul() {
-     DSerial.println("Beginne Initialisierung des Moduls...");
-
-    // Schritt 1: Modem initialisieren
-    if (initModem())
-    {
-        DSerial.println("Modem erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung des Modems.");
-        return;
-    }
-    
-    // Schritt 2: Board initialisieren
-    if (initBoard())
-    {
-        DSerial.println("Board erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung des Boards.");
-        return;
-    }
-
-    // Schritt 3: GNSS initialisieren
-    if (InitGNSS())
-    {
-        DSerial.println("GNSS erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung von GNSS.");
-        return;
-    }
-     // Schritt 4: MQTT initialisieren
-    if (initMQTT())
-    {
-        DSerial.println("MQTT erfolgreich initialisiert.");
-    }
-    else
-    {
-        DSerial.println("Fehler bei der Initialisierung von MQTT.");
-        return;
-    }
-    
-    
-    DSerial.println("Alle Module erfolgreich initialisiert.");
-}
+EventHandler::EventHandler(Stream &serial, Tracker &tracker, JsonDocument &docInput, JsonDocument &docOutput )
+    : DSerial(serial),tracker(tracker), docInput(docInput), docOutput(docOutput) {}
 
 // Tägliche Updates
-void Mode_Handle::dailyUpdates() {
-    GPSOneXtraCheckForUpdate();
-    double temperature = readTemperature();
+void EventHandler::dailyUpdates()
+{
+    tracker.GPSOneXtraCheckForUpdate();
+    double temperature = tracker.readTemperature();
     if (temperature < -20)
     {
         docInput["TemperatureLow"] = true;
@@ -67,18 +17,19 @@ void Mode_Handle::dailyUpdates() {
     {
         docInput["TemperatureHigh"] = true;
     }
-    if (calculateBatteryPercentage() <= 10)
+    if (tracker.calculateBatteryPercentage() <= 10)
     {
         docInput["BatteryLow"] = true;
     }
-    if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
+    if (tracker.publishData("/notifications"))
     {
-        delay(300);
+        
     }
 }
 
 // Behandelt MQTT-Ereignisse
-void Mode_Handle::eventHandle(char *payload) {
+void EventHandler::setMode(char *payload)
+{
     DeserializationError error = deserializeJson(docOutput, payload);
 
     if (error == DeserializationError::Ok)
@@ -152,11 +103,14 @@ void Mode_Handle::eventHandle(char *payload) {
                     DSerial.print("Updated GeoFenMode to: ");
                     DSerial.println(trackerModes.GeoFenMode);
                 }
-                if(addGeo()){
-                    DSerial.println("Geo added successfully!");
-                }else{
-                    DSerial.println("Failed to add geo!");
-                };
+        //         if (addGeo())
+        //         {
+        //             DSerial.println("Geo added successfully!");
+        //         }
+        //         else
+        //         {
+        //             DSerial.println("Failed to add geo!");
+        //         };
             }
             else
             {
@@ -177,72 +131,76 @@ void Mode_Handle::eventHandle(char *payload) {
 }
 
 // Wartet und prüft MQTT-URC-Events
-void Mode_Handle::waitAndCheck() {
-    char payload[1028];
-    Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(payload, 2);
+// void EventHandler::waitAndCheck()
+// {
+//     char payload[1028];
+//     Mqtt_URC_Event_t ret = tracker.WaitCheckMQTTURCEvent(payload, 2);
 
-    switch (ret) {
-    case MQTT_RECV_DATA_EVENT:
-        DSerial.println("RECV_DATA_EVENT");
-        eventHandle(payload);
-        break;
-    case MQTT_STATUS_EVENT:
-        handleMQTTStatusEvent(payload);
-        break;
-    default:
-        break;
-    }
-}
+//     switch (ret)
+//     {
+//     case MQTT_RECV_DATA_EVENT:
+//         DSerial.println("RECV_DATA_EVENT");
+//         eventHandle(payload);
+//         break;
+//     case MQTT_STATUS_EVENT:
+//         handleMQTTStatusEvent(payload);
+//         break;
+//     default:
+//         break;
+//     }
+// }
 
 // Handhabt das Aufwachen aus dem Schlafmodus
-bool Mode_Handle::handleWakeUp() {
-    if (!startModem()) {
-        DSerial.println("Fehler beim Starten des Modems.");
-        return false;
-    }
+// bool EventHandler::handleWakeUp()
+// {
+//     if (!tracker.startModem())
+//     {
+//         DSerial.println("Fehler beim Starten des Modems.");
+//         return false;
+//     }
 
-    _BG96.ScanCells(RAT, cells);
+//     // _BG96.ScanCells(RAT, trackerModes.cells);
 
-    char apn_error[64];
-    if (!_BG96.TurnOnInternet(PDPIndex, apn_error)) {
-        DSerial.println(apn_error);
-        return false;
-    }
+//     char apn_error[64];
+//     if (!_BG96.TurnOnInternet(PDPIndex, apn_error))
+//     {
+//         DSerial.println(apn_error);
+//         return false;
+//     }
 
-    if (!initMQTT()) {
-        DSerial.println("Fehler beim Starten von MQTT.");
-        return false;
-    }
+//     if (!tracker.initMQTT())
+//     {
+//         DSerial.println("Fehler beim Starten von MQTT.");
+//         return false;
+//     }
 
-    modemOff = false;
-    return true;
-}
+//     modemOff = false;
+//     return true;
+// }
 
-void Mode_Handle::modeHandle(){
-    pub_time = millis();
+void EventHandler::collectData()
+{
     // GNSS-Modus verwalten
     if (trackerModes.GnssMode)
     {
-        handleGNSSMode();
+        tracker.handleGNSSMode();
     }
-    else if (gnssTracker.isOn)
-    {
-        _BG96.TurnOffGNSS();
-        gnssTracker.isOn = false;
-        gnssTracker.startMillis = 0;
-    }
+    // else if (gnssData.isOn)
+    // {
+    //     tracker.TurnOff();
+    // }
 
     // Temperatur- und Feuchtigkeitsdaten sammeln
     if (trackerModes.TemperatureMode)
     {
-        docInput["Temperature"] = readTemperature();
-        docInput["Humidity"] = readHumidity();
+        docInput["Temperature"] = tracker.readTemperature();
+        docInput["Humidity"] = tracker.readHumidity();
     }
 
     // Batteriestand erfassen
     if (trackerModes.BatteryMode)
     {
-        docInput["BatteryPercentage"] = calculateBatteryPercentage();
+        docInput["BatteryPercentage"] = tracker.calculateBatteryPercentage();
         ;
     }
 
@@ -250,7 +208,7 @@ void Mode_Handle::modeHandle(){
     if (trackerModes.CellInfosMode)
     {
         JsonArray cellsArray = docInput["cells"].to<JsonArray>();
-        for (Cell *&cell : cells)
+        for (Cell *&cell : trackerModes.cells)
         {
             if (cell != nullptr)
             {
@@ -268,29 +226,29 @@ void Mode_Handle::modeHandle(){
         docInput["RequestMode"] = true;
     }
     // Zeitstempel hinzufügen
-    docInput["Timestamp"] = getDateTime();
+    docInput["Timestamp"] = tracker.getDateTime();
     // Daten veröffentlichen
-    if (publishData(pub_time, AT_LEAST_ONCE, "/pub"))
+    if (tracker.publishData("/pub"))
     {
         // delay(300);
     }
-    if (trackerModes.GeoFenMode)
-    {
-        GEOFENCE_STATUS_t status = _BG96.getGeoFencingStatus(gnssTracker.geoID);
-        switch (status)
-        {
-        case OUTSIDE_GEOFENCE:
-            docInput["LeavingGeo"] = true;
-            if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
-            {
-                delay(300);
-            }
-            break;
-        case INSIDE_GEOFENCE:
-        case NOFIX:
-            break;
-        default:
-            break;
-        }
-    }
+    // if (trackerModes.GeoFenMode)
+    // {
+    //     GEOFENCE_STATUS_t status = _BG96.getGeoFencingStatus(gnssData.geoID);
+    //     switch (status)
+    //     {
+    //     case OUTSIDE_GEOFENCE:
+    //         docInput["LeavingGeo"] = true;
+    //         if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
+    //         {
+    //             delay(300);
+    //         }
+    //         break;
+    //     case INSIDE_GEOFENCE:
+    //     case NOFIX:
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    // }
 }

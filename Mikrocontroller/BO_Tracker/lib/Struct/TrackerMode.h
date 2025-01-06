@@ -1,7 +1,7 @@
 // TrackerMode.h
 #ifndef TRACKER_MODE_H_
 #define TRACKER_MODE_H_
-
+#include "Cell.h"
 struct TrackerModes {
     // Mode
     bool GnssMode = false;
@@ -14,6 +14,8 @@ struct TrackerModes {
     bool Modem_Off = false;
     unsigned int period = 5000UL;
 
+    char modemIMEI[20]; // IMEI des Modems
+    Cell *cells[6] = {nullptr}; // Zellinformationen
     // GeoFencing
     float geoLatitude = 0;
     float geoLongitude = 0;
@@ -42,7 +44,6 @@ struct TrackerModes {
     }
 };
 
-// Hier nur "extern" Deklaration
 extern TrackerModes trackerModes;
 
 #endif // TRACKER_MODE_H_

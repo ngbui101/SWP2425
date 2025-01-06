@@ -10,19 +10,14 @@
 // Modem-Klasse zur Verwaltung der Modem-Operationen
 class Modem : public _Board {
 protected:
-    // Private Attribute
-    _BG96_Module &_BG96;  // Modem-Objekt (einzige Instanz)
-
-    // Private Daten
-    char modemIMEI[20]; // IMEI des Modems
-    Cell *cells[6] = {nullptr}; // Zellinformationen
+    // Das interne _BG96_Module-Objekt
+    _BG96_Module _BG96;
 
 public:
-    // Konstruktor
-    Modem(Stream &serial, _BG96_Module &modem);
+    // Konstruktor (nur zwei Streams)
+    Modem(Stream &atSerial, Stream &dSerial);
 
     // Methoden
-    bool setRTC();             // Setzt die RTC des Boards
     bool startModem();         // Initialisiert das Modem
     bool initModem();          // Führt die vollständige Initialisierung des Modems durch
 };

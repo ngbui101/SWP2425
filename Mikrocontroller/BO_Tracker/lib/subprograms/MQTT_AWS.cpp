@@ -1,8 +1,8 @@
 #include "MQTT_AWS.h"
 
 // Konstruktor der MQTT_AWS-Klasse
-MQTT_AWS::MQTT_AWS(Stream &serial, _BG96_Module &modem,JsonDocument &doc)
-    : Modem(serial, modem), docInput(doc)
+MQTT_AWS::MQTT_AWS(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
+    : Modem(atSerial, dSerial), docInput(doc)
 {
 }
 
@@ -11,7 +11,7 @@ bool MQTT_AWS::initMQTT()
 {   
     // MQTT-Base-Topic mit IMEI erweitern
     strcpy(mqtt_base_topic, "tracker/");
-    strcat(mqtt_base_topic, modemIMEI);
+    strcat(mqtt_base_topic, trackerModes.modemIMEI);
     _BG96.DeleteCertificate("all");
 
     char ssl_error[128];
@@ -33,7 +33,7 @@ bool MQTT_AWS::initMQTT()
     }
     DSerial.println("MQTT-Parameter erfolgreich konfiguriert!");
 
-    return startMQTT(); // Startet MQTT-Verbindung
+    return true; // Startet MQTT-Verbindung
 }
 
 // Startet die MQTT-Verbindung
@@ -75,8 +75,8 @@ bool MQTT_AWS::startMQTT()
 }
 
 // Veröffentlicht Daten auf dem MQTT-Topic
-bool MQTT_AWS::publishData(unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS, const char *subtopic)
-{
+bool MQTT_AWS::publishData(const char *subtopic)
+{      
     char payload[1028];
     serializeJsonPretty(docInput, payload);
 
@@ -90,7 +90,6 @@ bool MQTT_AWS::publishData(unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS, const c
     {
         DSerial.println("Veröffentlichung erfolgreich!");
         docInput.clear();
-        pub_time = millis();
         return true;
     }
     else
@@ -117,6 +116,7 @@ void MQTT_AWS::handleMQTTStatusEvent(char *payload)
         DSerial.println(atoi(sta_buf + 1));
     }
 }
-unsigned long MQTT_AWS::getPub_time(){
-    return pub_time;
+
+void MQTT_AWS::waitForResponse(){
+    
 }

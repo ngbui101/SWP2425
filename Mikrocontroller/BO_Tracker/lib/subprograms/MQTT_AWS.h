@@ -8,18 +8,18 @@ class MQTT_AWS : public Modem {
 protected:
     char mqtt_base_topic[32]; // Basis-Topic für MQTT-Kommunikation
     JsonDocument &docInput;
-    unsigned long pub_time = 0;
 public:
     // Konstruktor
-    MQTT_AWS(Stream &serial, _BG96_Module &modem,JsonDocument &docInput);
+    MQTT_AWS(Stream &atSerial, Stream &dSerial, JsonDocument &docInput);
 
     // Methoden
     bool initMQTT();             // Initialisiert die MQTT-Verbindung
     bool startMQTT();            // Startet die MQTT-Verbindung
-    bool publishData(unsigned long &pub_time, Mqtt_Qos_t MQTT_QoS, const char *subtopic); // Veröffentlicht Daten
-    void handleMQTTStatusEvent(char *payload); // Behandelt Statusereignisse des MQTT-Clients
-
-    unsigned long getPub_time(); //
+    bool publishData(const char *subtopic); // Veröffentlicht Daten
+    void handleMQTTStatusEvent(char *payload);
+    
+    void waitForResponse();
+     // Behandelt Statusereignisse des MQTT-Clients
 };
 
 #endif // __MQTT_AWS_H_
