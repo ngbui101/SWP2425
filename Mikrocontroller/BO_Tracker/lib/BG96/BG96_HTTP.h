@@ -41,6 +41,8 @@ class _BG96_HTTP : public _BG96_SSL
 
     bool HTTPReadToFile(const char *filename, unsigned int timeout);
 
+    bool HTTPPOST200(char *post_data, unsigned int timeout);
+
   private:
 
 };
