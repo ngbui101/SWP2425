@@ -38,7 +38,7 @@ bool Modem::initModem()
     {
         String s = String(imei_tmp);
         s.trim();
-        s.toCharArray(trackerModes.modemIMEI, 64);
+        s.toCharArray(modemIMEI, 64);
     }
     else
     {

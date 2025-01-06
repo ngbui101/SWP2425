@@ -13,9 +13,6 @@ struct TrackerModes {
     bool RequestMode = true;
     bool Modem_Off = false;
     unsigned int period = 5000UL;
-
-    char modemIMEI[20]; // IMEI des Modems
-    Cell *cells[6] = {nullptr}; // Zellinformationen
     // GeoFencing
     float geoLatitude = 0;
     float geoLongitude = 0;
@@ -28,20 +25,20 @@ struct TrackerModes {
         TemperatureMode = false;
         NmeaMode = false;
         GeoFenMode = false;
-        RequestMode = true;
+        // RequestMode = true;
         period = 5000UL;
         geoLatitude = 0;
         geoLongitude = 0;
         geoRadius = 0;
     }
 
-    void updateRequestMode(){
-        if(GnssMode || CellInfosMode || TemperatureMode || NmeaMode || BatteryMode){
-            RequestMode = false;
-        } else {
-            RequestMode = true;
-        }
-    }
+    // void updateRequestMode(){
+    //     if(GnssMode || CellInfosMode || TemperatureMode || NmeaMode || BatteryMode){
+    //         RequestMode = false;
+    //     } else {
+    //         RequestMode = true;
+    //     }
+    // }
 };
 
 extern TrackerModes trackerModes;

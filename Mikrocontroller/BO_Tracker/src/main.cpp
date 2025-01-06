@@ -6,7 +6,7 @@
 
 // De- und Serialisation
 JsonDocument docInput;
-JsonDocument docOutput;
+// JsonDocument docOutput;
 
 Tracker tracker(ATSerial, DSerial,docInput);
 
@@ -22,7 +22,7 @@ void setup()
   while (ATSerial.read() >= 0)
     ; // Buffer leeren
   delay(3000);
-  tracker.InitModule();
+  tracker.firstStart();
 }
 
 

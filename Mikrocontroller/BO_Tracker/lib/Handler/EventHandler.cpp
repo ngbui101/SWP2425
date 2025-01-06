@@ -178,77 +178,77 @@ void EventHandler::setMode(char *payload)
 //     return true;
 // }
 
-void EventHandler::collectData()
-{
-    // GNSS-Modus verwalten
-    if (trackerModes.GnssMode)
-    {
-        tracker.handleGNSSMode();
-    }
-    // else if (gnssData.isOn)
-    // {
-    //     tracker.TurnOff();
-    // }
+// void EventHandler::collectData()
+// {
+//     // GNSS-Modus verwalten
+//     if (trackerModes.GnssMode)
+//     {
+//         tracker.handleGNSSMode();
+//     }
+//     // else if (gnssData.isOn)
+//     // {
+//     //     tracker.TurnOff();
+//     // }
 
-    // Temperatur- und Feuchtigkeitsdaten sammeln
-    if (trackerModes.TemperatureMode)
-    {
-        docInput["Temperature"] = tracker.readTemperature();
-        docInput["Humidity"] = tracker.readHumidity();
-    }
+//     // Temperatur- und Feuchtigkeitsdaten sammeln
+//     if (trackerModes.TemperatureMode)
+//     {
+//         docInput["Temperature"] = tracker.readTemperature();
+//         docInput["Humidity"] = tracker.readHumidity();
+//     }
 
-    // Batteriestand erfassen
-    if (trackerModes.BatteryMode)
-    {
-        docInput["BatteryPercentage"] = tracker.calculateBatteryPercentage();
-        ;
-    }
+//     // Batteriestand erfassen
+//     if (trackerModes.BatteryMode)
+//     {
+//         docInput["BatteryPercentage"] = tracker.calculateBatteryPercentage();
+//         ;
+//     }
 
-    // Zellinformationen erfassen
-    if (trackerModes.CellInfosMode)
-    {
-        JsonArray cellsArray = docInput["cells"].to<JsonArray>();
-        for (Cell *&cell : trackerModes.cells)
-        {
-            if (cell != nullptr)
-            {
-                // JSON-Objekt für jede Zelle erstellen
-                JsonObject cellObj = cellsArray.add<JsonObject>();
-                cell->toJson(cellObj);
-            }
-        }
-    }
+//     // Zellinformationen erfassen
+//     if (trackerModes.CellInfosMode)
+//     {
+//         JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+//         for (Cell *&cell : trackerModes.cells)
+//         {
+//             if (cell != nullptr)
+//             {
+//                 // JSON-Objekt für jede Zelle erstellen
+//                 JsonObject cellObj = cellsArray.add<JsonObject>();
+//                 cell->toJson(cellObj);
+//             }
+//         }
+//     }
 
-    // Request-Modus setzen
-    trackerModes.updateRequestMode();
-    if (trackerModes.RequestMode)
-    {
-        docInput["RequestMode"] = true;
-    }
-    // Zeitstempel hinzufügen
-    docInput["Timestamp"] = tracker.getDateTime();
-    // Daten veröffentlichen
-    if (tracker.publishData("/pub"))
-    {
-        // delay(300);
-    }
-    // if (trackerModes.GeoFenMode)
-    // {
-    //     GEOFENCE_STATUS_t status = _BG96.getGeoFencingStatus(gnssData.geoID);
-    //     switch (status)
-    //     {
-    //     case OUTSIDE_GEOFENCE:
-    //         docInput["LeavingGeo"] = true;
-    //         if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
-    //         {
-    //             delay(300);
-    //         }
-    //         break;
-    //     case INSIDE_GEOFENCE:
-    //     case NOFIX:
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    // }
-}
+//     // Request-Modus setzen
+//     trackerModes.updateRequestMode();
+//     if (trackerModes.RequestMode)
+//     {
+//         docInput["RequestMode"] = true;
+//     }
+//     // Zeitstempel hinzufügen
+//     docInput["Timestamp"] = tracker.getDateTime();
+//     // Daten veröffentlichen
+//     if (tracker.publishData("/pub"))
+//     {
+//         // delay(300);
+//     }
+//     // if (trackerModes.GeoFenMode)
+//     // {
+//     //     GEOFENCE_STATUS_t status = _BG96.getGeoFencingStatus(gnssData.geoID);
+//     //     switch (status)
+//     //     {
+//     //     case OUTSIDE_GEOFENCE:
+//     //         docInput["LeavingGeo"] = true;
+//     //         if (publishData(pub_time, AT_LEAST_ONCE, "/notifications"))
+//     //         {
+//     //             delay(300);
+//     //         }
+//     //         break;
+//     //     case INSIDE_GEOFENCE:
+//     //     case NOFIX:
+//     //         break;
+//     //     default:
+//     //         break;
+//     //     }
+//     // }
+// }

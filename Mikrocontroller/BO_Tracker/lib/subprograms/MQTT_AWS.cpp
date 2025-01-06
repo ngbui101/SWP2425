@@ -11,7 +11,7 @@ bool MQTT_AWS::initMQTT()
 {   
     // MQTT-Base-Topic mit IMEI erweitern
     strcpy(mqtt_base_topic, "tracker/");
-    strcat(mqtt_base_topic, trackerModes.modemIMEI);
+    strcat(mqtt_base_topic, modemIMEI);
     _BG96.DeleteCertificate("all");
 
     char ssl_error[128];

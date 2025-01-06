@@ -12,10 +12,17 @@ bool HTTP::initHTTP()
     if (!_BG96.SetHTTPConfigParameters(PDPIndex, false, false, http_type))
     {
         initLogger.logError("HTTP_Parameters");
+        return false;
     }
+    return true;
+}
+
+bool HTTP::setHTTPURL()
+{
     if (!_BG96.HTTPURL(http_url, WRITE_MODE))
     {
         initLogger.logError("HTTP_Set_URL");
+        return false;
     }
     return true;
 }
