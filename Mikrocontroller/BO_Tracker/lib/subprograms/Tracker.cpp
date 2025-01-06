@@ -15,7 +15,7 @@ void Tracker::InitModule()
     
     initHTTP();
 
-    setRTC();
+    setCurrentTimeToRTC();
 
     InitGNSS();
 
