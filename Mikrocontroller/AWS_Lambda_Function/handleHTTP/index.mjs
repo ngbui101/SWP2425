@@ -7,7 +7,9 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
 
     try {
         // Hole Modusinformationen
-        const modeDoc = await modeCollection.findOne({ tracker: new ObjectId(String(trackerId)) });
+        const modeDoc = await modeCollection.findOne({ 
+            tracker: new ObjectId(String(trackerId)) 
+        });
 
         const modeData = modeDoc ? {
             GnssMode: modeDoc.GnssMode,
@@ -15,11 +17,13 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
             BatteryMode: modeDoc.BatteryMode,
             TemperatureMode: modeDoc.TemperatureMode,
             NmeaMode: modeDoc.NmeaMode,
-            frequenz: modeDoc.frequenz
+            frequenz: modeDoc.frequenz // => long/number
         } : {};
 
         // Hole Geofence-Informationen
-        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId))});
+        const geofencesCursor = geofencesCollection.find({
+            tracker: new ObjectId(String(trackerId))
+        });
         const geofences = await geofencesCursor.toArray();
         const geofenceData = geofences.map(geo => ({
             geoRadius: parseInt(geo.radius),
@@ -96,9 +100,12 @@ export const handler = async (event) => {
     const mongoURI = process.env.MONGO_URI;
     const client = new MongoClient(mongoURI);
 
-    // Bei HTTP-Events kommt der Body meist als string, ggf. parsen
-    const requestData = typeof event.body === 'string' ? JSON.parse(event.body) : event;
+    // Body parsen bei HTTP-Events
+    const requestData = typeof event.body === 'string' 
+        ? JSON.parse(event.body) 
+        : event;
 
+    // Relevante Felder aus dem Request
     const data = {
         IMEI: requestData.IMEI,
         Timestamp: requestData.Timestamp,
@@ -106,13 +113,15 @@ export const handler = async (event) => {
         Temperature: requestData.Temperature,
         Humidity: requestData.Humidity,
         BatteryPercentage: requestData.BatteryPercentage,
-        Position: requestData.Position,
+        gnss: requestData.gnss,
         GSA: requestData.GSA,
         GSV: requestData.GSV,
         Accuracy: requestData.Accuracy,
         RequestMode: requestData.RequestMode,
         BatteryLow: requestData.BatteryLow,
-        TimeToGetFirstFix: requestData.TimeToGetFirstFix
+        TimeToGetFirstFix: requestData.TimeToGetFirstFix,
+        gnss: requestData.gnss,        
+        frequenz: requestData.frequenz 
     };
 
     try {
@@ -130,42 +139,129 @@ export const handler = async (event) => {
         }
 
         const trackerId = trackerDoc._id;
+        // Hole modeData & geofenceData
+        const { modeData, geofenceData } = await getModeAndGeofencesFromMongo(trackerId, database);
+
+        // Checks, ob Daten gesendet wurden
+        const isBatteryDataSent = (data.BatteryPercentage !== undefined);
+        const isTempHumDataSent  = (data.Temperature !== undefined || data.Humidity !== undefined);
+        const isCellDataSent     = (data.Cells && Array.isArray(data.Cells) && data.Cells.length > 0);
+        const isGnssDataSent     = (data.gnss !== undefined);
+        const isNmeaDataSent     = (data.GSA !== undefined || data.GSV !== undefined);
+        const isFrequenzSent     = (data.frequenz !== undefined);
+
+        // Mismatch-Objekt
+        const mismatches = {};
+
+        // BatteryMode
+        if (isBatteryDataSent && modeData.BatteryMode === false) {
+            mismatches.BatteryMode = false;  
+        }
+        if (!isBatteryDataSent && modeData.BatteryMode === true) {
+            mismatches.BatteryMode = true;
+        }
+
+        // TemperatureMode
+        if (isTempHumDataSent && modeData.TemperatureMode === false) {
+            mismatches.TemperatureMode = false;
+        }
+        if (!isTempHumDataSent && modeData.TemperatureMode === true) {
+            mismatches.TemperatureMode = true;
+        }
+
+        // CellInfosMode
+        if (isCellDataSent && modeData.CellInfosMode === false) {
+            mismatches.CellInfosMode = false;
+        }
+        if (!isCellDataSent && modeData.CellInfosMode === true) {
+            mismatches.CellInfosMode = true;
+        }
+
+        // GnssMode
+        if (isGnssDataSent && modeData.GnssMode === false) {
+            mismatches.GnssMode = false;
+        }
+        if (!isGnssDataSent && modeData.GnssMode === true) {
+            mismatches.GnssMode = true;
+        }
+
+        // NmeaMode
+        if (isNmeaDataSent && modeData.NmeaMode === false) {
+            mismatches.NmeaMode = false;
+        }
+        if (!isNmeaDataSent && modeData.NmeaMode === true) {
+            mismatches.NmeaMode = true;
+        }
+
+        // Frequenz
+        // Hier: Wenn Frequenz gesendet, aber != modeData.frequenz => mismatch
+        //       Wenn Frequenz nicht gesendet, aber modeData.frequenz != null => mismatch
+        if (isFrequenzSent) {
+            if (data.frequenz !== modeData.frequenz) {
+                // Wir geben hier in der Antwort die **erwartete** Frequenz als number zurück
+                mismatches.frequenz = modeData.frequenz; 
+            }
+        } else {
+            // Frequenz gar nicht gesendet
+            if (modeData.frequenz !== undefined && modeData.frequenz !== null) {
+                mismatches.frequenz = modeData.frequenz;
+            }
+        }
+
+        // Falls Mismatch => zurückgeben mit Status 200
+        // (Daten werden NICHT inserted)
+        if (Object.keys(mismatches).length > 0) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify(mismatches)
+            };
+        }
+
+        // Wenn RequestMode=true, soll Mode-Data & Geofences zurückkommen (Option)
+        if (data.RequestMode === true) {
+            const payload = { ...modeData, geofences: geofenceData };
+            return {
+                statusCode: 200,
+                body: JSON.stringify(payload)
+            };
+        }
+
+        // => Kein Mismatch => Daten verarbeiten
         const collection = database.collection('measurements');
         const documentsToInsert = [];
 
-        if (data.Position) {
-            const [_, latitudeStr, longitudeStr, hdopStr, __, fixStr, ___, ____, _____, ______, nsatStr] = data.Position.split(",");
-            const latitude = parseFloat(latitudeStr);
-            const longitude = parseFloat(longitudeStr);
-
+        // GNSS
+        if (isGnssDataSent) {
             documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "GPS",
-                latitude,
-                longitude,
+                latitude: data.gnss.latitude,
+                longitude: data.gnss.longitude,
+                hdop: data.gnss.hdop,
+                nsat: data.gnss.nsat,
                 tracker: new ObjectId(trackerId),
-                accuracy: data.Accuracy,
-                timeToGetFirstFix: data.TimeToGetFirstFix,
+                accuracy: data.gnss.accuracy,
+                timeToGetFirstFix: data.gnss.TTFF,
                 createdAt: data.Timestamp,
                 updatedAt: data.Timestamp
             });
         }
 
-        if (data.Cells && Array.isArray(data.Cells) && data.Cells.length > 0) {
+        // Cell
+        if (isCellDataSent) {
             const location = await getCellLocationAndEstimatedPositionFromUnwiredLabs(data.Cells);
             if (location) {
                 const radioType = data.Cells[0].radio || "unknown";
-
                 const modeMap = {
                     "lte": "LTE",
                     "gsm": "GSM",
                     "nbiot": "NBIOT"
                 };
-                const mode = modeMap[radioType.toLowerCase()] || radioType.toUpperCase();
+                const resolvedMode = modeMap[radioType.toLowerCase()] || radioType.toUpperCase();
 
                 documentsToInsert.push({
                     imei: data.IMEI,
-                    mode: mode,
+                    mode: "LTE",
                     latitude: location.latitude,
                     longitude: location.longitude,
                     accuracy: location.accuracy,
@@ -176,7 +272,8 @@ export const handler = async (event) => {
             }
         }
 
-        if (data.Temperature !== undefined || data.Humidity !== undefined) {
+        // Temperature/Humidity
+        if (isTempHumDataSent) {
             documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "TemperatureHumidity",
@@ -188,7 +285,8 @@ export const handler = async (event) => {
             });
         }
 
-        if (data.BatteryPercentage !== undefined) {
+        // Battery
+        if (isBatteryDataSent) {
             documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "Battery",
@@ -199,18 +297,7 @@ export const handler = async (event) => {
             });
         }
 
-        if (data.RequestMode === true) {
-            const { modeData, geofenceData } = await getModeAndGeofencesFromMongo(trackerId, database);
-
-            const payload = { ...modeData, geofences: geofenceData };
-            
-            // Anstatt publishToAwsIoT: direkter Return als HTTP-Response
-            return {
-                statusCode: 200,
-                body: JSON.stringify(payload)
-            };
-        }
-
+        // Daten einfügen
         if (documentsToInsert.length > 0) {
             await collection.insertMany(documentsToInsert);
             console.log(`${documentsToInsert.length} document(s) inserted.`);
@@ -218,9 +305,10 @@ export const handler = async (event) => {
             console.log("No valid measurement data found; no documents were inserted.");
         }
 
+        // Am Ende: alles OK => {"valid": true}
         return {
             statusCode: 200,
-            body: JSON.stringify('Data successfully processed and inserted')
+            body: JSON.stringify({ valid: true })
         };
     } catch (error) {
         console.error("Error inserting data: ", error);
