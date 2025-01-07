@@ -18,7 +18,7 @@ void Tracker::InitModule()
 
     InitGNSS();
 
-    connect =true;
+    connect = true;
 }
 
 bool Tracker::setCurrentTimeToRTC()
@@ -308,13 +308,41 @@ bool Tracker::turnOffModem()
     return true;
 }
 
-bool Tracker::resetModem(){
+bool Tracker::resetModem()
+{
 
     if (!turnOffModem())
         return false;
     delay(3000);
-    if(!turnOnModem())
+    if (!turnOnModem())
         return false;
 
+    return true;
+}
+bool Tracker::turnOnFunctionality()
+{
+    if (!isModemAvailable() && !turnOnModem())
+    {
+        return false;
+    }
+    if (trackerModes.GnssMode && !isGnssModuleEnable() && !TurnOnGNSS())
+    {
+        // Serial.println("TurnOnGNSS");
+        return false;
+    }
+    if (!isConnected() && !startConnect())
+    {
+        // Serial.println("startConnect");
+        return false;
+    }
+    if (!isUrlSetted() && !setHTTPURL(http_url))
+    {
+        // Serial.println("setHTTPURL");
+        return false;
+    }
+    if (!isMQTTAvaliable() && useMQTT && !startMQTT())
+    {
+        return false;
+    }
     return true;
 }

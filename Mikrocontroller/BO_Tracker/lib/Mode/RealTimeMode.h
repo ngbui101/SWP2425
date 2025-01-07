@@ -14,7 +14,7 @@ public:
 
     // Methoden
     void start();
-    void setup();
+    bool setup();
     void loop();
 };
 

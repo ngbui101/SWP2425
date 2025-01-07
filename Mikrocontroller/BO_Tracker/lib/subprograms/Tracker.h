@@ -41,10 +41,10 @@ public:
 
     bool resetModem();
 
+    bool turnOnFunctionality();
 private:
     unsigned long pub_time = 0;
     bool modeRequest = true;
-
 };
 
 #endif  // __TRACKER_H_

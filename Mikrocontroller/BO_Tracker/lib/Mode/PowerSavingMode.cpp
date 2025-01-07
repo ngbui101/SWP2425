@@ -5,19 +5,21 @@ PowerSavingMode::PowerSavingMode(Tracker &trackerObj)
 {
 }
 
-
-void PowerSavingMode::start() {
-    setup();
+void PowerSavingMode::start()
+{
+    if (!setup())
+        return;
     loop();
 }
 
-
-void PowerSavingMode::setup() {
-    
+bool PowerSavingMode::setup()
+{
+    tracker.turnOnFunctionality();
 }
 
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
-void PowerSavingMode::loop() {
+void PowerSavingMode::loop()
+{
     Serial.println("PowerSavingMode");
     delay(1000);
 }

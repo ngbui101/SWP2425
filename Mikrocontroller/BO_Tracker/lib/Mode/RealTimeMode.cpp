@@ -7,37 +7,14 @@ RealTimeMode::RealTimeMode(Tracker &trackerObj)
 
 void RealTimeMode::start()
 {
-    setup();
+    if (!setup())
+        return;
     loop();
 }
 
-void RealTimeMode::setup()
+bool RealTimeMode::setup()
 {
-    if (!tracker.isModemAvailable())
-    {
-        Serial.println("turnOnModem");
-        if (!tracker.turnOnModem())
-            return;
-    }
-    if (trackerModes.GnssMode && !tracker.isGnssModuleEnable())
-    {
-        Serial.println("TurnOnGNSS");
-        tracker.TurnOnGNSS();
-    }
-    if (!tracker.isConnected())
-    {
-        Serial.println("startConnect");
-        tracker.startConnect();
-    }
-    if (!tracker.isUrlSetted())
-    {
-        Serial.println("setHTTPURL");
-        tracker.setHTTPURL(http_url);
-    }
-    // if (!tracker.isMQTTAvaliable())
-    // {
-    //     tracker.startMQTT();
-    // }
+    return tracker.turnOnFunctionality();
 }
 
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)

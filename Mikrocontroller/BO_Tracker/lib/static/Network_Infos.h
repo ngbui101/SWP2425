@@ -8,6 +8,7 @@ const char SUPURL[]  = "supl.google.com:7276";
 const char LOGIN[] = "";
 const char PASSWORD[] = "";
 const char RAT[] = "gsm";
+const bool useMQTT = false;
 const unsigned int PDPIndex = 1;
 
 #endif
