@@ -9,6 +9,7 @@ public:
     // Konstruktor
     Tracker(Stream &atSerial, Stream &dSerial, JsonDocument &doc);
 
+    ~Tracker();
     // Methode zum Initialisieren des Trackers
     void InitModule();
 
@@ -30,14 +31,15 @@ public:
 
     bool responseValid(char *payload);
 
-    bool turnOffTracker();
-
     int getInitErrorCount();
 
     int getRunningErrorCount();
 
     int checkForError();
 
+    bool turnOffModem();
+
+    bool resetModem();
 
 private:
     unsigned long pub_time = 0;

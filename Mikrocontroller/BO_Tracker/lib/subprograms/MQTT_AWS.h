@@ -13,7 +13,7 @@ class MQTT_AWS : public GNSS
 {
 protected:
     char mqtt_base_topic[32];
-    bool available = false;
+    bool mqtt_available = false;
 
 public:
     // Konstruktor

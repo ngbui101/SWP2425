@@ -5,22 +5,20 @@ Tracker::Tracker(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
     : MQTT_AWS(atSerial, dSerial, doc)
 {
 }
+Tracker::~Tracker() {}
 
 // Beispiel-Implementierung der InitModule()-Funktion
 void Tracker::InitModule()
 {
     initBoard();
 
-    if (initModem())
-    {
-        funkModuleEnable = true;
-    }
+    initModem();
 
     initHTTP();
 
-    setCurrentTimeToRTC();
-
     InitGNSS();
+
+    connect =true;
 }
 
 bool Tracker::setCurrentTimeToRTC()
@@ -44,6 +42,10 @@ void Tracker::setModeRequest(bool modeRequest)
 void Tracker::firstStart()
 {
     InitModule();
+    // startConnect();
+
+    setCurrentTimeToRTC();
+
     setHTTPURL(http_url);
 
     modeHandle();
@@ -63,15 +65,18 @@ void Tracker::firstStart()
     checkForError();
 }
 
-int Tracker::checkForError(){
-    int totalErrors = getInitErrorCount()+getRunningErrorCount();
-    if(totalErrors != 0){
+int Tracker::checkForError()
+{
+    int totalErrors = getInitErrorCount() + getRunningErrorCount();
+    if (totalErrors != 0)
+    {
         initLogger.flushErrors();
         runningLogger.flushErrors();
     }
     return totalErrors;
 }
-bool Tracker::responseValid(char *payload){
+bool Tracker::responseValid(char *payload)
+{
     JsonDocument docOutput;
     DeserializationError error = deserializeJson(docOutput, payload);
 
@@ -217,7 +222,7 @@ bool Tracker::modeHandle()
 }
 
 bool Tracker::sendAndCheck()
-{   
+{
     if (isMQTTAvaliable())
     {
         return pubAndsubMQTT();
@@ -253,8 +258,11 @@ bool Tracker::pubAndsubMQTT()
 
 bool Tracker::sendAndWaitResponseHTTP()
 {
+    int count = 0;
     while (abs(millis() - pub_time) >= trackerModes.period - 1000)
     {
+        DSerial.println("Start");
+
         char payload[1028];
         char response[1028];
         if (!modeHandle())
@@ -264,26 +272,60 @@ bool Tracker::sendAndWaitResponseHTTP()
         if (!serializeJsonPretty(docInput, payload))
             return false;
 
+        docInput.clear();
+
         if (!sendAndReadResponse(payload, response))
             return false;
 
         if (!responseValid(response))
-        {   
-            return setMode(response);
+        {
+            setMode(response);
+            DSerial.println("Set Mode Erfolgreich");
+            return false;
         }
         pub_time = millis();
-        docInput.clear();
+        DSerial.println("Senden Data Erfolgreich");
+        count++;
+        DSerial.print("Versuch: ");
+        DSerial.println(count);
         return true;
     }
-    checkForError();
     return false;
 }
 
-int Tracker::getInitErrorCount(){
+int Tracker::getInitErrorCount()
+{
     return initLogger.getErrorCount();
 }
 
-int Tracker::getRunningErrorCount(){
+int Tracker::getRunningErrorCount()
+{
     return runningLogger.getErrorCount();
 }
 
+bool Tracker::turnOffModem()
+{
+    if (!_BG96.PowerOffModule())
+    {
+        return false;
+    };
+    funkModuleEnable = false;
+    connect = false;
+    getFirstFix = false;
+    gpsModuleEnable = false;
+    urlSetted = false;
+    mqtt_available = false;
+    return true;
+}
+
+bool Tracker::resetModem(){
+
+    if (!turnOffModem())
+        return false;
+    delay(3000);
+    Serial.println("Turn On Modem");
+    if(!turnOnModem())
+        return false;
+
+    return true;
+}

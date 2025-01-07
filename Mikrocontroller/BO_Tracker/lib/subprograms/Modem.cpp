@@ -53,31 +53,43 @@ bool Modem::initModem()
         return false;
     }
 
-    _BG96.ScanCells(RAT, cells); // Uncomment if needed
+    // _BG96.ScanCells(RAT, cells); // Uncomment if needed
 
     return true;
 }
 
-bool Modem::turnOffModem(){
-    if(!_BG96.TurnOffGNSS()){
-        return false;
-    };
-    funkModuleEnable = false;
-    return true;
-}
-
-bool Modem::turnOnModem(){
-    if (!_BG96.InitModule()){
+bool Modem::turnOnModem()
+{
+    if (!_BG96.InitModule())
+    {
         return false;
     }
+    
     funkModuleEnable = true;
+
     return true;
 }
 
-bool Modem::isModemAvailable(){
+bool Modem::isModemAvailable()
+{
     return funkModuleEnable;
 }
 
- _BG96_Module Modem::getModem(){
+_BG96_Module Modem::getModem()
+{
     return this->_BG96;
- }
+}
+
+bool Modem::startConnect(){
+    char error[64];
+    if(!_BG96.TurnOnInternet(PDPIndex,error)){
+        runningLogger.logError("TurnOnInternet");
+        return false;
+    }
+    connect = true;
+    return true;
+}
+
+bool Modem::isConnected(){
+    return connect;
+}

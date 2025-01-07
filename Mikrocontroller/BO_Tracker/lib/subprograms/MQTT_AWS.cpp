@@ -66,7 +66,7 @@ bool MQTT_AWS::startMQTT()
         initLogger.logError("MQTT:SubscribeTopic");
     }
 
-    available = true;
+    mqtt_available = true;
     return true;
 }
 
@@ -90,7 +90,7 @@ bool MQTT_AWS::publishData(const char *subtopic)
     else
     {
         runningLogger.logError("MQTTPublish");
-        available = false;
+        mqtt_available = false;
         return false;
     }
 }
@@ -114,12 +114,12 @@ bool MQTT_AWS::closeMQTTClient()
 {
     if (!_BG96.CloseMQTTClient(MQTTIndex))
         return false;
-    available = false;
+     mqtt_available = false;
     return true;
 }
 bool MQTT_AWS::isMQTTAvaliable()
 {
-    return this->available;
+    return this-> mqtt_available;
 }
 
 Mqtt_Event_t MQTT_AWS::waitForResponse(char *response)

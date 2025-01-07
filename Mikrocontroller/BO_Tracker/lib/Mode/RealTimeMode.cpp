@@ -12,14 +12,27 @@ void RealTimeMode::start()
 }
 
 void RealTimeMode::setup()
-{   
+{
     if (!tracker.isModemAvailable())
     {
-        tracker.turnOnModem();
+        Serial.println("turnOnModem");
+        if (!tracker.turnOnModem())
+            return;
     }
     if (trackerModes.GnssMode && !tracker.isGnssModuleEnable())
     {
+        Serial.println("TurnOnGNSS");
         tracker.TurnOnGNSS();
+    }
+    if (!tracker.isConnected())
+    {
+        Serial.println("startConnect");
+        tracker.startConnect();
+    }
+    if (!tracker.isUrlSetted())
+    {
+        Serial.println("setHTTPURL");
+        tracker.setHTTPURL(http_url);
     }
     // if (!tracker.isMQTTAvaliable())
     // {

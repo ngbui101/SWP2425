@@ -17,6 +17,7 @@ public:
     bool getAllError(char *errors);
     void clear();
 
+    
 private:
     int errorCount;
     char errors[MAX_ERRORS][MAX_ERROR_LENGTH];

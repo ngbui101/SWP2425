@@ -1,4 +1,5 @@
 #include <RealTimeMode.h>
+#include <ErrorsHandler.h>
 
 #define DSerial SerialUSB
 #define ATSerial Serial1
@@ -8,8 +9,10 @@
 JsonDocument docOutput;
 
 Tracker tracker(ATSerial, DSerial,docOutput);
+ErrorsHandler errorsHandler(ATSerial, DSerial,docOutput);
 
 RealTimeMode realtimeTracker(tracker);
+
 bool realtime = false;
 void setup()
 { 
@@ -26,6 +29,10 @@ void setup()
 
 void loop()
 { 
+  if(tracker.checkForError() > 0){
+    tracker.resetModem();
+  }
+  
   realtime = (trackerModes.period < 1800000ul);
   if(realtime){
     realtimeTracker.start();

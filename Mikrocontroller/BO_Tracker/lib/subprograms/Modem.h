@@ -14,7 +14,9 @@ protected:
     _BG96_Module _BG96;
     char modemIMEI[20]; 
     bool funkModuleEnable = false;
+    bool connect = false;
     Cell *cells[6] = {nullptr};
+    
 public:
     // Konstruktor (nur zwei Streams)
     Modem(Stream &atSerial, Stream &dSerial);
@@ -22,12 +24,14 @@ public:
     // Methoden
     bool startModem();         // Initialisiert das Modem
     bool initModem();
-    bool turnOffModem();
     bool turnOnModem();
     
     bool isModemAvailable();
+
+    bool startConnect();
     
-    _BG96_Module getModem();         // Führt die vollständige Initialisierung des Modems durch
+    bool isConnected();
+    _BG96_Module getModem();
 };
 
 #endif  // __MODEM_H_

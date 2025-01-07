@@ -24,12 +24,13 @@ bool HTTP::setHTTPURL(const char *url)
         initLogger.logError("HTTP_Set_URL");
         return false;
     }
+    urlSetted = true;
     return true;
 }
 
 bool HTTP::sendPostRequest(char *payload)
 {
-    if (!_BG96.HTTPPOST200(payload, 80))
+    if (!_BG96.HTTPPOST200(payload, 40))
     {   
         runningLogger.logError("HTTPPOST200");
         return false;
@@ -51,3 +52,6 @@ bool HTTP::sendAndReadResponse(char *payload, char *recv_data){
     return (sendPostRequest(payload) && readResponse(recv_data));
 }
 
+bool HTTP::isUrlSetted(){
+    return urlSetted;
+}

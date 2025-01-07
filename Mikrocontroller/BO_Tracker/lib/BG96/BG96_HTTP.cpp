@@ -246,7 +246,7 @@ bool _BG96_HTTP::HTTPPOST200(char *post_data, unsigned int timeout)
     sprintf(buf, "=%d,%d,%d", strlen(post_data), timeout, timeout);
     strcat(cmd, buf);
     
-    if (sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, 10)) {
+    if (sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, 3) == SUCCESS_RESPONSE) {
         if (sendDataAndCheck(post_data, HTTP_POST_REQUEST, RESPONSE_ERROR, timeout)) {
             unsigned long start_time = millis();
             errorCode = -1;

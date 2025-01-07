@@ -14,6 +14,9 @@ public:
     bool sendPostRequest(char* payload);
     bool readResponse(char *recv_data);
     bool sendAndReadResponse(char* payload,char *recv_data);
+    bool isUrlSetted();
+protected:
+    bool urlSetted = false;
 };
 
 #endif // _HTTP_H_
