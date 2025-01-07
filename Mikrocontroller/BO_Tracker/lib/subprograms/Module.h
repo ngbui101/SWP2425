@@ -11,7 +11,7 @@ public:
     ~_Module();
 protected:
     Logger initLogger;
-    Logger runLogger;
+    Logger runningLogger;
 private:
 };
 

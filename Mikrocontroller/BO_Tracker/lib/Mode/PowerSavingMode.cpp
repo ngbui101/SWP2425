@@ -18,5 +18,6 @@ void PowerSavingMode::setup() {
 
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
 void PowerSavingMode::loop() {
-    
+    Serial.println("PowerSavingMode");
+    delay(1000);
 }
