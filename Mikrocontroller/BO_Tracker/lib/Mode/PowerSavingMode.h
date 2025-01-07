@@ -11,8 +11,6 @@ private:
 public:
     
     PowerSavingMode(Tracker &trackerObj);
-
-   
     void start();
     void setup();
     void loop();
