@@ -203,6 +203,7 @@ bool _BG96_GNSS::GetGnssJsonPositionInformation(JsonDocument &json, unsigned lon
     float accuracy;
     if (!GetGNSSPositionInformation(position))
     {   
+        json["gnss"] = "NoFix";
         return false;
     }
     GetEstimationError(accuracy);
@@ -240,13 +241,6 @@ bool _BG96_GNSS::GetGnssJsonPositionInformation(JsonDocument &json, unsigned lon
         token = strtok(nullptr, delimiter);
     }
 
-    // int parsedItems = sscanf(position, "%*f,%f,%f,%f,%*f,%*d,%*f,%*f,%*f,%*d,%d",
-    //                          &latitude, &longitude, &hdop, &nsat);
-
-    // if (parsedItems < 4)
-    // {
-    //     return false;
-    // }
     if(TTFF == 0){
         currentTime = millis();
         TTFF = currentTime - starttime;

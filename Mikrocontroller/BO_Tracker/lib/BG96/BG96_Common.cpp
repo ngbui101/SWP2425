@@ -1074,12 +1074,12 @@ bool _BG96_Common::ConfigNetworks(const char *rat)
 
     if (strcmp(rat, "gsm") == 0)
     {
-        SearchingConfig("01");
+        SearchingConfig("010203");
         ScanmodeConfig(1);
     }
     else if (strcmp(rat, "nbiot") == 0)
     {
-        SearchingConfig("03");
+        SearchingConfig("030201");
         ScanmodeConfig(3);
     }
     else
