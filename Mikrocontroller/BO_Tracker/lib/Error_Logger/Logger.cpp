@@ -15,14 +15,15 @@ bool Logger::logError(const char* message) {
     return false;
 }
 
-void Logger::flushErrors(Stream& serial) {
+void Logger::flushErrors() {
 #ifdef UART_DEBUG
-    serial.print("Errors: ");
-    serial.println(errorCount);
+    Serial.print("Errors: ");
+    Serial.println(errorCount);
     for (int i = 0; i < errorCount; i++) {
-        serial.println(errors[i]);
+        Serial.println(errors[i]);
     }
 #endif
+    clear();
 }
 
 int Logger::getErrorCount() const {
@@ -49,7 +50,6 @@ bool Logger::getAllError(char *errorsBuffer) {
             errorsBuffer[currentPos] = '\0'; 
         }
     }
-
     return true;
 }
 

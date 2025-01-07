@@ -12,7 +12,7 @@ public:
     Logger();
     ~Logger();
     bool logError(const char* message);
-    void flushErrors(Stream& serial);
+    void flushErrors();
     int getErrorCount() const;
     bool getAllError(char *errors);
     void clear();
