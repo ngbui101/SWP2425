@@ -5,7 +5,7 @@
 #include "board.h"
 #include "Network_Infos.h"
 #include "MQTT_Infos.h"
-#include "TrackerMode.h"
+
 
 // Modem-Klasse zur Verwaltung der Modem-Operationen
 class Modem : public _Board {

@@ -207,7 +207,7 @@ bool _Motion::checkForMotionInMillis(unsigned long time, float threshold)
         delay(interval);
     }
     avgMagnitude = sumMagnitude / count;
-    Serial.println(avgMagnitude);
+    // Serial.println(avgMagnitude);
     return (avgMagnitude > threshold);
 }
 

@@ -346,3 +346,8 @@ bool Tracker::turnOnFunctionality()
     }
     return true;
 }
+
+bool Tracker::wakeUp()
+{
+    return (waitForMotion() || trackerModes.wakeUp);
+}

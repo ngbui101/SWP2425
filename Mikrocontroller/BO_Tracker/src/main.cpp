@@ -1,5 +1,5 @@
 #include <RealTimeMode.h>
-
+#include <PowerSavingMode.h>
 #define DSerial SerialUSB
 #define ATSerial Serial1
 
@@ -11,6 +11,7 @@ Tracker tracker(ATSerial, DSerial,docOutput);
 
 
 RealTimeMode realtimeTracker(tracker);
+PowerSavingMode longtimeTracker(tracker);
 
 bool realtime = false;
 void setup()
@@ -28,14 +29,15 @@ void setup()
 
 void loop()
 { 
-  if(tracker.checkForError() > 0){
-    tracker.resetModem();
-  }
-
-  realtime = (trackerModes.period < 1800000ul);
+  realtime = (trackerModes.period < (120ul * 1000ul));
+  
   if(realtime){
     realtimeTracker.start();
   }else{
-    ///longtimeTracker.start();
+    longtimeTracker.start();
+  }
+
+  if(tracker.checkForError() > 0){
+    tracker.resetModem();
   }
 }

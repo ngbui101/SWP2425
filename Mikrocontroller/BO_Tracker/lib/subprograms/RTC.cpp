@@ -1,11 +1,12 @@
 #include "RTC.h"
 
-_RTC::_RTC() : _Temperature() {
+_RTC::_RTC() : _Temperature()
+{
 }
 
-_RTC::~_RTC() {
+_RTC::~_RTC()
+{
 }
-
 
 /**
  * @brief Konfiguriert die Echtzeituhr (RTC) basierend auf einem Zeitstempel vom Modem.
@@ -91,4 +92,53 @@ char *_RTC::getDateTime()
              year, month, day, hour, minute, second);
 
     return buffer; // Rückgabe des Strings
+}
+
+bool _RTC::enableAlarm(unsigned long millisSpan)
+{
+    uint8_t day = rtc.getDay();
+    uint8_t hour = rtc.getHours();
+    uint8_t minute = rtc.getMinutes();
+    uint8_t second = rtc.getSeconds();
+
+    calculateTimeForAlarm(&day,&hour, &minute, &second, millisSpan);
+    rtc.setAlarmTime(hour, minute, second);
+    rtc.setAlarmDay(day);
+    rtc.enableAlarm(rtc.MATCH_DHHMMSS);
+    rtc.attachInterrupt(rtcCallback);
+    return true;
+}
+
+void _RTC::calculateTimeForAlarm(uint8_t *day, uint8_t *hour,
+                                 uint8_t *minute,
+                                 uint8_t *second, unsigned long millisSpan)
+{   
+    unsigned long secondsToAdd = millisSpan / 1000;
+    *second += secondsToAdd % 60;
+    unsigned long minutesToAdd = secondsToAdd / 60;
+    if (*second >= 60)
+    {
+        *second -= 60;
+        minutesToAdd += 1;
+    }
+    *minute += minutesToAdd % 60;
+    unsigned long hoursToAdd = minutesToAdd / 60;
+    if (*minute >= 60)
+    {
+        *minute -= 60;
+        hoursToAdd += 1;
+    }
+    *hour += hoursToAdd % 24;
+    unsigned long daysToAdd = hoursToAdd / 24;
+    if (*hour >= 24)
+    {
+        *hour -= 24;
+        daysToAdd += 1;
+    }
+    *day += daysToAdd;
+}
+
+void _RTC::rtcCallback()
+{
+    trackerModes.wakeUp = true;
 }

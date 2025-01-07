@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "Logger.h"
+#include "TrackerMode.h"
 
 class _Module {
 public:

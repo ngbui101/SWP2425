@@ -42,6 +42,8 @@ public:
     bool resetModem();
 
     bool turnOnFunctionality();
+
+    bool wakeUp();
 private:
     unsigned long pub_time = 0;
     bool modeRequest = true;
