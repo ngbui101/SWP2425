@@ -38,19 +38,19 @@ void RealTimeMode::loop()
     {
         unsigned long start = millis();
         char response[1028];
-        // Mqtt_Event_t event = tracker.waitForResponse(response);
-        // switch (event)
-        // {
-        // case MQTT_RECV_DATA_EVENT:
-        //     tracker.setMode(response);
-        //     keepRunning = false;
-        //     break;
-        // case MQTT_CLIENT_CLOSED:
-        //     keepRunning = false;
-        //     break;
-        // default:
-        //     break;
-        // }
+        Mqtt_Event_t event = tracker.waitForResponse(response);
+        switch (event)
+        {
+        case MQTT_RECV_DATA_EVENT:
+            tracker.setMode(response);
+            keepRunning = false;
+            break;
+        case MQTT_CLIENT_CLOSED:
+            keepRunning = false;
+            break;
+        default:
+            break;
+        }
         if (abs(millis() - pub_time) >= trackerModes.period - 1000)
         {
             tracker.modeHandle();
@@ -66,12 +66,6 @@ void RealTimeMode::loop()
             // tracker.getModem().GetDevInformation(infos);
             pub_time = millis();
             // Serial.println("Public Data");
-            count++;
-            Serial.print("Count: ");
-            Serial.println(count);
-            long laufzeit = millis() - start;
-            Serial.println("Laufzeit: ");
-            Serial.println(laufzeit);
         }
 
         delay(100);

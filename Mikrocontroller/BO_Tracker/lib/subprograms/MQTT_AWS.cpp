@@ -73,7 +73,7 @@ bool MQTT_AWS::startMQTT()
 // Veröffentlicht Daten auf dem MQTT-Topic
 bool MQTT_AWS::publishData(const char *subtopic)
 {
-    char payload[1028];
+    char payload[2056];
     serializeJsonPretty(docInput, payload);
 
     char mqtt_topic[64];
@@ -82,11 +82,8 @@ bool MQTT_AWS::publishData(const char *subtopic)
 
     int res = _BG96.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_topic, false, payload);
 
-    DSerial.print("res: ");
-    DSerial.println(res);
     if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK) // || res == PACKET_RETRANSMISSION)
     {
-        DSerial.println("Veröffentlichung erfolgreich!");
         docInput.clear();
         return true;
     }

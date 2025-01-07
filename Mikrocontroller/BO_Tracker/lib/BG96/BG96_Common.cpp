@@ -557,7 +557,7 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
         }
     }
     else if (status == WRITE_MODE)
-    {
+    {   
         char buf[32];
         if (mode != 0)
         {
@@ -566,17 +566,10 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
         else
             sprintf(buf, "=%d", mode);
         strcat(cmd, buf);
-        // oper_status = sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 30);
-        if(sendATcommand(cmd)){
-            oper_status = SUCCESS_RESPONSE;
-        }else
-        {
-            oper_status = FIAL_RESPONSE;
-        }
+        oper_status = sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 30);
     }
     return oper_status;
 }
-
 /**
  * @brief Holt die Netzwerkinformationen des Moduls.
  *
@@ -1116,9 +1109,10 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
     int cellCount = 0;       // Counter for the number of cells found
 
     // Determine scan mode based on 'rat'
+    
 
     if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
-    {
+    {   
         Net_Type_t act = strcmp(rat, "lte") == 0 ? LTE_CAT_M1 : LTE_CAT_NB1; // LTE network type
         // --- LTE Scanning ---
         // List of operators to scan
@@ -1226,7 +1220,8 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
 
     return cellCount; // Return the total number of cells found
 }
- bool _BG96_Common::FactoryReset(){
+bool _BG96_Common::FactoryReset()
+{
     char reset_cmd[32];
     sprintf(reset_cmd, "&F");
     if (sendATcommand(reset_cmd))
@@ -1234,13 +1229,14 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
         return true;
     }
     return false;
- }
-  bool _BG96_Common::SaveSetting(){
+}
+bool _BG96_Common::SaveSetting()
+{
     char save_cmd[32];
     sprintf(save_cmd, "&W");
-    if ( sendATcommand(save_cmd))
+    if (sendATcommand(save_cmd))
     {
         return true;
     }
     return false;
- }
+}

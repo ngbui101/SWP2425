@@ -7,7 +7,7 @@ const char SUPURL[]  = "supl.google.com:7276";
 // char APN[] = "iot.1nce.net";
 const char LOGIN[] = "";
 const char PASSWORD[] = "";
-const char RAT[] = "gsm";
+const char RAT[] = "lte";
 const unsigned int PDPIndex = 1;
 
 #endif

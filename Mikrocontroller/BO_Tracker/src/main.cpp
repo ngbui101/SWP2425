@@ -1,4 +1,3 @@
-#include <EventHandler.h>
 #include <RealTimeMode.h>
 
 #define DSerial SerialUSB
