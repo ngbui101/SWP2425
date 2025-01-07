@@ -88,8 +88,8 @@ bool MQTT_AWS::publishData(const char *subtopic)
         return true;
     }
     else
-    {   
-        DSerial.println("Fehler bei der Veröffentlichung!");
+    {
+        runningLogger.logError("MQTTPublish");
         available = false;
         return false;
     }
@@ -103,14 +103,9 @@ bool MQTT_AWS::handleMQTTStatusEventClose(char *payload)
     {
         if (closeMQTTClient())
         {
-            DSerial.println("MQTT-Client erfolgreich geschlossen!");
             return true;
         }
-    }
-    else
-    {
-        DSerial.print("Statuscode: ");
-        DSerial.println(atoi(sta_buf + 1));
+        runningLogger.logError("closeMQTTClient");
     }
     return false;
 }
@@ -128,14 +123,14 @@ bool MQTT_AWS::isMQTTAvaliable()
 }
 
 Mqtt_Event_t MQTT_AWS::waitForResponse(char *response)
-{   
+{
     Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(response, 1);
     switch (ret)
     {
     case MQTT_RECV_DATA_EVENT:
         return MQTT_RESPONSE;
     case MQTT_STATUS_EVENT:
-        if(handleMQTTStatusEventClose(response))
+        if (handleMQTTStatusEventClose(response))
             return MQTT_CLIENT_CLOSED;
     default:
         break;

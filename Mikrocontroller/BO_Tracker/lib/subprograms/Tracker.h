@@ -21,8 +21,26 @@ public:
     bool setMode(char *payload);
 
     bool modeHandle();
+
+    bool sendAndCheck();
+
+    bool pubAndsubMQTT();
+
+    bool sendAndWaitResponseHTTP();
+
+    bool responseValid(char *payload);
+
+    bool turnOffTracker();
+
+    int getInitErrorCount();
+
+    int getRunningErrorCount();
+
+    int checkForError();
+
+
 private:
-    
+    unsigned long pub_time = 0;
     bool modeRequest = true;
 
 };
