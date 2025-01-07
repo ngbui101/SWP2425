@@ -41,13 +41,6 @@ void GNSS::GPSOneXtraCheckForUpdate()
 // Handhabt GNSS-Modus
 void GNSS::handleGNSSMode()
 {
-    // GNSS einschalten, falls es deaktiviert ist
-    if (!gpsModuleEnable && _BG96.TurnOnGNSS(gnssData.workMode, WRITE_MODE))
-    {
-        gpsModuleEnable = true;
-        gnssData.startMillis = millis();
-    }
-
     // GNSS-Position und Genauigkeit abrufen
     if (_BG96.GetGnssJsonPositionInformation(docInput, gnssData.startMillis))
     {
@@ -102,4 +95,20 @@ bool GNSS::TurnOff()
         return true;
     }
     return false;
+}
+
+bool GNSS::TurnOnGNSS()
+{
+    if (_BG96.TurnOnGNSS(gnssData.workMode, WRITE_MODE))
+    {
+        gpsModuleEnable = true;
+        // gnssData.startMillis = millis();
+        gnssData.startMillis = millis();
+        return true;
+    }
+    return false;
+}
+
+bool GNSS::isGnssModuleEnable(){
+    return gpsModuleEnable;
 }

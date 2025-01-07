@@ -394,8 +394,8 @@ Mqtt_Client_Result_Status_t _BG96_MQTT::MQTTPublishMessages(unsigned int mqtt_in
             memset(publish_data, '\0', strlen(publish_data));
             char temp[16];
             char *sta_buf = searchChrBuffer(',');
-            strcpy(temp, sta_buf + 1);
-            sta_buf = strchr(temp, ',');
+            strcpy(temp, sta_buf + 3);
+            // sta_buf = strchr(temp, ',');
             *sta_buf = '\0';
             return (Mqtt_Client_Result_Status_t)atoi(temp);
         }

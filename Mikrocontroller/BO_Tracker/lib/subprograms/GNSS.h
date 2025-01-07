@@ -26,7 +26,9 @@ public:
     void handleGNSSMode();          // Handhabt GNSS-Modus
     bool addGeo();
     
-    bool TurnOff();                  // Fügt Geofencing hinzu
+    bool TurnOff();
+    bool TurnOnGNSS();
+    bool isGnssModuleEnable();
 };
 
 #endif  // __GNSS_H_

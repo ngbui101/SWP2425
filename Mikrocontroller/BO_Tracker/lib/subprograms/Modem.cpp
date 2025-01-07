@@ -53,7 +53,7 @@ bool Modem::initModem()
         return false;
     }
 
-    // _BG96.ScanCells(RAT, cells); // Uncomment if needed
+    _BG96.ScanCells(RAT, cells); // Uncomment if needed
 
     return true;
 }
@@ -63,7 +63,9 @@ bool Modem::turnOffModem(){
         return false;
     };
     funkModuleEnable = false;
+    return true;
 }
+
 bool Modem::turnOnModem(){
     if (!_BG96.InitModule()){
         return false;
@@ -71,3 +73,11 @@ bool Modem::turnOnModem(){
     funkModuleEnable = true;
     return true;
 }
+
+bool Modem::isModemAvailable(){
+    return funkModuleEnable;
+}
+
+ _BG96_Module Modem::getModem(){
+    return this->_BG96;
+ }

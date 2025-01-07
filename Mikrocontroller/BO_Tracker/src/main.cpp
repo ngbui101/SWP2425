@@ -26,7 +26,8 @@ void setup()
 }
 
 void loop()
-{
+{ 
+  realtime = (trackerModes.period < 1800000ul);
   if(realtime){
     realtimeTracker.start();
   }else{

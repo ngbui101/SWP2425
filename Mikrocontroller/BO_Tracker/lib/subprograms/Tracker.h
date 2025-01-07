@@ -24,7 +24,6 @@ public:
 private:
     
     bool modeRequest = true;
-    Cell *cells[6] = {nullptr};
 
 };
 

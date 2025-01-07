@@ -61,13 +61,14 @@ void Tracker::firstStart()
     char payload[1028];
     char response[1028];
 
-    serializeJsonPretty(docInput, payload);
+    if(!serializeJsonPretty(docInput, payload))
+        return;
 
-    sendAndReadResponse(payload, response);
+    if(!sendAndReadResponse(payload, response))
+        return;
 
     if (setMode(response))
         setModeRequest(false);
-
     docInput.clear();
 }
 
