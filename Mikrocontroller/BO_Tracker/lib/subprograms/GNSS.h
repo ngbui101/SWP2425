@@ -15,6 +15,7 @@ protected:
     } gnssData;
     JsonDocument &docInput;
 
+    bool getFirstFix = false;
     bool gpsModuleEnable = false;
 public:
     // Konstruktor

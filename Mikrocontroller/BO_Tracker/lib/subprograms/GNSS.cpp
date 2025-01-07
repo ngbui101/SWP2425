@@ -40,17 +40,18 @@ void GNSS::GPSOneXtraCheckForUpdate()
 
 // Handhabt GNSS-Modus
 void GNSS::handleGNSSMode()
-{
+{   
+    if(!gpsModuleEnable){
+        TurnOnGNSS();
+    }
+    if(!trackerModes.GnssMode){
+        TurnOff();
+    }
     // GNSS-Position und Genauigkeit abrufen
     if (_BG96.GetGnssJsonPositionInformation(docInput, gnssData.startMillis))
     {
-        DSerial.println("GNSS-Positionsdaten erfolgreich abgerufen.");
+        getFirstFix = true;
     }
-    else
-    {
-        DSerial.println("Fehler beim Abrufen der GNSS-Position.");
-    }
-
     // NMEA-Sätze abrufen, falls aktiviert
     if (trackerModes.NmeaMode)
     {
@@ -89,8 +90,9 @@ bool GNSS::addGeo()
 bool GNSS::TurnOff()
 {
     if (_BG96.TurnOffGNSS())
-    {
+    {   
         gpsModuleEnable = false;
+        getFirstFix = false;
         gnssData.startMillis = 0;
         return true;
     }
@@ -102,7 +104,6 @@ bool GNSS::TurnOnGNSS()
     if (_BG96.TurnOnGNSS(gnssData.workMode, WRITE_MODE))
     {
         gpsModuleEnable = true;
-        // gnssData.startMillis = millis();
         gnssData.startMillis = millis();
         return true;
     }
