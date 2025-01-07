@@ -231,7 +231,7 @@ export const handler = async (event) => {
         const documentsToInsert = [];
 
         // GNSS
-        if (isGnssDataSent) {
+        if (isGnssDataSent && data.gnss.latitude != undefined ) {
             documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "GPS",
