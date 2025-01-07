@@ -1,30 +1,14 @@
 #include "Motion.h"
 
-_Motion::_Motion() : _RTC() {
-}
-
-_Motion::~_Motion() {
-}
-
-bool _Motion::waitWakeOnMotions()
+_Motion::_Motion() : _RTC()
 {
-    if (waitForMotion())
-    {
-        // digitalWrite(LED_BUILTIN, HIGH);
-        // delay(1000);
-        // digitalWrite(LED_BUILTIN, LOW);
-        return true;
-    }
-    else
-        return false;
 }
 
-bool _Motion::checkOnMotionsfor10s()
+_Motion::~_Motion()
 {
-    return isMovementAboveThresholdFor10S(100);
 }
 
-//Hier neu
+// Hier neu
 
 static uint16_t bma_i2c_write(uint8_t addr, uint8_t reg, uint8_t *data, uint16_t len)
 {
@@ -152,7 +136,7 @@ int _Motion::enableWakeOnMotion()
     // Wakeup-Feature aktivieren/deaktivieren
 
     rslt = bma456_map_interrupt(BMA4_INTR1_MAP, BMA456_WAKEUP_INT, BMA4_ENABLE, &accel);
-    rslt =  bma456_wakeup_set_sensitivity(0x00,&accel);
+    rslt = bma456_wakeup_set_sensitivity(0x00, &accel);
     if (rslt == BMA4_OK)
     {
         rslt = bma456_feature_enable(BMA456_WAKEUP, BMA4_ENABLE, &accel);
@@ -160,15 +144,16 @@ int _Motion::enableWakeOnMotion()
     return rslt;
 }
 
-int _Motion::enableAnyNoMotion(){
+int _Motion::enableAnyNoMotion()
+{
     uint16_t rslt;
 
     // Wakeup-Feature aktivieren/deaktivieren
 
     rslt = bma456_map_interrupt(BMA4_INTR1_MAP, BMA456_ANY_NO_MOTION_INT, BMA4_ENABLE, &accel);
     if (rslt == BMA4_OK)
-    {   
-        rslt = bma456_step_detector_enable(BMA456_ALL_AXIS_EN,&accel);
+    {
+        // rslt = bma456_step_detector_enable(BMA456_ALL_AXIS_EN,&accel);
         rslt = bma456_feature_enable(BMA456_ANY_MOTION, BMA4_ENABLE, &accel);
     }
     return rslt;
@@ -183,23 +168,48 @@ bool _Motion::waitForMotion()
     rslt = bma456_read_int_status(&int_status, &accel);
     /* Check if sig-motion interrupt is received */
     if ((rslt == BMA4_OK) && (int_status & BMA456_WAKEUP_INT))
-    {   
+    {
         return true;
     }
     return false;
 }
 
-bool _Motion::checkForAnyMotion(){
-    uint16_t rslt;
-    uint16_t int_status = 0;
+bool _Motion::checkForMotionInMillis(unsigned long time, float threshold)
+{
+    unsigned long interval = time / 10;
+    float x0, y0, z0;
+    float x, y, z;
+    int count = 0;
+    float sumMagnitude = 0;
+    float avgMagnitude = 0;
+    getAcceleration(&x0, &y0, &z0);
 
-    /* Read the interrupt status */
-    rslt = bma456_read_int_status(&int_status, &accel);
-    /* Check if sig-motion interrupt is received */
-    Serial.println(int_status);
-    return ((rslt == BMA4_OK) && (int_status & BMA456_ANY_NO_MOTION_INT));
+    while (count <= 10)
+    {
+        getAcceleration(&x, &y, &z);
+        float xx0 = x-x0;
+        float yy0 = y-y0;
+        float zz0 = z-z0;
+        // Serial.print("xx0: ");
+        // Serial.println(xx0);
+        // Serial.print("yy0: ");
+        // Serial.println(yy0);
+        // Serial.print("zz0: ");
+        // Serial.println(zz0);
+
+        float magnitude = sqrt(xx0 * xx0 + yy0*yy0 + zz0*zz0);
+        
+        x0 = x;
+        y0 = y;
+        z0 = z;
+        sumMagnitude += magnitude;
+        count++;
+        delay(interval);
+    }
+    avgMagnitude = sumMagnitude / count;
+    Serial.println(avgMagnitude);
+    return (avgMagnitude > threshold);
 }
-
 
 bool _Motion::isMovementAboveThreshold(float threshold)
 {
@@ -208,29 +218,8 @@ bool _Motion::isMovementAboveThreshold(float threshold)
 
     // Berechnung des Betrags der Beschleunigung aus den drei Achsen
     float magnitude = sqrt((x * x) + (y * y) + (z * z));
-    
+
     // Wenn der Betrag die Grenze überschreitet, geben wir true zurück
     return (magnitude > threshold);
 }
-bool _Motion::isMovementAboveThresholdFor10S(float threshold)
-{   
-    float x0,y0,z0;
-    float x, y, z;
-    int count = 0;
-    float sumMagnitude = 0;
-    float avgMagnitude = 0;
-    getAcceleration(&x0, &y0, &z0);
-    // unsigned long current = millis();
-    while (count <= 10)
-    {   
-        getAcceleration(&x, &y, &z);
-        float magnitude = sqrt(((x - x0)* (x-x0)) + ((y-y0)*(y-y0)) + ((z - z0)-(z - z0)));
-        sumMagnitude += magnitude;
-        count++;
-        // Serial.println(magnitude);
-        delay(1000);
-    }
-    avgMagnitude = sumMagnitude / count;
 
-    return (avgMagnitude > threshold);
-}

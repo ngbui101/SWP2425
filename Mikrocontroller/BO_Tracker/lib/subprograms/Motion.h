@@ -61,12 +61,6 @@ public:
     void initialize(MA456_RANGE range = RANGE_4G, MBA456_ODR odr = ODR_100_HZ,
                     MA456_BW bw = NORMAL_AVG4, MA456_PERF_MODE mode = CIC_AVG);
 
-    //
-    bool waitWakeOnMotions();
-
-    bool checkOnMotionsfor10s();
-    ///
-
     void stepCounterEnable(MA456_PLATFORM_CONF conf = WRIST_CONFIG, bool cmd = true);
 
     void getAcceleration(float *x, float *y, float *z);
@@ -78,13 +72,12 @@ public:
     int enableWakeOnMotion();
 
     int enableAnyNoMotion();
+
     bool waitForMotion();
 
-    bool checkForAnyMotion();
+    bool checkForMotionInMillis(unsigned long millis, float threshold);
 
     bool isMovementAboveThreshold(float threshold);
-
-    bool isMovementAboveThresholdFor10S(float threshold);
 
 private:
     float devRange;

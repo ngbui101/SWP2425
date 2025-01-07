@@ -14,12 +14,16 @@ void PowerSavingMode::start()
 
 bool PowerSavingMode::setup()
 {
-    tracker.turnOnFunctionality();
+    return tracker.turnOnFunctionality();
 }
 
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
 void PowerSavingMode::loop()
-{
-    Serial.println("PowerSavingMode");
-    delay(1000);
+{   
+    bool keepRunning = true;
+    while (keepRunning)
+    {
+        
+    }
+    
 }
