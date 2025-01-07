@@ -24,8 +24,6 @@ void Tracker::InitModule()
 bool Tracker::setCurrentTimeToRTC()
 {
     const char *modemTime = _BG96.GetCurrentTime();
-    DSerial.println(modemTime); // Ausgabe der Modem-Zeit
-
     if (!setcurrentTime(modemTime))
     { // RTC im Board setzen
         initLogger.logError("SetTime");
@@ -258,11 +256,8 @@ bool Tracker::pubAndsubMQTT()
 
 bool Tracker::sendAndWaitResponseHTTP()
 {
-    int count = 0;
     while (abs(millis() - pub_time) >= trackerModes.period - 1000)
     {
-        DSerial.println("Start");
-
         char payload[1028];
         char response[1028];
         if (!modeHandle())
@@ -280,14 +275,9 @@ bool Tracker::sendAndWaitResponseHTTP()
         if (!responseValid(response))
         {
             setMode(response);
-            DSerial.println("Set Mode Erfolgreich");
             return false;
         }
         pub_time = millis();
-        DSerial.println("Senden Data Erfolgreich");
-        count++;
-        DSerial.print("Versuch: ");
-        DSerial.println(count);
         return true;
     }
     return false;
@@ -323,7 +313,6 @@ bool Tracker::resetModem(){
     if (!turnOffModem())
         return false;
     delay(3000);
-    Serial.println("Turn On Modem");
     if(!turnOnModem())
         return false;
 
