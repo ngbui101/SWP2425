@@ -12,7 +12,7 @@
 #include <ctime>
 
 #define RX_BUFFER_LENGTH  1024
-#define UART_DEBUG
+// #define UART_DEBUG
 
 const unsigned long Band_list[] = {
     9600,
