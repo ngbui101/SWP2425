@@ -669,21 +669,3 @@ Socket_Event_t _BG96_TCPIP::WaitCheckSocketEvent(char *event, unsigned int timeo
     }
     return (Socket_Event_t)0;
 }
-
-bool _BG96_TCPIP::checkForNetwork()
-{
-    Net_Status_t i_status = NOT_REGISTERED;
-    unsigned long start_time = millis();
-    while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
-    {
-        i_status = DevNetRegistrationStatus();
-        if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
-        {
-            // if(ResetModule())
-            Serial.println("Fail to register!!!");
-            return false;
-        }
-        delay(3000);
-    }
-    return true;
-}

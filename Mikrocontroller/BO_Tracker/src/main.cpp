@@ -41,6 +41,10 @@ void loop()
     // totalReset ++;
     tracker.resetModem();
   }
+  
+  if(tracker.getResetCount() > 3){
+    tracker.retryIn1Hour();
+  }
   // if(totalReset )
   delay(100);
 }

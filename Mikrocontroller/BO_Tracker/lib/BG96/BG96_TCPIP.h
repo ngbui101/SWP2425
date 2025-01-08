@@ -90,8 +90,6 @@ class _BG96_TCPIP : public _BG96_Common
 
     bool TurnOnInternet(unsigned int pdp_index, char* err_code);
 
-    bool checkForNetwork();
-
   private:
   
 };

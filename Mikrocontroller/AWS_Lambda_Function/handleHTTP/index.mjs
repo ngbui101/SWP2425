@@ -117,7 +117,7 @@ export const handler = async (event) => {
         GSA: requestData.GSA,
         GSV: requestData.GSV,
         Accuracy: requestData.Accuracy,
-        RequestMode: requestData.RequestMode,
+        // RequestMode: requestData.RequestMode,
         BatteryLow: requestData.BatteryLow,
         TimeToGetFirstFix: requestData.TimeToGetFirstFix,
         gnss: requestData.gnss,        
@@ -196,6 +196,15 @@ export const handler = async (event) => {
         // Frequenz
         // Hier: Wenn Frequenz gesendet, aber != modeData.frequenz => mismatch
         //       Wenn Frequenz nicht gesendet, aber modeData.frequenz != null => mismatch
+        // Falls Mismatch => zurückgeben mit Status 200
+        // (Daten werden NICHT inserted)
+        if (Object.keys(mismatches).length > 0) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify(mismatches)
+            };
+        }
+
         if (isFrequenzSent) {
             if (data.frequenz !== modeData.frequenz) {
                 // Wir geben hier in der Antwort die **erwartete** Frequenz als number zurück
@@ -208,23 +217,14 @@ export const handler = async (event) => {
             }
         }
 
-        // Falls Mismatch => zurückgeben mit Status 200
-        // (Daten werden NICHT inserted)
-        if (Object.keys(mismatches).length > 0) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify(mismatches)
-            };
-        }
-
-        // Wenn RequestMode=true, soll Mode-Data & Geofences zurückkommen (Option)
-        if (data.RequestMode === true) {
-            const payload = { ...modeData, geofences: geofenceData };
-            return {
-                statusCode: 200,
-                body: JSON.stringify(payload)
-            };
-        }
+        // // Wenn RequestMode=true, soll Mode-Data & Geofences zurückkommen (Option)
+        // if (data.RequestMode === true) {
+        //     const payload = { ...modeData, geofences: geofenceData };
+        //     return {
+        //         statusCode: 200,
+        //         body: JSON.stringify(payload)
+        //     };
+        // }
 
         // => Kein Mismatch => Daten verarbeiten
         const collection = database.collection('measurements');
@@ -305,6 +305,13 @@ export const handler = async (event) => {
             console.log("No valid measurement data found; no documents were inserted.");
         }
 
+        
+        if (Object.keys(mismatches).length > 0) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify(mismatches)
+            };
+        }
         // Am Ende: alles OK => {"valid": true}
         return {
             statusCode: 200,

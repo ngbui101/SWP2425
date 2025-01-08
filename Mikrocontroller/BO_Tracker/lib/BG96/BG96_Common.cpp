@@ -1196,20 +1196,19 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
         // Wait for registration with a maximum timeout of 30 seconds
         Net_Status_t i_status = NOT_REGISTERED;
         unsigned long start_time = millis();
+
         while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
         {
             i_status = DevNetRegistrationStatus();
             if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
-            {
+            {   
+
                 break;
             }
             delay(3000); // Wait 3 seconds
         }
-
-        // Regardless of registration status, proceed to scan neighbour cells
-
         // Get neighbour cell information
-        delay(10000);
+        // delay(10000);
         int neighbourCellCount = ReportNeighbourCellInformation(cells, max_cells);
 
         cellCount = neighbourCellCount > max_cells ? max_cells : neighbourCellCount;
@@ -1236,4 +1235,21 @@ bool _BG96_Common::SaveSetting()
         return true;
     }
     return false;
+}
+bool _BG96_Common::checkForNetwork()
+{
+    Net_Status_t i_status = NOT_REGISTERED;
+    unsigned long start_time = millis();
+    while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+    {
+        i_status = DevNetRegistrationStatus();
+        if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
+        {
+            // if(ResetModule())
+            Serial.println("Fail to register!!!");
+            return false;
+        }
+        delay(3000);
+    }
+    return true;
 }

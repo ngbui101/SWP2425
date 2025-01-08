@@ -44,8 +44,14 @@ public:
     bool wakeUp();
 
     bool handleCellInfosMode();
+
+    bool retryIn1Hour();
+
+    int getResetCount();
 private:
     unsigned long pub_time = 0;
+
+    int countReset = 0;
     // bool modeRequest = true;
 };
 

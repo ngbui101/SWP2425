@@ -128,7 +128,7 @@ class _BG96_Common : public _BG96_Serial
 
     bool FactoryReset();
     bool SaveSetting();
-
+    bool checkForNetwork();
   private:
     char currenttime[64];
 };

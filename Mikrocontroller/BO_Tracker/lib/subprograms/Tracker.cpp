@@ -273,13 +273,12 @@ bool Tracker::turnOffModem()
 
 bool Tracker::resetModem()
 {
-
     if (!turnOffModem())
         return false;
     delay(3000);
     if (!turnOnModem())
         return false;
-
+    countReset++;
     return true;
 }
 bool Tracker::turnOnFunctionality()
@@ -330,4 +329,13 @@ bool Tracker::handleCellInfosMode()
         }
     }
     return true;
+}
+
+bool Tracker::retryIn1Hour(){
+    deepSleep(3600*1000);
+    return true;
+}
+
+int Tracker::getResetCount(){
+    return this->countReset;
 }
