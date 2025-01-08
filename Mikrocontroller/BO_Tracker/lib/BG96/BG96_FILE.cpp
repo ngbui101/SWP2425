@@ -119,7 +119,7 @@ bool _BG96_FILE::DeleteFiles(const char *filename)
  *
  * @see Quectel BG96 File AT Commands, Abschnitt 2.4 (Seite 10)
  */
-bool _BG96_FILE::UploadFiles(char *filename, char *u_file)
+bool _BG96_FILE::UploadFiles(char *filename,const char *u_file)
 {
     char cmd[32],buf[32];
     strcpy(cmd, FILE_UPLOAD_FILES);

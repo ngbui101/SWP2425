@@ -188,7 +188,7 @@ export const handler = async (event) => {
 
                 documentsToInsert.push({
                     imei: data.IMEI,
-                    mode: mode,
+                    mode: "LTE",
                     latitude: location.latitude,
                     longitude: location.longitude,
                     accuracy: location.accuracy,

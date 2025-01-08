@@ -54,7 +54,7 @@ class _BG96_SSL : public _BG96_FILE
 
     bool SetSSLCertificate(unsigned int ssl_index, const char *ca_cert_path, const char *client_cert_path, const char *client_key_path, bool validity_check);
 
-    bool InitSSL(unsigned int ssl_index, char *ca_cert, char *client_cert, char *client_key, char *err_code);
+    bool InitSSL(unsigned int ssl_index,const char *ca_cert,const char *client_cert,const char *client_key, char *err_code);
 
     bool OpenSSLSocket(unsigned int pdp_index, unsigned int ssl_index, unsigned int socket_index, char *ip, unsigned int port, Access_Mode_t mode);
 

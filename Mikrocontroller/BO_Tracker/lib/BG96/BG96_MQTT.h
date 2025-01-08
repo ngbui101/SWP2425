@@ -66,7 +66,7 @@ class _BG96_MQTT : public _BG96_HTTP
 
     bool SetMQTTAlibabaCloudDeviceInformation(unsigned int mqtt_index, char *product_key, char *device_name, char *device_secret);
 
-    Mqtt_Network_Result_t OpenMQTTNetwork(unsigned int mqtt_index, char *host_name, unsigned int port);
+    Mqtt_Network_Result_t OpenMQTTNetwork(unsigned int mqtt_index,const char *host_name, unsigned int port);
 
     bool CloseMQTTNetwork(unsigned int mqtt_index);
 

@@ -94,7 +94,7 @@ bool _BG96_Serial::AutoATSerialBand(T &_atserial)
  */
 bool _BG96_Serial::sendDataAndCheck(const char *data_buf, const char *ok_str, const char *err_str, unsigned int timeout)
 {
-    delay(100);
+    delay(300);
     while(_atserial.read()>=0);
     int data_len = strlen(data_buf);
     int send_bytes = _atserial.write(data_buf);

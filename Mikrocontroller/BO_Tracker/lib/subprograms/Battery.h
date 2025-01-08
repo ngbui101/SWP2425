@@ -1,8 +1,6 @@
 #ifndef _BATTERY_H_  
 #define _BATTERY_H_
-
-#include <Arduino.h>
-#include <Wire.h>
+#include "Module.h"
 
 #define BATVOLTAGE_CTRL_PIN 3u
 #define BATVOLTAGE_READ_PIN A1
@@ -12,8 +10,7 @@
 #define FULL_BATTERY_VOLTAGE 4.2 // Voltage at 100% battery charge
 #define EMPTY_BATTERY_VOLTAGE 3.0
 
-class _Battery
-{
+class _Battery : public _Module {
 public:
     _Battery();
     ~_Battery();

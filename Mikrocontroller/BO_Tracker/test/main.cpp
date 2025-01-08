@@ -1,35 +1,39 @@
-#include <BG96_Common.h>
+
+#include <Tracker.h>
 #define DSerial SerialUSB
 #define ATSerial Serial1
-_BG96_Common _BG96(ATSerial, DSerial);
-void setup()
+
+JsonDocument docOutput;
+
+Tracker tracker(ATSerial, DSerial, docOutput);
+
+void setup(void)
 {
-    DSerial.begin(115200);
-    while (DSerial.read() >= 0)
-        ;
-    DSerial.println("This is the _BG96 Debug Serial!");
-    ATSerial.begin(115200);
-    while (ATSerial.read() >= 0)
-        ;
-    delay(1000);
-    _BG96.InitModule();
-    DSerial.println("\r\n_BG96.InitModule() OK!");
-    _BG96.SetDevCommandEcho(false);
-    // ATSerial.println("AT+QGPS=1");
-    // delay(1000);
+    Serial.begin(115200);
+    Serial.println("BMA456 Step Counter");
+
+    tracker.initialize(RANGE_4G, ODR_1600_HZ, NORMAL_AVG4, CONTINUOUS);
+    tracker.enableWakeOnMotion();
+    if (tracker.setcurrentTime("25/01/07,03:02:09+04") && tracker.enableAlarm(100000))
+    {
+        DSerial.println("Set successful");
+    }
 }
-void loop()
-{   
-    // ATSerial.println("AT+QGPSLOC?");
-    if (ATSerial.available())
+
+void loop(void)
+{
+    // if(tracker.waitForMotion()){
+    //     DSerial.println("Motion Triggern");
+    // }
+    // if(tracker.checkForMotionInMillis(1000,100)){
+    //     DSerial.println("Motion above Threshold Triggern");
+    // }
+    // delay(1000);
+
+    if (trackerModes.wakeUp == true)
     {
-        char at = ATSerial.read();
-        DSerial.write(at);
+        DSerial.println("Alarm Triggern");
+        trackerModes.wakeUp = false;
     }
-    if (DSerial.available())
-    {
-        char d = DSerial.read();
-        ATSerial.write(d);
-        DSerial.write(d);
-    }
+    delay(200);
 }

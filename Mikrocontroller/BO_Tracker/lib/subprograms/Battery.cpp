@@ -1,7 +1,6 @@
 #include "Battery.h"
 
-_Battery::_Battery() 
-{
+_Battery::_Battery() : _Module() {
 }
 
 _Battery::~_Battery()
