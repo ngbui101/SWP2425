@@ -11,7 +11,7 @@ public:
 
     ~Tracker();
     // Methode zum Initialisieren des Trackers
-    void InitModule();
+    bool InitModule();
 
     bool setCurrentTimeToRTC();  
 

@@ -13,6 +13,7 @@ Tracker tracker(ATSerial, DSerial,docOutput);
 RealTimeMode realtimeTracker(tracker);
 PowerSavingMode longtimeTracker(tracker);
 
+// int totalReset = 0;
 
 void setup()
 { 
@@ -37,7 +38,9 @@ void loop()
   }
 
   if(tracker.checkForError() > 0){
+    // totalReset ++;
     tracker.resetModem();
   }
+  // if(totalReset )
   delay(100);
 }

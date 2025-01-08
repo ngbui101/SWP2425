@@ -8,17 +8,14 @@ Tracker::Tracker(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
 Tracker::~Tracker() {}
 
 // Beispiel-Implementierung der InitModule()-Funktion
-void Tracker::InitModule()
+bool Tracker::InitModule()
 {
-    initBoard();
-
-    initModem();
-
-    initHTTP();
-
-    InitGNSS();
-
-    connect = true;
+    if(initBoard() && initModem() && initHTTP()){
+        connect = true;
+        InitGNSS();
+        return true;
+    }
+    return false;
 }
 
 bool Tracker::setCurrentTimeToRTC()
@@ -34,14 +31,14 @@ bool Tracker::setCurrentTimeToRTC()
 
 void Tracker::firstStart()
 {
-    InitModule();
-    // startConnect();
+    if(InitModule() && setCurrentTimeToRTC()){
+       return; 
+    }
+    // setCurrentTimeToRTC();
 
-    setCurrentTimeToRTC();
+    // setHTTPURL(http_url);
 
-    setHTTPURL(http_url);
-
-    while(!sendAndWaitResponseHTTP());
+    // while(!sendAndWaitResponseHTTP());
 }
 
 int Tracker::checkForError()

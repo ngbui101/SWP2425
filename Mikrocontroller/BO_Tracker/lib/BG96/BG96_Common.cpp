@@ -69,6 +69,7 @@ bool _BG96_Common::InitModule()
     // ResetModule();
     while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
         ;
+        
     return true;
 }
 
@@ -95,10 +96,7 @@ bool _BG96_Common::PowerOnModule()
  */
 bool _BG96_Common::ResetModule()
 {
-    digitalWrite(POWKEY_PIN, HIGH);
-    delay(500);
-    digitalWrite(POWKEY_PIN, LOW);
-    return true;
+    return PowerOffModule() && InitModule();
 }
 
 /**
@@ -557,7 +555,7 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
         }
     }
     else if (status == WRITE_MODE)
-    {   
+    {
         char buf[32];
         if (mode != 0)
         {
@@ -1109,10 +1107,9 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
     int cellCount = 0;       // Counter for the number of cells found
 
     // Determine scan mode based on 'rat'
-    
 
     if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
-    {   
+    {
         Net_Type_t act = strcmp(rat, "lte") == 0 ? LTE_CAT_M1 : LTE_CAT_NB1; // LTE network type
         // --- LTE Scanning ---
         // List of operators to scan
