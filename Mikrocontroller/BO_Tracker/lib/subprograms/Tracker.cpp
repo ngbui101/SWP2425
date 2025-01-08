@@ -119,15 +119,6 @@ bool Tracker::setMode(char *payload)
         {
             trackerModes.GeoFenMode = docOutput["GeoFenMode"];
         }
-        // Frequenz aktualisieren
-        if (docOutput["frequenz"].is<unsigned int>())
-        {
-            unsigned int newFrequenz = docOutput["frequenz"];
-            if (newFrequenz > 0)
-            {
-                trackerModes.period = newFrequenz;
-            }
-        }
         // GeoUpdate
         if (docOutput["geofences"].is<JsonArray>())
         {
@@ -162,6 +153,17 @@ bool Tracker::setMode(char *payload)
                 //         {
                 //             DSerial.println("Failed to add geo!");
                 //         };
+            }
+        }
+        // Frequenz aktualisieren
+        if (docOutput["frequenz"].is<unsigned long>())
+        {
+            unsigned long newFrequenz = docOutput["frequenz"];
+            if (newFrequenz > 0)
+            {
+                trackerModes.period = newFrequenz;
+                trackerModes.realtime = (trackerModes.period < trackerModes.maxRealTime);
+                return trackerModes.realtime;
             }
         }
     }
@@ -274,8 +276,10 @@ bool Tracker::sendAndWaitResponseHTTP()
 
         if (!responseValid(response))
         {
-            setMode(response);
-            return false;
+            if(setMode(response)){
+                continue;
+            }else
+                break;
         }
         pub_time = millis();
         return true;

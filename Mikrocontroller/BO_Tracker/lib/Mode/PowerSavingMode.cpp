@@ -27,7 +27,7 @@ void PowerSavingMode::start()
 }
 
 bool PowerSavingMode::setup()
-{
+{   
     tracker.enableAlarm(trackerModes.period);
     return tracker.turnOnFunctionality();
 }
