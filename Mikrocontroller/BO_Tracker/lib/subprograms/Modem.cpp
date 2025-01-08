@@ -64,7 +64,7 @@ bool Modem::turnOnModem()
     {
         return false;
     }
-    
+
     funkModuleEnable = true;
 
     return true;
@@ -80,9 +80,11 @@ _BG96_Module Modem::getModem()
     return this->_BG96;
 }
 
-bool Modem::startConnect(){
+bool Modem::startConnect()
+{
     char error[64];
-    if(!_BG96.TurnOnInternet(PDPIndex,error)){
+    if (!_BG96.TurnOnInternet(PDPIndex, error))
+    {
         runningLogger.logError("TurnOnInternet");
         return false;
     }
@@ -90,6 +92,8 @@ bool Modem::startConnect(){
     return true;
 }
 
-bool Modem::isConnected(){
+bool Modem::isConnected()
+{
     return connect;
 }
+

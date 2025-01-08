@@ -15,8 +15,6 @@ public:
 
     bool setCurrentTimeToRTC();  
 
-    void setModeRequest(bool modeRequest);
-
     void firstStart();
 
     bool setMode(char *payload);
@@ -44,9 +42,11 @@ public:
     bool turnOnFunctionality();
 
     bool wakeUp();
+
+    bool handleCellInfosMode();
 private:
     unsigned long pub_time = 0;
-    bool modeRequest = true;
+    // bool modeRequest = true;
 };
 
 #endif  // __TRACKER_H_

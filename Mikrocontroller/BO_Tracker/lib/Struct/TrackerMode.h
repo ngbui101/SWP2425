@@ -5,14 +5,14 @@
 struct TrackerModes {
     // Mode
     bool GnssMode = false;
-    bool CellInfosMode = false;
-    bool BatteryMode = false;
-    bool TemperatureMode = false;
+    bool CellInfosMode = true;
+    bool BatteryMode = true;
+    bool TemperatureMode = true;
     bool NmeaMode = false;
     bool GeoFenMode = false;
-    bool RequestMode = true;
+    // bool RequestMode = true;
     bool Modem_Off = false;
-    unsigned long period = 5000UL;
+    unsigned long period = 60000UL;
     unsigned long maxRealTime = 120000UL;
     bool realtime = true;
     // GeoFencing
@@ -23,13 +23,13 @@ struct TrackerModes {
 
     void resetModes() {
         GnssMode = false;
-        CellInfosMode = false;
-        BatteryMode = false;
-        TemperatureMode = false;
+        CellInfosMode = true;
+        BatteryMode = true;
+        TemperatureMode = true;
         NmeaMode = false;
         GeoFenMode = false;
         // RequestMode = true;
-        period = 5000UL;
+        period = 60000UL;
         geoLatitude = 0;
         geoLongitude = 0;
         geoRadius = 0;
@@ -46,4 +46,4 @@ struct TrackerModes {
 
 extern TrackerModes trackerModes;
 
-#endif // TRACKER_MODE_H_
+#endif 

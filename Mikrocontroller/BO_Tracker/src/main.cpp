@@ -29,7 +29,7 @@ void setup()
 
 void loop()
 { 
-  
+
   if(trackerModes.realtime){
     realtimeTracker.start();
   }else{
@@ -39,4 +39,5 @@ void loop()
   if(tracker.checkForError() > 0){
     tracker.resetModem();
   }
+  delay(100);
 }

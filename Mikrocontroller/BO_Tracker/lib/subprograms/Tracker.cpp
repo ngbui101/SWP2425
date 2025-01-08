@@ -32,11 +32,6 @@ bool Tracker::setCurrentTimeToRTC()
     return true;
 }
 
-void Tracker::setModeRequest(bool modeRequest)
-{
-    this->modeRequest = modeRequest;
-}
-
 void Tracker::firstStart()
 {
     InitModule();
@@ -46,21 +41,7 @@ void Tracker::firstStart()
 
     setHTTPURL(http_url);
 
-    modeHandle();
-
-    char payload[1028];
-    char response[1028];
-
-    if (!serializeJsonPretty(docInput, payload))
-        return;
-
-    if (!sendAndReadResponse(payload, response))
-        return;
-
-    if (setMode(response))
-        setModeRequest(false);
-    docInput.clear();
-    checkForError();
+    while(!sendAndWaitResponseHTTP());
 }
 
 int Tracker::checkForError()
@@ -163,7 +144,6 @@ bool Tracker::setMode(char *payload)
             {
                 trackerModes.period = newFrequenz;
                 trackerModes.realtime = (trackerModes.period < trackerModes.maxRealTime);
-                return trackerModes.realtime;
             }
         }
     }
@@ -173,48 +153,33 @@ bool Tracker::setMode(char *payload)
         return false;
     }
     docOutput.clear();
-    return true;
+    return trackerModes.realtime;
 }
 
 bool Tracker::modeHandle()
 {
-    if (modeRequest)
+    if (trackerModes.TemperatureMode)
     {
-        docInput["RequestMode"] = true;
+        docInput["Temperature"] = readTemperature();
+        docInput["Humidity"] = readHumidity();
     }
-    else
+
+    // Batteriestand erfassen
+    if (trackerModes.BatteryMode)
     {
-        if (trackerModes.TemperatureMode)
-        {
-            docInput["Temperature"] = readTemperature();
-            docInput["Humidity"] = readHumidity();
-        }
-
-        // Batteriestand erfassen
-        if (trackerModes.BatteryMode)
-        {
-            docInput["BatteryPercentage"] = calculateBatteryPercentage();
-        }
-
-        // Zellinformationen erfassen
-        if (trackerModes.CellInfosMode)
-        {
-            JsonArray cellsArray = docInput["cells"].to<JsonArray>();
-            for (Cell *&cell : cells)
-            {
-                if (cell != nullptr)
-                {
-                    // JSON-Objekt für jede Zelle erstellen
-                    JsonObject cellObj = cellsArray.add<JsonObject>();
-                    cell->toJson(cellObj);
-                }
-            }
-        }
-        if (trackerModes.GnssMode)
-        {
-            handleGNSSMode();
-        }
+        docInput["BatteryPercentage"] = calculateBatteryPercentage();
     }
+
+    // Zellinformationen erfassen
+    if (trackerModes.CellInfosMode)
+    {
+        handleCellInfosMode();
+    }
+    if (trackerModes.GnssMode)
+    {
+        handleGNSSMode();
+    }
+
     docInput["IMEI"] = modemIMEI;
     docInput["frequenz"] = trackerModes.period;
     docInput["Timestamp"] = getDateTime();
@@ -223,11 +188,16 @@ bool Tracker::modeHandle()
 
 bool Tracker::sendAndCheck()
 {
-    if (isMQTTAvaliable())
+    bool keepRunning;
+    while (abs(millis() - pub_time) >= trackerModes.period - 1000)
     {
-        return pubAndsubMQTT();
+        if (isMQTTAvaliable())
+        {
+            return pubAndsubMQTT();
+        }
+        keepRunning = sendAndWaitResponseHTTP();
     }
-    return sendAndWaitResponseHTTP();
+    return keepRunning;
 }
 
 bool Tracker::pubAndsubMQTT()
@@ -244,47 +214,39 @@ bool Tracker::pubAndsubMQTT()
     default:
         break;
     }
-    if (abs(millis() - pub_time) >= trackerModes.period - 1000)
+
+    modeHandle();
+    if (!publishData("/pub"))
     {
-        modeHandle();
-        if (!publishData("/pub"))
-        {
-            return false;
-        }
-        pub_time = millis();
+        return false;
     }
+    pub_time = millis();
+
     return true;
 }
 
 bool Tracker::sendAndWaitResponseHTTP()
 {
-    while (abs(millis() - pub_time) >= trackerModes.period - 1000)
+    char payload[1028];
+    char response[1028];
+    if (!modeHandle())
     {
-        char payload[1028];
-        char response[1028];
-        if (!modeHandle())
-        {
-            return false;
-        };
-        if (!serializeJsonPretty(docInput, payload))
-            return false;
+        return false;
+    };
+    if (!serializeJsonPretty(docInput, payload))
+        return false;
 
-        docInput.clear();
+    docInput.clear();
 
-        if (!sendAndReadResponse(payload, response))
-            return false;
+    if (!sendAndReadResponse(payload, response))
+        return false;
 
-        if (!responseValid(response))
-        {
-            if(setMode(response)){
-                continue;
-            }else
-                break;
-        }
-        pub_time = millis();
-        return true;
+    if (!responseValid(response))
+    {
+        return (setMode(response));
     }
-    return false;
+    pub_time = millis();
+    return true;
 }
 
 int Tracker::getInitErrorCount()
@@ -354,4 +316,21 @@ bool Tracker::turnOnFunctionality()
 bool Tracker::wakeUp()
 {
     return (waitForMotion() || trackerModes.wakeUp);
+}
+
+bool Tracker::handleCellInfosMode()
+{   
+    _BG96.ScanCells(RAT,cells);
+
+    JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+    for (Cell *&cell : cells)
+    {
+        if (cell != nullptr)
+        {
+            // JSON-Objekt für jede Zelle erstellen
+            JsonObject cellObj = cellsArray.add<JsonObject>();
+            cell->toJson(cellObj);
+        }
+    }
+    return true;
 }

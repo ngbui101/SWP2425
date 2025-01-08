@@ -31,6 +31,7 @@ public:
     bool startConnect();
     
     bool isConnected();
+
     _BG96_Module getModem();
 };
 

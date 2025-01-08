@@ -9,40 +9,35 @@ void PowerSavingMode::start()
 {
     if (tracker.wakeUp())
     {
-        Serial.println("Wake Up");
+        // Serial.println("Wake Up");
+        // Serial.println("Setup");
+        if (!setup())
+            return;
+        // Serial.println("SendData");
+        sendData();
         trackerModes.wakeUp = false;
     }
     else
     {
-        Serial.println("GoTo Sleep");
         if (tracker.isModemAvailable())
-        {
+        {   
+            // Serial.println("TurnOffModem");
+            tracker.enableAlarm(trackerModes.period-10*1000ul); 
             tracker.turnOffModem();
         }
-        delay(120000);
+        // Serial.println("GoTo Sleep");
+        tracker.deepSleep(120000);
     }
-    if (!setup())
-        return;
-    loop();
 }
 
 bool PowerSavingMode::setup()
-{   
+{
     tracker.enableAlarm(trackerModes.period);
     return tracker.turnOnFunctionality();
 }
 
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
-void PowerSavingMode::loop()
+void PowerSavingMode::sendData()
 {
-    bool keepRunning = true;
-    while (keepRunning)
-    {
-        keepRunning = tracker.sendAndCheck();
-    }
-    Serial.println("GoTo Sleep");
-    if (tracker.isModemAvailable())
-    {
-        tracker.turnOffModem();
-    }
+    while(!tracker.sendAndWaitResponseHTTP());
 }
