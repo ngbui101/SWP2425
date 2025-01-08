@@ -10,10 +10,9 @@ Tracker::~Tracker() {}
 // Beispiel-Implementierung der InitModule()-Funktion
 bool Tracker::InitModule()
 {
-    if(initBoard() && initModem() && initHTTP()){
-        connect = true;
-        InitGNSS();
-        return true;
+    if (initBoard() && initModem() && startConnect())
+    {   
+        return initHTTP() && InitGNSS();
     }
     return false;
 }
@@ -31,9 +30,12 @@ bool Tracker::setCurrentTimeToRTC()
 
 void Tracker::firstStart()
 {
-    if(InitModule() && setCurrentTimeToRTC()){
-       return; 
+    if (InitModule())
+    {
+        setCurrentTimeToRTC();
     }
+    setCurrentTimeToRTC();
+    init = true;
     // setCurrentTimeToRTC();
 
     // setHTTPURL(http_url);
@@ -243,6 +245,7 @@ bool Tracker::sendAndWaitResponseHTTP()
         return (setMode(response));
     }
     pub_time = millis();
+
     return true;
 }
 
@@ -306,6 +309,7 @@ bool Tracker::turnOnFunctionality()
     {
         return false;
     }
+    handleErrors();
     return true;
 }
 
@@ -315,8 +319,8 @@ bool Tracker::wakeUp()
 }
 
 bool Tracker::handleCellInfosMode()
-{   
-    _BG96.ScanCells(RAT,cells);
+{
+    _BG96.ScanCells(RAT, cells);
 
     JsonArray cellsArray = docInput["cells"].to<JsonArray>();
     for (Cell *&cell : cells)
@@ -331,11 +335,32 @@ bool Tracker::handleCellInfosMode()
     return true;
 }
 
-bool Tracker::retryIn1Hour(){
-    deepSleep(3600*1000);
+bool Tracker::retryIn1Hour()
+{
+    countReset = 0;
+    deepSleep(3600 * 1000);
     return true;
 }
 
-int Tracker::getResetCount(){
+int Tracker::getResetCount()
+{
     return this->countReset;
+}
+
+bool Tracker::handleErrors()
+{
+    if (countReset > 3)
+    {
+        return retryIn1Hour();
+    }
+    if (checkForError() > 0) 
+    {
+        return resetModem();
+    }
+    return true;
+}
+
+bool Tracker::handleIniTErrors(){
+    
+    return true;
 }

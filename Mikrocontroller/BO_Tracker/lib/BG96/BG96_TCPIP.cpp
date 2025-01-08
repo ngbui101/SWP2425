@@ -137,9 +137,9 @@ bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, const char *apn, const char *u
 {
     // Statusvariablen
     // Net_Status_t i_status = NOT_REGISTERED;
-    Cmd_Response_t init_status;
+    // Cmd_Response_t init_status;
     const char *e_str;
-    char i_ip[16]; // Buffer für die IP-Adresse
+    // char i_ip[16]; // Buffer für die IP-Adresse
     // Schritt 1: SIM-Kartenprüfung
     unsigned long start_time = millis();
     while (!DevSimPIN("", READ_MODE))
@@ -161,42 +161,42 @@ bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, const char *apn, const char *u
         return false;
     }
     // Schritt 3: Netzregistrierung prüfen
-    if (!checkForNetwork())
-    {
-        return false;
-    }
+    // if (!checkForNetwork())
+    // {
+    //     return false;
+    // }
 
-    // Schritt 4: APN aktivieren und IP-Adresse abrufen
-    start_time = millis();
-    while (millis() - start_time <= 30 * 1000UL) // Timeout nach 150 Sekunden
-    {
-        init_status = ActivateDevAPN(pdp_index);
-        if (init_status == SUCCESS_RESPONSE)
-        {
-            if (GetDevAPNIPAddress(pdp_index, i_ip))
-            {
-                sprintf(err_code, "\r\nAPN OK: The IP address is %s\r\n", i_ip);
-                return true;
-            }
-            else
-            {
-                e_str = "\r\nAPN ERROR: Failed to retrieve IP address!\r\n";
-                strcpy(err_code, e_str);
-                return false;
-            }
-        }
-        else if (init_status == TIMEOUT_RESPONSE)
-        {
-            e_str = "\r\nAPN ERROR: APN activation timeout. Please reset your device!\r\n";
-            strcpy(err_code, e_str);
-            // if(ResetModule())
-            return false;
-        }
-    }
+    // // Schritt 4: APN aktivieren und IP-Adresse abrufen
+    // start_time = millis();
+    // while (millis() - start_time <= 30 * 1000UL) // Timeout nach 150 Sekunden
+    // {
+    //     init_status = ActivateDevAPN(pdp_index);
+    //     if (init_status == SUCCESS_RESPONSE)
+    //     {
+    //         if (GetDevAPNIPAddress(pdp_index, i_ip))
+    //         {
+    //             sprintf(err_code, "\r\nAPN OK: The IP address is %s\r\n", i_ip);
+    //             return true;
+    //         }
+    //         else
+    //         {
+    //             e_str = "\r\nAPN ERROR: Failed to retrieve IP address!\r\n";
+    //             strcpy(err_code, e_str);
+    //             return false;
+    //         }
+    //     }
+    //     else if (init_status == TIMEOUT_RESPONSE)
+    //     {
+    //         e_str = "\r\nAPN ERROR: APN activation timeout. Please reset your device!\r\n";
+    //         strcpy(err_code, e_str);
+    //         // if(ResetModule())
+    //         return false;
+    //     }
+    // }
     // Falls die APN-Aktivierung fehlschlägt
-    e_str = "\r\nAPN ERROR: Failed to activate APN!\r\n";
-    strcpy(err_code, e_str);
-    return false;
+    // e_str = "\r\nAPN ERROR: Failed to activate APN!\r\n";
+    // strcpy(err_code, e_str);
+    return true;
 }
 
 bool _BG96_TCPIP::TurnOnInternet(unsigned int pdp_index, char *err_code)

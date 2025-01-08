@@ -30,21 +30,10 @@ void setup()
 
 void loop()
 { 
-
   if(trackerModes.realtime){
     realtimeTracker.start();
   }else{
     longtimeTracker.start();
   }
-
-  if(tracker.checkForError() > 0){
-    // totalReset ++;
-    tracker.resetModem();
-  }
-  
-  if(tracker.getResetCount() > 3){
-    tracker.retryIn1Hour();
-  }
-  // if(totalReset )
   delay(100);
 }

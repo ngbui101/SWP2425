@@ -16,14 +16,12 @@ public:
 
     bool enableAlarm(unsigned long millis);
 
-    void calculateTimeForAlarm(uint8_t *day, uint8_t *hour,
-                               uint8_t *minute,
-                               uint8_t *second, unsigned long millisSpan);
     void calculateTimeForAlarm(uint8_t *hour,unsigned long millisSpan);
 
 private:
     RTCZero rtc;
     static void rtcCallback();
+
 };
 
 #endif // _RTC_H_

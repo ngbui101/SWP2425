@@ -14,13 +14,13 @@ struct TrackerModes {
     // bool Modem_Off = false;
     unsigned long period = 60000UL;
     unsigned long maxRealTime = 120001UL;
-    bool realtime = true;
+    bool realtime = false;
     // GeoFencing
     float geoLatitude = 0;
     float geoLongitude = 0;
     unsigned int geoRadius = 0;
 
-    bool wakeUp = false;
+    bool wakeUp = true;
 
     // void resetModes() {
     //     GnssMode = false;

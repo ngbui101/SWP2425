@@ -39,5 +39,7 @@ bool PowerSavingMode::setup()
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
 void PowerSavingMode::sendData()
 {
-    while(!tracker.sendAndWaitResponseHTTP());
+    while(!tracker.sendAndWaitResponseHTTP()){
+        tracker.handleErrors();
+    };
 }

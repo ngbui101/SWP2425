@@ -19,10 +19,12 @@ bool RealTimeMode::setup()
 
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
 void RealTimeMode::loop()
-{
+{   
     bool keepRunning = true;
     while (keepRunning)
     {
         keepRunning = tracker.sendAndCheck();
     }
+    tracker.handleErrors();
+    // tracker.handleErrors();
 }

@@ -1246,7 +1246,7 @@ bool _BG96_Common::checkForNetwork()
         if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
         {
             // if(ResetModule())
-            Serial.println("Fail to register!!!");
+            // Serial.println("Fail to register!!!");
             return false;
         }
         delay(3000);
