@@ -96,46 +96,31 @@ char *_RTC::getDateTime()
 
 bool _RTC::enableAlarm(unsigned long millisSpan)
 {
-    uint8_t day = rtc.getDay();
+    // uint8_t day = rtc.getDay();
     uint8_t hour = rtc.getHours();
     uint8_t minute = rtc.getMinutes();
-    uint8_t second = rtc.getSeconds();
+    // uint8_t second = rtc.getSeconds();
 
-    calculateTimeForAlarm(&day,&hour, &minute, &second, millisSpan);
-    rtc.setAlarmTime(hour, minute, second);
-    rtc.setAlarmDay(day);
-    rtc.enableAlarm(rtc.MATCH_DHHMMSS);
+    calculateTimeForAlarm(&hour, millisSpan);
+    // rtc.setAlarmTime(hour, minute, second);
+    // rtc.setAlarmDay(day);
+    rtc.setAlarmMinutes(minute);
+    rtc.setAlarmHours(hour);
+    
+    rtc.enableAlarm(rtc.MATCH_HHMMSS);
     rtc.attachInterrupt(rtcCallback);
+   
     return true;
 }
 
-void _RTC::calculateTimeForAlarm(uint8_t *day, uint8_t *hour,
-                                 uint8_t *minute,
-                                 uint8_t *second, unsigned long millisSpan)
+// void _RTC::calculateTimeForAlarm(uint8_t *day, uint8_t *hour,
+//                                  uint8_t *minute,
+//                                  uint8_t *second, unsigned long millisSpan)
+// {  
+void _RTC::calculateTimeForAlarm(uint8_t *hour, unsigned long millisSpan)
 {   
-    unsigned long secondsToAdd = millisSpan / 1000;
-    *second += secondsToAdd % 60;
-    unsigned long minutesToAdd = secondsToAdd / 60;
-    if (*second >= 60)
-    {
-        *second -= 60;
-        minutesToAdd += 1;
-    }
-    *minute += minutesToAdd % 60;
-    unsigned long hoursToAdd = minutesToAdd / 60;
-    if (*minute >= 60)
-    {
-        *minute -= 60;
-        hoursToAdd += 1;
-    }
-    *hour += hoursToAdd % 24;
-    unsigned long daysToAdd = hoursToAdd / 24;
-    if (*hour >= 24)
-    {
-        *hour -= 24;
-        daysToAdd += 1;
-    }
-    *day += daysToAdd;
+    uint8_t to_add_hour = millisSpan / 3600000;
+    *hour = (*hour + to_add_hour)/24;
 }
 
 void _RTC::rtcCallback()

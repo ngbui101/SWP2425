@@ -46,7 +46,9 @@ static void bma_delay_ms(uint32_t ms)
 }
 
 void _Motion::initialize(MA456_RANGE range, MBA456_ODR odr, MA456_BW bw, MA456_PERF_MODE mode)
-{
+{   
+    pinMode(LED_BUILTIN, OUTPUT);
+
     Wire.begin();
 
     accel.dev_addr = BMA4_I2C_ADDR_SECONDARY;
@@ -168,7 +170,8 @@ bool _Motion::waitForMotion()
     rslt = bma456_read_int_status(&int_status, &accel);
     /* Check if sig-motion interrupt is received */
     if ((rslt == BMA4_OK) && (int_status & BMA456_WAKEUP_INT))
-    {
+    {   
+        blink();
         return true;
     }
     return false;
@@ -223,3 +226,10 @@ bool _Motion::isMovementAboveThreshold(float threshold)
     return (magnitude > threshold);
 }
 
+void _Motion::blink(){
+
+    digitalWrite(LED_BUILTIN,HIGH);
+    delay(1000);
+    digitalWrite(LED_BUILTIN,LOW);
+
+}

@@ -7,8 +7,8 @@ async function getModeAndGeofencesFromMongo(trackerId, database) {
 
     try {
         // Hole Modusinformationen
-        const modeDoc = await modeCollection.findOne({ 
-            tracker: new ObjectId(String(trackerId)) 
+        const modeDoc = await modeCollection.findOne({
+            tracker: new ObjectId(String(trackerId))
         });
 
         const modeData = modeDoc ? {
@@ -101,8 +101,8 @@ export const handler = async (event) => {
     const client = new MongoClient(mongoURI);
 
     // Body parsen bei HTTP-Events
-    const requestData = typeof event.body === 'string' 
-        ? JSON.parse(event.body) 
+    const requestData = typeof event.body === 'string'
+        ? JSON.parse(event.body)
         : event;
 
     // Relevante Felder aus dem Request
@@ -120,8 +120,8 @@ export const handler = async (event) => {
         // RequestMode: requestData.RequestMode,
         BatteryLow: requestData.BatteryLow,
         TimeToGetFirstFix: requestData.TimeToGetFirstFix,
-        gnss: requestData.gnss,        
-        frequenz: requestData.frequenz 
+        gnss: requestData.gnss,
+        frequenz: requestData.frequenz
     };
 
     try {
@@ -144,18 +144,18 @@ export const handler = async (event) => {
 
         // Checks, ob Daten gesendet wurden
         const isBatteryDataSent = (data.BatteryPercentage !== undefined);
-        const isTempHumDataSent  = (data.Temperature !== undefined || data.Humidity !== undefined);
-        const isCellDataSent     = (data.Cells && Array.isArray(data.Cells) && data.Cells.length > 0);
-        const isGnssDataSent     = (data.gnss !== undefined);
-        const isNmeaDataSent     = (data.GSA !== undefined || data.GSV !== undefined);
-        const isFrequenzSent     = (data.frequenz !== undefined);
+        const isTempHumDataSent = (data.Temperature !== undefined || data.Humidity !== undefined);
+        const isCellDataSent = (data.Cells && Array.isArray(data.Cells) && data.Cells.length > 0);
+        const isGnssDataSent = (data.gnss !== undefined);
+        const isNmeaDataSent = (data.GSA !== undefined || data.GSV !== undefined);
+        const isFrequenzSent = (data.frequenz !== undefined);
 
         // Mismatch-Objekt
         const mismatches = {};
 
         // BatteryMode
         if (isBatteryDataSent && modeData.BatteryMode === false) {
-            mismatches.BatteryMode = false;  
+            mismatches.BatteryMode = false;
         }
         if (!isBatteryDataSent && modeData.BatteryMode === true) {
             mismatches.BatteryMode = true;
@@ -198,25 +198,6 @@ export const handler = async (event) => {
         //       Wenn Frequenz nicht gesendet, aber modeData.frequenz != null => mismatch
         // Falls Mismatch => zurückgeben mit Status 200
         // (Daten werden NICHT inserted)
-        if (Object.keys(mismatches).length > 0) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify(mismatches)
-            };
-        }
-
-        if (isFrequenzSent) {
-            if (data.frequenz !== modeData.frequenz) {
-                // Wir geben hier in der Antwort die **erwartete** Frequenz als number zurück
-                mismatches.frequenz = modeData.frequenz; 
-            }
-        } else {
-            // Frequenz gar nicht gesendet
-            if (modeData.frequenz !== undefined && modeData.frequenz !== null) {
-                mismatches.frequenz = modeData.frequenz;
-            }
-        }
-
         // // Wenn RequestMode=true, soll Mode-Data & Geofences zurückkommen (Option)
         // if (data.RequestMode === true) {
         //     const payload = { ...modeData, geofences: geofenceData };
@@ -231,7 +212,7 @@ export const handler = async (event) => {
         const documentsToInsert = [];
 
         // GNSS
-        if (isGnssDataSent && data.gnss.latitude != undefined ) {
+        if (isGnssDataSent && data.gnss.latitude != undefined) {
             documentsToInsert.push({
                 imei: data.IMEI,
                 mode: "GPS",
@@ -305,14 +286,32 @@ export const handler = async (event) => {
             console.log("No valid measurement data found; no documents were inserted.");
         }
 
-        
+
+        // if (Object.keys(mismatches).length > 0) {
+        //     return {
+        //         statusCode: 200,
+        //         body: JSON.stringify(mismatches)
+        //     };
+        // }
+        if (isFrequenzSent) {
+            if (data.frequenz !== modeData.frequenz) {
+                // Wir geben hier in der Antwort die **erwartete** Frequenz als number zurück
+                mismatches.frequenz = modeData.frequenz;
+            }
+        } else {
+            // Frequenz gar nicht gesendet
+            if (modeData.frequenz !== undefined && modeData.frequenz !== null) {
+                mismatches.frequenz = modeData.frequenz;
+            }
+        }
+        // Am Ende: alles OK => {"valid": true}
         if (Object.keys(mismatches).length > 0) {
             return {
                 statusCode: 200,
                 body: JSON.stringify(mismatches)
             };
         }
-        // Am Ende: alles OK => {"valid": true}
+
         return {
             statusCode: 200,
             body: JSON.stringify({ valid: true })
