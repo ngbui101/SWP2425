@@ -1,7 +1,6 @@
 // TrackerMode.h
 #define TRACKER_MODE_H_
 
-#include "Cell.h"
 struct TrackerModes {
     // Mode
     bool GnssMode = false;

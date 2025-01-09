@@ -307,19 +307,19 @@ bool Tracker::wakeUp()
 
 bool Tracker::handleCellInfosMode()
 {
-    _BG96.ScanCells(RAT, cells);
+    // _BG96.ScanCells(RAT, cells);
 
     JsonArray cellsArray = docInput["cells"].to<JsonArray>();
     
-    for (Cell *&cell : cells)
-    {
-        if (cell != nullptr)
-        {
-            // JSON-Objekt für jede Zelle erstellen
-            JsonObject cellObj = cellsArray.add<JsonObject>();
-            cell->toJson(cellObj);
-        }
-    }
+    // for (Cell *&cell : cells)
+    // {
+    //     if (cell != nullptr)
+    //     {
+    //         // JSON-Objekt für jede Zelle erstellen
+    //         JsonObject cellObj = cellsArray.add<JsonObject>();
+    //         cell->toJson(cellObj);
+    //     }
+    // }
     return true;
 }
 
