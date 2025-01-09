@@ -11,7 +11,7 @@ Tracker::~Tracker() {}
 bool Tracker::InitModule()
 {
     if (initBoard() && initModem() && startConnect())
-    {   
+    {
         return initHTTP() && InitGNSS();
     }
     return false;
@@ -30,17 +30,11 @@ bool Tracker::setCurrentTimeToRTC()
 
 void Tracker::firstStart()
 {
+    // !!! Fehler nicht behebel, Internet erforderllich
     if (InitModule())
     {
         setCurrentTimeToRTC();
     }
-    setCurrentTimeToRTC();
-    init = true;
-    // setCurrentTimeToRTC();
-
-    // setHTTPURL(http_url);
-
-    // while(!sendAndWaitResponseHTTP());
 }
 
 int Tracker::checkForError()
@@ -152,7 +146,7 @@ bool Tracker::setMode(char *payload)
         return false;
     }
     docOutput.clear();
-    return trackerModes.realtime;
+    return true;
 }
 
 bool Tracker::modeHandle()
@@ -187,15 +181,22 @@ bool Tracker::modeHandle()
 
 bool Tracker::sendAndCheck()
 {
-    bool keepRunning;
-    while (abs(millis() - pub_time) >= trackerModes.period - 1000)
-    {
-        if (isMQTTAvaliable())
-        {
-            return pubAndsubMQTT();
-        }
-        keepRunning = sendAndWaitResponseHTTP();
+    bool keepRunning = false;
+
+    Serial.println("sendAndWaitResponseHTTP");
+
+    keepRunning = isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
+
+    if(!trackerModes.realtime){
+        return false;
     }
+    
+    while (abs(millis() - pub_time) <= trackerModes.period - 1000)
+    {
+        delay(1000);
+        Serial.println("less than interval");
+    }
+
     return keepRunning;
 }
 
@@ -226,7 +227,7 @@ bool Tracker::pubAndsubMQTT()
 
 bool Tracker::sendAndWaitResponseHTTP()
 {
-    char payload[1028];
+    char payload[4096];
     char response[1028];
     if (!modeHandle())
     {
@@ -238,14 +239,17 @@ bool Tracker::sendAndWaitResponseHTTP()
     docInput.clear();
 
     if (!sendAndReadResponse(payload, response))
+    {
+        Serial.println("Fehler bei: sendAndReadResponse");
         return false;
-
+    }
     if (!responseValid(response))
     {
+        Serial.println("Response invalid");
         return (setMode(response));
     }
+    Serial.println("Response valid");
     pub_time = millis();
-
     return true;
 }
 
@@ -286,31 +290,14 @@ bool Tracker::resetModem()
 }
 bool Tracker::turnOnFunctionality()
 {
-    if (!isModemAvailable() && !turnOnModem())
-    {
-        return false;
-    }
-    if (trackerModes.GnssMode && !isGnssModuleEnable() && !TurnOnGNSS())
-    {
-        // Serial.println("TurnOnGNSS");
-        return false;
-    }
-    if (!isConnected() && !startConnect())
-    {
-        // Serial.println("startConnect");
-        return false;
-    }
-    if (!isUrlSetted() && !setHTTPURL(http_url))
-    {
-        // Serial.println("setHTTPURL");
-        return false;
-    }
-    if (!isMQTTAvaliable() && useMQTT && !startMQTT())
-    {
-        return false;
-    }
+    bool success = true;
+    success &= isModemAvailable() || turnOnModem();
+    success &= !trackerModes.GnssMode || isGnssModuleEnable() || TurnOnGNSS();
+    success &= isConnected() || startConnect();
+    success &= isUrlSetted() || setHTTPURL(http_url);
+    success &= !useMQTT || isMQTTAvaliable() || startMQTT();
     handleErrors();
-    return true;
+    return success;
 }
 
 bool Tracker::wakeUp()
@@ -350,17 +337,19 @@ int Tracker::getResetCount()
 bool Tracker::handleErrors()
 {
     if (countReset > 3)
-    {
-        return retryIn1Hour();
+    {   
+        trackerModes.wakeUp = false;
+        return true;
     }
-    if (checkForError() > 0) 
+    if (checkForError() > 0)
     {
         return resetModem();
     }
     return true;
 }
 
-bool Tracker::handleIniTErrors(){
-    
+bool Tracker::handleIniTErrors()
+{
+
     return true;
 }

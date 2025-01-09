@@ -1,6 +1,6 @@
 // TrackerMode.h
-#ifndef TRACKER_MODE_H_
 #define TRACKER_MODE_H_
+
 #include "Cell.h"
 struct TrackerModes {
     // Mode
@@ -46,5 +46,3 @@ struct TrackerModes {
 };
 
 extern TrackerModes trackerModes;
-
-#endif 

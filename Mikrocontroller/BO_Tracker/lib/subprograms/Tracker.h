@@ -48,14 +48,16 @@ public:
     bool retryIn1Hour();
 
     int getResetCount();
+
     bool handleErrors();
+    
     bool handleIniTErrors();
 private:
     unsigned long pub_time = 0;
 
     int countReset = 0;
 
-    bool init = false;
+    // bool init = false;
     // bool modeRequest = true;
 };
 
