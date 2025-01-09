@@ -310,6 +310,7 @@ bool Tracker::handleCellInfosMode()
     _BG96.ScanCells(RAT, cells);
 
     JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+    
     for (Cell *&cell : cells)
     {
         if (cell != nullptr)

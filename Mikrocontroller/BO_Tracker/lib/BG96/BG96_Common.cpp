@@ -69,7 +69,7 @@ bool _BG96_Common::InitModule()
     // ResetModule();
     while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
         ;
-        
+
     return true;
 }
 
@@ -1108,9 +1108,9 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
 
     // Determine scan mode based on 'rat'
 
-    if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
+    if (strcmp(rat, "lte") == 0)
     {
-        Net_Type_t act = strcmp(rat, "lte") == 0 ? LTE_CAT_M1 : LTE_CAT_NB1; // LTE network type
+        Net_Type_t act = LTE_CAT_M1; // LTE network type
         // --- LTE Scanning ---
         // List of operators to scan
         // int operators[3] = {26201, 26202, 26203};
@@ -1190,6 +1190,27 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
             }
         }
     }
+    else if (strcmp(rat, "nbiot") == 0)
+    {
+        Net_Status_t i_status = NOT_REGISTERED;
+        unsigned long start_time = millis();
+
+        // while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+        // {
+        //     i_status = DevNetRegistrationStatus();
+        //     if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
+        //     {
+
+        //         break;
+        //     }
+        //     delay(3000); // Wait 3 seconds
+        // }
+        if(!checkForNetwork()){
+            return 0;
+        }
+        Cell *cell = ReportCellInformation("servingcell");
+        return 1;
+    }
     else if (strcmp(rat, "gsm") == 0)
     {
         // --- GSM Scanning ---
@@ -1197,15 +1218,17 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
         Net_Status_t i_status = NOT_REGISTERED;
         unsigned long start_time = millis();
 
-        while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
-        {
-            i_status = DevNetRegistrationStatus();
-            if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
-            {   
-
-                break;
-            }
-            delay(3000); // Wait 3 seconds
+        // while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+        // {
+        //     i_status = DevNetRegistrationStatus();
+        //     if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
+        //     {
+        //         return 0;
+        //     }
+        //     delay(3000); // Wait 3 seconds
+        // }
+        if(!checkForNetwork()){
+            return 0;
         }
         // Get neighbour cell information
         // delay(10000);
