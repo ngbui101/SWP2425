@@ -11,35 +11,42 @@ void PowerSavingMode::start()
     {
         // Serial.println("Wake Up");
         // Serial.println("Setup");
-        if (!setup())
+        if (!tracker.turnOnFunctionality())
             return;
+        // delay(5000);
         // Serial.println("SendData");
-        sendData();
+        // tracker.blink();
+        if (!tracker.sendAndWaitResponseHTTP())
+        {
+            tracker.handleErrors();
+            return;
+        }
         trackerModes.wakeUp = false;
     }
     else
     {
         if (tracker.isModemAvailable())
-        {   
+        {
             // Serial.println("TurnOffModem");
-            tracker.enableAlarm(trackerModes.period-10*1000ul); 
             tracker.turnOffModem();
         }
         // Serial.println("GoTo Sleep");
-        tracker.deepSleep(120000);
+        tracker.deepSleepWithAlarm(trackerModes.period - 10 * 1000ul);
     }
 }
 
-bool PowerSavingMode::setup()
-{
-    tracker.enableAlarm(trackerModes.period);
-    return tracker.turnOnFunctionality();
-}
+// bool PowerSavingMode::setup()
+// {
+//     return tracker.turnOnFunctionality();
+// }
 
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
-void PowerSavingMode::sendData()
-{
-    while(!tracker.sendAndWaitResponseHTTP()){
-        tracker.handleErrors();
-    };
-}
+// bool PowerSavingMode::sendData()
+// {
+//     if (!tracker.sendAndWaitResponseHTTP())
+//     {
+
+//         return false;
+//     }
+//     return true;
+// }

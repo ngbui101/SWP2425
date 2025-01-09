@@ -13,7 +13,7 @@ public:
     PowerSavingMode(Tracker &trackerObj);
     void start();
     bool setup();
-    void sendData();
+    bool sendData();
 };
 
 #endif 
