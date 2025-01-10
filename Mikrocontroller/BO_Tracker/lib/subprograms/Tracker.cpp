@@ -181,7 +181,7 @@ bool Tracker::modeHandle()
     docInput["IMEI"] = modemIMEI;
     docInput["frequenz"] = trackerModes.period;
     docInput["Timestamp"] = getDateTime();
-    handle = true;
+    // handle = true;
     return true;
 }
 
@@ -234,28 +234,38 @@ bool Tracker::sendAndWaitResponseHTTP()
 {
     char payload[4096];
     char response[1028];
-    if (!handle && !modeHandle())
+    // if (!handle )
+    // {
+    //     if(modeHandle()){
+    //         handle = true;
+    //     }
+    // }
+    if (!modeHandle())
     {
         return false;
-    };
+    }
     if (!serializeJsonPretty(docInput, payload))
+    {
         return false;
-
+    }
+    docInput.clear();
+    
     if (!sendAndReadResponse(payload, response))
     {
         // Serial.println("Fehler bei: sendAndReadResponse");
         return false;
     }
-    handle = false;
-    docInput.clear();
+
     if (!responseValid(response))
     {
         Serial.println("Response invalid");
-        return (setMode(response));
+        setMode(response);
+        return false;
     }
     Serial.println("Response valid");
-    pub_time = millis();
     
+    pub_time = millis();
+    // handle = false;
     return true;
 }
 
@@ -319,14 +329,14 @@ bool Tracker::handleCellInfosMode()
 
     if (!fillCellsQueue())
     {
-        runningLogger.logError("ScanningCells");
+        runningLogger.logError("FillCells");
         return false;
     };
 
     cells_queue.addCellsToJsonArray(&cellsArray);
 
     Serial.println("handleCellInfosMode()");
-    
+
     return true;
     // for (Cell *&cell : cells)
     // {

@@ -1191,7 +1191,7 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
 
             if (cell != nullptr)
             {
-
+                
                 if (cellCount < max_cells)
                 {
                     cells[cellCount++] = cell;
@@ -1333,9 +1333,9 @@ bool _BG96_Common::checkForNetwork()
     while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
     {
         i_status = DevNetRegistrationStatus();
-        if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
+        if (millis() - start_time >= 90 * 1000UL) // Timeout nach 90 Sekunden
         {
-            // if(ResetModule())
+            // // if(ResetModule())
             // Serial.println("Fail to register!!!");
             return false;
         }
@@ -1382,7 +1382,7 @@ bool _BG96_Common::TurnOnInternet(unsigned int pdp_index)
                 // strcpy(err_code, e_str);
                 return false;
             }
-            // return true;
+            return true;
         }
         else if (init_status == TIMEOUT_RESPONSE)
         {
