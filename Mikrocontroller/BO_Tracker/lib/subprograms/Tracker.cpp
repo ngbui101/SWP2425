@@ -151,6 +151,11 @@ bool Tracker::setMode(char *payload)
 
 bool Tracker::modeHandle()
 {
+    // if (modeRequest)
+    // {
+    //     docInput["RequestMode"] = true;
+    //     modeRequest = false;
+    // }
     if (trackerModes.TemperatureMode)
     {
         docInput["Temperature"] = readTemperature();
@@ -164,9 +169,9 @@ bool Tracker::modeHandle()
     }
 
     // Zellinformationen erfassen
-    if (trackerModes.CellInfosMode)
+    if (trackerModes.CellInfosMode && !handleCellInfosMode())
     {
-        handleCellInfosMode();
+        return false;
     }
     if (trackerModes.GnssMode)
     {
@@ -176,6 +181,7 @@ bool Tracker::modeHandle()
     docInput["IMEI"] = modemIMEI;
     docInput["frequenz"] = trackerModes.period;
     docInput["Timestamp"] = getDateTime();
+    handle = true;
     return true;
 }
 
@@ -187,10 +193,11 @@ bool Tracker::sendAndCheck()
 
     keepRunning = isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
 
-    if(!trackerModes.realtime){
+    if (!trackerModes.realtime)
+    {
         return false;
     }
-    
+
     while (abs(millis() - pub_time) <= trackerModes.period - 1000)
     {
         delay(1000);
@@ -207,16 +214,14 @@ bool Tracker::pubAndsubMQTT()
     switch (event)
     {
     case MQTT_RECV_DATA_EVENT:
-        setMode(response);
-        return false;
+        return setMode(response);
+        ;
     case MQTT_CLIENT_CLOSED:
         return false;
     default:
         break;
     }
-
-    modeHandle();
-    if (!publishData("/pub"))
+    if (!modeHandle() || !publishData("/pub"))
     {
         return false;
     }
@@ -229,20 +234,20 @@ bool Tracker::sendAndWaitResponseHTTP()
 {
     char payload[4096];
     char response[1028];
-    if (!modeHandle())
+    if (!handle && !modeHandle())
     {
         return false;
     };
     if (!serializeJsonPretty(docInput, payload))
         return false;
 
-    docInput.clear();
-
     if (!sendAndReadResponse(payload, response))
     {
-        Serial.println("Fehler bei: sendAndReadResponse");
+        // Serial.println("Fehler bei: sendAndReadResponse");
         return false;
     }
+    handle = false;
+    docInput.clear();
     if (!responseValid(response))
     {
         Serial.println("Response invalid");
@@ -250,6 +255,7 @@ bool Tracker::sendAndWaitResponseHTTP()
     }
     Serial.println("Response valid");
     pub_time = millis();
+    
     return true;
 }
 
@@ -310,7 +316,18 @@ bool Tracker::handleCellInfosMode()
     // _BG96.ScanCells(RAT, cells);
 
     JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+
+    if (!fillCellsQueue())
+    {
+        runningLogger.logError("ScanningCells");
+        return false;
+    };
+
+    cells_queue.addCellsToJsonArray(&cellsArray);
+
+    Serial.println("handleCellInfosMode()");
     
+    return true;
     // for (Cell *&cell : cells)
     // {
     //     if (cell != nullptr)
@@ -320,7 +337,6 @@ bool Tracker::handleCellInfosMode()
     //         cell->toJson(cellObj);
     //     }
     // }
-    return true;
 }
 
 bool Tracker::retryIn1Hour()
@@ -338,7 +354,7 @@ int Tracker::getResetCount()
 bool Tracker::handleErrors()
 {
     if (countReset > 3)
-    {   
+    {
         trackerModes.wakeUp = false;
         return true;
     }

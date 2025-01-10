@@ -205,7 +205,7 @@ bool BMA456::checkForAnyMotion(){
     /* Read the interrupt status */
     rslt = bma456_read_int_status(&int_status, &accel);
     /* Check if sig-motion interrupt is received */
-    Serial.println(int_status);
+    // Serial.println(int_status);
     return ((rslt == BMA4_OK) && (int_status & BMA456_ANY_NO_MOTION_INT));
 }
 

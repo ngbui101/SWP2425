@@ -56,7 +56,7 @@ private:
     unsigned long pub_time = 0;
 
     int countReset = 0;
-
+    bool handle = false;
     // bool init = false;
     // bool modeRequest = true;
 };
