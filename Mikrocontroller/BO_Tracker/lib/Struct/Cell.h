@@ -34,7 +34,7 @@ public:
     {
         if (strcmp(rat, "cat-m") == 0){
             json["radio"] = "lte";
-        }else if( strcmp(rat, "nb-iot") == 0){
+        }else if( strcmp(rat, "cat-nb") == 0){
             json["radio"] = "nbiot";
         }else
         {

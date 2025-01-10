@@ -8,17 +8,13 @@ Tracker::Tracker(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
 Tracker::~Tracker() {}
 
 // Beispiel-Implementierung der InitModule()-Funktion
-void Tracker::InitModule()
+bool Tracker::InitModule()
 {
-    initBoard();
-
-    initModem();
-
-    initHTTP();
-
-    InitGNSS();
-
-    connect = true;
+    if (initBoard() && initModem() && startConnect())
+    {
+        return initHTTP() && InitGNSS();
+    }
+    return false;
 }
 
 bool Tracker::setCurrentTimeToRTC()
@@ -34,14 +30,11 @@ bool Tracker::setCurrentTimeToRTC()
 
 void Tracker::firstStart()
 {
-    InitModule();
-    // startConnect();
-
-    setCurrentTimeToRTC();
-
-    setHTTPURL(http_url);
-
-    while(!sendAndWaitResponseHTTP());
+    // !!! Fehler nicht behebel, Internet erforderllich
+    if (InitModule())
+    {
+        setCurrentTimeToRTC();
+    }
 }
 
 int Tracker::checkForError()
@@ -153,11 +146,16 @@ bool Tracker::setMode(char *payload)
         return false;
     }
     docOutput.clear();
-    return trackerModes.realtime;
+    return true;
 }
 
 bool Tracker::modeHandle()
 {
+    // if (modeRequest)
+    // {
+    //     docInput["RequestMode"] = true;
+    //     modeRequest = false;
+    // }
     if (trackerModes.TemperatureMode)
     {
         docInput["Temperature"] = readTemperature();
@@ -171,9 +169,9 @@ bool Tracker::modeHandle()
     }
 
     // Zellinformationen erfassen
-    if (trackerModes.CellInfosMode)
+    if (trackerModes.CellInfosMode && !handleCellInfosMode())
     {
-        handleCellInfosMode();
+        return false;
     }
     if (trackerModes.GnssMode)
     {
@@ -183,20 +181,29 @@ bool Tracker::modeHandle()
     docInput["IMEI"] = modemIMEI;
     docInput["frequenz"] = trackerModes.period;
     docInput["Timestamp"] = getDateTime();
+    handle = true;
     return true;
 }
 
 bool Tracker::sendAndCheck()
 {
-    bool keepRunning;
-    while (abs(millis() - pub_time) >= trackerModes.period - 1000)
+    bool keepRunning = false;
+
+    Serial.println("sendAndWaitResponseHTTP");
+
+    keepRunning = isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
+
+    if (!trackerModes.realtime)
     {
-        if (isMQTTAvaliable())
-        {
-            return pubAndsubMQTT();
-        }
-        keepRunning = sendAndWaitResponseHTTP();
+        return false;
     }
+
+    while (abs(millis() - pub_time) <= trackerModes.period - 1000)
+    {
+        delay(1000);
+        Serial.println("less than interval");
+    }
+
     return keepRunning;
 }
 
@@ -207,16 +214,14 @@ bool Tracker::pubAndsubMQTT()
     switch (event)
     {
     case MQTT_RECV_DATA_EVENT:
-        setMode(response);
-        return false;
+        return setMode(response);
+        ;
     case MQTT_CLIENT_CLOSED:
         return false;
     default:
         break;
     }
-
-    modeHandle();
-    if (!publishData("/pub"))
+    if (!modeHandle() || !publishData("/pub"))
     {
         return false;
     }
@@ -227,25 +232,30 @@ bool Tracker::pubAndsubMQTT()
 
 bool Tracker::sendAndWaitResponseHTTP()
 {
-    char payload[1028];
+    char payload[4096];
     char response[1028];
-    if (!modeHandle())
+    if (!handle && !modeHandle())
     {
         return false;
     };
     if (!serializeJsonPretty(docInput, payload))
         return false;
 
-    docInput.clear();
-
     if (!sendAndReadResponse(payload, response))
+    {
+        // Serial.println("Fehler bei: sendAndReadResponse");
         return false;
-
+    }
+    handle = false;
+    docInput.clear();
     if (!responseValid(response))
     {
+        Serial.println("Response invalid");
         return (setMode(response));
     }
+    Serial.println("Response valid");
     pub_time = millis();
+    
     return true;
 }
 
@@ -276,41 +286,24 @@ bool Tracker::turnOffModem()
 
 bool Tracker::resetModem()
 {
-
     if (!turnOffModem())
         return false;
     delay(3000);
     if (!turnOnModem())
         return false;
-
+    countReset++;
     return true;
 }
 bool Tracker::turnOnFunctionality()
 {
-    if (!isModemAvailable() && !turnOnModem())
-    {
-        return false;
-    }
-    if (trackerModes.GnssMode && !isGnssModuleEnable() && !TurnOnGNSS())
-    {
-        // Serial.println("TurnOnGNSS");
-        return false;
-    }
-    if (!isConnected() && !startConnect())
-    {
-        // Serial.println("startConnect");
-        return false;
-    }
-    if (!isUrlSetted() && !setHTTPURL(http_url))
-    {
-        // Serial.println("setHTTPURL");
-        return false;
-    }
-    if (!isMQTTAvaliable() && useMQTT && !startMQTT())
-    {
-        return false;
-    }
-    return true;
+    bool success = true;
+    success &= isModemAvailable() || turnOnModem();
+    success &= !trackerModes.GnssMode || isGnssModuleEnable() || TurnOnGNSS();
+    success &= isConnected() || startConnect();
+    success &= isUrlSetted() || setHTTPURL(http_url);
+    success &= !useMQTT || isMQTTAvaliable() || startMQTT();
+    handleErrors();
+    return success;
 }
 
 bool Tracker::wakeUp()
@@ -319,18 +312,61 @@ bool Tracker::wakeUp()
 }
 
 bool Tracker::handleCellInfosMode()
-{   
-    _BG96.ScanCells(RAT,cells);
+{
+    // _BG96.ScanCells(RAT, cells);
 
     JsonArray cellsArray = docInput["cells"].to<JsonArray>();
-    for (Cell *&cell : cells)
+
+    if (!fillCellsQueue())
     {
-        if (cell != nullptr)
-        {
-            // JSON-Objekt für jede Zelle erstellen
-            JsonObject cellObj = cellsArray.add<JsonObject>();
-            cell->toJson(cellObj);
-        }
+        runningLogger.logError("ScanningCells");
+        return false;
+    };
+
+    cells_queue.addCellsToJsonArray(&cellsArray);
+
+    Serial.println("handleCellInfosMode()");
+    
+    return true;
+    // for (Cell *&cell : cells)
+    // {
+    //     if (cell != nullptr)
+    //     {
+    //         // JSON-Objekt für jede Zelle erstellen
+    //         JsonObject cellObj = cellsArray.add<JsonObject>();
+    //         cell->toJson(cellObj);
+    //     }
+    // }
+}
+
+bool Tracker::retryIn1Hour()
+{
+    countReset = 0;
+    deepSleep(3600 * 1000);
+    return true;
+}
+
+int Tracker::getResetCount()
+{
+    return this->countReset;
+}
+
+bool Tracker::handleErrors()
+{
+    if (countReset > 3)
+    {
+        trackerModes.wakeUp = false;
+        return true;
     }
+    if (checkForError() > 0)
+    {
+        return resetModem();
+    }
+    return true;
+}
+
+bool Tracker::handleIniTErrors()
+{
+
     return true;
 }

@@ -239,42 +239,6 @@ bool _BG96_HTTP::HTTPPOST(char *post_data, unsigned int timeout)
     return false;
 }
 
-bool _BG96_HTTP::HTTPPOST200(char *post_data, unsigned int timeout)
-{
-    char cmd[32], buf[16];
-    strcpy(cmd, HTTP_POST_REQUEST);
-    sprintf(buf, "=%d,%d,%d", strlen(post_data), timeout, timeout);
-    strcat(cmd, buf);
-    
-    if (sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, 3) == SUCCESS_RESPONSE) {
-        if (sendDataAndCheck(post_data, HTTP_POST_REQUEST, RESPONSE_ERROR, timeout)) {
-            unsigned long start_time = millis();
-            errorCode = -1;
-
-            while (millis() - start_time < 200UL) {
-                if (serialAvailable()) {
-                    readResponseByteToBuffer();
-                }
-            }
-
-            // Suche nach "QHTTPPOST: " in der Antwort
-            char *sta_buf = searchStrBuffer(": ");  // Zeigt auf den Beginn nach ": "
-            if (!sta_buf) return false;  // Falls nicht gefunden, gib false zurück
-            
-            // Werte extrahieren
-            int confirmation_code = atoi(sta_buf + 2);  // Bestätigungscode (z. B. 0)
-            char *first_comma = strchr(sta_buf + 2, ',');  // Erstes Komma
-            if (!first_comma) return false;
-            int http_status_code = atoi(first_comma + 1);  // HTTP-Statuscode (z. B. 200)
-
-            // Überprüfen: Bestätigungscode == 0 und HTTP-Statuscode == 200
-            if (confirmation_code == 0 && http_status_code == 200) {
-                return true;  // Erfolg
-            }
-        }
-    }
-    return false;  // Rückgabe false, wenn eine der Bedingungen nicht erfüllt ist
-}
 /**
  * @brief Führt eine HTTP-POST-Anfrage aus, bei der eine Datei gesendet wird.
  *

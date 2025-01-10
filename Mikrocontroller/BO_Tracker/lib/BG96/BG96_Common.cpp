@@ -69,6 +69,7 @@ bool _BG96_Common::InitModule()
     // ResetModule();
     while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
         ;
+
     return true;
 }
 
@@ -95,10 +96,7 @@ bool _BG96_Common::PowerOnModule()
  */
 bool _BG96_Common::ResetModule()
 {
-    digitalWrite(POWKEY_PIN, HIGH);
-    delay(500);
-    digitalWrite(POWKEY_PIN, LOW);
-    return true;
+    return PowerOffModule() && InitModule();
 }
 
 /**
@@ -557,7 +555,7 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
         }
     }
     else if (status == WRITE_MODE)
-    {   
+    {
         char buf[32];
         if (mode != 0)
         {
@@ -861,7 +859,7 @@ Cell *_BG96_Common::ReportCellInformation(const char *celltype)
             strcpy(infos, start_buf);
 
             // Initialize variables
-            char cellType[16], state[16], rat[16], duplex_mode[16];
+            char cellType[16], state[8], rat[8], duplex_mode[16];
             char *rest = infos;
 
             // Parse cellType
@@ -888,19 +886,56 @@ Cell *_BG96_Common::ReportCellInformation(const char *celltype)
                 for (char *p = rat; *p; ++p)
                     *p = tolower(*p);
 
-                // Parse duplex_mode
-                token = strtok_r(NULL, ",", &rest);
-                if (token == NULL)
-                    return nullptr;
-                sscanf(token, "\"%[^\"]\"", duplex_mode);
-
                 if (strcmp(rat, "gsm") == 0)
                 {
                     // Ignore GSM servingcell as per your requirements
-                    return nullptr;
+                    // Parse mcc
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    int mcc = atoi(token);
+
+                    // Parse mnc
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    int mnc = atoi(token);
+
+                    // lac
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    long lac = (int)strtol(token, NULL, 16);
+
+                    // Parse cellid (hex)
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    long cellid = strtol(token, NULL, 16);
+                    // skip <bsic>,<arfcn>,<band>,
+                    for (int i = 0; i < 3; i++)
+                    {
+                        token = strtok_r(NULL, ",", &rest);
+                        if (token == NULL)
+                            return nullptr;
+                    }
+                    // Parse rxlev
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    int rxlev = atoi(token);
+                    // Create and return Cell object
+                    return new Cell(rat, mcc, mnc, lac, cellid, rxlev);
                 }
-                else if (strcmp(rat, "cat-m") == 0 || strcmp(rat, "nb-iot") == 0)
+                else if (strcmp(rat, "cat-m") == 0 || strcmp(rat, "cat-nb") == 0)
                 {
+
+                    // Parse duplex_mode
+                    token = strtok_r(NULL, ",", &rest);
+                    if (token == NULL)
+                        return nullptr;
+                    sscanf(token, "\"%[^\"]\"", duplex_mode);
+
                     // Parse mcc
                     token = strtok_r(NULL, ",", &rest);
                     if (token == NULL)
@@ -940,36 +975,36 @@ Cell *_BG96_Common::ReportCellInformation(const char *celltype)
                     int rsrp = atoi(token);
 
                     // Parse rsrq
-                    token = strtok_r(NULL, ",", &rest);
-                    if (token == NULL)
-                        return nullptr;
-                    // int rsrq = atoi(token);
+                    // token = strtok_r(NULL, ",", &rest);
+                    // if (token == NULL)
+                    //     return nullptr;
+                    // // int rsrq = atoi(token);
 
-                    // Parse rssi
-                    token = strtok_r(NULL, ",", &rest);
-                    if (token == NULL)
-                        return nullptr;
-                    // int rssi = atoi(token);
+                    // // Parse rssi
+                    // token = strtok_r(NULL, ",", &rest);
+                    // if (token == NULL)
+                    //     return nullptr;
+                    // // int rssi = atoi(token);
 
-                    // Parse sinr
-                    token = strtok_r(NULL, ",", &rest);
-                    if (token == NULL)
-                        return nullptr;
-                    // int sinr = atoi(token);
+                    // // Parse sinr
+                    // token = strtok_r(NULL, ",", &rest);
+                    // if (token == NULL)
+                    //     return nullptr;
+                    // // int sinr = atoi(token);
 
-                    // Parse srxlev (may be "-" or a number)
-                    token = strtok_r(NULL, ",", &rest);
-                    if (token == NULL)
-                        return nullptr;
+                    // // Parse srxlev (may be "-" or a number)
+                    // token = strtok_r(NULL, ",", &rest);
+                    // if (token == NULL)
+                    //     return nullptr;
                     // srxlev kann "-" oder eine Zahl sein, wir können es hier ignorieren oder nach Bedarf verwenden
 
                     // Optional: Parse cqi (falls vorhanden)
                     // token = strtok_r(NULL, ",", &rest);
 
-                    int signal = rsrp; // Verwenden Sie rsrp als Signalstärke
+                    // int signal = rsrp;
 
                     // Create and return Cell object
-                    return new Cell(rat, mcc, mnc, tac, cellid, signal);
+                    return new Cell(rat, mcc, mnc, tac, cellid, rsrp);
                 }
                 else
                 {
@@ -1055,6 +1090,27 @@ int _BG96_Common::ReportNeighbourCellInformation(Cell *cells[], int max_cells)
     }
     return cellCount;
 }
+Cmd_Response_t _BG96_Common::ActivateDevAPN(unsigned int pdp_index)
+{
+    char cmd[16], buf[8];
+    strcpy(cmd, ACTIVATE_APN);
+    sprintf(buf, "=%d", pdp_index);
+    strcat(cmd, buf);
+    return sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 150);
+}
+
+bool _BG96_Common::DeactivateDevAPN(unsigned int pdp_index)
+{
+    char cmd[16], buf[8];
+    strcpy(cmd, DEACTIVATE_APN);
+    sprintf(buf, "=%d", pdp_index);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 40) > 0)
+    {
+        return true;
+    }
+    return false;
+}
 
 bool _BG96_Common::ResetFunctionality()
 {
@@ -1109,15 +1165,17 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
     int cellCount = 0;       // Counter for the number of cells found
 
     // Determine scan mode based on 'rat'
-    
 
-    if (strcmp(rat, "lte") == 0 || strcmp(rat, "nbiot") == 0)
-    {   
-        Net_Type_t act = strcmp(rat, "lte") == 0 ? LTE_CAT_M1 : LTE_CAT_NB1; // LTE network type
+    if (strcmp(rat, "lte") == 0)
+    {
+        Net_Type_t act = LTE_CAT_M1; // LTE network type
         // --- LTE Scanning ---
         // List of operators to scan
         // int operators[3] = {26201, 26202, 26203};
-
+        if (!DeactivateDevAPN(1))
+        {
+            return 0;
+        }
         bool telekom = false;
         bool vodafone = false;
         bool o2 = false;
@@ -1125,33 +1183,16 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
         for (int i = 0; i < 3; i++)
         {
             // Wait for registration with a maximum timeout of 30 seconds
-            Net_Status_t i_status = NOT_REGISTERED;
-            unsigned long start_time = millis();
-            while (i_status != REGISTERED && i_status != REGISTERED_ROAMING && i_status != REGISTRATION_DENIED)
+            if (!checkForNetwork())
             {
-                i_status = DevNetRegistrationStatus();
-                if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
-                {
-                    break;
-                }
-                delay(3000); // Wait 3 seconds
+                continue;
             }
             Cell *cell = ReportCellInformation("servingcell");
 
             if (cell != nullptr)
             {
-                // Check for duplicates
-                bool isNewCell = true;
-                for (int j = 0; j < cellCount; j++)
-                {
-                    if (cells[j]->getCellID() == cell->getCellID())
-                    {
-                        isNewCell = false;
-                        delete cell; // Avoid memory leak
-                        break;
-                    }
-                }
-                if (isNewCell && cellCount < max_cells)
+
+                if (cellCount < max_cells)
                 {
                     cells[cellCount++] = cell;
                 }
@@ -1192,32 +1233,77 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
                 continue;
             }
         }
+        // char error_code[16];
+
+        if (!TurnOnInternet(1))
+        {
+            // Serial.println(error_code);
+            return 0;
+        }
+    }
+    else if (strcmp(rat, "nbiot") == 0)
+    {
+        // Net_Status_t i_status = NOT_REGISTERED;
+        // unsigned long start_time = millis();
+
+        // while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+        // {
+        //     i_status = DevNetRegistrationStatus();
+        //     if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
+        //     {
+
+        //         break;
+        //     }
+        //     delay(3000); // Wait 3 seconds
+        // }
+        if (!checkForNetwork())
+        {
+            return 0;
+        }
+        Cell *cell = ReportCellInformation("servingcell");
+        if(cell != nullptr){
+            cells[cellCount] = cell;
+            Serial.println("Scan for NarrowBand IoT Cell");
+            return 1;
+        }
     }
     else if (strcmp(rat, "gsm") == 0)
     {
         // --- GSM Scanning ---
         // Wait for registration with a maximum timeout of 30 seconds
-        Net_Status_t i_status = NOT_REGISTERED;
-        unsigned long start_time = millis();
-        while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+        // Net_Status_t i_status = NOT_REGISTERED;
+        // unsigned long start_time = millis();
+
+        // while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+        // {
+        //     i_status = DevNetRegistrationStatus();
+        //     if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
+        //     {
+        //         return 0;
+        //     }
+        //     delay(3000); // Wait 3 seconds
+        // }
+        if (!checkForNetwork())
         {
-            i_status = DevNetRegistrationStatus();
-            if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
-            {
-                break;
-            }
-            delay(3000); // Wait 3 seconds
+            return 0;
+        }
+        // Get neighbour cell information
+        // delay(10000);
+        Cell *cell = ReportCellInformation("servingcell");
+
+        cells[0] = cell;
+
+        const int puff_length = max_cells - 1;
+        Cell *puff_array[puff_length] = {nullptr};
+        int neighbourCellCount = ReportNeighbourCellInformation(puff_array, puff_length);
+        for (int i = 0; i < puff_length; i++)
+        {
+            cells[i + 1] = puff_array[i];
         }
 
-        // Regardless of registration status, proceed to scan neighbour cells
-
-        // Get neighbour cell information
-        delay(10000);
-        int neighbourCellCount = ReportNeighbourCellInformation(cells, max_cells);
-
-        cellCount = neighbourCellCount > max_cells ? max_cells : neighbourCellCount;
+        return neighbourCellCount + 1;
     }
-
+    // Serial.println("Fertig ScanCells");
     return cellCount; // Return the total number of cells found
 }
 bool _BG96_Common::FactoryReset()
@@ -1235,6 +1321,123 @@ bool _BG96_Common::SaveSetting()
     char save_cmd[32];
     sprintf(save_cmd, "&W");
     if (sendATcommand(save_cmd))
+    {
+        return true;
+    }
+    return false;
+}
+bool _BG96_Common::checkForNetwork()
+{
+    Net_Status_t i_status = NOT_REGISTERED;
+    unsigned long start_time = millis();
+    while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
+    {
+        i_status = DevNetRegistrationStatus();
+        if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
+        {
+            // if(ResetModule())
+            // Serial.println("Fail to register!!!");
+            return false;
+        }
+        delay(3000);
+    }
+    return true;
+}
+
+bool _BG96_Common::TurnOnInternet(unsigned int pdp_index)
+{
+    // Net_Status_t i_status = NOT_REGISTERED;
+    Cmd_Response_t init_status;
+    // const char *e_str;
+
+    unsigned long start_time = millis();
+
+    start_time = millis();
+
+    if (!checkForNetwork())
+    {
+        return false;
+    }
+    start_time = millis();
+    while (millis() - start_time <= 150 * 1000UL) // Timeout nach 150 Sekunden
+    {
+        if (!AttachPS(true))
+        {
+            return false;
+        }
+        init_status = ActivateDevAPN(pdp_index);
+
+        if (init_status == SUCCESS_RESPONSE)
+        {
+            char i_ip[16];
+            if (GetDevAPNIPAddress(pdp_index, i_ip))
+            {
+                // sprintf(err_code, "\r\nAPN OK: The IP address is %s\r\n", i_ip);
+                // Serial.println("Get APN OK");
+                return true;
+            }
+            else
+            {
+                // e_str = "\r\nAPN ERROR: Failed to retrieve IP address!\r\n";
+                // strcpy(err_code, e_str);
+                return false;
+            }
+            // return true;
+        }
+        else if (init_status == TIMEOUT_RESPONSE)
+        {
+            // e_str = "\r\nAPN ERROR: APN activation timeout. Please reset your device!\r\n";
+            // strcpy(err_code, e_str);
+            // if(ResetModule())
+            return false;
+        }
+    }
+    // Falls die APN-Aktivierung fehlschlägt
+    // e_str = "\r\nAPN ERROR: Failed to activate APN!\r\n";
+    // strcpy(err_code, e_str);
+    return false;
+}
+
+bool _BG96_Common::GetDevAPNIPAddress(unsigned int pdp_index, char *ip)
+{
+    char cmd[16], buf[8];
+    strcpy(cmd, GET_APN_IP_ADDRESS);
+    sprintf(buf, "=%d", pdp_index);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, 2))
+    {
+        char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
+        *end_buf = '\0';
+        char *sta_buf = searchChrBuffer(',');
+        if (sta_buf)
+        {
+            strcpy(ip, sta_buf + 1);
+        }
+        else // Komma nicht gefunden
+        {
+            sta_buf = searchChrBuffer('"');
+            if (sta_buf)
+            {
+                strcpy(ip, sta_buf + 2);
+            }
+            else // Doppeltes Anführungszeichen nicht gefunden
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+bool _BG96_Common::AttachPS(bool enable)
+{
+    char cmd[16], buf[8];
+    int state = enable ? 1 : 0;
+    strcpy(cmd, ATTACH_PS);
+    sprintf(buf, "=%d", state);
+    strcat(cmd, buf);
+    if (sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 30) == SUCCESS_RESPONSE)
     {
         return true;
     }

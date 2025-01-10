@@ -1,2 +1,2 @@
 
-zip -r output.zip .
+zip -r index.zip index.mjs

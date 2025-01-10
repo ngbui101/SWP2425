@@ -5,6 +5,7 @@
 #include "board.h"
 #include "Network_Infos.h"
 #include "MQTT_Infos.h"
+#include "CELL_FIFO.h"
 
 
 // Modem-Klasse zur Verwaltung der Modem-Operationen
@@ -15,7 +16,9 @@ protected:
     char modemIMEI[20]; 
     bool funkModuleEnable = false;
     bool connect = false;
-    Cell *cells[6] = {nullptr};
+    // Cell *cells[6] = {nullptr};
+
+    CellFIFO cells_queue;
     
 public:
     // Konstruktor (nur zwei Streams)
@@ -31,6 +34,12 @@ public:
     bool startConnect();
     
     bool isConnected();
+
+    bool sortBySignal(Cell* arr[], int length);
+
+    void fillWithZero(Cell* arr[], int length, int maxSize);
+
+    bool fillCellsQueue();
 
     _BG96_Module getModem();
 };

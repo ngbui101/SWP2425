@@ -82,8 +82,7 @@ _BG96_Module Modem::getModem()
 
 bool Modem::startConnect()
 {
-    char error[64];
-    if (!_BG96.TurnOnInternet(PDPIndex, error))
+    if (!_BG96.TurnOnInternet(PDPIndex))
     {
         runningLogger.logError("TurnOnInternet");
         return false;
@@ -97,3 +96,52 @@ bool Modem::isConnected()
     return connect;
 }
 
+void Modem::fillWithZero(Cell* arr[], int length, int maxSize) {
+    if (length >= maxSize) return;  // Keine Auffüllung notwendig, wenn das Array bereits voll ist
+
+    // Erstelle eine Dummy-Cell mit `CellID = 0`
+    for (int i = length; i < maxSize; i++) {
+        arr[i] = new Cell("FILLER", 0, 0, 0, 0, 0);  // Dynamische Erstellung einer Platzhalter-Zelle
+    }
+}
+
+bool Modem::sortBySignal(Cell* arr[], int length) {
+    if (arr == nullptr || length <= 1) {
+        return false;  // Keine Sortierung notwendig oder ungültiger Array-Zeiger
+    }
+
+    // Bubble-Sort-Algorithmus (absteigend nach Signalstärke)
+    for (int i = 0; i < length - 1; i++) {
+        for (int j = 0; j < length - i - 1; j++) {
+            if (arr[j]->getSignal() < arr[j + 1]->getSignal()) {
+                Cell* temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+
+    return true;  // Sortierung abgeschlossen
+}
+
+
+bool Modem::fillCellsQueue(){
+    int MAX_CELLS = 6;
+    Cell *cells[MAX_CELLS] = {nullptr};
+
+    int countCell = _BG96.ScanCells(RAT,cells);
+    Serial.println("ScanCells OK");
+    Serial.println(countCell);
+    if (countCell == 0)
+        return false;
+    if(countCell > 1){
+        sortBySignal(cells,countCell);
+    }
+
+    fillWithZero(cells,countCell, MAX_CELLS);
+
+    cells_queue.addAll(cells);
+
+    Serial.println("cells_queue OK");
+    return true;
+}

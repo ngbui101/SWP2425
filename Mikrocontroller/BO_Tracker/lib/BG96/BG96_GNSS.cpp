@@ -351,7 +351,7 @@ bool _BG96_GNSS::InitGpsOneXTRA(char *currentTimestamp)
         }
     }
 
-    ResetModule();
+    // ResetModule();
 
     if (!InjectGpsOneXTRAData("UFS:xtra2.bin", READ_MODE, currentTimestamp))
     {

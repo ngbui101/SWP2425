@@ -30,9 +30,9 @@ bool HTTP::setHTTPURL(const char *url)
 
 bool HTTP::sendPostRequest(char *payload)
 {
-    if (!_BG96.HTTPPOST200(payload, 40))
+    if (!_BG96.HTTPPOST(payload, 80))
     {   
-        runningLogger.logError("HTTPPOST200");
+        runningLogger.logError("HTTPPOST");
         return false;
     }
     return true;
