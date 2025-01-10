@@ -64,7 +64,7 @@ const char CONFIGURE_DNS_SERVER[] = "+QIDNSCFG";
 const char DNS_FUNCTION[] = "+QIDNSGIP";
 const char QUERY_ERROR_CODE[] = "+QIGETERROR";
 const char RECV_SOCKET_EVENT[] = "+QIURC";
-
+const char ATTACH_PS[] = "+CGATT";
 // FILE AT Commands
 const char FILE_SPACE_INFORMATION[] = "+QFLDS";
 const char FILE_LIST_FILES[] = "+QFLST";
