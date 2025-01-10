@@ -11,7 +11,7 @@ public:
 
     ~Tracker();
     // Methode zum Initialisieren des Trackers
-    void InitModule();
+    bool InitModule();
 
     bool setCurrentTimeToRTC();  
 
@@ -44,8 +44,20 @@ public:
     bool wakeUp();
 
     bool handleCellInfosMode();
+
+    bool retryIn1Hour();
+
+    int getResetCount();
+
+    bool handleErrors();
+    
+    bool handleIniTErrors();
 private:
     unsigned long pub_time = 0;
+
+    int countReset = 0;
+    // bool cellscanning = false;
+    // bool init = false;
     // bool modeRequest = true;
 };
 

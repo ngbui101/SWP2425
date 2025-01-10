@@ -20,7 +20,6 @@ _Board::~_Board(){}
 
 bool _Board::initBoard()
 {
-    // pinMode(LED_BUILTIN, OUTPUT);
 
     initialize(RANGE_4G, ODR_50_HZ, NORMAL_AVG4, CIC_AVG);
 
@@ -38,3 +37,4 @@ bool _Board::initBoard()
 
     return initLogger.getErrorCount() == 0;
 }
+

@@ -41,7 +41,7 @@ bool MQTT_AWS::startMQTT()
         initLogger.logError("MQTT:Set_Parameters");
     }
 
-    if (!_BG96.OpenMQTTNetwork(MQTTIndex, MQTTServer, MQTTPort) != 0)
+    if (_BG96.OpenMQTTNetwork(MQTTIndex, MQTTServer, MQTTPort) != 0)
     {
         initLogger.logError("MQTT:OpenNetwork");
     }
@@ -52,7 +52,7 @@ bool MQTT_AWS::startMQTT()
         initLogger.logError("MQTT:MessageTimeOut");
     }
 
-    if (!_BG96.CreateMQTTClient(MQTTIndex, MQTTClientId, "", "") != 0)
+    if (_BG96.CreateMQTTClient(MQTTIndex, MQTTClientId, "", "") != 0)
     {
         initLogger.logError("MQTT:CreateClient");
     }
@@ -114,12 +114,12 @@ bool MQTT_AWS::closeMQTTClient()
 {
     if (!_BG96.CloseMQTTClient(MQTTIndex))
         return false;
-     mqtt_available = false;
+    mqtt_available = false;
     return true;
 }
 bool MQTT_AWS::isMQTTAvaliable()
 {
-    return this-> mqtt_available;
+    return this->mqtt_available;
 }
 
 Mqtt_Event_t MQTT_AWS::waitForResponse(char *response)

@@ -124,7 +124,7 @@ bool _BG96_Serial::sendDataAndCheck(const char *data_buf, const char *ok_str, co
  */
 bool _BG96_Serial::sendATcommand(const char *command)
 {
-    delay(100);
+    delay(300);
     while(_atserial.read()>=0);
     _atserial.write("AT");
     int cmd_len = strlen(command);

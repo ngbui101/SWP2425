@@ -1,23 +1,33 @@
 <template>
     <div :class="['contact-page', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
         <div class="contact-form-container">
-            <h2 class="contact-form-title">Get in Touch</h2>
+            <h2 class="contact-form-title">{{ $t('ContactForm-title') }}</h2>
             <p class="contact-form-description">
-                Have any questions or concerns? Feel free to contact us using this contact form. We’re here to help and
-                look forward to hearing from you!
+                {{ $t('ContactForm-description') }}
             </p>
             <form class="contact-form" @submit.prevent="submitContactForm">
                 <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" class="form-input" v-model="email" placeholder="Enter your email"
-                        required />
+                    <label for="email" class="form-label">{{ $t('ContactForm-emailLabel') }}</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="form-input" 
+                        v-model="email" 
+                        :placeholder="$t('ContactForm-emailPlaceholder')" 
+                        required 
+                    />
                 </div>
                 <div class="form-group">
-                    <label for="message" class="form-label">Message</label>
-                    <textarea id="message" class="form-textarea" v-model="message" placeholder="Type your message here"
-                        required></textarea>
+                    <label for="message" class="form-label">{{ $t('ContactForm-messageLabel') }}</label>
+                    <textarea 
+                        id="message" 
+                        class="form-textarea" 
+                        v-model="message" 
+                        :placeholder="$t('ContactForm-messagePlaceholder')" 
+                        required
+                    ></textarea>
                 </div>
-                <button type="submit" class="form-submit-button">Send Message</button>
+                <button type="submit" class="form-submit-button">{{ $t('ContactForm-submitButton') }}</button>
             </form>
 
             <!-- Display success or error message -->

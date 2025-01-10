@@ -2,7 +2,7 @@
   <div :class="['container', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
     <div class="mapview-container">
       <div v-if="trackers.length === 0" class="overlay">
-        <p class="overlay-text">No trackers available. Please add a tracker.</p>
+        <p class="overlay-text">{{ $t('CurrentMap-no_trackers') }}</p>
       </div>
 
       <!-- Greyish Overlay when there are no trackers (Top-level) -->
@@ -14,7 +14,7 @@
           <!-- Select Tracker with Filters Button -->
           <div class="tracker-container">
             <label for="tracker-dropdown" class="dropdown-label">
-              Select Tracker:
+              {{ $t('CurrentMap-select_tracker') }}:
               <select id="tracker-dropdown" class="tracker-dropdown" v-model="selectedTracker" @change="selectTracker">
                 <option v-for="tracker in filteredTrackers" :key="tracker._id" :value="tracker._id">
                   {{ tracker.name }}
@@ -27,7 +27,7 @@
           <!-- Select Timestamp with Filters Button -->
           <div class="timestamp-container">
             <label for="timestamp-dropdown" class="dropdown-label">
-              Select Timestamp:
+              {{ $t('CurrentMap-select_timestamp')}}:
               <select id="timestamp-dropdown" class="tracker-dropdown" v-model="selectedTimestamp"
                 @change="updateSelectedMeasurement">
                 <option v-for="measurement in filteredMeasurements" :key="measurement._id" :value="measurement._id">
@@ -41,11 +41,11 @@
           <div class="grid-container">
             <!-- Mode Information -->
             <div class="grid-item-full mode-item">
-              <strong>Mode:</strong> {{ trackerModeLabel }}
+              <strong>{{ $t('TrackerCard-mode')}}:</strong> {{ trackerModeLabel }}
 
 
               <!-- Switch Mode Button -->
-              <button class="switch-mode-button shimmering-button" @click="openChangeModePopup">Change Mode</button>
+              <button class="switch-mode-button shimmering-button" @click="openChangeModePopup">{{ $t('CurrentMap-change_mode')}}</button>
               <ChangeModePopup v-if="isChangeModePopupOpen" :template="user.settings?.template"
                 :selectedTrackerId="selectedTracker" :closePopup="closeChangeModePopup" />
             </div>
@@ -75,19 +75,19 @@
 
             <!-- Temperature -->
             <div v-if="selectedMeasurement.temperature !== undefined" class="grid-item">
-              <strong>Temperature:&nbsp;</strong> {{ selectedMeasurement.temperature }} °C
+              <strong>{{ $t('TrackerList-temperature')}}:&nbsp;</strong> {{ selectedMeasurement.temperature }} °C
             </div>
             <!-- Humidity -->
             <div v-if="selectedMeasurement.humidity !== undefined" class="grid-item">
-              <strong>Humidity:&nbsp;</strong> {{ selectedMeasurement.humidity }} %
+              <strong>{{ $t('TrackerList-humidity')}}:&nbsp;</strong> {{ selectedMeasurement.humidity }} %
             </div>
 
             <!-- Add/Remove Geofence button -->
             <!-- Add/Remove Geofence button -->
             <div class="grid-item-full no-background button-row">
-              <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">Add Geofence</button>
-              <button v-else @click="removeGeofence" class="remove-geofence-button">Remove Geofence</button>
-              <button @click="addMotionSensor" class="geofence-button">Add Motion Sensor</button>
+              <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">{{ $t('CurrentMap-add_geofence')}}</button>
+              <button v-else @click="removeGeofence" class="remove-geofence-button">{{ $t('CurrentMap-remove_geofence')}}</button>
+              <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button>
             </div>
 
           </div>
@@ -98,7 +98,7 @@
           <label for="radius-slider" class="radius-label">Geofence Radius: {{ geofenceRadius }} meters</label>
           <input id="radius-slider" type="range" min="100" max="5000" step="100" v-model="geofenceRadius"
             class="radius-slider" />
-          <button @click="applyGeofenceRadius" class="apply-radius-button">Apply</button>
+          <button @click="applyGeofenceRadius" class="apply-radius-button">{{ $t('CurrentMap-apply') }}</button>
         </div>
       </div>
     </div>
@@ -116,7 +116,7 @@
           <p class="location-text">{{ selectedTrackerLocation }}</p>
         </div>
         <div class="tracker-mode">
-          Mode: {{ trackerModeLabel }}
+          {{ $t('TrackerCard-mode')}}: {{ trackerModeLabel }}
 
         </div>
       </div>
@@ -133,12 +133,14 @@
           :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#87c099' : 'black', display: 'flex', alignItems: 'center' }">
           <span :style="{ color: modeColors.green }">
             <i class="fas fa-map-pin"></i>
-          </span> Green: {{ modeAccuracy.green }}
+          </span> {{ $t('CurrentMap-green')}}: {{ modeAccuracy.green }}
           <span :style="{ color: modeColors.yellow, marginLeft: '20px' }">
             <i class="fas fa-map-pin"></i>
-          </span> Yellow: {{ modeAccuracy.yellow }}
+          </span> {{ $t('CurrentMap-yellow')}}: {{ modeAccuracy.yellow }}
           <span :style="{ color: modeColors.red, marginLeft: '20px' }">
             <i class="fas fa-map-pin"></i>
+ 
+ 
           </span> Red: {{ modeAccuracy.red }}
           <span
             :style="{ marginLeft: '50px', color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }">

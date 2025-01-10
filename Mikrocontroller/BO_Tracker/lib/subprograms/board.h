@@ -13,7 +13,7 @@ public:
 
     ~_Board();
     bool initBoard();
-
+    
 protected:  
     Stream &DSerial;
    

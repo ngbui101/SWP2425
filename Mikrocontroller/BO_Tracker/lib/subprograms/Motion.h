@@ -79,6 +79,8 @@ public:
 
     bool isMovementAboveThreshold(float threshold);
 
+    void blink();
+
 private:
     float devRange;
     struct bma4_dev accel;

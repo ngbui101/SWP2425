@@ -2,7 +2,7 @@
     <div class="popup-overlay" @click.self="closePopup">
         <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
             <div class="popup-header">
-                <h2>Timestamp Filters</h2>
+                <h2> Timestamp Filters </h2>
                 <button class="close-btn" @click="closePopup">✖</button>
             </div>
 
