@@ -1,9 +1,9 @@
 /*
-*Die Klasse _BG96_Common erweitert die Funktionalitäten der Basisklasse _BG96_Serial, 
-*um erweiterte Funktionen des BG96-Moduls bereitzustellen. Sie bietet Methoden zur Steuerung 
-*und Konfiguration des Moduls, wie das Ein- und Ausschalten, das Setzen von 
-*Konfigurationsparametern, das Abrufen von Geräteinformationen und Netzstatus sowie 
-*das Verwalten von SIM-Karteninformationen.
+ *Die Klasse _BG96_Common erweitert die Funktionalitäten der Basisklasse _BG96_Serial,
+ *um erweiterte Funktionen des BG96-Moduls bereitzustellen. Sie bietet Methoden zur Steuerung
+ *und Konfiguration des Moduls, wie das Ein- und Ausschalten, das Setzen von
+ *Konfigurationsparametern, das Abrufen von Geräteinformationen und Netzstatus sowie
+ *das Verwalten von SIM-Karteninformationen.
  */
 #ifndef _BG96_COMMEN_H_
 #define _BG96_COMMEN_H_
@@ -16,49 +16,52 @@
 #define ENABLE_PWR 2
 #define STATUS_PIN 3
 
-typedef enum functionality{
-    MINIMUM_FUNCTIONALITY = 0, 
+typedef enum functionality
+{
+    MINIMUM_FUNCTIONALITY = 0,
     FULL_FUNCTIONALITY = 1,
     RESET_FUNCTIONALITY = 3,
     DISABLE_RF = 4,
-}Functionality_t;
+} Functionality_t;
 
-typedef enum cmd_status{
+typedef enum cmd_status
+{
     READ_MODE = 0,
     WRITE_MODE = 1,
-}Cmd_Status_t;
+} Cmd_Status_t;
 
-typedef enum net_status{
+typedef enum net_status
+{
     NOT_REGISTERED = 0,
     REGISTERED = 1,
     SEARCHING = 2,
     REGISTRATION_DENIED = 3,
     UNKNOWN = 4,
     REGISTERED_ROAMING = 5,
-}Net_Status_t;
+} Net_Status_t;
 
-typedef enum net_type{
+typedef enum net_type
+{
     GSM = 0,
     LTE_CAT_M1 = 8,
     LTE_CAT_NB1 = 9,
-}Net_Type_t;
-
+} Net_Type_t;
 
 class _BG96_Common : public _BG96_Serial
 {
-  public:
+public:
     _BG96_Common();
 
     ~_BG96_Common();
 
     _BG96_Common(Stream &atserial, Stream &dserial);
-    
+
     bool PowerOffModule();
 
     bool PowerOnModule();
 
     bool TurnOnModule();
-	
+
     bool InitModule();
 
     bool ResetModule();
@@ -71,7 +74,7 @@ class _BG96_Common : public _BG96_Serial
 
     bool GetLatestGMTTime(char *time);
 
-    char* GetCurrentTime();
+    char *GetCurrentTime();
 
     bool GetDevVersion(char *ver);
 
@@ -105,16 +108,16 @@ class _BG96_Common : public _BG96_Serial
 
     bool ScanmodeConfig(int mode);
 
-    bool SearchingConfig(const char * scanseq);
+    bool SearchingConfig(const char *scanseq);
 
     time_t parseTimestamp(const char *timestamp);
 
-    Cell* ReportCellInformation(const char *celltype);
+    Cell *ReportCellInformation(const char *celltype);
 
-    int ReportNeighbourCellInformation(Cell* cells[], int max_cells);
+    int ReportNeighbourCellInformation(Cell *cells[], int max_cells);
     bool LTENetworkCategoryConfig(int mode);
 
-    bool BandConfig(const char *gsmbandval, const char * catm1bandval, const char * catnb1bandval);
+    bool BandConfig(const char *gsmbandval, const char *catm1bandval, const char *catnb1bandval);
 
     bool ConfigNetworks(const char *rat);
 
@@ -124,12 +127,23 @@ class _BG96_Common : public _BG96_Serial
 
     bool NetworkRegistrationCodeConfig(int n);
 
-    int ScanCells(const char* rat, Cell* cells[]);
+    int ScanCells(const char *rat, Cell *cells[]);
+
+    bool DeactivateDevAPN(unsigned int pdp_index);
+
+    bool GetDevAPNIPAddress(unsigned int pdp_index, char *ip);
+
+    Cmd_Response_t ActivateDevAPN(unsigned int pdp_index);
+
+    bool TurnOnInternet(unsigned int pdp_index);
+
+    bool AttachPS(bool enable);
 
     bool FactoryReset();
     bool SaveSetting();
     bool checkForNetwork();
-  private:
+
+private:
     char currenttime[64];
 };
 
