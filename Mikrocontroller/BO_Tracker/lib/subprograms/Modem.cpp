@@ -57,14 +57,24 @@ bool Modem::initModem()
 
     return true;
 }
+bool Modem::setCurrentTimeToRTC()
+{
+    const char *modemTime = _BG96.GetCurrentTime();
+    if (!setcurrentTime(modemTime))
+    { // RTC im Board setzen
+        initLogger.logError("SetTime");
+        return false;
+    }
+    return true;
+}
 
 bool Modem::turnOnModem()
 {
-    if (!_BG96.InitModule())
+    if (!_BG96.InitModule() && !setCurrentTimeToRTC())
     {
         return false;
     }
-
+    
     funkModuleEnable = true;
 
     return true;
