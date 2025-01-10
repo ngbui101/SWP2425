@@ -1361,10 +1361,10 @@ bool _BG96_Common::TurnOnInternet(unsigned int pdp_index)
     start_time = millis();
     while (millis() - start_time <= 150 * 1000UL) // Timeout nach 150 Sekunden
     {
-        if (!AttachPS(true))
-        {
-            return false;
-        }
+        // if (!AttachPS(true))
+        // {
+        //     return false;
+        // }
         init_status = ActivateDevAPN(pdp_index);
 
         if (init_status == SUCCESS_RESPONSE)

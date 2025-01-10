@@ -17,17 +17,6 @@ bool Tracker::InitModule()
     return false;
 }
 
-bool Tracker::setCurrentTimeToRTC()
-{
-    const char *modemTime = _BG96.GetCurrentTime();
-    if (!setcurrentTime(modemTime))
-    { // RTC im Board setzen
-        initLogger.logError("SetTime");
-        return false;
-    }
-    return true;
-}
-
 void Tracker::firstStart()
 {
     // !!! Fehler nicht behebel, Internet erforderllich
