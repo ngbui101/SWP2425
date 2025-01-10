@@ -82,8 +82,7 @@ _BG96_Module Modem::getModem()
 
 bool Modem::startConnect()
 {
-    char error[64];
-    if (!_BG96.TurnOnInternet(PDPIndex, error))
+    if (!_BG96.TurnOnInternet(PDPIndex))
     {
         runningLogger.logError("TurnOnInternet");
         return false;
@@ -126,17 +125,23 @@ bool Modem::sortBySignal(Cell* arr[], int length) {
 }
 
 
-bool Modem::fillCellsQueue(Cell * cells[]){
+bool Modem::fillCellsQueue(){
     int MAX_CELLS = 6;
     Cell *cells[MAX_CELLS] = {nullptr};
+
     int countCell = _BG96.ScanCells(RAT,cells);
-    
-    sortBySignal(cells,countCell);
+    Serial.println("ScanCells OK");
+    Serial.println(countCell);
+    if (countCell == 0)
+        return false;
+    if(countCell > 1){
+        sortBySignal(cells,countCell);
+    }
 
     fillWithZero(cells,countCell, MAX_CELLS);
 
     cells_queue.addAll(cells);
 
-    
+    Serial.println("cells_queue OK");
     return true;
 }

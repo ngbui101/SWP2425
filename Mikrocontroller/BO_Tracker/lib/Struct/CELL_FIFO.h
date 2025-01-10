@@ -87,7 +87,6 @@ public:
                     if (exists(newCells[i]->getCellID())) {
                         remove(newCells[i]->getCellID());
                     }
-
                     // FIFO nach vorne verschieben und neues Element an den Anfang setzen
                     for (int j = MAX_SIZE - 1; j > 0; j--) {
                         buffer[j] = buffer[j - 1];
@@ -97,7 +96,16 @@ public:
             }
         }
     }
-    
+    bool addCellsToJsonArray(JsonArray *cellsArray){
+        for (int i = 0; i < MAX_SIZE; i++) {
+            if ((buffer[i]->getCellID() != 0)&&(buffer[i] != nullptr)) {
+                JsonObject cellObj = cellsArray->add<JsonObject>();
+                buffer[i]->toJson(cellObj);   
+            }
+        }
+        Serial.println("addCellsToJsonArray");
+        return true;
+    }
 };
 
 #endif

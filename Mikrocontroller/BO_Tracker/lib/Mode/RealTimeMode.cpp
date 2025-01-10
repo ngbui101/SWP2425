@@ -24,10 +24,10 @@ void RealTimeMode::loop()
     bool keepRunning = true;
     while (keepRunning)
     {   
-        Serial.println("keepRunning");
+        // Serial.println("keepRunning");
         keepRunning = tracker.sendAndCheck();
     }
-    Serial.println("Running handleErrors()");
+    // Serial.println("Running handleErrors()");
     tracker.handleErrors();
     // tracker.handleErrors();
 }
