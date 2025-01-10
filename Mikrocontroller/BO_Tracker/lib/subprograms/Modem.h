@@ -39,7 +39,7 @@ public:
 
     void fillWithZero(Cell* arr[], int length, int maxSize);
 
-    bool fillCellsQueue(Cell* arr[]);
+    bool fillCellsQueue();
 
     _BG96_Module getModem();
 };
