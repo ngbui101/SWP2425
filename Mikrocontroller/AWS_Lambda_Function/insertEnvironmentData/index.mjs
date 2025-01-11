@@ -1,7 +1,7 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 export const handler = async (event) => {
-    const { IMEI, Timestamp, Temperature, Humidity, BatteryPercentage } = typeof event.body === 'string' ? JSON.parse(event.body) : event;
+    const { IMEI, Timestamp,trackerId ,Temperature, Humidity, BatteryPercentage } = typeof event.body === 'string' ? JSON.parse(event.body) : event;
     const mongoURI = process.env.MONGO_URI;
     const client = new MongoClient(mongoURI);
     if(Temperature < 0 || Humidity < 0 || BatteryPercentage < 0){
@@ -28,6 +28,7 @@ export const handler = async (event) => {
                 mode: "TemperatureHumidity",
                 temperature: Temperature,
                 humidity: Humidity,
+                tracker:new ObjectId(trackerId),
                 createdAt: Timestamp,
                 updatedAt: Timestamp
             });
@@ -38,6 +39,7 @@ export const handler = async (event) => {
                 imei: IMEI,
                 mode: "Battery",
                 battery: BatteryPercentage,
+                tracker:new ObjectId(trackerId),
                 createdAt: Timestamp,
                 updatedAt: Timestamp
             });

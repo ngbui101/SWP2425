@@ -1,7 +1,7 @@
-import { MongoClient} from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 export const handler = async (event) => {
-    const { IMEI, Timestamp, gnss } = typeof event.body === 'string' ? JSON.parse(event.body) : event;
+    const { IMEI, Timestamp, trackerId,gnss } = typeof event.body === 'string' ? JSON.parse(event.body) : event;
     const mongoURI = process.env.MONGO_URI;
     const client = new MongoClient(mongoURI);
 
@@ -20,6 +20,7 @@ export const handler = async (event) => {
                 nsat: gnss.nsat,
                 accuracy: gnss.accuracy,
                 timeToGetFirstFix: gnss.TTFF,
+                tracker: new ObjectId(trackerId),
                 createdAt: Timestamp,
                 updatedAt: Timestamp
             });
