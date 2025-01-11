@@ -1,4 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
+import fetch from 'node-fetch';
 
 async function getModeFromMongo(trackerId, database) {
     const modeCollection = database.collection('mode');
@@ -24,19 +25,24 @@ async function getModeFromMongo(trackerId, database) {
         return { modeData: {} };
     }
 }
+
 async function postToLambdaUrl(url, payload) {
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
+    console.log(`Sende Daten an URL ${url} mit Payload:`, payload); // Logge die URL und Payload
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-    if (!response.ok) {
-        throw new Error(`Request to ${url} failed with status: ${response.status}`);
+        if (!response.ok) {
+            console.error(`Fehlerhafte Antwort von ${url}:`, await response.text());
+        }
+    } catch (error) {
+        console.error(`Fehler beim Senden an URL ${url}:`, error);
     }
-
-    return response.json();
 }
+
 
 export const handler = async (event) => {
     const mongoURI = process.env.MONGO_URI;
@@ -67,9 +73,6 @@ export const handler = async (event) => {
         insertEnvironmentDataUrl: process.env.INSERT_ENVIRONMENT_DATA_URL
     };
 
-    const results = [];
-
-
     await client.connect();
     const database = client.db('SOP');
     const trackersCollection = database.collection('trackers');
@@ -91,7 +94,7 @@ export const handler = async (event) => {
     const isBatteryDataSent = (data.BatteryPercentage !== undefined);
     const isTempHumDataSent = (data.Temperature !== undefined || data.Humidity !== undefined);
     const isCellDataSent = (data.Cells)  //&& Array.isArray(data.Cells) && data.Cells.length > 0);
-    const isGnssDataSent = (data.gnss !== undefined);
+    const isGnssDataSent = (data.Gnss !== undefined);
     const isNmeaDataSent = (data.GSA !== undefined || data.GSV !== undefined);
     const isFrequenzSent = (data.frequenz !== undefined);
 
@@ -142,28 +145,41 @@ export const handler = async (event) => {
         const payload = {
             IMEI: data.IMEI,
             Timestamp: data.Timestamp,
+            trackerId: trackerId,
             Cells: data.Cells
         };
-        postToLambdaUrl(urls.insertCellInfosUrl, payload);
+    
+        // Fire-and-Forget: ohne auf den Abschluss zu warten
+        postToLambdaUrl(urls.insertCellInfosUrl, payload)
+            .catch((error) => console.error("Fehler beim Senden der Zellinformationen:", error));
     }
-    if (isGnssDataSent && data.gnss.latitude != undefined) {
+    
+    if (isGnssDataSent && data.Gnss && data.Gnss.latitude !== undefined) {
         const payload = {
             IMEI: data.IMEI,
             Timestamp: data.Timestamp,
-            gnss: data.gnss
+            trackerId: trackerId,
+            gnss: data.Gnss
         };
-        postToLambdaUrl(urls.insertGNSSInfosUrl, payload);
+    
+        postToLambdaUrl(urls.insertGNSSInfosUrl, payload)
+            .catch((error) => console.error("Fehler beim Senden der GNSS-Daten:", error));
     }
+    
     if (isTempHumDataSent || isBatteryDataSent) {
         const payload = {
             IMEI: data.IMEI,
             Timestamp: data.Timestamp,
+            trackerId: trackerId,
             BatteryPercentage: data.BatteryPercentage,
             Temperature: data.Temperature,
             Humidity: data.Humidity
         };
-        postToLambdaUrl(urls.insertEnvironmentDataUrl, payload);
+    
+        postToLambdaUrl(urls.insertEnvironmentDataUrl, payload)
+            .catch((error) => console.error("Fehler beim Senden der Umweltdaten:", error));
     }
+    
 
     if (isFrequenzSent) {
         if (data.frequenz !== modeData.frequenz) {
@@ -174,7 +190,7 @@ export const handler = async (event) => {
             mismatches.frequenz = modeData.frequenz;
         }
     }
-    // Am Ende: alles OK => {"valid": true}
+
     if (Object.keys(mismatches).length > 0) {
         return {
             statusCode: 200,
