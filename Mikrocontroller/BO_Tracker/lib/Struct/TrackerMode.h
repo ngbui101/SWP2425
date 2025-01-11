@@ -19,7 +19,7 @@ struct TrackerModes {
     float geoLongitude = 0;
     unsigned int geoRadius = 0;
 
-    bool wakeUp = false;
+    bool wakeUp = true;
 
     // void resetModes() {
     //     GnssMode = false;

@@ -169,7 +169,7 @@ bool Tracker::modeHandle()
 
     docInput["IMEI"] = modemIMEI;
     docInput["frequenz"] = trackerModes.period;
-    docInput["Timestamp"] = getDateTime();
+    // docInput["Timestamp"] = getDateTime();
     // handle = true;
     return true;
 }
