@@ -22,9 +22,16 @@
           <li class="list-inline-item">
             <router-link to="/contact">{{ $t('FOOTER-contact_us') }}</router-link> 
           </li>
-          <li class="list-inline-item"><a href="#">{{ $t('FOOTER-services') }}</a></li>
-          <li class="list-inline-item"><a href="#">{{ $t('FOOTER-about') }}</a></li>
-          <li class="list-inline-item"><a href="#">{{ $t('FOOTER-terms') }}</a></li>
+         <!--  <li class="list-inline-item"><a href="#">{{ $t('FOOTER-services') }}</a></li> -->
+          
+         <li class="list-inline-item">
+          <router-link to="/uber">{{ $t('FOOTER-about') }}</router-link>
+        </li>
+
+          <li class="list-inline-item">
+            <router-link to="/terms">{{ $t('FOOTER-terms') }}</router-link>
+          </li>
+
           <li class="list-inline-item">
             <router-link to="/privacy">{{ $t('FOOTER-privacy_policy') }}</router-link>
           </li>
