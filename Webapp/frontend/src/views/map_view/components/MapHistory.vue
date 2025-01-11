@@ -9,7 +9,7 @@
                 <div class="card-body">
                     <!-- Select Tracker Dropdown -->
                     <label for="tracker-dropdown" class="dropdown-label">
-                        Select Tracker:
+                        {{ $t("MapHistory-SelectTracker") }}:
                         <select id="tracker-dropdown" class="tracker-dropdown" v-model="selectedTracker"
                             @change="updateSelectedTrackerMeasurements">
                             <option v-for="tracker in trackers" :key="tracker._id" :value="tracker._id">
@@ -20,7 +20,7 @@
 
                     <!-- From Timestamp Dropdown with Date Picker -->
                     <label for="from-timestamp-dropdown" class="dropdown-label">
-                        From Timestamp:
+                        {{ $t("MapHistory-FromTimestamp") }}:
                         <div class="timestamp-selection">
                             <select id="from-timestamp-dropdown"
                                 :class="['tracker-dropdown', !fromTimestamp && errorMessage ? 'error-dropdown' : '']"
@@ -37,7 +37,7 @@
 
                     <!-- To Timestamp Dropdown with Date Picker -->
                     <label for="to-timestamp-dropdown" class="dropdown-label">
-                        To Timestamp:
+                        {{ $t("MapHistory-ToTimestamp") }}:
                         <div class="timestamp-selection">
                             <select id="to-timestamp-dropdown"
                                 :class="['tracker-dropdown', !toTimestamp && errorMessage ? 'error-dropdown' : '']"
@@ -59,9 +59,9 @@
                     <div class="pin-filter-container">
                         <label class="checkbox-label">
                             <input type="checkbox" v-model="usePinForEveryMeasurement" />
-                            Use Pin for every Measurement
+                            {{ $t("MapHistory-UsePinforeveryMeasurement") }}
                         </label>
-                        <button class="filters-button" @click="openMeasurementFilters">Select Filters</button>
+                        <button class="filters-button" @click="openMeasurementFilters">Filters</button>
                     </div>
 
                     <!-- Build History Button -->
