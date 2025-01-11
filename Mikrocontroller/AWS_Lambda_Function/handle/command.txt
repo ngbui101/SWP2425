@@ -1,2 +1,0 @@
-
-zip -r index.zip index.mjs
