@@ -14,7 +14,7 @@
     </div>
 
     <!-- Logged in as Section -->
-    <div class="email-placeholder">Logged in as: {{ user.email }}</div>
+    <div class="email-placeholder">{{ $t("LoggedInAs") }}: {{ user.email }}</div>
   </div>
 </template>
 
