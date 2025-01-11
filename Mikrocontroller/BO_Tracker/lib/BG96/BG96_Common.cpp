@@ -1159,60 +1159,61 @@ bool _BG96_Common::NetworkRegistrationCodeConfig(int n)
     return false;
 }
 
-int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
+int _BG96_Common::ScanCells(Cell *cells[])
 {
     const int max_cells = 6; // Max number of cells to collect
     int cellCount = 0;       // Counter for the number of cells found
-
+    Cell *servingcell = nullptr;
+    int act_operator;
     // Determine scan mode based on 'rat'
+    if (!DeactivateDevAPN(1))
+    {
+        return 0;
+    }
+    if (!checkForNetwork())
+    {
+        return 0;
+    }
+    else
+    {
+        servingcell = ReportCellInformation("servingcell");
+        if (servingcell != nullptr)
+        {
+            cells[cellCount++] = servingcell;
+            act_operator = servingcell->getOperator();
+        }
+    }
 
-    if (strcmp(rat, "lte") == 0)
+    if (strcmp(servingcell->getRat(), "cat-m") == 0)
     {
         Net_Type_t act = LTE_CAT_M1; // LTE network type
         // --- LTE Scanning ---
         // List of operators to scan
         // int operators[3] = {26201, 26202, 26203};
-        if (!DeactivateDevAPN(1))
-        {
-            return 0;
-        }
         bool telekom = false;
         bool vodafone = false;
         bool o2 = false;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
-            // Wait for registration with a maximum timeout of 30 seconds
-            if (!checkForNetwork())
+            if (act_operator == 26201)
             {
-                continue;
+                telekom = true;
+                // Serial.println("Telekom");
             }
-            Cell *cell = ReportCellInformation("servingcell");
-
-            if (cell != nullptr)
+            else if (act_operator == 26202)
             {
-                
-                if (cellCount < max_cells)
-                {
-                    cells[cellCount++] = cell;
-                }
-                int act_operator = cell->getOperator();
-                // Serial.println(act_operator);
-                if (act_operator == 26201)
-                {
-                    telekom = true;
-                    // Serial.println("Telekom");
-                }
-                if (act_operator == 26202)
-                {
-                    vodafone = true;
-                    // Serial.println("Vodafone");
-                }
-                if (act_operator == 26203)
-                {
-                    o2 = true;
-                    // Serial.println("o2");
-                }
+                vodafone = true;
+                // Serial.println("Vodafone");
+            }
+            else if (act_operator == 26203)
+            {
+                o2 = true;
+                // Serial.println("o2");
+            }
+            else
+            {
+                break;
             }
             // Configure operator network
             unsigned int mode = 1;   // Manual mode
@@ -1220,90 +1221,57 @@ int _BG96_Common::ScanCells(const char *rat, Cell *cells[])
             if (!o2)
             {
                 DevOperatorNetwork(mode, format, "26203", act, WRITE_MODE);
-                continue;
             }
-            if (!vodafone)
+            else if (!vodafone)
             {
                 DevOperatorNetwork(mode, format, "26202", act, WRITE_MODE);
-                continue;
             }
-            if (!telekom)
+            else if (!telekom)
             {
                 DevOperatorNetwork(mode, format, "26201", act, WRITE_MODE);
+            }else{
+                break;
+            }
+            
+            if (!checkForNetwork())
+            {
                 continue;
             }
-        }
-        // char error_code[16];
 
-        if (!TurnOnInternet(1))
-        {
-            // Serial.println(error_code);
-            return 0;
-        }
-    }
-    else if (strcmp(rat, "nbiot") == 0)
-    {
-        // Net_Status_t i_status = NOT_REGISTERED;
-        // unsigned long start_time = millis();
-
-        // while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
-        // {
-        //     i_status = DevNetRegistrationStatus();
-        //     if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
-        //     {
-
-        //         break;
-        //     }
-        //     delay(3000); // Wait 3 seconds
-        // }
-        if (!checkForNetwork())
-        {
-            return 0;
-        }
-        Cell *cell = ReportCellInformation("servingcell");
-        if(cell != nullptr){
-            cells[cellCount] = cell;
-            Serial.println("Scan for NarrowBand IoT Cell");
-            return 1;
+            Cell *cell = ReportCellInformation("servingcell");
+            if (cell != nullptr)
+            {
+                cells[cellCount++] = cell;
+                act_operator = cell->getOperator();
+            }
+            // Serial.println(act_operator);
         }
     }
-    else if (strcmp(rat, "gsm") == 0)
+    // char error_code[16];
+    else if (strcmp(servingcell->getRat(), "cat-nb") == 0)
     {
-        // --- GSM Scanning ---
-        // Wait for registration with a maximum timeout of 30 seconds
-        // Net_Status_t i_status = NOT_REGISTERED;
-        // unsigned long start_time = millis();
-
-        // while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
-        // {
-        //     i_status = DevNetRegistrationStatus();
-        //     if (millis() - start_time >= 30 * 1000UL) // Timeout after 30 seconds
-        //     {
-        //         return 0;
-        //     }
-        //     delay(3000); // Wait 3 seconds
-        // }
-        if (!checkForNetwork())
-        {
-            return 0;
-        }
-        // Get neighbour cell information
-        // delay(10000);
-        Cell *cell = ReportCellInformation("servingcell");
-
-        cells[0] = cell;
-
+        
+    }
+    else if (strcmp(servingcell->getRat(), "gsm") == 0)
+    {
         const int puff_length = max_cells - 1;
         Cell *puff_array[puff_length] = {nullptr};
-        int neighbourCellCount = ReportNeighbourCellInformation(puff_array, puff_length);
-        for (int i = 0; i < puff_length; i++)
-        {
-            cells[i + 1] = puff_array[i];
+        ReportNeighbourCellInformation(puff_array, puff_length);
+    
+        for(Cell *neighbourCell : puff_array)
+        {   
+            if(neighbourCell != nullptr){
+                cells[cellCount++] = neighbourCell;
+            }
         }
-
-        return neighbourCellCount + 1;
+    }else{
+        return 0;
     }
     // Serial.println("Fertig ScanCells");
+    if (!TurnOnInternet(1))
+    {
+        return 0;
+    }
     return cellCount; // Return the total number of cells found
 }
 bool _BG96_Common::FactoryReset()
@@ -1361,10 +1329,8 @@ bool _BG96_Common::TurnOnInternet(unsigned int pdp_index)
     start_time = millis();
     while (millis() - start_time <= 150 * 1000UL) // Timeout nach 150 Sekunden
     {
-        // if (!AttachPS(true))
-        // {
-        //     return false;
-        // }
+        AttachPS(true);
+
         init_status = ActivateDevAPN(pdp_index);
 
         if (init_status == SUCCESS_RESPONSE)

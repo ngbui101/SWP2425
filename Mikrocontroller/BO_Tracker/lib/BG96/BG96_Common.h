@@ -127,7 +127,7 @@ public:
 
     bool NetworkRegistrationCodeConfig(int n);
 
-    int ScanCells(const char *rat, Cell *cells[]);
+    int ScanCells(Cell *cells[]);
 
     bool DeactivateDevAPN(unsigned int pdp_index);
 
