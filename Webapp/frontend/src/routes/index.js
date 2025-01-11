@@ -37,6 +37,12 @@ const router = createRouter({
 // Global navigation guard for authentication and guest access
 router.beforeResolve(async (to, from, next) => {
     const authStore = useAuthStore();
+
+    // Versuche, den Benutzerstatus wiederherzustellen
+    if (!authStore.authReady) {
+      await authStore.attempt();
+      authStore.authReady = true; // Authentifizierung wurde überprüft
+    }
   
     // Überprüfen, ob die Route Authentifizierung erfordert und ob der Benutzer nicht authentifiziert ist
     if (to.meta.requiresAuth && !authStore.isAuthenticated) {

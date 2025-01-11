@@ -87,7 +87,7 @@
             <div class="grid-item-full no-background button-row">
               <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">{{ $t('CurrentMap-add_geofence')}}</button>
               <button v-else @click="removeGeofence" class="remove-geofence-button">{{ $t('CurrentMap-remove_geofence')}}</button>
-              <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button>
+               <!-- <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button> -->
             </div>
 
           </div>

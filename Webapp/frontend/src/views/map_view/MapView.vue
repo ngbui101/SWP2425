@@ -14,6 +14,7 @@
                 <label @click="setView('current')" :class="{ active: currentView === 'current' }">
                     {{ $t('MapView-Current') }}
                 </label>
+                
 
                 <!-- Map History View Toggle (Right) -->
                 <label @click="setView('history')" :class="{ active: currentView === 'history' }">

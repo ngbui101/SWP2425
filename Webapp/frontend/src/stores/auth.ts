@@ -81,17 +81,23 @@ export interface User {
       actions: {
         async attempt() {
           try {
-            await this.refresh();
-            await this.getUser();
-          } catch (error) {
-            console.error("Error in attempt:", error);
-          }
+            //speicherung im localstorage
+            const token = localStorage.getItem('accessToken');
+            if (token) {
+              this.accessToken = token; // Setze das Token im Store
+              await this.getUser();
+            }
+            }catch (error) {
+              console.error("Error in attempt:", error);
+            }
         },
     
         async login(payload: LoginData) {
           try {
             const { data } = await useApi().post(`http://localhost:3500/api/auth/login`, payload);
             this.accessToken = data.access_token;
+            //speicherung in localstorage
+            localStorage.setItem('accessToken', data.access_token); // Speichere das Token im localStorage
             await this.getUser();
             return data;
           } catch (error: any) {
@@ -129,6 +135,8 @@ export interface User {
               const { data } = await useApiPrivate().post(`http://localhost:3500/api/auth/logout`);
               this.accessToken = "";
               this.user = {} as User;
+              //entfern Token
+              localStorage.removeItem('accessToken'); // Entferne das Token aus dem localStorage
               return data;
             } catch (error: any) {
               throw new Error(`Logout failed: ${error.message}`);
