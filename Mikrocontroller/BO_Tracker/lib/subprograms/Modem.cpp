@@ -70,11 +70,11 @@ bool Modem::setCurrentTimeToRTC()
 
 bool Modem::turnOnModem()
 {
-    if (!_BG96.InitModule() && !setCurrentTimeToRTC())
+    if (!_BG96.InitModule())
     {
         return false;
     }
-    
+    // setCurrentTimeToRTC();
     funkModuleEnable = true;
 
     return true;
@@ -139,9 +139,9 @@ bool Modem::fillCellsQueue(){
     int MAX_CELLS = 6;
     Cell *cells[MAX_CELLS] = {nullptr};
 
-    int countCell = _BG96.ScanCells(RAT,cells);
-    Serial.println("ScanCells OK");
-    Serial.println(countCell);
+    int countCell = _BG96.ScanCells(cells);
+    // Serial.println("ScanCells OK");
+    // Serial.println(countCell);
     if (countCell == 0)
         return false;
     if(countCell > 1){
@@ -152,6 +152,6 @@ bool Modem::fillCellsQueue(){
 
     cells_queue.addAll(cells);
 
-    Serial.println("cells_queue OK");
+    // Serial.println("cells_queue OK");
     return true;
 }

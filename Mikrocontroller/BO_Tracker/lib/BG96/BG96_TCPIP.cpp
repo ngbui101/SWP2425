@@ -199,73 +199,73 @@ bool _BG96_TCPIP::InitAPN(unsigned int pdp_index, const char *apn, const char *u
     return true;
 }
 
-bool _BG96_TCPIP::InitAPNWithNetworkScanning(unsigned int pdp_index, const char *apn, const char *usr, const char *pwd, char *err_code, const char *rat, Cell *cells[])
-{
-    // Statusvariablen
-    // Net_Status_t i_status = NOT_REGISTERED;
-    Cmd_Response_t init_status;
-    const char *e_str;
-    char i_ip[16]; // Buffer für die IP-Adresse
-    // Schritt 1: SIM-Kartenprüfung
-    unsigned long start_time = millis();
-    while (!DevSimPIN("", READ_MODE))
-    {
-        if (millis() - start_time >= 20 * 1000UL) // Timeout nach 20 Sekunden
-        {
-            e_str = "\r\nAPN ERROR: No SIM card detected!\r\n";
-            strcpy(err_code, e_str);
-            // ResetModule();
-            return false;
-        }
-    }
-    // Schritt 2: APN-Konfiguration setzen
-    if (!SetDevAPNParameters(pdp_index, IPV4, apn, usr, pwd, PAP_OR_CHAP))
-    {
-        e_str = "\r\nAPN ERROR: Failed to set APN parameters!\r\n";
-        strcpy(err_code, e_str);
-        return false;
-    }
-    ScanCells(rat, cells);
-    // Schritt 3: Netzregistrierung prüfen
-    start_time = millis();
+// bool _BG96_TCPIP::InitAPNWithNetworkScanning(unsigned int pdp_index, const char *apn, const char *usr, const char *pwd, char *err_code, const char *rat, Cell *cells[])
+// {
+//     // Statusvariablen
+//     // Net_Status_t i_status = NOT_REGISTERED;
+//     Cmd_Response_t init_status;
+//     const char *e_str;
+//     char i_ip[16]; // Buffer für die IP-Adresse
+//     // Schritt 1: SIM-Kartenprüfung
+//     unsigned long start_time = millis();
+//     while (!DevSimPIN("", READ_MODE))
+//     {
+//         if (millis() - start_time >= 20 * 1000UL) // Timeout nach 20 Sekunden
+//         {
+//             e_str = "\r\nAPN ERROR: No SIM card detected!\r\n";
+//             strcpy(err_code, e_str);
+//             // ResetModule();
+//             return false;
+//         }
+//     }
+//     // Schritt 2: APN-Konfiguration setzen
+//     if (!SetDevAPNParameters(pdp_index, IPV4, apn, usr, pwd, PAP_OR_CHAP))
+//     {
+//         e_str = "\r\nAPN ERROR: Failed to set APN parameters!\r\n";
+//         strcpy(err_code, e_str);
+//         return false;
+//     }
+//     ScanCells(cells);
+//     // Schritt 3: Netzregistrierung prüfen
+//     start_time = millis();
 
-    if (!checkForNetwork())
-    {
-        return false;
-    }
+//     if (!checkForNetwork())
+//     {
+//         return false;
+//     }
 
-    // Schritt 4: APN aktivieren und IP-Adresse abrufen
-    start_time = millis();
-    while (millis() - start_time <= 150 * 1000UL) // Timeout nach 150 Sekunden
-    {
-        init_status = ActivateDevAPN(pdp_index);
-        if (init_status == SUCCESS_RESPONSE)
-        {
-            if (GetDevAPNIPAddress(pdp_index, i_ip))
-            {
-                sprintf(err_code, "\r\nAPN OK: The IP address is %s\r\n", i_ip);
-                return true;
-            }
-            else
-            {
-                e_str = "\r\nAPN ERROR: Failed to retrieve IP address!\r\n";
-                strcpy(err_code, e_str);
-                return false;
-            }
-        }
-        else if (init_status == TIMEOUT_RESPONSE)
-        {
-            e_str = "\r\nAPN ERROR: APN activation timeout. Please reset your device!\r\n";
-            strcpy(err_code, e_str);
-            // ResetModule();
-            return false;
-        }
-    }
-    // Falls die APN-Aktivierung fehlschlägt
-    e_str = "\r\nAPN ERROR: Failed to activate APN!\r\n";
-    strcpy(err_code, e_str);
-    return false;
-}
+//     // Schritt 4: APN aktivieren und IP-Adresse abrufen
+//     start_time = millis();
+//     while (millis() - start_time <= 150 * 1000UL) // Timeout nach 150 Sekunden
+//     {
+//         init_status = ActivateDevAPN(pdp_index);
+//         if (init_status == SUCCESS_RESPONSE)
+//         {
+//             if (GetDevAPNIPAddress(pdp_index, i_ip))
+//             {
+//                 sprintf(err_code, "\r\nAPN OK: The IP address is %s\r\n", i_ip);
+//                 return true;
+//             }
+//             else
+//             {
+//                 e_str = "\r\nAPN ERROR: Failed to retrieve IP address!\r\n";
+//                 strcpy(err_code, e_str);
+//                 return false;
+//             }
+//         }
+//         else if (init_status == TIMEOUT_RESPONSE)
+//         {
+//             e_str = "\r\nAPN ERROR: APN activation timeout. Please reset your device!\r\n";
+//             strcpy(err_code, e_str);
+//             // ResetModule();
+//             return false;
+//         }
+//     }
+//     // Falls die APN-Aktivierung fehlschlägt
+//     e_str = "\r\nAPN ERROR: Failed to activate APN!\r\n";
+//     strcpy(err_code, e_str);
+//     return false;
+// }
 /**
  * @brief Öffnet einen Socket-Dienst mit den angegebenen Parametern.
  *

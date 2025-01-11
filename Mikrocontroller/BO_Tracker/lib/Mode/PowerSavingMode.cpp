@@ -9,12 +9,12 @@ void PowerSavingMode::start()
 {
     if (tracker.wakeUp())
     {
-        Serial.println("Wake Up");
+        // Serial.println("Wake Up");
         // Serial.println("Setup");
         if (!tracker.turnOnFunctionality())
             return;
         // delay(5000);
-        Serial.println("SendData");
+        // Serial.println("SendData");
         // tracker.blink();
         if (!tracker.sendAndWaitResponseHTTP())
         {

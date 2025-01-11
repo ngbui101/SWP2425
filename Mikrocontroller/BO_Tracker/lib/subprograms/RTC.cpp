@@ -119,11 +119,11 @@ bool _RTC::enableAlarm(unsigned long millisSpan)
 // {  
 void _RTC::calculateTimeForAlarm(uint8_t *hour, unsigned long millisSpan)
 {   
-    uint8_t to_add_hour = millisSpan / 3600000;
-    *hour = (*hour + to_add_hour)/24;
+    // uint8_t to_add_hour = millisSpan / 3600000;
+    // *hour = (*hour + to_add_hour)/24;
 }
 
 void _RTC::rtcCallback()
 {
-    trackerModes.wakeUp = true;
+    // trackerModes.wakeUp = true;
 }
