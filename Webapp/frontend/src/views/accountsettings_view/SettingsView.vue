@@ -109,7 +109,7 @@
                 {{ $t('SETTINGSVIEW-email_motion_alert') }}
               </label>
 
-              <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
+              <button type="submit" class="form-submit-button" :class="{ 'saved': isSaved }"  @click="handleSave" > {{ $t('SETTINGSVIEW-save') }}</button>
             </form>
           </div>
 
@@ -136,6 +136,10 @@ const oldPassword = ref('');
 const newPassword = ref('');
 const confirmNewPassword = ref('');
 const phoneNumber = ref('');
+
+
+const isSaved = ref(false);
+
 
 const selectedLanguage = ref('EN');
 const selectedTheme = ref('default');
@@ -176,6 +180,13 @@ const updateEmail = async () => {
   try {
     await authStore.updateEmail(newEmail.value);
     alert("Email updated successfully!");
+      // Setze die Schaltfläche auf den "gespeichert"-Status
+    isSaved.value = true;
+
+    // Optional: Zustand nach 3 Sekunden zurücksetzen
+    setTimeout(() => {
+      isSaved.value = false;
+    }, 3000);
   } catch (error) {
     alert("Failed to update email.");
     console.error("Error updating email:", error);
@@ -305,6 +316,27 @@ const resetAllWobbles = () => {
     card.value.offsetY = 0;
   });
 };
+
+
+const handleSave = async () => {
+  try {
+    // Beispiel für Speichern
+    await authStore.updateSettings({ /* Daten */ });
+
+    // Zustand aktualisieren und debuggen
+    isSaved.value = true;
+
+    // Zustand nach 3 Sekunden zurücksetzen
+    setTimeout(() => {
+      isSaved.value = false;
+      console.log("isSaved zurückgesetzt auf:", isSaved.value);
+    }, 3000);
+  } catch (error) {
+    console.error("Fehler beim Speichern:", error);
+  }
+};
+
+
 </script>
 <style scoped>
 .notification {

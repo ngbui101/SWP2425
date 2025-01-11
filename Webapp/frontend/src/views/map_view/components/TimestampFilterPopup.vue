@@ -18,13 +18,14 @@
                     </label>
                 </div>
 
-                <!-- Valid Location Filter -->
+                <!-- Valid Location Filter raus 
                 <div class="popup-section">
                     <h3>Location</h3>
                     <label>
                         <input type="checkbox" v-model="filters.validPosition" /> Valid Location
                     </label>
                 </div>
+                -->
             </div>
 
             <div class="popup-footer">

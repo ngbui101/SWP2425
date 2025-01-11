@@ -87,7 +87,7 @@
             <div class="grid-item-full no-background button-row">
               <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">{{ $t('CurrentMap-add_geofence')}}</button>
               <button v-else @click="removeGeofence" class="remove-geofence-button">{{ $t('CurrentMap-remove_geofence')}}</button>
-              <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button>
+               <!-- <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button> -->
             </div>
 
           </div>
@@ -129,32 +129,27 @@
         <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
       </div>
       <div class="legend">
-        <p
-          :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#87c099' : 'black', display: 'flex', alignItems: 'center' }">
-          <span :style="{ color: modeColors.green }">
-            <i class="fas fa-map-pin"></i>
-          </span> {{ $t('CurrentMap-green')}}: {{ modeAccuracy.green }}
-          <span :style="{ color: modeColors.yellow, marginLeft: '20px' }">
-            <i class="fas fa-map-pin"></i>
-          </span> {{ $t('CurrentMap-yellow')}}: {{ modeAccuracy.yellow }}
-          <span :style="{ color: modeColors.red, marginLeft: '20px' }">
-            <i class="fas fa-map-pin"></i>
- 
- 
-          </span> Red: {{ modeAccuracy.red }}
-          <span
-            :style="{ marginLeft: '50px', color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }">
-            Current accuracy:
-            <strong>
-              {{
-                selectedMeasurement.accuracy
-                  ? Math.round(selectedMeasurement.accuracy * 10) / 10 + 'm'
-                  : 'N/A'
-              }}
-            </strong>
-          </span>
-        </p>
-      </div>
+  <span :style="{ color: modeColors.green }">
+    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-green')}}: {{ modeAccuracy.green }}
+  </span>
+  <span :style="{ color: modeColors.yellow }">
+    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-yellow')}}: {{ modeAccuracy.yellow }}
+  </span>
+  <span :style="{ color: modeColors.red }">
+    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-red')}}: {{ modeAccuracy.red }}
+  </span>
+  <span
+    :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }">
+    {{ $t('CurrentMap-current_accuracy')}}:
+    <strong>
+      {{
+        selectedMeasurement.accuracy
+          ? Math.round(selectedMeasurement.accuracy * 10) / 10 + 'm'
+          : 'N/A'
+      }}
+    </strong>
+  </span>
+</div>
 
 
 
@@ -737,4 +732,7 @@ const filteredMeasurements = computed(() => {
 
 </script>
 
-<style scoped></style>
+
+
+<style scoped>
+</style>
