@@ -27,7 +27,7 @@
                                 v-model="fromTimestamp" @change="updateTimestampRange">
                                 <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
                                     :value="measurement.createdAt">
-                                    {{ new Date(measurement.createdAt).toLocaleString() }}
+                                    {{ formatTimestamp(measurement.createdAt) }}
                                 </option>
                             </select>
                             <DatePicker v-model="fromDate" type="date" :disabled-date="disableUnavailableDates"
@@ -123,11 +123,12 @@ import HistoryTimeStampFilterPopup from './HistoryTimestampFilterPopup.vue'
 const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
-
-    return `${day}.${month} ${hours}:${minutes}`;
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
 };
 const isMeasurementFilterPopupOpen = ref(false);
 const openMeasurementFilters = () => {
@@ -229,9 +230,9 @@ const handleToDateChange = (date) => {
 // Computed property for the map history title
 const mapHistoryTitle = computed(() => {
     if (fromTimestamp.value && toTimestamp.value) {
-        return `Map history from ${new Date(fromTimestamp.value).toLocaleString()} to ${new Date(toTimestamp.value).toLocaleString()}`;
+        return `Map history from ${formatTimestamp(fromTimestamp.value)} to ${formatTimestamp(toTimestamp.value)}`;
     } else if (fromTimestamp.value) {
-        return `Map history from ${new Date(fromTimestamp.value).toLocaleString()}`;
+        return `Map history from ${formatTimestamp(fromTimestamp.value)}`;
     } else {
         return "Map history";
     }
