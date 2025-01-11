@@ -63,7 +63,8 @@ class _BG96_TCPIP : public _BG96_Common
 
     bool InitAPN(unsigned int pdp_index, const char* apn, const char* usr, const char* pwd, char* err_code);
 
-    bool InitAPNWithNetworkScanning(unsigned int pdp_index, const char* apn, const char* usr, const char* pwd, char* err_code, const char* rat, Cell* cells[]);
+    // bool InitAPNWithNetworkScanning(unsigned int pdp_index, const char* apn, const char* usr, const char* pwd, char* err_code, const char* rat, Cell* cells[]);
+
     bool OpenSocketService(unsigned int pdp_index, unsigned int socket_index, Socket_Type_t socket, char *ip, unsigned int port, unsigned int local_port, Access_Mode_t mode);
 
     bool CloseSocketService(unsigned int socket_index);
@@ -76,7 +77,7 @@ class _BG96_TCPIP : public _BG96_Common
 
     bool SwitchAccessModes(unsigned int socket_index, Access_Mode_t mode);
 
-    bool DevPingFunction(unsigned int socket_index, char *host);
+    // bool DevPingFunction(unsigned int socket_index, char *host);
 
     bool DevNTPFunction(unsigned int socket_index, char *ntp_ip, unsigned int port, char *time);
 

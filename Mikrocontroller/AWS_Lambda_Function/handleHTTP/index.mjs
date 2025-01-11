@@ -1,6 +1,15 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import fetch from 'node-fetch';
 
+function isValidTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = (now - date) / 1000 / 60;
+
+    // Überprüft, ob das Datum gültig ist und ob es nicht älter als 3 Minuten ist
+    return date instanceof Date && !isNaN(date.getTime()) && diffInMinutes <= 3;
+}
+
 async function getModeFromMongo(trackerId, database) {
     const modeCollection = database.collection('mode');
 
@@ -66,6 +75,11 @@ export const handler = async (event) => {
         GSV: requestData.GSV,
         frequenz: requestData.frequenz
     };
+
+    if (!isValidTimestamp(data.Timestamp)) {
+        console.warn(`Ungültiger Timestamp empfangen: ${data.Timestamp}. Ersetze durch aktuelle Zeit.`);
+        data.Timestamp = new Date().toISOString();
+    }
 
     const urls = {
         insertCellInfosUrl: process.env.INSERT_CELL_INFOS_URL,

@@ -6,13 +6,14 @@ _Lowpower::_Lowpower() : _Motion() {
 _Lowpower::~_Lowpower() {
 }
 
-void _Lowpower::deepSleep(unsigned long millis)
+bool _Lowpower::deepSleep(unsigned long millis)
 {   
     millis = (millis <= minSleepTime) ? minSleepTime : maxSleepTime;
     
     LowPower.deepSleep(millis);
     // Serial.println("Deep Sleep");
-    // delay(1000);
+    // delay(millis/10);
+    return true;
 }
 
 bool _Lowpower::deepSleepWithAlarm(unsigned long millis){
@@ -35,7 +36,7 @@ bool _Lowpower::deepSleepWithAlarm(unsigned long millis){
         // Serial.println(countMaxSleep);
 
         countMaxSleep--;
-        LowPower.deepSleep(maxSleepTime);
+        deepSleep(maxSleepTime);
         return true;
     }else if(countMinSleep != 0){
 
@@ -43,7 +44,7 @@ bool _Lowpower::deepSleepWithAlarm(unsigned long millis){
         // Serial.println(countMinSleep);
 
         countMinSleep--;
-        LowPower.deepSleep(minSleepTime);
+        deepSleep(minSleepTime);
         return true;
     }
     return true;

@@ -355,6 +355,7 @@ bool Tracker::handleErrors()
     if (countReset > 3)
     {
         trackerModes.wakeUp = false;
+        countReset = 0;
         return true;
     }
     if (checkForError() > 0)
