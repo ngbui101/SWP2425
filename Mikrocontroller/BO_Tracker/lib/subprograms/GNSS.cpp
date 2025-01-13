@@ -107,7 +107,6 @@ bool GNSS::TurnOnGNSS()
         gnssData.startMillis = millis();
         return true;
     }
-    initLogger.logError("TurnOnGNSS");
     return false;
 }
 

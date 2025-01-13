@@ -11,9 +11,9 @@ struct TrackerModes {
     bool GeoFenMode = false;
     // bool RequestMode = true;
     // bool Modem_Off = false;
-    unsigned long period = 20000UL;
+    unsigned long period = 60000UL;
     unsigned long maxRealTime = 120001UL;
-    bool realtime = true;
+    bool realtime = false;
     // GeoFencing
     float geoLatitude = 0;
     float geoLongitude = 0;
