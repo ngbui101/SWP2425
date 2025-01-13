@@ -7,7 +7,7 @@ RealTimeMode::RealTimeMode(Tracker &trackerObj)
 
 void RealTimeMode::start()
 {   
-    Serial.println("Real Time Start");
+    // Serial.println("Real Time Start");
     if (!setup())
         return;
     loop();

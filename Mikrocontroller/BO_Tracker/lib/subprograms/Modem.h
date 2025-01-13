@@ -29,6 +29,8 @@ public:
     bool initModem();
     bool turnOnModem();
     
+    bool setCurrentTimeToRTC(); 
+
     bool isModemAvailable();
 
     bool startConnect();

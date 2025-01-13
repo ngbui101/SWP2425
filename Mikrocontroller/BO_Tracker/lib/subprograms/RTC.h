@@ -14,13 +14,13 @@ public:
 
     char *getDateTime();
 
-    bool enableAlarm(unsigned long millis);
+    // bool enableAlarm(unsigned long millis);
 
-    void calculateTimeForAlarm(uint8_t *hour,unsigned long millisSpan);
+    // void calculateTimeForAlarm(uint8_t *hour,unsigned long millisSpan);
 
 private:
     RTCZero rtc;
-    static void rtcCallback();
+    // static void rtcCallback();
 
 };
 

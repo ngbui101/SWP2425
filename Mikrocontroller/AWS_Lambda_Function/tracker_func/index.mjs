@@ -2,8 +2,32 @@ import { MongoClient, ObjectId } from 'mongodb';
 import fetch from 'node-fetch';
 import AWS from 'aws-sdk';
 
-
 const iotData = new AWS.IotData({ endpoint: process.env.AWS_IOT_ENDPOINT });
+
+function isValidTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = (now - date) / 1000 / 60;
+
+    return (
+        date instanceof Date &&
+        !isNaN(date.getTime()) &&
+        diffInMinutes <= 3
+    );
+}
+
+async function invokeDataHandler(data) {
+    const dataHandlerUrl = process.env.DATA_HANDLER_URL;
+
+    const response = await fetch(dataHandlerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    return response.json();
+}
+
 
 async function publishToAwsIoT(imei, modeData) {
     const topic = `tracker/${imei}/sub`;
@@ -21,100 +45,28 @@ async function publishToAwsIoT(imei, modeData) {
     }
 }
 
-async function getModeAndGeofencesFromMongo(trackerId, database) {
+async function getModeFromMongo(trackerId, database) {
     const modeCollection = database.collection('mode');
-    const geofencesCollection = database.collection('geofences');
-
     try {
-        // Hole Modusinformationen
-        const modeDoc = await modeCollection.findOne({ tracker: new ObjectId(String(trackerId)) });
-
-        const modeData = modeDoc ? {
-            GnssMode: modeDoc.GnssMode,
-            CellInfosMode: modeDoc.CellInfosMode,
-            BatteryMode: modeDoc.BatteryMode,
-            TemperatureMode: modeDoc.TemperatureMode,
-            NmeaMode: modeDoc.NmeaMode,
-            frequenz: modeDoc.frequenz
-        } : null;
-
-        // Hole Geofence-Informationen
-        const geofencesCursor = geofencesCollection.find({ tracker: new ObjectId(String(trackerId)) });
-        const geofences = await geofencesCursor.toArray();
-        const isValidNumber = (value) => !isNaN(value) && value.trim() !== '';
-        const geofenceData = geofences.map(geo => ({
-            geoRadius: parseInt(geo.radius, 10),
-            geoLongitude: isValidNumber(geo.longitude) ? parseFloat(geo.longitude) : null,
-            geoLatitude: isValidNumber(geo.latitude) ? parseFloat(geo.latitude) : null
-            // ,GeoFenMode: geo.active
-        }));
-        // const geofenceData = null;
-        return { modeData, geofenceData };
-    } catch (error) {
-        console.error("Error fetching mode and geofences from MongoDB:", error);
-        return null;
-    }
-}
-
-
-async function getCellLocationAndEstimatedPositionFromUnwiredLabs(cells) {
-    const apiUrl = "https://eu1.unwiredlabs.com/v2/process";
-    const token = "pk.11e2626f93a4d4ee0bb5ab37ee6b25a4";
-
-    if (!Array.isArray(cells) || cells.length === 0) {
-        console.error("No valid cell information provided.");
-        return null;
-    }
-
-    // Ensure that each cell has the required fields
-    const requiredFields = ['radio', 'mcc', 'mnc', 'lac', 'cid'];
-    for (const cell of cells) {
-        for (const field of requiredFields) {
-            if (!(field in cell)) {
-                console.error(`Cell is missing required field '${field}':`, cell);
-                return null;
-            }
-        }
-    }
-    // Aufbau des JSON-Payloads
-    const payload = {
-        token,
-        cells: cells.slice(0, 6),
-        address: 1
-    };
-
-    // POST-Anfrage an die API
-    try {
-        const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+        const modeDoc = await modeCollection.findOne({
+            tracker: new ObjectId(String(trackerId))
         });
 
-        if (!response.ok) {
-            throw new Error(`API error: ${response.statusText}`);
-        }
-
-        const responseData = await response.json();
-        if (responseData.status === "ok") {
-            console.log("Location data from Unwired Labs API:", responseData);
-            return {
-                latitude: responseData.lat,
-                longitude: responseData.lon,
-                accuracy: responseData.accuracy / 5
-            };
-        } else {
-            console.error("Unwired Labs API returned an error:", responseData);
-            return null;
-        }
+        return modeDoc
+            ? {
+                GnssMode: modeDoc.GnssMode,
+                CellInfosMode: modeDoc.CellInfosMode,
+                BatteryMode: modeDoc.BatteryMode,
+                TemperatureMode: modeDoc.TemperatureMode,
+                NmeaMode: modeDoc.NmeaMode,
+                frequenz: modeDoc.frequenz
+            }
+            : {};
     } catch (error) {
-        console.error("Error calling Unwired Labs API:", error);
-        return null;
+        console.error('Error fetching mode from MongoDB:', error);
+        return {};
     }
 }
-
-
-
 
 export const handler = async (event) => {
     const mongoURI = process.env.MONGO_URI;
@@ -127,14 +79,16 @@ export const handler = async (event) => {
         Temperature: event.Temperature,
         Humidity: event.Humidity,
         BatteryPercentage: event.BatteryPercentage,
-        gnss: event.gnss,
+        Gnss: event.gnss,
         GSA: event.GSA,
         GSV: event.GSV,
-        Accuracy: event.Accuracy,
-        RequestMode: event.RequestMode,
-        BatteryLow: event.BatteryLow,
-        TimeToGetFirstFix: event.TimeToGetFirstFix
+        frequenz: event.frequenz
     };
+
+    if (!isValidTimestamp(data.Timestamp)) {
+        console.warn(`Ungültiger Timestamp empfangen: ${data.Timestamp}. Ersetze durch aktuelle Zeit.`);
+        data.Timestamp = new Date().toISOString();
+    }
 
     try {
         await client.connect();
@@ -151,104 +105,108 @@ export const handler = async (event) => {
         }
 
         const trackerId = trackerDoc._id;
-        const collection = database.collection('measurements');
-        const documentsToInsert = [];
+        const modeData = await getModeFromMongo(trackerId, database);
 
+        // Checks, ob Daten gesendet wurden
+        const isBatteryDataSent = (data.BatteryPercentage !== undefined);
+        const isTempHumDataSent = (data.Temperature !== undefined || data.Humidity !== undefined);
+        const isCellDataSent = (data.Cells);
+        const isGnssDataSent = (data.Gnss !== undefined);
+        const isNmeaDataSent = (data.GSA !== undefined || data.GSV !== undefined);
+        const isFrequenzSent = (data.frequenz !== undefined);
 
-        if (data.gnss) {
-            documentsToInsert.push({
-                imei: data.IMEI,
-                mode: "GPS",
-                latitude: data.gnss.latitude,
-                longitude: data.gnss.longitude,
-                hdop: data.gnss.hdop,
-                nsat: data.gnss.nsat,
-                tracker: new ObjectId(trackerId),
-                accuracy: data.gnss.accuracy,
-                timeToGetFirstFix: data.gnss.TTFF,
-                createdAt: data.Timestamp,
-                updatedAt: data.Timestamp
-            });
+        // Mismatch-Objekt
+        const mismatches = {};
+
+        // BatteryMode
+        if (isBatteryDataSent && modeData.BatteryMode === false) {
+            mismatches.BatteryMode = false;
+        }
+        if (!isBatteryDataSent && modeData.BatteryMode === true) {
+            mismatches.BatteryMode = true;
         }
 
+        // TemperatureMode
+        if (isTempHumDataSent && modeData.TemperatureMode === false) {
+            mismatches.TemperatureMode = false;
+        }
+        if (!isTempHumDataSent && modeData.TemperatureMode === true) {
+            mismatches.TemperatureMode = true;
+        }
 
-        if (data.Cells && Array.isArray(data.Cells) && data.Cells.length > 0) {
-            const location = await getCellLocationAndEstimatedPositionFromUnwiredLabs(data.Cells);
-            if (location) {
-                // Das 'radio'-Feld aus der ersten Zelle extrahieren
-                const radioType = data.Cells[0].radio || "unknown";
+        // CellInfosMode
+        if (isCellDataSent && modeData.CellInfosMode === false) {
+            mismatches.CellInfosMode = false;
+        }
+        if (!isCellDataSent && modeData.CellInfosMode === true) {
+            mismatches.CellInfosMode = true;
+        }
 
-                const modeMap = {
-                    "lte": "LTE",
-                    "gsm": "GSM",
-                    "nbiot": "NBIOT"
+        // GnssMode
+        if (isGnssDataSent && modeData.GnssMode === false) {
+            mismatches.GnssMode = false;
+        }
+        if (!isGnssDataSent && modeData.GnssMode === true) {
+            mismatches.GnssMode = true;
+        }
 
-                };
-                const mode = modeMap[radioType.toLowerCase()] || radioType.toUpperCase();
+        // NmeaMode
+        if (isNmeaDataSent && modeData.NmeaMode === false) {
+            mismatches.NmeaMode = false;
+        }
+        if (!isNmeaDataSent && modeData.NmeaMode === true) {
+            mismatches.NmeaMode = true;
+        }
 
-                documentsToInsert.push({
-                    imei: data.IMEI,
-                    mode: "LTE",
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                    accuracy: location.accuracy,
-                    tracker: new ObjectId(trackerId),
-                    createdAt: data.Timestamp,
-                    updatedAt: data.Timestamp
-                });
+        // Frequenz
+        if (isFrequenzSent) {
+            if (data.frequenz !== modeData.frequenz) {
+                mismatches.frequenz = modeData.frequenz;
             }
-        }
-
-        if (data.Temperature !== undefined || data.Humidity !== undefined) {
-            documentsToInsert.push({
-                imei: data.IMEI,
-                mode: "TemperatureHumidity",
-                temperature: data.Temperature,
-                humidity: data.Humidity,
-                tracker: new ObjectId(trackerId),
-                createdAt: data.Timestamp,
-                updatedAt: data.Timestamp
-            });
-        }
-
-        if (data.BatteryPercentage !== undefined) {
-            documentsToInsert.push({
-                imei: data.IMEI,
-                mode: "Battery",
-                battery: data.BatteryPercentage,
-                tracker: new ObjectId(trackerId),
-                createdAt: data.Timestamp,
-                updatedAt: data.Timestamp
-            });
-        }
-
-        if (data.RequestMode === true) {
-            const { modeData, geofenceData } = await getModeAndGeofencesFromMongo(trackerId, database);
-
-            if ((modeData && Object.keys(modeData).length > 0) || geofenceData.length > 0) {
-                const payload = { ...modeData, geofences: geofenceData };
-                await publishToAwsIoT(data.IMEI, payload);
-            } else {
-                console.log("No mode or geofence data available for publishing.");
-            }
-        }
-
-        if (documentsToInsert.length > 0) {
-            await collection.insertMany(documentsToInsert);
-            console.log(`${documentsToInsert.length} document(s) inserted.`);
         } else {
-            console.log("No valid measurement data found; no documents were inserted.");
+            if (modeData.frequenz !== undefined && modeData.frequenz !== null) {
+                mismatches.frequenz = modeData.frequenz;
+            }
         }
+
+        // Bei Mismatch: sofortige Rückgabe
+        if (Object.keys(mismatches).length > 0) {
+
+            await publishToAwsIoT(data.IMEI,mismatches);
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(mismatches)
+            };
+        }
+
+        // Wenn kein Mismatch => Aufruf der zweiten Funktion
+        // Die zweite Funktion übernimmt das „Daten versenden“ (Cells, Gnss, etc.)
+        const resultFromDataHandler = await invokeDataHandler({
+            IMEI: data.IMEI,
+            Timestamp: data.Timestamp,
+            trackerId,
+            Cells: data.Cells,
+            Gnss: data.Gnss,
+            BatteryPercentage: data.BatteryPercentage,
+            Temperature: data.Temperature,
+            Humidity: data.Humidity,
+            GSA: data.GSA,
+            GSV: data.GSV
+        });
 
         return {
             statusCode: 200,
-            body: JSON.stringify('Data successfully processed and inserted')
+            body: JSON.stringify({
+                valid: true,
+                dataHandlerResponse: resultFromDataHandler
+            })
         };
     } catch (error) {
-        console.error("Error inserting data: ", error);
+        console.error('Error in ModeHandler:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify('Error inserting data')
+            body: JSON.stringify('Internal Server Error')
         };
     } finally {
         await client.close();

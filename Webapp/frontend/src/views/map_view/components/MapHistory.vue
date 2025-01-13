@@ -9,7 +9,7 @@
                 <div class="card-body">
                     <!-- Select Tracker Dropdown -->
                     <label for="tracker-dropdown" class="dropdown-label">
-                        Select Tracker:
+                        {{ $t("MapHistory-SelectTracker") }}:
                         <select id="tracker-dropdown" class="tracker-dropdown" v-model="selectedTracker"
                             @change="updateSelectedTrackerMeasurements">
                             <option v-for="tracker in trackers" :key="tracker._id" :value="tracker._id">
@@ -20,14 +20,14 @@
 
                     <!-- From Timestamp Dropdown with Date Picker -->
                     <label for="from-timestamp-dropdown" class="dropdown-label">
-                        From Timestamp:
+                        {{ $t("MapHistory-FromTimestamp") }}:
                         <div class="timestamp-selection">
                             <select id="from-timestamp-dropdown"
                                 :class="['tracker-dropdown', !fromTimestamp && errorMessage ? 'error-dropdown' : '']"
                                 v-model="fromTimestamp" @change="updateTimestampRange">
                                 <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
                                     :value="measurement.createdAt">
-                                    {{ new Date(measurement.createdAt).toLocaleString() }}
+                                    {{ formatTimestamp(measurement.createdAt) }}
                                 </option>
                             </select>
                             <DatePicker v-model="fromDate" type="date" :disabled-date="disableUnavailableDates"
@@ -37,7 +37,7 @@
 
                     <!-- To Timestamp Dropdown with Date Picker -->
                     <label for="to-timestamp-dropdown" class="dropdown-label">
-                        To Timestamp:
+                        {{ $t("MapHistory-ToTimestamp") }}:
                         <div class="timestamp-selection">
                             <select id="to-timestamp-dropdown"
                                 :class="['tracker-dropdown', !toTimestamp && errorMessage ? 'error-dropdown' : '']"
@@ -59,9 +59,9 @@
                     <div class="pin-filter-container">
                         <label class="checkbox-label">
                             <input type="checkbox" v-model="usePinForEveryMeasurement" />
-                            Use Pin for every Measurement
+                            {{ $t("MapHistory-UsePinforeveryMeasurement") }}
                         </label>
-                        <button class="filters-button" @click="openMeasurementFilters">Select Filters</button>
+                        <button class="filters-button" @click="openMeasurementFilters">Filters</button>
                     </div>
 
                     <!-- Build History Button -->
@@ -123,11 +123,12 @@ import HistoryTimeStampFilterPopup from './HistoryTimestampFilterPopup.vue'
 const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
-
-    return `${day}.${month} ${hours}:${minutes}`;
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
 };
 const isMeasurementFilterPopupOpen = ref(false);
 const openMeasurementFilters = () => {
@@ -229,9 +230,9 @@ const handleToDateChange = (date) => {
 // Computed property for the map history title
 const mapHistoryTitle = computed(() => {
     if (fromTimestamp.value && toTimestamp.value) {
-        return `Map history from ${new Date(fromTimestamp.value).toLocaleString()} to ${new Date(toTimestamp.value).toLocaleString()}`;
+        return `Map history from ${formatTimestamp(fromTimestamp.value)} to ${formatTimestamp(toTimestamp.value)}`;
     } else if (fromTimestamp.value) {
-        return `Map history from ${new Date(fromTimestamp.value).toLocaleString()}`;
+        return `Map history from ${formatTimestamp(fromTimestamp.value)}`;
     } else {
         return "Map history";
     }

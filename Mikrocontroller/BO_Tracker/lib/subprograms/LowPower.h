@@ -9,12 +9,12 @@ public:
     _Lowpower();
     ~_Lowpower();
 
-    void deepSleep(unsigned long millis);
+    bool deepSleep(unsigned long millis);
 
     bool deepSleepWithAlarm(unsigned long millis);
 private:
     int countMaxSleep = 0;
-    int countMinSleep = 0;
+    int countMinSleep = 1;
     uint32_t maxSleepTime = 120000;
     uint32_t minSleepTime = 10000;
 };

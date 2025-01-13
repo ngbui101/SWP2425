@@ -13,8 +13,6 @@ public:
     // Methode zum Initialisieren des Trackers
     bool InitModule();
 
-    bool setCurrentTimeToRTC();  
-
     void firstStart();
 
     bool setMode(char *payload);

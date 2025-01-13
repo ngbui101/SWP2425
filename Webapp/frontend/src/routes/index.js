@@ -11,6 +11,9 @@ const ForgotPasswordView = () => import('../views/auth_view/ForgotPasswordView.v
 const RouteView = () => import('../views/route_view/RouteView.vue');
 const ContactFormView = () => import('../components/main/ContactForm.vue');
 const PrivacyPolicyView = () => import('../views/PrivacyPolicy.vue'); // Neue Seite privacy Policy
+const Nutzungbedingungen = () => import('../views/Nutzungbedingungen.vue'); // Neue Seite Nutzungbedingungen
+const Uber = () => import('../views/UberUns.vue'); // Neue Seite Uber uns
+
 
 // const ForbiddenPage = () => import('../components/ForbiddenPage.vue'); // Falls benötigt
 
@@ -25,6 +28,8 @@ const routes = [
   { path: '/trackers', component: TrackerView, name: 'trackers', meta: { requiresAuth: true } },
   { path: '/contact', component: ContactFormView, name: 'contact', meta: { requiresAuth: true } },
   { path: '/privacy', component: PrivacyPolicyView, name: 'privacy' },
+  { path: '/terms', component: Nutzungbedingungen, name: 'terms' },
+  { path: '/uber', component: Uber, name: 'uber' },
 ];
 
 
@@ -37,6 +42,12 @@ const router = createRouter({
 // Global navigation guard for authentication and guest access
 router.beforeResolve(async (to, from, next) => {
     const authStore = useAuthStore();
+
+    // Versuche, den Benutzerstatus wiederherzustellen
+    if (!authStore.authReady) {
+      await authStore.attempt();
+      authStore.authReady = true; // Authentifizierung wurde überprüft
+    }
   
     // Überprüfen, ob die Route Authentifizierung erfordert und ob der Benutzer nicht authentifiziert ist
     if (to.meta.requiresAuth && !authStore.isAuthenticated) {

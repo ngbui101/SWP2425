@@ -52,7 +52,7 @@ const errorMessage = ref<string>('');
 async function submit() {
   try {
     const response = await authStore.login(loginData);
-    router.replace({ name: 'trackers' });
+    router.replace({ name: 'main' });
   } catch (err: any) {
     errorMessage.value = err.message;
   }
