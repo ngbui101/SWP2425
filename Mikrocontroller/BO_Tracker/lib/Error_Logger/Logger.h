@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "BG96_Serial.h"
 
-#define MAX_ERRORS 20
+#define MAX_ERRORS 3
 #define MAX_ERROR_LENGTH 20
 
 class Logger {
