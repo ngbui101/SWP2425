@@ -83,31 +83,31 @@ bool Tracker::setMode(char *payload)
             trackerModes.GeoFenMode = docOutput["GeoFenMode"];
         }
         // GeoUpdate
-        // if (docOutput["geofences"].is<JsonArray>())
-        // {
-        //     JsonArray geofences = docOutput["geofences"].as<JsonArray>();
-        //     if (geofences.size() > 0) // Prüfen, ob das Array nicht leer ist
-        //     {
-        //         JsonObject geofence = geofences[0];
-        //         if (geofence["geoRadius"].is<int>())
-        //         {
-        //             trackerModes.geoRadius = geofence["geoRadius"].as<unsigned int>();
-        //         }
+        if (docOutput["geofences"].is<JsonArray>())
+        {
+            JsonArray geofences = docOutput["geofences"].as<JsonArray>();
+            if (geofences.size() > 0) // Prüfen, ob das Array nicht leer ist
+            {
+                JsonObject geofence = geofences[0];
+                if (geofence["geoRadius"].is<int>())
+                {
+                    trackerModes.geoRadius = geofence["geoRadius"].as<unsigned int>();
+                }
 
-        //         if (geofence["geoLatitude"].is<float>())
-        //         {
-        //             trackerModes.geoLatitude = geofence["geoLatitude"];
-        //         }
+                if (geofence["geoLatitude"].is<float>())
+                {
+                    trackerModes.geoLatitude = geofence["geoLatitude"];
+                }
 
-        //         if (geofence["geoLongitude"].is<float>())
-        //         {
-        //             trackerModes.geoLongitude = geofence["geoLongitude"];
-        //         }
+                if (geofence["geoLongitude"].is<float>())
+                {
+                    trackerModes.geoLongitude = geofence["geoLongitude"];
+                }
 
-        //         if (geofence["GeoFenMode"].is<boolean>())
-        //         {
-        //             trackerModes.GeoFenMode = geofence["GeoFenMode"];
-        //         }
+                if (geofence["GeoFenMode"].is<boolean>())
+                {
+                    trackerModes.GeoFenMode = geofence["GeoFenMode"];
+                }
                 //         if (addGeo())
                 //         {
                 //             DSerial.println("Geo added successfully!");
@@ -116,8 +116,8 @@ bool Tracker::setMode(char *payload)
                 //         {
                 //             DSerial.println("Failed to add geo!");
                 //         };
-        //     }
-        // }
+            }
+        }
         // Frequenz aktualisieren
         if (docOutput["frequenz"].is<unsigned long>())
         {
@@ -176,84 +176,45 @@ bool Tracker::modeHandle()
 
 bool Tracker::sendAndCheck()
 {
-    char response[1028];
+    bool keepRunning = false;
 
-    while (abs(millis() - pub_time) > trackerModes.period - 1000)
-    {
-        if (!modeHandle() || !publishData("/pub"))
-        {   
-            return false;
-        }
-        pub_time = millis();
-        // delay(300);
-    }
-    Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(response, 2);
-    Serial.print("ret:");
-    Serial.println(ret);
-    Serial.println("response");
-    Serial.println(response);
+    Serial.println("sendAndWaitResponseHTTP");
 
-    switch (ret)
+    keepRunning = isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
+
+    if (!trackerModes.realtime)
     {
-    case MQTT_RECV_DATA_EVENT:
-        setMode(response);
         return false;
-    case MQTT_STATUS_EVENT:
-        if (handleMQTTStatusEventClose(response)){
-            mqtt_available = false;
-            return false;
-        }
-        break;
-    default:
-        break;
     }
-    // bool keepRunning = false;
 
-    // // Serial.println("sendAndWaitResponseHTTP");
+    while (abs(millis() - pub_time) <= trackerModes.period - 1000)
+    {
+        delay(1000);
+        Serial.println("less than interval");
+    }
 
-    // 
-
-    // /////
-    // keepRunning = isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
-    // while (keepRunning)
-    // {
-    //     /* code */
-    // }
-
-    // if (!trackerModes.realtime)
-    // {
-    //     return false;
-    // }
-
-    // while (abs(millis() - pub_time) <= trackerModes.period - 1000)
-    // {
-    //     delay(1000);
-    //     Serial.println("less than interval");
-    // }
-
-    // return keepRunning;
-    return true;
+    return keepRunning;
 }
 
 bool Tracker::pubAndsubMQTT()
 {
     char response[1028];
-
-    if (!modeHandle() || !publishData("/pub"))
-    {
-        return false;
-    }
-    pub_time = millis();
     Mqtt_Event_t event = waitForResponse(response);
     switch (event)
     {
     case MQTT_RECV_DATA_EVENT:
         return setMode(response);
+        ;
     case MQTT_CLIENT_CLOSED:
         return false;
     default:
         break;
     }
+    if (!modeHandle() || !publishData("/pub"))
+    {
+        return false;
+    }
+    pub_time = millis();
 
     return true;
 }
@@ -277,7 +238,7 @@ bool Tracker::sendAndWaitResponseHTTP()
         return false;
     }
     docInput.clear();
-
+    
     if (!sendAndReadResponse(payload, response))
     {
         // Serial.println("Fehler bei: sendAndReadResponse");
@@ -291,7 +252,7 @@ bool Tracker::sendAndWaitResponseHTTP()
         return false;
     }
     Serial.println("Response valid");
-
+    
     pub_time = millis();
     // handle = false;
     return true;
@@ -335,32 +296,12 @@ bool Tracker::resetModem()
 bool Tracker::turnOnFunctionality()
 {
     bool success = true;
-
-    // Modem einschalten (falls noch nicht verfügbar)
     success &= isModemAvailable() || turnOnModem();
-
-    // GNSS nur einschalten, wenn trackerModes.GnssMode == true
-    // (bzw. wenn es nicht already enabled ist)
     success &= !trackerModes.GnssMode || isGnssModuleEnable() || TurnOnGNSS();
-
-    // Netzwerkverbindung herstellen
     success &= isConnected() || startConnect();
-
-    // Entweder MQTT oder HTTP
-    if (useMQTT)
-    {
-        // Wenn wir MQTT verwenden, MQTT initialisieren
-        success &= isMQTTAvaliable() || startMQTT();
-    }
-    else
-    {
-        // Ansonsten HTTP verwenden
-        success &= isUrlSetted() || (setHTTPURL(http_url) && pingServer());
-    }
-
-    // Fehlerbehandlung
+    success &= isUrlSetted() || setHTTPURL(http_url);
+    success &= !useMQTT || isMQTTAvaliable() || startMQTT();
     handleErrors();
-
     return success;
 }
 

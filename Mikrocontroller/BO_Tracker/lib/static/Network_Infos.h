@@ -10,7 +10,7 @@ const char PASSWORD[] = "";
 // const char RAT[] = "lte";
 const char RAT[] = "gsm";
 // const char RAT[] = "nbiot";
-const bool useMQTT = true;
+const bool useMQTT = false;
 const unsigned int PDPIndex = 1;
 
 #endif

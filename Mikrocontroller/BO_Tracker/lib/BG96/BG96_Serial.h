@@ -75,7 +75,6 @@ class _BG96_Serial
     char *searchStrBuffer(const char *test_str);
 
     char *searchChrBuffer(const char test_chr);
-    Cmd_Response_t waitForMQTTURC(unsigned int timeoutSeconds);
 
     unsigned int bufferHead;
     char rxBuffer[RX_BUFFER_LENGTH];

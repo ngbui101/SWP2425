@@ -71,8 +71,7 @@ bool Modem::setCurrentTimeToRTC()
 bool Modem::turnOnModem()
 {
     if (!_BG96.InitModule())
-    {   
-        initLogger.logError("TurnOnModem");
+    {
         return false;
     }
     // setCurrentTimeToRTC();
