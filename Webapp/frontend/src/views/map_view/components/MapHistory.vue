@@ -18,39 +18,33 @@
                         </select>
                     </label>
 
-                    <!-- From Timestamp Dropdown with Date Picker -->
+                    <!-- From Timestamp Dropdown -->
                     <label for="from-timestamp-dropdown" class="dropdown-label">
                         {{ $t("MapHistory-FromTimestamp") }}:
                         <div class="timestamp-selection">
-                            <select id="from-timestamp-dropdown"
-                                :class="['tracker-dropdown', !fromTimestamp && errorMessage ? 'error-dropdown' : '']"
-                                v-model="fromTimestamp" @change="updateTimestampRange">
-                                <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
-                                    :value="measurement.createdAt">
-                                    {{ formatTimestamp(measurement.createdAt) }}
-                                </option>
-                            </select>
-                            <DatePicker v-model="fromDate" type="date" :disabled-date="disableUnavailableDates"
-                                @change="handleFromDateChange" :clearable="false" placeholder="Start" />
-                        </div>
-                    </label>
-
-                    <!-- To Timestamp Dropdown with Date Picker -->
-                    <label for="to-timestamp-dropdown" class="dropdown-label">
-                        {{ $t("MapHistory-ToTimestamp") }}:
-                        <div class="timestamp-selection">
-                            <select id="to-timestamp-dropdown"
-                                :class="['tracker-dropdown', !toTimestamp && errorMessage ? 'error-dropdown' : '']"
-                                v-model="toTimestamp" @change="updateTimestampRange">
+                            <select id="from-timestamp-dropdown" class="tracker-dropdown" v-model="fromTimestamp">
                                 <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
                                     :value="measurement.createdAt">
                                     {{ new Date(measurement.createdAt).toLocaleString() }}
                                 </option>
                             </select>
-                            <DatePicker v-model="toDate" type="date" :disabled-date="disableUnavailableDates"
-                                @change="handleToDateChange" :clearable="false" placeholder= "End" />
                         </div>
                     </label>
+
+                    <!-- To Timestamp Dropdown -->
+                    <label for="to-timestamp-dropdown" class="dropdown-label">
+                        {{ $t("MapHistory-ToTimestamp") }}:
+                        <div class="timestamp-selection">
+                            <select id="to-timestamp-dropdown" class="tracker-dropdown" v-model="toTimestamp">
+                                <option v-for="measurement in filteredToTimestamps" :key="measurement._id"
+                                    :value="measurement.createdAt">
+                                    {{ new Date(measurement.createdAt).toLocaleString() }}
+                                </option>
+                            </select>
+ 
+                        </div>
+                    </label>
+
 
                     <!-- Error message display -->
                     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -61,7 +55,7 @@
                             <input type="checkbox" v-model="usePinForEveryMeasurement" />
                             {{ $t("MapHistory-UsePinforeveryMeasurement") }}
                         </label>
-                        <button class="filters-button" @click="openMeasurementFilters">{{ $t("Filters") }}</button>
+ r
                     </div>
 
                     <!-- Build History Button -->
@@ -103,11 +97,21 @@
                 <!-- Grey Overlay for dark mode -->
                 <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
             </div>
+            <!-- Legend Section -->
+            <div class="legend">
+                <span :style="{ color: modeColors.GPS }" class="legend-item">
+                    <i class="fas fa-map-pin"></i> {{ }}: GPS&nbsp;&nbsp;
+                </span>
+                <span :style="{ color: modeColors.LTE }" class="legend-item">
+                    <i class="fas fa-map-pin"></i> {{ }}: LTE&nbsp;&nbsp;
+                </span>
+            </div>
+
         </div>
-        <!-- Conditionally render the Measurement Filter Popup -->
-        <HistoryTimeStampFilterPopup v-if="isMeasurementFilterPopupOpen" :template="user.settings?.template"
-            :filters="user.settings.measurementFilters" :closePopup="closeMeasurementFilters"
-            :applyFilters="applyMeasurementFilters" />
+
+
+
+
     </div>
 </template>
 
@@ -118,7 +122,25 @@ import { useAuthStore } from "@/stores/auth";
 import DatePicker from 'vue-datepicker-next';
 import './styles_maphistory.css';
 import 'vue-datepicker-next/index.css';
-import HistoryTimeStampFilterPopup from './HistoryTimestampFilterPopup.vue'
+
+const fromTimestamp = ref(null);
+const toTimestamp = ref(null);
+
+const modeColors = computed(() => ({
+    GPS: "#228B22", // Green for GPS
+    LTE: "#FFA500", // Orange for LTE
+}));
+
+
+
+const modeAccuracy = computed(() => ({
+    green: "0-25m",
+    yellow: "26-50m",
+    red: ">50m",
+}));
+
+
+
 // Open and close the measurement filter popup
 const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
@@ -131,29 +153,16 @@ const formatTimestamp = (timestamp) => {
     return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
 };
 const isMeasurementFilterPopupOpen = ref(false);
-const openMeasurementFilters = () => {
-    isMeasurementFilterPopupOpen.value = true;
-};
-const closeMeasurementFilters = () => {
-    isMeasurementFilterPopupOpen.value = false;
-};
 
-// Function to apply filters
-const applyMeasurementFilters = (filters) => {
-
-    // Implement the filtering logic based on `filters` received from the popup
-    // This could be storing `filters` and using them to filter `selectedTrackerMeasurements`
-};
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
-const measurementFilters = computed(() => user.value.settings?.measurementFilters || { mode: [] });
+
 const filteredMeasurementsForHistory = ref([]);
 const trackers = ref([]);
 const selectedTracker = ref(null);
-const fromDate = ref(null); // Define fromDate
-const toDate = ref(null); // Define toDate
-const fromTimestamp = ref(null);
-const toTimestamp = ref(null);
+const fromDate = ref(null);
+const toDate = ref(null);
+
 const selectedTrackerMeasurements = ref([]);
 const usePinForEveryMeasurement = ref(false);
 const errorMessage = ref('');
@@ -162,33 +171,27 @@ const showMeasurementsList = ref(false);
 let map = null;
 let markers = [];
 let path = null;
+let accuracyCircle = null;
 
 
-// Generate a list of unique measurement dates
-const measurementDates = computed(() => {
-    const dates = new Set();
-    selectedTrackerMeasurements.value.forEach((m) => {
-        const date = new Date(m.createdAt);
-        date.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
-        dates.add(date.getTime()); // Store as timestamp for easy comparison
-    });
-    return Array.from(dates);
-});
 
 // Disable unavailable dates in date picker
 const disableUnavailableDates = (date) => {
-    return !measurementDates.value.includes(date.setHours(0, 0, 0, 0)); // Disable if date is not in measurementDates
+    if (fromDate.value) {
+        return date.getTime() <= fromDate.value.getTime(); // Disable dates before "from date"
+    }
+    return false;
 };
+
+
 const updateTimestampRange = () => {
     // Add logic here if necessary
 
 };
 // Automatically set the earliest timestamp for the selected date in the FROM dropdown
 const handleFromDateChange = (date) => {
-    // Only set the date (clear the time)
     fromDate.value = new Date(date.setHours(0, 0, 0, 0));
 
-    // Find the earliest timestamp on the selected date
     const measurementsOnDate = selectedTrackerMeasurements.value.filter((m) => {
         const mDate = new Date(m.createdAt);
         return (
@@ -199,11 +202,15 @@ const handleFromDateChange = (date) => {
     });
 
     if (measurementsOnDate.length > 0) {
-        // Set `fromTimestamp` to the earliest timestamp on the selected date
         fromTimestamp.value = measurementsOnDate[0].createdAt;
+
+        // Reset "toTimestamp" if it is no longer valid
+        if (toTimestamp.value && new Date(toTimestamp.value) <= new Date(fromTimestamp.value)) {
+            toTimestamp.value = null;
+        }
     }
-    updateTimestampRange();
 };
+
 
 const handleToDateChange = (date) => {
     const selectedDate = new Date(date);
@@ -261,6 +268,21 @@ const fetchTrackersForUser = async () => {
         console.error('Failed to fetch trackers or measurements:', error);
     }
 };
+const filteredToTimestamps = computed(() => {
+    if (!fromTimestamp.value) {
+        // Show all measurements if no "from timestamp" is selected
+        return selectedTrackerMeasurements.value;
+    }
+    return selectedTrackerMeasurements.value.filter(
+        (measurement) => new Date(measurement.createdAt) > new Date(fromTimestamp.value)
+    );
+});
+watch(fromTimestamp, (newFromTimestamp) => {
+    if (toTimestamp.value && new Date(toTimestamp.value) <= new Date(newFromTimestamp)) {
+        toTimestamp.value = null; // Reset toTimestamp if invalid
+    }
+});
+
 
 // Update measurements for selected tracker and filter out invalid coordinates
 const updateSelectedTrackerMeasurements = () => {
@@ -286,9 +308,7 @@ const drawPinsWithGroupedInfoWindow = (measurements) => {
     markers.forEach(marker => marker.setMap(null)); // Clear previous markers
     markers = []; // Reset markers array
 
-    // Step 1: Group measurements by location (latitude and longitude)
     const locationGroups = new Map();
-
     measurements.forEach((m, index) => {
         const key = `${m.latitude},${m.longitude}`;
         if (!locationGroups.has(key)) {
@@ -297,37 +317,59 @@ const drawPinsWithGroupedInfoWindow = (measurements) => {
         locationGroups.get(key).push({ ...m, index: index + 1 });
     });
 
-    // Step 2: Create markers and info windows for each unique location
-    locationGroups.forEach((groupedMeasurements, key) => {
-        const { latitude, longitude } = groupedMeasurements[0];
+    locationGroups.forEach((groupedMeasurements) => {
+        const { latitude, longitude, mode } = groupedMeasurements[0];
+        const color = modeColors.value[mode] || "#000000"; // Default to black if mode is undefined
 
-        // Create a single marker for the location
         const marker = new google.maps.Marker({
             position: { lat: latitude, lng: longitude },
             map,
-            label: `${groupedMeasurements[0].index}`, // Show the first index as label
+            label: `${groupedMeasurements[0].index}`,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: color,
+                fillOpacity: 1,
+                strokeColor: "#000000",
+                strokeWeight: 1,
+                scale: 8,
+            },
         });
 
-        // Create combined content for the info window
         const infoContent = groupedMeasurements
-            .map(m => `Measurement ${m.index}: ${new Date(m.createdAt).toLocaleString()}`)
+            .map(m => `Measurement ${m.index}: ${new Date(m.createdAt).toLocaleString()} (Mode: ${m.mode})`)
             .join("<br>");
 
         const infoWindow = new google.maps.InfoWindow({
-            content: infoContent
+            content: infoContent,
         });
 
-        // Show info window on hover
-        marker.addListener("mouseover", () => {
-            infoWindow.open(map, marker);
-        });
-        marker.addListener("mouseout", () => {
-            infoWindow.close();
+        marker.addListener("mouseover", () => infoWindow.open(map, marker));
+        marker.addListener("mouseout", () => infoWindow.close());
+
+        marker.addListener("click", () => {
+            if (accuracyCircle) accuracyCircle.setMap(null); // Clear previous circle
+
+            const accuracy = groupedMeasurements[0].accuracy;
+            if (!isNaN(accuracy)) {
+                accuracyCircle = new google.maps.Circle({
+                    map,
+                    center: { lat: latitude, lng: longitude },
+                    radius: accuracy,
+                    fillColor: color,
+                    fillOpacity: 0.2,
+                    strokeColor: color,
+                    strokeOpacity: 0.8,
+                    strokeWeight: 1,
+                });
+            }
         });
 
         markers.push(marker);
     });
 };
+
+
+
 
 // Function to draw pins for only the first and last measurements
 const drawPinsForFirstAndLast = (measurements) => {

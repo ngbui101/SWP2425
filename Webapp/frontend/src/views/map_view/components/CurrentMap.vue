@@ -27,10 +27,11 @@
           <!-- Select Timestamp with Filters Button -->
           <div class="timestamp-container">
             <label for="timestamp-dropdown" class="dropdown-label">
-              {{ $t('CurrentMap-select_timestamp')}}:
+              {{ $t('CurrentMap-select_timestamp') }}:
               <select id="timestamp-dropdown" class="tracker-dropdown" v-model="selectedTimestamp"
                 @change="updateSelectedMeasurement">
-                <option v-for="measurement in filteredMeasurements" :key="measurement._id" :value="measurement._id">
+                <option v-for="(measurement, index) in filteredMeasurements" :key="measurement._id"
+                  :value="measurement._id" :class="{ 'newest-timestamp': index === 0 }">
                   {{ new Date(measurement.createdAt).toLocaleString() }}
                 </option>
               </select>
@@ -41,11 +42,12 @@
           <div class="grid-container">
             <!-- Mode Information -->
             <div class="grid-item-full mode-item">
-              <strong>{{ $t('TrackerCard-mode')}}:</strong> {{ trackerModeLabel }}
+              <strong>{{ $t('TrackerCard-mode') }}:</strong> {{ trackerModeLabel }}
 
 
               <!-- Switch Mode Button -->
-              <button class="switch-mode-button shimmering-button" @click="openChangeModePopup">{{ $t('CurrentMap-change_mode')}}</button>
+              <button class="switch-mode-button shimmering-button" @click="openChangeModePopup">{{
+                $t('CurrentMap-change_mode') }}</button>
               <ChangeModePopup v-if="isChangeModePopupOpen" :template="user.settings?.template"
                 :selectedTrackerId="selectedTracker" :closePopup="closeChangeModePopup" />
             </div>
@@ -75,19 +77,21 @@
 
             <!-- Temperature -->
             <div v-if="selectedMeasurement.temperature !== undefined" class="grid-item">
-              <strong>{{ $t('TrackerList-temperature')}}:&nbsp;</strong> {{ selectedMeasurement.temperature }} °C
+              <strong>{{ $t('TrackerList-temperature') }}:&nbsp;</strong> {{ selectedMeasurement.temperature }} °C
             </div>
             <!-- Humidity -->
             <div v-if="selectedMeasurement.humidity !== undefined" class="grid-item">
-              <strong>{{ $t('TrackerList-humidity')}}:&nbsp;</strong> {{ selectedMeasurement.humidity }} %
+              <strong>{{ $t('TrackerList-humidity') }}:&nbsp;</strong> {{ selectedMeasurement.humidity }} %
             </div>
 
             <!-- Add/Remove Geofence button -->
             <!-- Add/Remove Geofence button -->
             <div class="grid-item-full no-background button-row">
-              <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">{{ $t('CurrentMap-add_geofence')}}</button>
-              <button v-else @click="removeGeofence" class="remove-geofence-button">{{ $t('CurrentMap-remove_geofence')}}</button>
-               <!-- <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button> -->
+              <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">{{
+                $t('CurrentMap-add_geofence') }}</button>
+              <button v-else @click="removeGeofence" class="remove-geofence-button">{{
+                $t('CurrentMap-remove_geofence') }}</button>
+              <!-- <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button> -->
             </div>
 
           </div>
@@ -116,7 +120,7 @@
           <p class="location-text">{{ selectedTrackerLocation }}</p>
         </div>
         <div class="tracker-mode">
-          {{ $t('TrackerCard-mode')}}: {{ trackerModeLabel }}
+          {{ $t('TrackerCard-mode') }}: {{ trackerModeLabel }}
 
         </div>
       </div>
@@ -129,27 +133,28 @@
         <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
       </div>
       <div class="legend">
-  <span :style="{ color: modeColors.green }">
-    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-green')}}: {{ modeAccuracy.green }}
-  </span>
-  <span :style="{ color: modeColors.yellow }">
-    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-yellow')}}: {{ modeAccuracy.yellow }}
-  </span>
-  <span :style="{ color: modeColors.red }">
-    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-red')}}: {{ modeAccuracy.red }}
-  </span>
-  <span
-    :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }">
-    {{ $t('CurrentMap-current_accuracy')}}:
-    <strong>
-      {{
-        selectedMeasurement.accuracy
-          ? Math.round(selectedMeasurement.accuracy * 10) / 10 + 'm'
-          : 'N/A'
-      }}
-    </strong>
-  </span>
-</div>
+        <span :style="{ color: modeColors.green }" class="legend-item">
+          <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-green') }}: {{ modeAccuracy.green }}&nbsp;&nbsp;
+        </span>
+        <span :style="{ color: modeColors.yellow }" class="legend-item">
+          <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-yellow') }}: {{ modeAccuracy.yellow }}&nbsp;&nbsp;
+        </span>
+        <span :style="{ color: modeColors.red }" class="legend-item">
+          <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-red') }}: {{ modeAccuracy.red }}&nbsp;&nbsp;
+        </span>
+        <span :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }"
+          class="legend-item">
+          {{ $t('CurrentMap-current_accuracy') }}:
+          <strong>
+            {{
+              selectedMeasurement.accuracy
+                ? Math.round(selectedMeasurement.accuracy * 10) / 10 + 'm'
+                : 'N/A'
+            }}
+          </strong>
+        </span>
+      </div>
+
 
 
 
@@ -735,4 +740,10 @@ const filteredMeasurements = computed(() => {
 
 
 <style scoped>
+.newest-timestamp {
+  background-color: #d4edda;
+  /* Light green background */
+  color: #155724;
+  /* Dark green text color for better contrast */
+}
 </style>
