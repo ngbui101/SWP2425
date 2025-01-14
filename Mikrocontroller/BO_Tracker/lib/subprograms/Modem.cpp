@@ -10,7 +10,7 @@ Modem::Modem(Stream &atSerial, Stream &dSerial)
 // Initialisiert das Modem (ohne Netzwerkkonfiguration)
 bool Modem::startModem()
 {
-    if (turnOnModem())
+    if(_BG96.FirstStart())
     {
         _BG96.SetDevOutputformat(true); // Set output format
         _BG96.SetDevCommandEcho(false); // Disable command echo
@@ -31,7 +31,7 @@ bool Modem::initModem()
         return false;
     }
 
-    _BG96.ConfigNetworks(RAT);
+    _BG96.ConfigNetworks(trackerModes.RAT);
     char imei_tmp[64];
 
     if (_BG96.GetDevIMEI(imei_tmp))
@@ -73,6 +73,7 @@ bool Modem::turnOnModem()
     if (!_BG96.InitModule())
     {   
         initLogger.logError("TurnOnModem");
+        funkModuleEnable = false;
         return false;
     }
     // setCurrentTimeToRTC();
@@ -96,6 +97,7 @@ bool Modem::startConnect()
     if (!_BG96.TurnOnInternet(PDPIndex))
     {
         runningLogger.logError("TurnOnInternet");
+        connect = false;
         return false;
     }
     connect = true;

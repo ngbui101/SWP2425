@@ -61,30 +61,16 @@ void GNSS::handleGNSSMode()
         }
         else
         {
-            DSerial.println("Fehler: GSA-NMEA-Satz konnte nicht abgerufen werden.");
+            // runningLogger.logError("GetGNSSNMEASentences");
         }
-
         if (_BG96.GetGNSSNMEASentences(GPGSV, gnssData.gsv))
         {
+            
             docInput["GSV"] = gnssData.gsv;
-        }
-        else
-        {
-            DSerial.println("Fehler: GSV-NMEA-Satz konnte nicht abgerufen werden.");
+        }else{
+            // runningLogger.logError("GetGNSSNMEASentences");
         }
     }
-}
-
-// Fügt Geofencing hinzu
-bool GNSS::addGeo()
-{
-    if (_BG96.AddGeoFence(gnssData.geoID, DISABLE_GEOFENCE, CIRLE, trackerModes.geoLatitude, trackerModes.geoLongitude, trackerModes.geoRadius))
-    {
-        DSerial.println("Geofence erfolgreich hinzugefügt.");
-        return true;
-    }
-    DSerial.println("Fehler beim Hinzufügen des Geofences.");
-    return false;
 }
 
 bool GNSS::TurnOff()
@@ -108,6 +94,7 @@ bool GNSS::TurnOnGNSS()
         return true;
     }
     initLogger.logError("TurnOnGNSS");
+    gpsModuleEnable = false;
     return false;
 }
 

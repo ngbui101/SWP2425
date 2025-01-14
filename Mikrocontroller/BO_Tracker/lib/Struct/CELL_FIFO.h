@@ -103,7 +103,7 @@ public:
                 buffer[i]->toJson(cellObj);   
             }
         }
-        Serial.println("addCellsToJsonArray");
+        // Serial.println("addCellsToJsonArray");
         return true;
     }
 };

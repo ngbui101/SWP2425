@@ -49,7 +49,6 @@ bool MQTT_AWS::startMQTT()
         initLogger.logError("MQTT:OpenNetwork");
         return false;
     }
-    DSerial.println("MQTT-Netzwerk erfolgreich geöffnet!");
 
     if (!_BG96.SetMQTTMessageTimeout(MQTTIndex, 10, 5, 1))
     {

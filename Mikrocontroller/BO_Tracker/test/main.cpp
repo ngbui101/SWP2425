@@ -10,7 +10,7 @@ Tracker tracker(ATSerial, DSerial, docOutput);
 void setup(void)
 {
     Serial.begin(115200);
-    Serial.println("BMA456 Step Counter");
+    // Serial.println("BMA456 Step Counter");
 
     tracker.firstStart();
 }

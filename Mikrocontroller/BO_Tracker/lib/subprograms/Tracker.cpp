@@ -82,52 +82,29 @@ bool Tracker::setMode(char *payload)
         {
             trackerModes.GeoFenMode = docOutput["GeoFenMode"];
         }
-        // GeoUpdate
-        // if (docOutput["geofences"].is<JsonArray>())
-        // {
-        //     JsonArray geofences = docOutput["geofences"].as<JsonArray>();
-        //     if (geofences.size() > 0) // Prüfen, ob das Array nicht leer ist
-        //     {
-        //         JsonObject geofence = geofences[0];
-        //         if (geofence["geoRadius"].is<int>())
-        //         {
-        //             trackerModes.geoRadius = geofence["geoRadius"].as<unsigned int>();
-        //         }
-
-        //         if (geofence["geoLatitude"].is<float>())
-        //         {
-        //             trackerModes.geoLatitude = geofence["geoLatitude"];
-        //         }
-
-        //         if (geofence["geoLongitude"].is<float>())
-        //         {
-        //             trackerModes.geoLongitude = geofence["geoLongitude"];
-        //         }
-
-        //         if (geofence["GeoFenMode"].is<boolean>())
-        //         {
-        //             trackerModes.GeoFenMode = geofence["GeoFenMode"];
-        //         }
-                //         if (addGeo())
-                //         {
-                //             DSerial.println("Geo added successfully!");
-                //         }
-                //         else
-                //         {
-                //             DSerial.println("Failed to add geo!");
-                //         };
-        //     }
-        // }
-        // Frequenz aktualisieren
         if (docOutput["frequenz"].is<unsigned long>())
         {
             unsigned long newFrequenz = docOutput["frequenz"];
-            if (newFrequenz > 0)
-            {
-                trackerModes.period = newFrequenz;
-                trackerModes.realtime = (trackerModes.period < trackerModes.maxRealTime);
-            }
+            // if (newFrequenz > trackerModes.maxRealTime)
+            // {
+            trackerModes.period = newFrequenz;
+            trackerModes.realtime = (trackerModes.period < trackerModes.maxRealTime);
+            // }
         }
+        // if (docOutput["rat"].is<String>())
+        // {
+        //     const char *rat = docOutput["rat"];
+        //     if (strcmp(trackerModes.RAT, rat) != 0)
+        //     {
+        //         strncpy(trackerModes.RAT, rat, sizeof(trackerModes.RAT) - 1);
+        //         trackerModes.RAT[sizeof(trackerModes.RAT) - 1] = '\0';
+        //         if (resetModem())
+        //         {
+        //             firstStart();
+        //             return false;
+        //         }
+        //     }
+        // }
     }
     else
     {
@@ -174,65 +151,60 @@ bool Tracker::modeHandle()
     return true;
 }
 
+// bool Tracker::sendAndCheck()
+// {
+//     char response[1028];
+
+//     while (abs(millis() - pub_time) > trackerModes.period - 1000)
+//     {
+//         if (!modeHandle() || !publishData("/pub"))
+//         {
+//             return false;
+//         }
+//         pub_time = millis();
+//         // delay(300);
+//     }
+//     Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(response, 2);
+//     // Serial.print("ret:");
+//     // Serial.println(ret);
+//     // Serial.println("response");
+//     // Serial.println(response);
+
+//     switch (ret)
+//     {
+//     case MQTT_RECV_DATA_EVENT:
+//         setMode(response);
+//         return false;
+//     case MQTT_STATUS_EVENT:
+//         if (handleMQTTStatusEventClose(response)){
+//             mqtt_available = false;
+//             return false;
+//         }
+//         break;
+//     default:
+//         break;
+//     }
+//     return true;
+// }
 bool Tracker::sendAndCheck()
 {
-    char response[1028];
+    bool keepRunning = false;
 
-    while (abs(millis() - pub_time) > trackerModes.period - 1000)
-    {
-        if (!modeHandle() || !publishData("/pub"))
-        {   
-            return false;
-        }
-        pub_time = millis();
-        // delay(300);
-    }
-    Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(response, 2);
-    Serial.print("ret:");
-    Serial.println(ret);
-    Serial.println("response");
-    Serial.println(response);
+    // Serial.println("sendAndWaitResponseHTTP");
+    /////
+    keepRunning = sendAndWaitResponseHTTP(); /// isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
 
-    switch (ret)
+    if (!trackerModes.realtime)
     {
-    case MQTT_RECV_DATA_EVENT:
-        setMode(response);
         return false;
-    case MQTT_STATUS_EVENT:
-        if (handleMQTTStatusEventClose(response)){
-            mqtt_available = false;
-            return false;
-        }
-        break;
-    default:
-        break;
     }
-    // bool keepRunning = false;
+    while (abs(millis() - pub_time) <= trackerModes.period - 1000)
+    {
+        // delay(1000);
+        // Serial.println("less than interval");
+    }
 
-    // // Serial.println("sendAndWaitResponseHTTP");
-
-    // 
-
-    // /////
-    // keepRunning = isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
-    // while (keepRunning)
-    // {
-    //     /* code */
-    // }
-
-    // if (!trackerModes.realtime)
-    // {
-    //     return false;
-    // }
-
-    // while (abs(millis() - pub_time) <= trackerModes.period - 1000)
-    // {
-    //     delay(1000);
-    //     Serial.println("less than interval");
-    // }
-
-    // return keepRunning;
-    return true;
+    return keepRunning;
 }
 
 bool Tracker::pubAndsubMQTT()
@@ -262,12 +234,7 @@ bool Tracker::sendAndWaitResponseHTTP()
 {
     char payload[4096];
     char response[1028];
-    // if (!handle )
-    // {
-    //     if(modeHandle()){
-    //         handle = true;
-    //     }
-    // }
+
     if (!modeHandle())
     {
         return false;
@@ -286,11 +253,11 @@ bool Tracker::sendAndWaitResponseHTTP()
 
     if (!responseValid(response))
     {
-        Serial.println("Response invalid");
+        // Serial.println("Response invalid");
         setMode(response);
         return false;
     }
-    Serial.println("Response valid");
+    // Serial.println("Response valid");
 
     pub_time = millis();
     // handle = false;
@@ -319,18 +286,18 @@ bool Tracker::turnOffModem()
     gpsModuleEnable = false;
     urlSetted = false;
     mqtt_available = false;
+
     return true;
 }
 
 bool Tracker::resetModem()
 {
-    if (!turnOffModem())
-        return false;
-    delay(3000);
-    if (!turnOnModem())
-        return false;
-    countReset++;
-    return true;
+    if (!turnOffModem() && !turnOnModem())
+    {
+        countReset++;
+        return true;
+    }
+    return false;
 }
 bool Tracker::turnOnFunctionality()
 {
@@ -347,16 +314,16 @@ bool Tracker::turnOnFunctionality()
     success &= isConnected() || startConnect();
 
     // Entweder MQTT oder HTTP
-    if (useMQTT)
-    {
-        // Wenn wir MQTT verwenden, MQTT initialisieren
-        success &= isMQTTAvaliable() || startMQTT();
-    }
-    else
-    {
-        // Ansonsten HTTP verwenden
-        success &= isUrlSetted() || (setHTTPURL(http_url) && pingServer());
-    }
+    // if (useMQTT)
+    // {
+    //     // Wenn wir MQTT verwenden, MQTT initialisieren
+    //     success &= isMQTTAvaliable() || startMQTT();
+    // }
+    // else
+    // {
+    // Ansonsten HTTP verwenden
+    success &= isUrlSetted() || (setHTTPURL(http_url) && pingServer());
+    // }
 
     // Fehlerbehandlung
     handleErrors();
@@ -383,18 +350,9 @@ bool Tracker::handleCellInfosMode()
 
     cells_queue.addCellsToJsonArray(&cellsArray);
 
-    Serial.println("handleCellInfosMode()");
+    // Serial.println("handleCellInfosMode()");
 
     return true;
-    // for (Cell *&cell : cells)
-    // {
-    //     if (cell != nullptr)
-    //     {
-    //         // JSON-Objekt für jede Zelle erstellen
-    //         JsonObject cellObj = cellsArray.add<JsonObject>();
-    //         cell->toJson(cellObj);
-    //     }
-    // }
 }
 
 bool Tracker::retryIn1Hour()

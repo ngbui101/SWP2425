@@ -22,6 +22,7 @@ bool HTTP::setHTTPURL(const char *url)
     if (!_BG96.HTTPURL(url, WRITE_MODE))
     {
         initLogger.logError("HTTP_Set_URL");
+        urlSetted = false;
         return false;
     }
     urlSetted = true;
@@ -30,8 +31,9 @@ bool HTTP::setHTTPURL(const char *url)
 
 bool HTTP::sendPostRequest(char *payload)
 {
-    if (!_BG96.HTTPPOST(payload, 80))
-    {
+    if (!_BG96.HTTPPOST(payload,80))
+    {   
+        urlSetted = false;
         runningLogger.logError("HTTPPOST");
         return false;
     }
@@ -41,7 +43,8 @@ bool HTTP::sendPostRequest(char *payload)
 bool HTTP::readResponse(char *recv_data)
 {
     if (!_BG96.HTTPRead(recv_data, 80))
-    {
+    {   
+        urlSetted = false;
         runningLogger.logError("HTTPRead");
         return false;
     }
@@ -68,6 +71,7 @@ bool HTTP::pingServer()
     else
     {   
         runningLogger.logError("pingServer");
+        connect = false;
         return false;
     }
 }

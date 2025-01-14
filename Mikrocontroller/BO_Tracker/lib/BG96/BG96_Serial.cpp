@@ -266,7 +266,6 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const c
     cleanBuffer();
     while(millis() - start_time < timeout * 1000UL){
         if (serialAvailable()){
-            Serial.println("serialAvailable()");
             recv_len += readResponseByteToBuffer();
             if (searchStrBuffer(test_str)){
                 return SUCCESS_RESPONSE;
@@ -314,7 +313,6 @@ Cmd_Response_t _BG96_Serial::waitForMQTTURC(unsigned int timeoutSeconds)
         if (serialAvailable()) {
             // Lese byteweise und füge sie in rxBuffer ein
             recv_len += readResponseByteToBuffer();
-            Serial.println("serialAvailable()");
             // Prüfe, ob +QMTRECV: gefunden wurde
             if (searchStrBuffer(MQTT_RECV_DATA)) {
                 // => Dann gib SUCCESS_RESPONSE zurück
