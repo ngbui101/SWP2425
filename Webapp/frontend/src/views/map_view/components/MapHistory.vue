@@ -48,7 +48,7 @@
                                 </option>
                             </select>
                             <DatePicker v-model="toDate" type="date" :disabled-date="disableUnavailableDates"
-                                @change="handleToDateChange" :clearable="false" placeholder="End" />
+                                @change="handleToDateChange" :clearable="false" placeholder= "End" />
                         </div>
                     </label>
 
@@ -61,17 +61,17 @@
                             <input type="checkbox" v-model="usePinForEveryMeasurement" />
                             {{ $t("MapHistory-UsePinforeveryMeasurement") }}
                         </label>
-                        <button class="filters-button" @click="openMeasurementFilters">Filters</button>
+                        <button class="filters-button" @click="openMeasurementFilters">{{ $t("Filters") }}</button>
                     </div>
 
                     <!-- Build History Button -->
-                    <button class="build-history-button" @click="buildHistory">Build History</button>
+                    <button class="build-history-button" @click="buildHistory">{{ $t("BuildHistory") }}</button>
 
                     <!-- Scrollable List of Selected Measurements within the card, only visible after clicking "Build History" -->
                     <div v-if="showMeasurementsList && filteredMeasurementsForHistory.length > 0"
                         class="measurements-list">
                         <div class="measurements-list-header">
-                            <span>Timestamp</span>
+                            <span>{{ $t("Timestamp")}}</span>
                             <span>Position</span>
                             <span>Lat</span>
                             <span>Long</span>
