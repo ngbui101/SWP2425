@@ -31,8 +31,8 @@ bool HTTP::setHTTPURL(const char *url)
 
 bool HTTP::sendPostRequest(char *payload)
 {
-    if (!_BG96.HTTPPOST(payload,80))
-    {   
+    if (!_BG96.HTTPPOST(payload, 80))
+    {
         urlSetted = false;
         runningLogger.logError("HTTPPOST");
         return false;
@@ -43,7 +43,7 @@ bool HTTP::sendPostRequest(char *payload)
 bool HTTP::readResponse(char *recv_data)
 {
     if (!_BG96.HTTPRead(recv_data, 80))
-    {   
+    {
         urlSetted = false;
         runningLogger.logError("HTTPRead");
         return false;
@@ -58,22 +58,18 @@ bool HTTP::sendAndReadResponse(char *payload, char *recv_data)
 
 bool HTTP::pingServer()
 {
-    char Ping[12] = "{\"Ping\":\"\"}";
-    sendPostRequest(Ping);
+    char send_data[32];
     char recv_data[32];
+    strcpy(send_data, PING);
     memset(recv_data, 0, sizeof(recv_data));
 
-    readResponse(recv_data);
-    if (strstr(recv_data, "OK") != nullptr)
+    if (sendAndReadResponse(send_data, recv_data) && ((strstr(recv_data, "OK") != nullptr)))
     {
         return true;
     }
-    else
-    {   
-        runningLogger.logError("pingServer");
-        connect = false;
-        return false;
-    }
+    runningLogger.logError("pingServer");
+    connect = false;
+    return false;
 }
 
 bool HTTP::isUrlSetted()
