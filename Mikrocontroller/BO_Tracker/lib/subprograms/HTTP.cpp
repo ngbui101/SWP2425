@@ -63,7 +63,7 @@ bool HTTP::pingServer()
     strcpy(send_data, PING);
     memset(recv_data, 0, sizeof(recv_data));
 
-    if (sendAndReadResponse(send_data, recv_data) && ((strstr(recv_data, "OK") != nullptr)))
+    if (sendAndReadResponse(send_data, recv_data) && ((strstr(recv_data, RESPONSE_OK) != nullptr)))
     {
         return true;
     }
