@@ -1,0 +1,6 @@
+npm init -y
+----install-----------
+npm install node-fetch
+npm install mongodb 
+----zip-command-------
+zip -r index.zip index.mjs
