@@ -61,7 +61,7 @@
                             <input type="checkbox" v-model="usePinForEveryMeasurement" />
                             {{ $t("MapHistory-UsePinforeveryMeasurement") }}
                         </label>
-                        <button class="filters-button" @click="openMeasurementFilters">Filters</button>
+
                     </div>
 
                     <!-- Build History Button -->
@@ -150,8 +150,8 @@ const measurementFilters = computed(() => user.value.settings?.measurementFilter
 const filteredMeasurementsForHistory = ref([]);
 const trackers = ref([]);
 const selectedTracker = ref(null);
-const fromDate = ref(null); // Define fromDate
-const toDate = ref(null); // Define toDate
+const fromDate = ref(null);
+const toDate = ref(null);
 const fromTimestamp = ref(null);
 const toTimestamp = ref(null);
 const selectedTrackerMeasurements = ref([]);
@@ -277,7 +277,7 @@ const updateSelectedTrackerMeasurements = () => {
                 latitude: parseFloat(m.latitude),
                 longitude: parseFloat(m.longitude),
             }))
-            .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 };
 
