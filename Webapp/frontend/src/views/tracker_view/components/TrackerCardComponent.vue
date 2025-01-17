@@ -39,11 +39,24 @@
             <div class="card-body">
                 <!-- Display each key-value pair on its own line -->
                 <p><strong>{{ $t('TrackerCard-mode') }}:</strong> {{ tracker.modeLabel }}</p>
+                <p><strong>{{ $t('TrackerCard-measurementType') }}:</strong> {{ tracker.detailsWithTimestamps.mode.value
+                    }}</p>
+                <p><strong>{{ $t('TrackerCard-accuracy') }}:</strong> {{ tracker.detailsWithTimestamps.accuracy.value
+                    }}m
+                </p>
+
                 <p><strong>{{ $t('TrackerCard-location') }}:</strong> {{ tracker.location }}</p>
-                <p><strong>{{ $t('TrackerCard-latitude') }}:</strong> {{ tracker.detailsWithTimestamps?.latitude?.value }}</p>
-                <p><strong>{{ $t('TrackerCard-longitude') }}:</strong> {{ tracker.detailsWithTimestamps?.longitude?.value }}</p>
-                <p><strong>{{ $t('TrackerCard-temp') }}:</strong> {{ tracker.detailsWithTimestamps?.temperature?.value }}</p>
-                <p><strong>{{ $t('TrackerCard-humidity') }}:</strong> {{ tracker.detailsWithTimestamps?.humidity?.value }}</p>
+
+                <p><strong>{{ $t('TrackerCard-latitude') }}:</strong> {{ tracker.detailsWithTimestamps?.latitude?.value
+                    }}</p>
+
+
+                <p><strong>{{ $t('TrackerCard-longitude') }}:</strong> {{
+                    tracker.detailsWithTimestamps?.longitude?.value }}</p>
+                <p><strong>{{ $t('TrackerCard-temp') }}:</strong> {{ tracker.detailsWithTimestamps?.temperature?.value
+                    }}</p>
+                <p><strong>{{ $t('TrackerCard-humidity') }}:</strong> {{ tracker.detailsWithTimestamps?.humidity?.value
+                    }}</p>
                 <p><strong>{{ $t('TrackerCard-deviceID') }}:</strong> {{ tracker.imei }}</p>
             </div>
         </div>
@@ -126,13 +139,12 @@ const fetchTrackersWithMeasurements = async () => {
                 // Sort measurements by createdAt in descending order (newest to oldest)
                 measurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-                // Log the sorted measurements array for verification
-
-
                 // Initialize details with no data and null timestamps
                 tracker.detailsWithTimestamps = {
                     latitude: { value: 'N/A', timestamp: null },
                     longitude: { value: 'N/A', timestamp: null },
+                    accuracy: { value: 'N/A', timestamp: null },
+                    mode: { value: 'N/A', timestamp: null },
                     temperature: { value: 'N/A', timestamp: null },
                     humidity: { value: 'N/A', timestamp: null },
                     battery: { value: 'N/A', timestamp: null },
@@ -142,23 +154,25 @@ const fetchTrackersWithMeasurements = async () => {
                 for (const measurement of measurements) {
                     const measurementDate = new Date(measurement.createdAt);
 
-                    // Check and update latitude
-                    if (measurement.latitude && !isNaN(measurement.latitude)) {
+                    // Check and update latitude, longitude, and accuracy
+                    if (measurement.latitude && measurement.longitude && measurement.accuracy !== undefined) {
                         if (!tracker.detailsWithTimestamps.latitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.latitude.timestamp)) {
-
                             tracker.detailsWithTimestamps.latitude = {
                                 value: measurement.latitude,
                                 timestamp: measurementDate.toLocaleString(),
                             };
-                        }
-                    }
-
-                    // Check and update longitude
-                    if (measurement.longitude && !isNaN(measurement.longitude)) {
-                        if (!tracker.detailsWithTimestamps.longitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.longitude.timestamp)) {
 
                             tracker.detailsWithTimestamps.longitude = {
                                 value: measurement.longitude,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
+
+                            tracker.detailsWithTimestamps.accuracy = {
+                                value: measurement.accuracy,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
+                            tracker.detailsWithTimestamps.mode = {
+                                value: measurement.mode, // Save mode
                                 timestamp: measurementDate.toLocaleString(),
                             };
                         }
@@ -167,7 +181,6 @@ const fetchTrackersWithMeasurements = async () => {
                     // Check and update temperature
                     if (measurement.temperature) {
                         if (!tracker.detailsWithTimestamps.temperature.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.temperature.timestamp)) {
-
                             tracker.detailsWithTimestamps.temperature = {
                                 value: `${measurement.temperature}°C`,
                                 timestamp: measurementDate.toLocaleString(),
@@ -178,7 +191,6 @@ const fetchTrackersWithMeasurements = async () => {
                     // Check and update humidity
                     if (measurement.humidity) {
                         if (!tracker.detailsWithTimestamps.humidity.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.humidity.timestamp)) {
-
                             tracker.detailsWithTimestamps.humidity = {
                                 value: `${measurement.humidity}%`,
                                 timestamp: measurementDate.toLocaleString(),
@@ -189,7 +201,6 @@ const fetchTrackersWithMeasurements = async () => {
                     // Check and update battery
                     if (measurement.battery) {
                         if (!tracker.detailsWithTimestamps.battery.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.battery.timestamp)) {
-
                             tracker.detailsWithTimestamps.battery = {
                                 value: `${Math.round(measurement.battery)}%`,
                                 timestamp: measurementDate.toLocaleString(),
@@ -198,14 +209,18 @@ const fetchTrackersWithMeasurements = async () => {
                     }
                 }
 
-                // Get location based on the most recent latitude and longitude
-                tracker.location =
-                    tracker.detailsWithTimestamps.latitude.value !== 'N/A' && tracker.detailsWithTimestamps.longitude.value !== 'N/A'
-                        ? await getReverseGeocodingAddress(
-                            tracker.detailsWithTimestamps.latitude.value,
-                            tracker.detailsWithTimestamps.longitude.value
-                        )
-                        : 'Unknown Location';
+                // Get location based on accuracy
+                if (tracker.detailsWithTimestamps.latitude.value !== 'N/A' &&
+                    tracker.detailsWithTimestamps.longitude.value !== 'N/A') {
+
+                    tracker.location = await getReverseGeocodingAddress(
+                        tracker.detailsWithTimestamps.latitude.value,
+                        tracker.detailsWithTimestamps.longitude.value,
+                        tracker.detailsWithTimestamps.accuracy.value // Pass accuracy
+                    );
+                } else {
+                    tracker.location = 'Unknown Location';
+                }
             } catch (error) {
                 console.warn(`Error fetching data for tracker ${tracker._id}:`, error);
                 tracker.detailsWithTimestamps = null;
@@ -222,15 +237,59 @@ const fetchTrackersWithMeasurements = async () => {
 };
 
 
-const getReverseGeocodingAddress = async (lat, lng) => {
+
+const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
+    const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
+
     try {
-        const response = await useApiPrivate().get(`http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`);
-        return response.data.address || 'Unknown Location';
+        // Log the latitude, longitude, and accuracy
+        console.log("Reverse geocoding inputs:", { lat, lng, accuracy });
+
+        const response = await useApiPrivate().get(geocodingUrl);
+
+        // Log the API response
+        console.log("Geocoding API response:", response.data);
+
+        const fullAddress = response.data?.address || "Unknown Location";
+        console.log("Full Address:", fullAddress);
+
+        // Handle cases where the address contains a Plus Code
+        if (fullAddress.includes('+')) {
+            console.log("Detected Plus Code in the response.");
+            const addressParts = fullAddress.split(',');
+            const cityPart = addressParts[addressParts.length - 2]?.trim() || "Unknown City";
+            const countryPart = addressParts[addressParts.length - 1]?.trim() || "Unknown Country";
+
+            const approximateLocation = `${cityPart}, ${countryPart}`;
+            console.log("Result Address (Plus Code):", approximateLocation);
+            return approximateLocation;
+        }
+
+        // Extract zip and city from the address
+        const addressParts = fullAddress.split(',');
+        const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
+        const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
+        const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Match 'zip city'
+
+        const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
+        const city = zipAndCity ? zipAndCity[2] : "Unknown City";
+
+        console.log("Extracted Address Parts:", { zip, city });
+
+        // Decide address display based on accuracy
+        const result = accuracy <= 50 ? fullAddress : `${zip}, ${city}`;
+        console.log("Result Address:", result);
+
+        return result;
     } catch (error) {
         console.error(`Failed to get reverse geocoding address for coordinates [${lat}, ${lng}]:`, error);
         return 'Unknown Location';
     }
 };
+
+
+
+
 
 onMounted(async () => {
     await authStore.getUser();
