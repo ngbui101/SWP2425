@@ -51,70 +51,6 @@ bool Tracker::responseValid(char *payload)
     return false;
 }
 
-bool Tracker::setMode(char *payload)
-{
-    JsonDocument docOutput;
-    DeserializationError error = deserializeJson(docOutput, payload);
-
-    if (error == DeserializationError::Ok)
-    {
-        if (docOutput["GnssMode"].is<boolean>())
-        {
-            trackerModes.GnssMode = docOutput["GnssMode"];
-        }
-        if (docOutput["CellInfosMode"].is<boolean>())
-        {
-            trackerModes.CellInfosMode = docOutput["CellInfosMode"];
-        }
-        if (docOutput["BatteryMode"].is<boolean>())
-        {
-            trackerModes.BatteryMode = docOutput["BatteryMode"];
-        }
-        if (docOutput["TemperatureMode"].is<boolean>())
-        {
-            trackerModes.TemperatureMode = docOutput["TemperatureMode"];
-        }
-        if (docOutput["NmeaMode"].is<boolean>())
-        {
-            trackerModes.NmeaMode = docOutput["NmeaMode"];
-        }
-        if (docOutput["GeoFenMode"].is<boolean>())
-        {
-            trackerModes.GeoFenMode = docOutput["GeoFenMode"];
-        }
-        if (docOutput["frequenz"].is<unsigned long>())
-        {
-            unsigned long newFrequenz = docOutput["frequenz"];
-            // if (newFrequenz > trackerModes.maxRealTime)
-            // {
-            trackerModes.period = newFrequenz;
-            trackerModes.realtime = (trackerModes.period < trackerModes.maxRealTime);
-            // }
-        }
-        // if (docOutput["rat"].is<String>())
-        // {
-        //     const char *rat = docOutput["rat"];
-        //     if (strcmp(trackerModes.RAT, rat) != 0)
-        //     {
-        //         strncpy(trackerModes.RAT, rat, sizeof(trackerModes.RAT) - 1);
-        //         trackerModes.RAT[sizeof(trackerModes.RAT) - 1] = '\0';
-        //         if (resetModem())
-        //         {
-        //             firstStart();
-        //             return false;
-        //         }
-        //     }
-        // }
-    }
-    else
-    {
-        runningLogger.logError("Deserialization");
-        return false;
-    }
-    docOutput.clear();
-    return true;
-}
-
 bool Tracker::modeHandle()
 {
     // if (modeRequest)
@@ -186,80 +122,107 @@ bool Tracker::modeHandle()
 //     }
 //     return true;
 // }
-bool Tracker::sendAndCheck()
-{
-    bool keepRunning = false;
+// bool Tracker::sendAndCheck()
+// {
+//     bool keepRunning = false;
 
-    // Serial.println("sendAndWaitResponseHTTP");
-    /////
-    keepRunning = sendAndWaitResponseHTTP(); /// isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
+//     // Serial.println("sendAndWaitResponseHTTP");
+//     /////
+//     keepRunning = sendAndWaitResponseHTTP(); /// isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
 
-    if (!trackerModes.realtime)
-    {
-        return false;
-    }
-    while (abs(millis() - pub_time) <= trackerModes.period - 1000)
-    {
-        // delay(1000);
-        // Serial.println("less than interval");
-    }
+//     if (!trackerModes.realtime)
+//     {
+//         return false;
+//     }
+//     while (abs(millis() - pub_time) <= trackerModes.period - 1000)
+//     {
+//         // delay(1000);
+//         // Serial.println("less than interval");
+//     }
 
-    return keepRunning;
-}
+//     return keepRunning;
+// }
 
-bool Tracker::pubAndsubMQTT()
+bool Tracker::pubAndsubMQTT(unsigned long interval)
 {
     char response[1028];
-
-    if (!modeHandle() || !publishData("/pub"))
-    {
-        return false;
-    }
     pub_time = millis();
     Mqtt_Event_t event = waitForResponse(response);
     switch (event)
     {
     case MQTT_RECV_DATA_EVENT:
-        return setMode(response);
+        setMode(response);
+        return false;
     case MQTT_CLIENT_CLOSED:
         return false;
     default:
         break;
     }
+    if ((millis() - measure_time) < interval)
+        return true;
 
+    if (!modeHandle())
+    {
+        pub_time = millis();
+        return false;
+    }
+    if (!publishData("/pub"))
+    {
+        return false;
+    }
     return true;
 }
 
-bool Tracker::sendAndWaitResponseHTTP()
+bool Tracker::sendAndWaitResponseHTTP(unsigned long interval)
 {
     char payload[4096];
     char response[1028];
+
+    if ((millis() - measure_time) < interval)
+        return true;
 
     if (!modeHandle())
     {
         return false;
     }
-    if (!serializeJsonPretty(docInput, payload))
+    else
     {
+        measure_time = millis();
+        if (!serializeJsonPretty(docInput, payload))
+        {
+            return false;
+        }
+    }
+
+    // if (!modeHandle())
+    // {
+    //     return false;
+    // }
+    // else
+    // {
+    //     measure_time = millis();
+    //     if (!serializeJsonPretty(docInput, payload))
+    //     {
+    //         return false;
+    //     }
+    // }
+    if (!sendAndReadResponse(payload, response))
+    {
+        Serial.println("Fehler bei: sendAndReadResponse");
         return false;
     }
     docInput.clear();
 
-    if (!sendAndReadResponse(payload, response))
-    {
-        // Serial.println("Fehler bei: sendAndReadResponse");
-        return false;
-    }
-
     if (!responseValid(response))
     {
-        // Serial.println("Response invalid");
+        Serial.println("Response invalid");
         setMode(response);
         return false;
     }
-    // Serial.println("Response valid");
-
-    pub_time = millis();
+    Serial.println("Response valid");
+    // post_time = millis();
+    // pub_time = millis();
+    // measure_time = 0;
     // handle = false;
     return true;
 }
@@ -294,15 +257,17 @@ bool Tracker::resetModem()
 {
     if (!turnOffModem() && !turnOnModem())
     {
+        Serial.print("Reset: ");
+        Serial.println(countReset);
         countReset++;
         return true;
     }
     return false;
 }
-bool Tracker::turnOnFunctionality()
+bool Tracker::turnOnFunctionality(bool useMQTT)
 {
     bool success = true;
-
+    start_time = millis();
     // Modem einschalten (falls noch nicht verfügbar)
     success &= isModemAvailable() || turnOnModem();
 
@@ -314,16 +279,16 @@ bool Tracker::turnOnFunctionality()
     success &= isConnected() || startConnect();
 
     // Entweder MQTT oder HTTP
-    // if (useMQTT)
-    // {
-    //     // Wenn wir MQTT verwenden, MQTT initialisieren
-    //     success &= isMQTTAvaliable() || startMQTT();
-    // }
-    // else
-    // {
-    // Ansonsten HTTP verwenden
-    success &= isUrlSetted() || (setHTTPURL(http_url) && pingServer());
-    // }
+    if (!useMQTT)
+    {
+        // Wenn wir MQTT verwenden, MQTT initialisieren
+        success &= isUrlSetted() || (setHTTPURL(http_url) && pingServer());
+    }
+    else
+    {
+        // Ansonsten HTTP verwenden
+        success &= isMQTTAvaliable() || startMQTT();
+    }
 
     // Fehlerbehandlung
     handleErrors();

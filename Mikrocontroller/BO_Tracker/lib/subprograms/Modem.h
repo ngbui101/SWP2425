@@ -17,7 +17,6 @@ protected:
     bool funkModuleEnable = false;
     bool connect = false;
     // Cell *cells[6] = {nullptr};
-
     CellFIFO cells_queue;
     
 public:
@@ -44,6 +43,11 @@ public:
     bool fillCellsQueue();
 
     _BG96_Module getModem();
+
+    bool setMode(char *payload);
+private:
+    int MAX_CELLS = 6;
+    unsigned long lastScanTime = 0;
 };
 
 #endif  // __MODEM_H_

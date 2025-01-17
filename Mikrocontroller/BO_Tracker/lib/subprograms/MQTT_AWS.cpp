@@ -131,7 +131,7 @@ bool MQTT_AWS::isMQTTAvaliable()
 Mqtt_Event_t MQTT_AWS::waitForResponse(char *response)
 {   
     delay(100);
-    Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(response, 1);
+    Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(response, 2);
     switch (ret)
     {
     case MQTT_RECV_DATA_EVENT:

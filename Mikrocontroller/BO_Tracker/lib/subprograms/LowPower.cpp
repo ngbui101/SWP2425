@@ -19,8 +19,15 @@ bool _Lowpower::deepSleep(unsigned long millis)
 }
 
 bool _Lowpower::deepSleepWithAlarm(unsigned long millis)
-{
-    if (countMinSleep != 0)
+{   
+    if (countMaxSleep != 0)
+    {
+        countMaxSleep--;
+        deepSleep(maxSleepTime);
+        return true;
+        // first start nicht schlafen aber wake up
+    }
+    else if (countMinSleep != 0)
     {   
         if ((countMinSleep == 1) && (countMaxSleep == 0))
         {
@@ -28,27 +35,14 @@ bool _Lowpower::deepSleepWithAlarm(unsigned long millis)
         trackerModes.wakeUp = true;
         return true;
         }
-        countMinSleep--;
-        deepSleep(minSleepTime);
+        countMinSleep = 1;
+        deepSleep(minSleepTime * (countMinSleep-1));
         return true;
-    }else if (countMaxSleep != 0)
-    {
-        countMaxSleep--;
-        deepSleep(maxSleepTime);
-        return true;
-        // first start nicht schlafen aber wake up
     }
     else if ((countMaxSleep == 0) && (countMinSleep == 0))
     {
         countMaxSleep = millis / maxSleepTime;
         countMinSleep = (millis % maxSleepTime) / minSleepTime;
-        // Serial.print("Go to Sleep for: ");
-        // Serial.print(countMaxSleep);
-        // Serial.print("x 2 Minutes and ");
-        // Serial.print(countMinSleep);
-        // Serial.println("x 10 Seconds");
-        trackerModes.wakeUp = true;
-
         return true;
     }
     return true;

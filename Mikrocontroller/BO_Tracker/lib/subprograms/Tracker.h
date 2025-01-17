@@ -15,15 +15,13 @@ public:
 
     void firstStart();
 
-    bool setMode(char *payload);
-
     bool modeHandle();
 
     bool sendAndCheck();
 
-    bool pubAndsubMQTT();
+    bool pubAndsubMQTT(unsigned long interval);
 
-    bool sendAndWaitResponseHTTP();
+    bool sendAndWaitResponseHTTP(unsigned long interval);
 
     bool responseValid(char *payload);
 
@@ -37,7 +35,7 @@ public:
 
     bool resetModem();
 
-    bool turnOnFunctionality();
+    bool turnOnFunctionality(bool useMQTT);
 
     bool wakeUp();
 
@@ -53,6 +51,11 @@ public:
 private:
     unsigned long pub_time = 0;
 
+    unsigned long start_time = 0;
+
+    unsigned long measure_time = -99999;
+
+    unsigned long post_time = 9999999;
     int countReset = 0;
     // bool cellscanning = false;
     // bool init = false;
