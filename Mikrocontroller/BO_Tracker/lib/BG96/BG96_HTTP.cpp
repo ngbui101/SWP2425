@@ -244,7 +244,7 @@ bool _BG96_HTTP::HTTPPOST(char *post_data, unsigned int timeout)
     // RESPONSE_CONNECT -> z.B. "CONNECT"
     // RESPONSE_ERROR   -> z.B. "ERROR"
     // StaBuffer und EndBuffer-Signaturen können von dir abweichen
-
+    delay(200);
     char cmd[32];
     char buf[16];
 
@@ -255,12 +255,12 @@ bool _BG96_HTTP::HTTPPOST(char *post_data, unsigned int timeout)
 
     // 1) Sende Kommando und warte auf CONNECT oder ERROR
     //    Wartezeit hier beispielhaft 10s. Ggf. anpassen.
-    if (!sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, 10)) {
+    if (!sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, timeout)) {
         // Falls weder CONNECT noch ERROR kam, Abbruch.
         // errorCode kann man noch spezifisch setzen (z.B. -1)
         return false;
     }
-
+    // delay(300);
     // 2) Daten (post_data) senden
     //    sendDataAndCheck: Wartet auf Antwort (z.B. "...OK" oder "...ERROR")
     if (!sendDataAndCheck(post_data, HTTP_POST_REQUEST, RESPONSE_ERROR, timeout)) {

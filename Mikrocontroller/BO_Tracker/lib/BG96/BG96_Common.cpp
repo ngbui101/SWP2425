@@ -68,7 +68,6 @@ bool _BG96_Common::FirstStart()
 
 bool _BG96_Common::InitModule()
 {
-    delay(3000);
     digitalWrite(RESET_PIN, LOW);
     digitalWrite(ENABLE_PWR, LOW);
     digitalWrite(POWKEY_PIN, LOW);
@@ -1097,7 +1096,7 @@ bool _BG96_Common::ResetFunctionality()
         return false;
     while (readResponseAndSearch(RESPONSE_READY, 3) != SUCCESS_RESPONSE)
         ;
-    delay(300);
+    // delay(300);
     return true;
 }
 bool _BG96_Common::ConfigNetworks(char *rat)
@@ -1286,7 +1285,8 @@ bool _BG96_Common::checkForNetwork()
     Net_Status_t i_status = NOT_REGISTERED;
     unsigned long start_time = millis();
     while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
-    {
+    {   
+        unsigned long loop_start= millis();
         i_status = DevNetRegistrationStatus();
         if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
         {
@@ -1294,7 +1294,7 @@ bool _BG96_Common::checkForNetwork()
             // Serial.println("Fail to register!!!");
             return false;
         }
-        delay(3000);
+        while((millis() - loop_start) < 3000);
     }
     return true;
 }
