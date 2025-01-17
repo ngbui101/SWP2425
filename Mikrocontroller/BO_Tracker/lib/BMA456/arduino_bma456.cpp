@@ -114,8 +114,10 @@ void BMA456::initialize(MA456_RANGE range, MBA456_ODR odr, MA456_BW bw, MA456_PE
     {
         devRange = 16000;
     }
-
+    
     bma4_set_accel_enable(BMA4_ENABLE, &accel);
+
+    // calibrateSensor(&x_offset, &y_offset, &z_offset, num_samples, &accel);
 }
 
 void BMA456::stepCounterEnable(MA456_PLATFORM_CONF conf, bool cmd)
@@ -135,6 +137,25 @@ void BMA456::getAcceleration(float *x, float *y, float *z)
     *y = (float)sens_data.y * devRange / 32768;
     *z = (float)sens_data.z * devRange / 32768;
 }
+
+void BMA456::getDynamicAcceleration(float *x, float *y, float *z, float *dynamic_acceleration) {
+    struct bma4_accel sens_data;
+
+    // Rohdaten auslesen
+    bma4_read_accel_xyz(&sens_data, &accel);
+
+    // Umrechnungsfaktor von Rohdaten nach mg
+    const float mg_to_ms2 = 9.81 / 1000;
+
+    // Umrechnung in mg
+    *x = (float)sens_data.x * devRange / 32768;
+    *y = (float)sens_data.y * devRange / 32768;
+    *z = (float)sens_data.z * devRange / 32768;
+    *dynamic_acceleration = (std::sqrt((*x * *x) + (*y * *y) + (*z * *z)) * mg_to_ms2)-9.81;
+    *dynamic_acceleration = (*dynamic_acceleration < 0.2) ? 0 : *dynamic_acceleration;
+}
+
+
 
 int32_t BMA456::getTemperature(void)
 {
@@ -243,4 +264,6 @@ bool BMA456::isMovementAboveThresholdFor10S(float threshold)
 
     return (avgMagnitude > threshold);
 }
+
+
 BMA456 bma456;

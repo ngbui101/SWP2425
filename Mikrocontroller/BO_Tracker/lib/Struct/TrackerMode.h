@@ -5,9 +5,9 @@ struct TrackerModes
 {
     // Mode
     bool GnssMode = false;
-    bool CellInfosMode = true;
-    bool BatteryMode = true;
-    bool TemperatureMode = true;
+    bool CellInfosMode = false;
+    bool BatteryMode = false;
+    bool TemperatureMode = false;
     bool NmeaMode = false;
     bool GeoFenMode = false;
     unsigned long period = 60000UL;

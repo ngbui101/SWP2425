@@ -30,6 +30,10 @@ public:
     bool TurnOff();
     bool TurnOnGNSS();
     bool isGnssModuleEnable();
+    bool GetGnssJsonPositionInformation(JsonDocument &json, unsigned long starttime);
+private:
+    unsigned long currentTime;
+    unsigned long TTFF = 0;
 };
 
 #endif  // __GNSS_H_

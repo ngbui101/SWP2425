@@ -48,7 +48,7 @@ void GNSS::handleGNSSMode()
         TurnOff();
     }
     // GNSS-Position und Genauigkeit abrufen
-    if (_BG96.GetGnssJsonPositionInformation(docInput, gnssData.startMillis))
+    if (GetGnssJsonPositionInformation(docInput, gnssData.startMillis))
     {
         getFirstFix = true;
     }
@@ -100,4 +100,63 @@ bool GNSS::TurnOnGNSS()
 
 bool GNSS::isGnssModuleEnable(){
     return gpsModuleEnable;
+}
+
+bool GNSS::GetGnssJsonPositionInformation(JsonDocument &json, unsigned long starttime)
+{
+    char position[256];
+    float accuracy;
+    if (!_BG96.GetGNSSPositionInformation(position))
+    {   
+        json["gnss"] = "NoFix";
+        return false;
+    }
+    _BG96.GetEstimationError(accuracy);
+    position[sizeof(position) - 1] = '\0';
+
+    const char *delimiter = ",";
+    char *token = strtok(position, delimiter);
+    int fieldIndex = 0;
+
+    float latitude = 0.0f;
+    float longitude = 0.0f;
+    float hdop = 0.0f;
+    int nsat = 0;
+
+    while (token != nullptr)
+    {
+        switch (fieldIndex)
+        {
+        case 1:
+            latitude = atof(token);
+            break;
+        case 2:
+            longitude = atof(token);
+            break;
+        case 3:
+            hdop = atof(token);
+            break;
+        case 10:
+            nsat = atoi(token);
+            break;
+        default:
+            break;
+        }
+        fieldIndex++;
+        token = strtok(nullptr, delimiter);
+    }
+
+    if(TTFF == 0){
+        currentTime = millis();
+        TTFF = currentTime - starttime;
+    }
+    // Erstellen des verschachtelten "gnss" Objekts
+    JsonObject gnss = json["gnss"].to<JsonObject>();
+    gnss["latitude"] = latitude;
+    gnss["longitude"] = longitude;
+    gnss["hdop"] = hdop;
+    gnss["nsat"] = nsat;
+    gnss["accuracy"] = accuracy;
+    gnss["TTFF"] = TTFF;
+    return true;
 }

@@ -58,13 +58,18 @@ bool HTTP::sendAndReadResponse(char *payload, char *recv_data)
 
 bool HTTP::pingServer()
 {
-    char send_data[32];
-    char recv_data[32];
-    strcpy(send_data, PING);
+    char send_data[64];
+    char recv_data[258];
+    JsonDocument ping;
+    ping["IMEI"]= modemIMEI;
+    if(!serializeJsonPretty(ping, send_data)){
+        return false;
+    }
+    // strcpy(send_data, PING);
     memset(recv_data, 0, sizeof(recv_data));
 
-    if (sendAndReadResponse(send_data, recv_data) && ((strstr(recv_data, RESPONSE_OK) != nullptr)))
-    {
+    if (sendAndReadResponse(send_data, recv_data) && setMode(recv_data))
+    {   
         return true;
     }
     runningLogger.logError("pingServer");
