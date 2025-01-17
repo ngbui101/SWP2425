@@ -46,7 +46,7 @@ static void bma_delay_ms(uint32_t ms)
 }
 
 void _Motion::initialize(MA456_RANGE range, MBA456_ODR odr, MA456_BW bw, MA456_PERF_MODE mode)
-{   
+{
     pinMode(LED_BUILTIN, OUTPUT);
 
     Wire.begin();
@@ -113,6 +113,25 @@ void _Motion::getAcceleration(float *x, float *y, float *z)
     *z = (float)sens_data.z * devRange / 32768;
 }
 
+void _Motion::getDynamicAcceleration(float *dynamic_acceleration)
+{
+    struct bma4_accel sens_data;
+    float x, y, z;
+    // Rohdaten auslesen
+    bma4_read_accel_xyz(&sens_data, &accel);
+
+    // Umrechnungsfaktor von Rohdaten nach mg
+    const float mg_to_ms2 = 9.81 / 1000;
+
+    // Umrechnung in mg
+    x = (float)sens_data.x * devRange / 32768;
+    y = (float)sens_data.y * devRange / 32768;
+    z = (float)sens_data.z * devRange / 32768;
+
+    *dynamic_acceleration = (std::sqrt((x * x) + (y * y) + (z * z)) * mg_to_ms2) - 9.81;
+    *dynamic_acceleration = (*dynamic_acceleration < 0.2) ? 0 : *dynamic_acceleration;
+}
+
 int32_t _Motion::getTemperature(void)
 {
     int32_t temp = 0;
@@ -170,7 +189,7 @@ bool _Motion::waitForMotion()
     rslt = bma456_read_int_status(&int_status, &accel);
     /* Check if sig-motion interrupt is received */
     if ((rslt == BMA4_OK) && (int_status & BMA456_WAKEUP_INT))
-    {   
+    {
         blink();
         return true;
     }
@@ -190,9 +209,9 @@ bool _Motion::checkForMotionInMillis(unsigned long time, float threshold)
     while (count <= 10)
     {
         getAcceleration(&x, &y, &z);
-        float xx0 = x-x0;
-        float yy0 = y-y0;
-        float zz0 = z-z0;
+        float xx0 = x - x0;
+        float yy0 = y - y0;
+        float zz0 = z - z0;
         // Serial.print("xx0: ");
         // Serial.println(xx0);
         // Serial.print("yy0: ");
@@ -200,8 +219,8 @@ bool _Motion::checkForMotionInMillis(unsigned long time, float threshold)
         // Serial.print("zz0: ");
         // Serial.println(zz0);
 
-        float magnitude = sqrt(xx0 * xx0 + yy0*yy0 + zz0*zz0);
-        
+        float magnitude = sqrt(xx0 * xx0 + yy0 * yy0 + zz0 * zz0);
+
         x0 = x;
         y0 = y;
         z0 = z;
@@ -226,10 +245,10 @@ bool _Motion::isMovementAboveThreshold(float threshold)
     return (magnitude > threshold);
 }
 
-void _Motion::blink(){
+void _Motion::blink()
+{
 
-    digitalWrite(LED_BUILTIN,HIGH);
+    digitalWrite(LED_BUILTIN, HIGH);
     delay(1000);
-    digitalWrite(LED_BUILTIN,LOW);
-
+    digitalWrite(LED_BUILTIN, LOW);
 }

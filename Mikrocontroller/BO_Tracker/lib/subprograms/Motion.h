@@ -81,6 +81,8 @@ public:
 
     void blink();
 
+    void getDynamicAcceleration(float *dynamic_acceleration);
+
 private:
     float devRange;
     struct bma4_dev accel;
