@@ -8,11 +8,11 @@
           <li class="nav-item">
             <a href="#" @click.prevent="goToHome">{{ $t('Nav-Map') }}</a>
           </li>
-          <!-- 
+
           <li class="nav-item">
             <a href="#" @click.prevent="goToRoutes">{{ $t('Nav-Route') }}</a>
           </li>
-          -->
+
           <li class="nav-item">
             <a ref="tour2" href="#" @click.prevent="goToTrackers">{{ $t('Nav-Tracker') }}</a>
           </li>
@@ -316,6 +316,4 @@ const logout = async () => {
 
 
 }
-
-
 </style>
