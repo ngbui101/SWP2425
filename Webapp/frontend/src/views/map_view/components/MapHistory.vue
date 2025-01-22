@@ -18,29 +18,37 @@
                         </select>
                     </label>
 
-                    <!-- From Timestamp Dropdown -->
+                    <!-- From Timestamp Dropdown with Date Picker -->
                     <label for="from-timestamp-dropdown" class="dropdown-label">
-                        {{ $t("MapHistory-FromTimestamp") }}:
+                        From Timestamp:
                         <div class="timestamp-selection">
-                            <select id="from-timestamp-dropdown" class="tracker-dropdown" v-model="fromTimestamp">
+                            <select id="from-timestamp-dropdown"
+                                :class="['tracker-dropdown', !fromTimestamp && errorMessage ? 'error-dropdown' : '']"
+                                v-model="fromTimestamp" @change="updateTimestampRange">
                                 <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
                                     :value="measurement.createdAt">
                                     {{ new Date(measurement.createdAt).toLocaleString() }}
                                 </option>
                             </select>
+                            <DatePicker v-model="fromDate" type="date" :disabled-date="disableUnavailableDates"
+                                @change="handleFromDateChange" :clearable="false" placeholder="Start" />
                         </div>
                     </label>
 
-                    <!-- To Timestamp Dropdown -->
+                    <!-- To Timestamp Dropdown with Date Picker -->
                     <label for="to-timestamp-dropdown" class="dropdown-label">
-                        {{ $t("MapHistory-ToTimestamp") }}:
+                        To Timestamp:
                         <div class="timestamp-selection">
-                            <select id="to-timestamp-dropdown" class="tracker-dropdown" v-model="toTimestamp">
-                                <option v-for="measurement in filteredToTimestamps" :key="measurement._id"
+                            <select id="to-timestamp-dropdown"
+                                :class="['tracker-dropdown', !toTimestamp && errorMessage ? 'error-dropdown' : '']"
+                                v-model="toTimestamp" @change="updateTimestampRange">
+                                <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
                                     :value="measurement.createdAt">
                                     {{ new Date(measurement.createdAt).toLocaleString() }}
                                 </option>
                             </select>
+                            <DatePicker v-model="toDate" type="date" :disabled-date="disableUnavailableDates"
+                                @change="handleToDateChange" :clearable="false" placeholder="End" />
                         </div>
                     </label>
 
@@ -99,12 +107,19 @@
             <!-- Legend Section -->
             <div class="legend">
                 <span :style="{ color: modeColors.GPS }" class="legend-item">
-                    <i class="fas fa-map-pin"></i> {{ }}: GPS&nbsp;&nbsp;
+                    <i class="fas fa-map-pin"></i> GPS&nbsp;&nbsp;
                 </span>
                 <span :style="{ color: modeColors.LTE }" class="legend-item">
-                    <i class="fas fa-map-pin"></i> {{ }}: LTE&nbsp;&nbsp;
+                    <i class="fas fa-map-pin"></i> LTE&nbsp;&nbsp;
+                </span>
+                <span :style="{ color: modeColors.NBIOT }" class="legend-item">
+                    <i class="fas fa-map-pin"></i> NBIOT&nbsp;&nbsp;
+                </span>
+                <span :style="{ color: modeColors.GSM }" class="legend-item">
+                    <i class="fas fa-map-pin"></i> GSM&nbsp;&nbsp;
                 </span>
             </div>
+
 
         </div>
 
@@ -126,8 +141,10 @@ const fromTimestamp = ref(null);
 const toTimestamp = ref(null);
 
 const modeColors = computed(() => ({
-    GPS: "#228B22", // Green for GPS
-    LTE: "#FFA500", // Orange for LTE
+    GPS: "#228B22",  // Green
+    LTE: "#FFA500",  // Orange
+    NBIOT: "#0000FF", // Blue
+    GSM: "#FF69B4",   // Pink
 }));
 
 
@@ -366,6 +383,7 @@ const drawPinsWithGroupedInfoWindow = (measurements) => {
         markers.push(marker);
     });
 };
+
 
 
 
