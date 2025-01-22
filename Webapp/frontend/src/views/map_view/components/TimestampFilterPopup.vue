@@ -11,21 +11,18 @@
                 <div class="popup-section">
                     <h3>Mode</h3>
                     <label>
-                        <input type="checkbox" v-model="realTimeChecked" /> Real-Time
+                        <input type="checkbox" v-model="realTimeChecked" /> GPS
                     </label>
                     <label>
-                        <input type="checkbox" v-model="longTimeChecked" /> Long-Time
+                        <input type="checkbox" v-model="longTimeChecked" /> LTE
                     </label>
-                </div>
-
-                <!-- Valid Location Filter raus 
-                <div class="popup-section">
-                    <h3>Location</h3>
                     <label>
-                        <input type="checkbox" v-model="filters.validPosition" /> Valid Location
+                        <input type="checkbox" v-model="nbiotChecked" /> NBIOT
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="gsmChecked" /> GSM
                     </label>
                 </div>
-                -->
             </div>
 
             <div class="popup-footer">
@@ -49,9 +46,11 @@ const props = defineProps({
     applyFilters: Function,
 });
 
-// Separate properties for real-time and long-time filters
+// Separate properties for each filter
 const realTimeChecked = ref(props.filters.mode.includes('RT'));
 const longTimeChecked = ref(props.filters.mode.includes('LT'));
+const nbiotChecked = ref(props.filters.mode.includes('NBIOT'));
+const gsmChecked = ref(props.filters.mode.includes('GSM'));
 
 // Sync the changes to filters.mode based on the checkboxes
 const filters = ref({
@@ -59,14 +58,18 @@ const filters = ref({
     validPosition: props.filters.validPosition || false
 });
 
-watch([realTimeChecked, longTimeChecked], () => {
+watch([realTimeChecked, longTimeChecked, nbiotChecked, gsmChecked], () => {
     filters.value.mode = [];
     if (realTimeChecked.value) filters.value.mode.push('RT');
     if (longTimeChecked.value) filters.value.mode.push('LT');
+    if (nbiotChecked.value) filters.value.mode.push('NBIOT');
+    if (gsmChecked.value) filters.value.mode.push('GSM');
 });
 
 const applyFilters = async () => {
     try {
+        console.log('Filters before sending:', filters.value.mode); // Debugging line
+
         const token = authStore.accessToken;
         const config = {
             headers: {
@@ -79,12 +82,14 @@ const applyFilters = async () => {
             'http://localhost:3500/api/settings',
             {
                 timestampFilters: {
-                    mode: filters.value.mode, // Selected modes (LTE, GPS)
+                    mode: filters.value.mode, // Selected modes (LTE, GPS, NBIOT, GSM)
                     validPosition: filters.value.validPosition, // Valid position filter
                 },
             },
             config
         );
+
+        console.log('Filters sent to backend:', filters.value.mode); // Debugging line
 
         // Refresh user data to get the latest settings
         await authStore.getUser();
@@ -98,6 +103,7 @@ const applyFilters = async () => {
 };
 
 </script>
+
 
 <style scoped>
 .popup-overlay {
