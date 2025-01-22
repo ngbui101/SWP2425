@@ -21,7 +21,7 @@
                 </option>
               </select>
             </label>
-            <button class="filters-button" @click="openTrackerFilters">Filters</button>
+
           </div>
 
           <!-- Select Timestamp with Filters Button -->
@@ -39,6 +39,7 @@
             <button class="filters-button" @click="openTimestampFilters">Filters</button>
           </div>
 
+
           <div class="grid-container">
             <!-- Mode Information -->
             <div class="grid-item-full mode-item">
@@ -50,6 +51,11 @@
                 $t('CurrentMap-change_mode') }}</button>
               <ChangeModePopup v-if="isChangeModePopupOpen" :template="user.settings?.template"
                 :selectedTrackerId="selectedTracker" :closePopup="closeChangeModePopup" />
+            </div>
+            <!-- Measurement Type -->
+            <div class="grid-item">
+              <strong>{{ $t('TrackerList-measurementType') }}: &nbsp;</strong>
+              {{ selectedMeasurement.mode || 'N/A' }}
             </div>
 
             <!-- Battery Status -->
@@ -181,6 +187,7 @@
 </template>
 
 <script setup>
+import { io } from 'socket.io-client';
 import './styles_currentmap.css';
 import { ref, computed, onMounted, watch } from 'vue';
 import { useShepherd } from 'vue-shepherd'
@@ -189,7 +196,7 @@ import TrackerFilterPopup from './TrackerFilterPopup.vue';
 import TimestampFilterPopup from './TimestampFilterPopup.vue';
 import { useAuthStore } from "@/stores/auth";
 import ChangeModePopup from './ChangeModePopup.vue';
-
+const socket = io('http://localhost:3500');
 const isTrackerFilterPopupOpen = ref(false);
 const isTimestampFilterPopupOpen = ref(false);
 
@@ -229,16 +236,16 @@ const applyTrackerFilters = (filters) => {
 
 // Method to apply Timestamp filters
 const applyTimestampFilters = (filters) => {
-  // Update the timestamp filters in the parent component
+  console.log('Applied Filters in Parent:', filters); // Debugging line
   user.value.settings.timestampFilters = filters;
 };
-
 
 const authStore = useAuthStore();
 const el = ref(null);
 const tour = useShepherd({
   useModalOverlay: true
 });
+const timestamps = ref([]); // Reactive array to store timestamps
 
 const trackers = ref([]);
 const selectedTracker = ref(null);
@@ -262,6 +269,18 @@ const modeAccuracy = computed(() => {
       red: ">50m",
     };
   } else if (selectedMeasurement.value?.mode === "LTE") {
+    return {
+      green: "0-100m",
+      yellow: "101-500m",
+      red: ">500m",
+    };
+  } else if (selectedMeasurement.value?.mode === "NBIOT") {
+    return {
+      green: "0-100m",
+      yellow: "101-500m",
+      red: ">500m",
+    };
+  } else if (selectedMeasurement.value?.mode === "GSM") {
     return {
       green: "0-100m",
       yellow: "101-500m",
@@ -303,56 +322,42 @@ const trackerMode = computed(() => {
 
 // Fetch trackers and measurements for the user
 const fetchTrackersForUser = async () => {
-  // Access the auth store
-
   try {
-    // Retrieve the access token from the auth store
     const token = authStore.accessToken;
+    const config = { headers: { Authorization: `Bearer ${token}` } };
 
-    // Set up the configuration for Axios to include the Authorization header
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    };
-
-    // Fetch trackers for the authenticated user
     const response = await axios.get('http://localhost:3500/api/tracker/user/', config);
     trackers.value = response.data;
 
-
-
-    // Fetch measurements for each tracker
     for (const tracker of trackers.value) {
-
-      const modeResponse = await axios.get(`http://localhost:3500/api/mode/${tracker._id}`, config);
-      tracker.modeDetails = modeResponse.data; // Store the mode details
-
       const measurementsResponse = await axios.get(
         `http://localhost:3500/api/position/tracker/${tracker._id}`,
         config
       );
-      // Filter measurements to include only LTE or GPS modes
+
       tracker.measurements = measurementsResponse.data.filter(
-        (measurement) => measurement.mode === 'LTE' || measurement.mode === 'GPS'
+        (measurement) => ['LTE', 'GPS', 'NBIOT', 'GSM'].includes(measurement.mode)
       );
 
-
-      const geofenceResponse = await axios.get(`http://localhost:3500/api/geofence/${tracker.geofence}`, config);
-      tracker.geofenceDetails = geofenceResponse.data; // Store geofence details
-      // Set the first tracker as the selected tracker, if not already set
       if (!selectedTracker.value) {
         selectedTracker.value = tracker._id;
         selectedTrackerName.value = tracker.name;
       }
+
+      // Add measurements to timestamps array
+      timestamps.value = tracker.measurements.map((measurement) => ({
+        id: measurement._id,
+        trackerId: tracker._id,
+        timestamp: new Date(measurement.createdAt).toLocaleString(),
+      }));
     }
 
-    // Update the selected tracker's measurements
     updateSelectedTrackerMeasurements(true);
   } catch (error) {
     console.error('Failed to fetch trackers or measurements:', error);
   }
 };
+
 
 const applyGeofenceRadius = async () => {
   if (!selectedMeasurement.value) {
@@ -474,21 +479,27 @@ const initializeMap = () => {
     lng: Number(selectedMeasurement.value.longitude),
   };
   const accuracy = Number(selectedMeasurement.value.accuracy);
+  const mode = selectedMeasurement.value.mode;
 
-  // Determine the pin color based on accuracy and mode
+  // Determine the pin color based on mode-specific accuracy thresholds
   let backgroundColor;
-  if (selectedMeasurement.value.mode === "GPS") {
-    backgroundColor = accuracy <= 25
-      ? modeColors.value.green
-      : accuracy <= 50
-        ? modeColors.value.yellow
-        : modeColors.value.red;
-  } else if (selectedMeasurement.value.mode === "LTE") {
-    backgroundColor = accuracy <= 100
-      ? modeColors.value.green
-      : accuracy <= 500
-        ? modeColors.value.yellow
-        : modeColors.value.red;
+
+  if (mode === "GPS") {
+    if (accuracy <= 25) {
+      backgroundColor = modeColors.value.green; // High accuracy
+    } else if (accuracy <= 50) {
+      backgroundColor = modeColors.value.yellow; // Moderate accuracy
+    } else {
+      backgroundColor = modeColors.value.red; // Low accuracy
+    }
+  } else if (["LTE", "GSM", "NBIOT"].includes(mode)) {
+    if (accuracy <= 100) {
+      backgroundColor = modeColors.value.green; // High accuracy
+    } else if (accuracy <= 500) {
+      backgroundColor = modeColors.value.yellow; // Moderate accuracy
+    } else {
+      backgroundColor = modeColors.value.red; // Low accuracy
+    }
   } else {
     backgroundColor = "#000000"; // Default for unknown mode
   }
@@ -523,10 +534,10 @@ const initializeMap = () => {
       accuracyCircle = new google.maps.Circle({
         map,
         center: position,
-        radius: accuracy, // Set radius based on accuracy
-        fillColor: "#0000FF", // Blue color for accuracy circle
+        radius: accuracy,
+        fillColor: backgroundColor,
         fillOpacity: 0.2,
-        strokeColor: "#0000FF",
+        strokeColor: backgroundColor,
         strokeOpacity: 0.5,
         strokeWeight: 1,
       });
@@ -552,14 +563,15 @@ const initializeMap = () => {
       map,
       center: position,
       radius: accuracy,
-      fillColor: "#0000FF", // Blue color for accuracy circle
+      fillColor: '#0000FF',
       fillOpacity: 0.2,
-      strokeColor: "#0000FF",
+      strokeColor: '#0000FF',
       strokeOpacity: 0.5,
       strokeWeight: 1,
     });
   }
 };
+
 
 
 const drawGeofenceCircle = (latitude, longitude, radius) => {
@@ -640,33 +652,51 @@ const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
   const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
 
   try {
+    // Log the inputs for debugging
+    console.log("Reverse geocoding inputs:", { lat, lng, accuracy });
+
     const response = await axios.get(geocodingUrl);
-    console.log("Geocoding API response:", response.data); // Log the response for debugging
 
-    if (response.data?.address) {
-      const fullAddress = response.data.address;
+    // Log the API response for debugging
+    console.log("Geocoding API response:", response.data);
 
-      // Extract zip and city from the address
-      const addressParts = fullAddress.split(','); // Split the address into parts
-      const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
-      const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
-      const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Regex to match 'zip city'
+    const fullAddress = response.data?.address || "Unknown Location";
+    console.log("Full Address:", fullAddress);
 
-      const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
-      const city = zipAndCity ? zipAndCity[2] : "Unknown City";
+    // Handle cases where the address contains a Plus Code
+    if (fullAddress.includes('+')) {
+      console.log("Detected Plus Code in the response.");
+      const addressParts = fullAddress.split(',');
+      const cityPart = addressParts[addressParts.length - 2]?.trim() || "Unknown City";
+      const countryPart = addressParts[addressParts.length - 1]?.trim() || "Unknown Country";
 
-      if (accuracy <= 25) {
-        // Full address for high accuracy
-        selectedTrackerLocation.value = fullAddress;
-      } else {
-        // Only zip and city for lower accuracy
-        selectedTrackerLocation.value = `${zip}, ${city}`;
-      }
+      const approximateLocation = `${cityPart}, ${countryPart}`;
+      console.log("Result Address (Plus Code):", approximateLocation);
+      selectedTrackerLocation.value = approximateLocation;
+      return;
+    }
+
+    // Extract zip and city from the address
+    const addressParts = fullAddress.split(',');
+    const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
+    const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
+    const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Match 'zip city'
+
+    const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
+    const city = zipAndCity ? zipAndCity[2] : "Unknown City";
+
+    console.log("Extracted Address Parts:", { zip, city });
+
+    // Decide address display based on accuracy
+    if (accuracy <= 25) {
+      // Full address for high accuracy
+      selectedTrackerLocation.value = fullAddress;
     } else {
-      selectedTrackerLocation.value = 'Unknown Location';
+      // Only zip and city for lower accuracy
+      selectedTrackerLocation.value = `${zip}, ${city}`;
     }
   } catch (error) {
-    console.error('Failed to perform reverse geocoding:', error);
+    console.error(`Failed to get reverse geocoding address for coordinates [${lat}, ${lng}]:`, error);
     selectedTrackerLocation.value = 'Unknown Location';
   }
 };
@@ -697,11 +727,43 @@ const loadGoogleMapsScript = () => {
 const user = computed(() => authStore.userDetail);
 // On component mount, fetch trackers and measurements
 onMounted(async () => {
+  // Step 1: Load user data and Google Maps script
   await authStore.getUser();
-  await loadGoogleMapsScript();  // Wait for Google Maps to load
+  await loadGoogleMapsScript(); // Wait for Google Maps to load
   await fetchTrackersForUser();
-  updateGeofenceState(); // Now safe to call since Google Maps is loaded
+  updateGeofenceState(); // Ensure geofence state updates correctly
+
+  // Step 2: Set up Socket.IO connection and subscribe to user's trackers
+  const userTrackerIds = authStore.userDetail.trackers.map((tracker) => tracker._id); // Get user's tracker IDs
+  socket.emit('subscribeToTrackers', userTrackerIds); // Subscribe to relevant trackers
+
+  // Step 3: Listen for new measurements via Socket.IO
+  socket.on('newMeasurement', (newMeasurement) => {
+    console.log('New measurement received:', newMeasurement);
+
+    // Check if the measurement is for a tracker the user owns
+    if (userTrackerIds.includes(newMeasurement.tracker)) {
+      const tracker = trackers.value.find((t) => t._id === newMeasurement.tracker);
+
+      if (tracker) {
+        // Add the new measurement to the top of the tracker's measurements array
+        tracker.measurements.unshift(newMeasurement);
+
+        // Update `selectedTrackerMeasurements` if this is the currently selected tracker
+        if (selectedTracker.value === newMeasurement.tracker) {
+          selectedTrackerMeasurements.value.unshift(newMeasurement);
+
+          // Automatically set the newest timestamp as selected
+          selectedTimestamp.value = newMeasurement._id;
+
+          // Log the update for debugging purposes
+          console.log('Updated measurements:', selectedTrackerMeasurements.value);
+        }
+      }
+    }
+  });
 });
+
 
 // Watch for changes in selected tracker and update measurements
 watch(selectedTracker, updateSelectedTrackerMeasurements);
@@ -717,21 +779,35 @@ const filteredTrackers = computed(() => {
     return modeFilter.includes(tracker.mode);
   });
 });
+
 const filteredMeasurements = computed(() => {
   const validPositionFilter = user.value.settings.timestampFilters?.validPosition ?? false;
   const modeFilters = user.value.settings.timestampFilters?.mode || [];
 
+  console.log('Mode Filters:', modeFilters); // Debugging line
+
   return selectedTrackerMeasurements.value.filter((measurement) => {
+    console.log('Measurement Mode:', measurement.mode); // Debugging line
+
     // Filter by valid position
     if (validPositionFilter && (isNaN(measurement.latitude) || isNaN(measurement.longitude))) {
       return false;
     }
 
     // Filter by mode
-    const measurementMode = measurement.mode === 'LTE' ? 'LT' : measurement.mode === 'GPS' ? 'RT' : null;
+    const measurementMode =
+      measurement.mode === 'LTE' ? 'LT' :
+        measurement.mode === 'GPS' ? 'RT' :
+          measurement.mode === 'NBIOT' ? 'NBIOT' :
+            measurement.mode === 'GSM' ? 'GSM' :
+              null;
+
+    console.log('Mapped Measurement Mode:', measurementMode); // Debugging line
+
     return modeFilters.length === 0 || modeFilters.includes(measurementMode);
   });
 });
+
 
 
 
