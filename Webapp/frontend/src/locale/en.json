@@ -125,6 +125,7 @@
   "CurrentMap-red": "Red: {accuracy}",
   "CurrentMap-current_accuracy": "Current accuracy: {accuracy}m",
   "CurrentMap-apply": "Apply",
+  "CurrentMap-PositionTimestamp": "Position Timestamp",
   "PrivacyPolicy-title": "Privacy Policy",
   "PrivacyPolicy-effective_date": "Effective Date: January 1, 2024",
   "PrivacyPolicy-intro-title": "Introduction",
@@ -191,6 +192,16 @@
   "MapHistory-FromTimestamp": "From Timestamp",
   "MapHistory-ToTimestamp": "To Timestamp",
   "MapHistory-UsePinforeveryMeasurement": "Use Pin for every Measurement",
-  "LoggedInAs": "Logged in as"
-
+  "LoggedInAs": "Logged in as",
+  "Mode": "Mode",
+  "ApplyFilters": "Apply Filters",
+  "TimestampFilters": "Timestamp Filters",
+  "TrackerFilters": "Tracker Filters",
+  "Filters": "Filters",
+  "BuildHistory": "Build History",
+  "Timestamp": "Timestamp",
+  "Latitude": "Latitude",
+  "Longitude": "Longitude",
+  "MeasurementDetails": "Measurement Details",
+  "ChangeTrackingMode": "Change Tracking Mode"
 }

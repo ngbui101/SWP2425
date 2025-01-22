@@ -36,7 +36,7 @@
                 </option>
               </select>
             </label>
-            <button class="filters-button" @click="openTimestampFilters">Filters</button>
+            <button class="filters-button" @click="openTimestampFilters">{{ $t("Filters") }}</button>
           </div>
 
 
@@ -75,10 +75,10 @@
 
             <!-- Latitude and Longitude -->
             <div class="grid-item">
-              <strong>Latitude:&nbsp; </strong> {{ selectedMeasurement.latitude || 'N/A' }}
+              <strong>{{ $t("Latitude") }}:&nbsp; </strong> {{ selectedMeasurement.latitude || 'N/A' }}
             </div>
             <div class="grid-item">
-              <strong>Longitude:&nbsp;</strong> {{ selectedMeasurement.longitude || 'N/A' }}
+              <strong>{{ $t("Longitude") }}:&nbsp;</strong> {{ selectedMeasurement.longitude || 'N/A' }}
             </div>
 
             <!-- Temperature -->
@@ -117,7 +117,7 @@
     <div v-if="trackers.length > 0" class="card">
       <div class="card-header">
         <div class="timestamp">
-          <strong>Position Timestamp: </strong>
+          <strong>{{ $t("CurrentMap-PositionTimestamp") }}: </strong>
           <span :class="[(user.settings?.template ?? 'default') === 'dark' ? 'date-dark' : 'date-normal']">
             {{ selectedMeasurement.createdAt ? new Date(selectedMeasurement.createdAt).toLocaleString() : 'N/A' }}
           </span>

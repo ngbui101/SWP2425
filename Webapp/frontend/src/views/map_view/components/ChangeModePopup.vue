@@ -2,27 +2,27 @@
     <div class="popup-overlay" @click.self="closePopup">
         <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
             <div class="popup-header">
-                <h2>Change Tracking Mode</h2>
+                <h2>{{ $t("ChangeTrackingMode")}}</h2>
                 <button class="close-btn" @click="closePopup">✖</button>
             </div>
 
             <div class="popup-body">
                 <!-- Mode Toggle -->
                 <div class="popup-section">
-                    <h3>Tracking Mode</h3>
+                    <h3>{{ $t("TrackersettingsPopup-TrackingMode")}}</h3>
                     <div class="mode-toggle">
                         <button :class="{ active: !isLongTimeTracking }" @click="setRealTimeTracking">
-                            Real-Time-Tracking
+                            {{ $t("TrackersettingsPopup-RealTimeTracking")}}
                         </button>
                         <button :class="{ active: isLongTimeTracking }" @click="setLongTimeTracking">
-                            Long-Time-Tracking
+                            {{ $t("TrackersettingsPopup-LongTimeTracking")}}
                         </button>
                     </div>
                 </div>
 
                 <!-- Frequency Slider for Real-Time Mode -->
                 <div class="popup-section" v-if="!isLongTimeTracking">
-                    <h3>Sending Frequency (Real-Time)</h3>
+                    <h3>{{ $t("TrackersettingsPopup-RealTimeFrequency")}}</h3>
                     <input type="range" v-model.number="selectedRealTimeStep" :min="0" :max="realTimeSteps.length - 1"
                         step="1" />
                     <p>{{ formattedRealTimeInterval }}</p>
@@ -30,9 +30,9 @@
 
                 <!-- Frequency Slider for Long-Time Mode -->
                 <div class="popup-section" v-else>
-                    <h3>Sending Frequency (Long-Time)</h3>
+                    <h3>{{ $t("TrackersettingsPopup-LongTimeFrequency")}}</h3>
                     <input type="range" v-model.number="trackingInterval" min="1" max="24" step="1" />
-                    <p>{{ trackingInterval }} hour(s)</p>
+                    <p>{{ trackingInterval }} {{ $t("TrackersettingsPopup-Hours") }}"</p>
                 </div>
             </div>
 

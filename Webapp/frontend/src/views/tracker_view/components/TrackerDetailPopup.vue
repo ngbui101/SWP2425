@@ -2,7 +2,7 @@
     <div class="popup-overlay" @click.self="closePopup">
         <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
             <div class="popup-header">
-                <h2>Measurement Details</h2>
+                <h2>{{ $t("MeasurementDetails") }}</h2>
                 <button class="close-btn" @click="closePopup">✖</button>
             </div>
 
@@ -10,29 +10,29 @@
                 <!-- Display tracker details with timestamps on the same line -->
                 <div class="details-section">
                     <p>
-                        <strong>Latitude:</strong>
+                        <strong>{{ $t("Latitude") }} :</strong>
                         <span class="detail">{{ tracker.detailsWithTimestamps?.latitude?.value || 'N/A' }}</span>
                         <span class="timestamp">{{ tracker.detailsWithTimestamps?.latitude?.timestamp || 'N/A' }}</span>
                     </p>
                     <p>
-                        <strong>Longitude:</strong>
+                        <strong>{{ $t("Longitude")}}:</strong>
                         <span class="detail">{{ tracker.detailsWithTimestamps?.longitude?.value || 'N/A' }}</span>
                         <span class="timestamp">{{ tracker.detailsWithTimestamps?.longitude?.timestamp || 'N/A'
                             }}</span>
                     </p>
                     <p>
-                        <strong>Temperature:</strong>
+                        <strong>{{ $t("TrackerList-temperature")}}:</strong>
                         <span class="detail">{{ tracker.detailsWithTimestamps?.temperature?.value || 'N/A' }}</span>
                         <span class="timestamp">{{ tracker.detailsWithTimestamps?.temperature?.timestamp || 'N/A'
                             }}</span>
                     </p>
                     <p>
-                        <strong>Humidity:</strong>
+                        <strong>{{ $t("TrackerList-humidity")}}:</strong>
                         <span class="detail">{{ tracker.detailsWithTimestamps?.humidity?.value || 'N/A' }}</span>
                         <span class="timestamp">{{ tracker.detailsWithTimestamps?.humidity?.timestamp || 'N/A' }}</span>
                     </p>
                     <p>
-                        <strong>Battery:</strong>
+                        <strong>{{ $t("TrackerList-battery")}}:</strong>
                         <span class="detail">{{ tracker.detailsWithTimestamps?.battery?.value || 'N/A' }}</span>
                         <span class="timestamp">{{ tracker.detailsWithTimestamps?.battery?.timestamp || 'N/A' }}</span>
                     </p>

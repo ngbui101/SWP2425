@@ -2,14 +2,14 @@
     <div class="popup-overlay" @click.self="closePopup">
         <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
             <div class="popup-header">
-                <h2> Timestamp Filters </h2>
+                <h2> {{ $t("TimestampFilters") }} </h2>
                 <button class="close-btn" @click="closePopup">✖</button>
             </div>
 
             <div class="popup-body">
                 <!-- Mode Filter -->
                 <div class="popup-section">
-                    <h3>Mode</h3>
+                    <h3>{{ $t("Mode")}}</h3>
                     <label>
                         <input type="checkbox" v-model="realTimeChecked" /> GPS
                     </label>
@@ -26,7 +26,7 @@
             </div>
 
             <div class="popup-footer">
-                <button class="popup-save-btn" @click="applyFilters">Apply Filters</button>
+                <button class="popup-save-btn" @click="applyFilters">{{ $t("ApplyFilters") }}</button>
             </div>
         </div>
     </div>
