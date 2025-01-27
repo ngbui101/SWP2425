@@ -10,12 +10,14 @@
                     :class="{ 'slide-left': currentView === 'card', 'slide-right': currentView === 'list' }"></div>
 
                 <!-- Card View Toggle (Left) -->
-                <label @click="setView('card')" :class="{ active: currentView === 'card' }">{{ $t('TrackerView-CardView') }}
+                <label @click="setView('card')" :class="{ active: currentView === 'card' }">{{
+                    $t('TrackerView-CardView') }}
                 </label>
 
-            <!-- Listenansicht -->
-                <label @click="setView('list')" :class="{ active: currentView === 'list' }">{{ $t('TrackerView-ListView') }}
-                    
+                <!-- Listenansicht -->
+                <label @click="setView('list')" :class="{ active: currentView === 'list' }">{{
+                    $t('TrackerView-ListView') }}
+
                 </label>
             </div>
         </div>
@@ -31,10 +33,10 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import TrackerListComponent from './components/TrackerListComponent.vue';
 import TrackerCardComponent from './/components/TrackerCardComponent.vue';
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore, currentView } from "@/stores/auth";
 
 const trackers = ref([]);
-const currentView = ref('card'); // Default view is now card
+
 let isDragging = ref(false); // Indicates if the slider is being dragged
 let sliderPosition = ref(100); // Default slider starts at Card View (rightmost)
 let draggingDirection = ref(''); // Tracks the drag direction
@@ -157,8 +159,10 @@ const getReverseGeocodingAddress = async (lat, lng) => {
 
 // Fetch trackers on component mount
 onMounted(async () => {
+
     await authStore.getUser();
     fetchTrackersForUser();
+    currentView.value = 'card';
 });
 </script>
 
