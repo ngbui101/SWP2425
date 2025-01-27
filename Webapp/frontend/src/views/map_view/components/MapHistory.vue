@@ -8,7 +8,7 @@
             <div v-if="trackers.length > 0" class="tracker-info-card">
                 <div class="card-body">
                     <!-- Select Tracker Dropdown -->
-                    <label for="tracker-dropdown" class="dropdown-label">
+                    <label for="tracker-dropdown" class="dropdown-label" ref="mapHistoryTour1">
                         {{ $t("MapHistory-SelectTracker") }}:
                         <select id="tracker-dropdown" class="tracker-dropdown" v-model="selectedTracker"
                             @change="updateSelectedTrackerMeasurements">
@@ -19,8 +19,8 @@
                     </label>
 
                     <!-- From Timestamp Dropdown with Date Picker -->
-                    <label for="from-timestamp-dropdown" class="dropdown-label">
-                        From Timestamp:
+                    <label for="from-timestamp-dropdown" class="dropdown-label" ref="mapHistoryTour2">
+                        {{ $t("MapHistory-FromTimestamp") }}
                         <div class="timestamp-selection">
                             <select id="from-timestamp-dropdown"
                                 :class="['tracker-dropdown', !fromTimestamp && errorMessage ? 'error-dropdown' : '']"
@@ -30,14 +30,15 @@
                                     {{ new Date(measurement.createdAt).toLocaleString() }}
                                 </option>
                             </select>
-                            <DatePicker v-model="fromDate" type="date" :disabled-date="disableUnavailableDates"
-                                @change="handleFromDateChange" :clearable="false" placeholder="Start" />
+                            <DatePicker ref="mapHistoryTour4" v-model="fromDate" type="date"
+                                :disabled-date="disableUnavailableDates" @change="handleFromDateChange"
+                                :clearable="false" placeholder="Start" />
                         </div>
                     </label>
 
                     <!-- To Timestamp Dropdown with Date Picker -->
-                    <label for="to-timestamp-dropdown" class="dropdown-label">
-                        To Timestamp:
+                    <label for="to-timestamp-dropdown" class="dropdown-label" ref="mapHistoryTour3">
+                        {{ $t("MapHistory-ToTimestamp") }}
                         <div class="timestamp-selection">
                             <select id="to-timestamp-dropdown"
                                 :class="['tracker-dropdown', !toTimestamp && errorMessage ? 'error-dropdown' : '']"
@@ -48,7 +49,7 @@
                                 </option>
                             </select>
                             <DatePicker v-model="toDate" type="date" :disabled-date="disableUnavailableDates"
-                                @change="handleToDateChange" :clearable="false" placeholder="End" />
+                                @change="handleToDateChange" :clearable="false" :placeholder="$t('MapHistory-End')" />
                         </div>
                     </label>
 
@@ -57,16 +58,17 @@
                     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
                     <!-- Use Pin for Every Measurement Checkbox and Filter Button -->
-                    <div class="pin-filter-container">
+                    <div class="pin-filter-container" ref="mapHistoryTour5">
                         <label class="checkbox-label">
                             <input type="checkbox" v-model="usePinForEveryMeasurement" />
                             {{ $t("MapHistory-UsePinforeveryMeasurement") }}
                         </label>
-                        r
+
                     </div>
 
                     <!-- Build History Button -->
-                    <button class="build-history-button" @click="buildHistory">{{ $t("BuildHistory") }}</button>
+                    <button class="build-history-button" ref="mapHistoryTour6" @click="buildHistory">{{
+                        $t("BuildHistory") }}</button>
 
                     <!-- Scrollable List of Selected Measurements within the card, only visible after clicking "Build History" -->
                     <div v-if="showMeasurementsList && filteredMeasurementsForHistory.length > 0"
@@ -92,9 +94,9 @@
             </div>
         </div>
         <!-- Map Card -->
-        <div v-if="trackers.length > 0" class="card">
+        <div v-if="trackers.length > 0" class="card" ref="mapHistoryTour7">
             <div class="card-header">
-                <p class="map-title">{{ mapHistoryTitle }}</p>
+
             </div>
 
             <!-- Map Container -->
@@ -105,7 +107,7 @@
                 <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
             </div>
             <!-- Legend Section -->
-            <div class="legend">
+            <div class="legend" ref="mapHistoryTour8">
                 <span :style="{ color: modeColors.GPS }" class="legend-item">
                     <i class="fas fa-map-pin"></i> GPS&nbsp;&nbsp;
                 </span>
@@ -136,6 +138,16 @@ import { useAuthStore } from "@/stores/auth";
 import DatePicker from 'vue-datepicker-next';
 import './styles_maphistory.css';
 import 'vue-datepicker-next/index.css';
+import {
+    mapHistoryTour1,
+    mapHistoryTour2,
+    mapHistoryTour3,
+    mapHistoryTour4,
+    mapHistoryTour5,
+    mapHistoryTour6,
+    mapHistoryTour7,
+    mapHistoryTour8
+} from '@/routes/tourRefs.js';
 
 const fromTimestamp = ref(null);
 const toTimestamp = ref(null);
