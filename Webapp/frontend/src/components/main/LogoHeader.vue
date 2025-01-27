@@ -22,7 +22,7 @@
 import { computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
-import { tour1 } from '@/routes/tourRefs.js';  // Import the shared logoRef
+
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
