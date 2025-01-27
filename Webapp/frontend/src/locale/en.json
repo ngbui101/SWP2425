@@ -81,14 +81,15 @@
   "TrackersettingsPopup-LongTimeFrequency": "Sending Frequency (Long-Time)",
   "TrackersettingsPopup-Hours": "hour(s)",
   "TrackersettingsPopup-Save": "Save",
+  "TrackersettingsPopup-Remove": "Remove Tracker",
   "RouteView-New": "New",
   "RouteView-Saved": "Saved",
   "NewRoute-SelectTracker": "Select Tracker:",
   "NewRoute-StartRoute": "Start Route",
   "NewRoute-StopRoute": "Stop Route",
   "NewRoute-SaveRoute": "Save Route",
-  "MapView-Current": "History",
-  "MapView-History": "Route",
+  "MapView-Current": "Timestamps",
+  "MapView-History": "History",
   "ContactForm-title": "Get in Touch",
   "ContactForm-description": "Have any questions or concerns? Feel free to contact us using this contact form. We’re here to help and look forward to hearing from you!",
   "ContactForm-emailLabel": "Email",
@@ -191,6 +192,7 @@
   "MapHistory-SelectTracker": "Select Tracker",
   "MapHistory-FromTimestamp": "From Timestamp",
   "MapHistory-ToTimestamp": "To Timestamp",
+  "MapHistory-End": "End",
   "MapHistory-UsePinforeveryMeasurement": "Use Pin for every Measurement",
   "LoggedInAs": "Logged in as",
   "Mode": "Mode",
@@ -203,5 +205,52 @@
   "Latitude": "Latitude",
   "Longitude": "Longitude",
   "MeasurementDetails": "Measurement Details",
-  "ChangeTrackingMode": "Change Tracking Mode"
+  "ChangeTrackingMode": "Change Tracking Mode",
+  "Tour": {
+  "CurrentMap": {
+    "step1": "Select the current tracker for which timestamps should be displayed",
+    "step2": "Select the timestamp",
+    "step3": "Filter timestamps by mode / measurement type",
+    "step4": "Currently configured mode of the selected tracker",
+    "step5": "Switch mode and configure sending frequency",
+    "step6": "The measurement type of the displayed timestamp (LTE, GPS, NBIOT, GSM)",
+    "step7": "Create a geofence around the tracker's position at the selected timestamp",
+    "step8": "Map overview – above the map you see the timestamp, location, and measurement type. You can switch between map/satellite and zoom freely",
+    "step9": "The legend shows the measurement accuracy. The color of the pin changes based on accuracy",
+    "step10": "Step 10 for Current Map"
+  },
+  "MapHistory": {
+    "step1": "Select the tracker for which the route should be constructed",
+    "step2": "Timestamp for the start point",
+    "step3": "Timestamp for the end point",
+    "step4": "The calendar provides a simpler way to pick timestamps",
+    "step5": "If this feature is disabled, only the start and end points have a pin on the route",
+    "step6": "Construct the route – the more timestamps, the longer it can take",
+    "step7": "Here the constructed route is displayed. Hovering over a pin shows its accuracy radius",
+    "step8": "Pins are colored differently depending on the measurement type",
+    "step9": "Step 9 for Map History",
+    "step10": "Step 10 for Map History"
+  },
+  "TrackerCard": {
+    "step1": "To add a tracker the IMEI and PIN is needed",
+    "step2": "All the current data from the trackers, taking the newest value for each measurement. The info icon shows you the timestamp of each measurement, and in the settings you can configure the mode, frequency, and other options.",
+    "step3": "Placeholder for TrackerCard Tour step 3",
+    "step4": "Placeholder for TrackerCard Tour step 4",
+    "step5": "Placeholder for TrackerCard Tour step 5",
+    "step6": "Placeholder for TrackerCard Tour step 6",
+    "step7": "Placeholder for TrackerCard Tour step 7",
+    "step8": "Placeholder for TrackerCard Tour step 8",
+    "step9": "Placeholder for TrackerCard Tour step 9",
+    "step10": "Placeholder for TrackerCard Tour step 10"
+  }
+},
+   
+
+  "AddTrackerPopup-TrackerName": "Tracker Name",
+  "AddTrackerPopup-TrackerNamePlaceholder": "Any name, you can rename it later",
+  "AddTrackerPopup-IMEI": "IMEI",
+  "AddTrackerPopup-IMEIPlaceholder": "IMEI of your tracker",
+  "AddTrackerPopup-PIN": "PIN",
+  "AddTrackerPopup-PINPlaceholder": "Enter the valid PIN"
+
 }
