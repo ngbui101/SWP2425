@@ -1,84 +1,78 @@
 <template>
     <div class="popup-overlay" @click.self="closePopup">
-      <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
-        <div class="popup-header">
-          <h2>{{ $t('TrackersettingsPopup-EditTrackerSettings') }}</h2>
-          <button class="close-btn" @click="closePopup">✖</button>
-        </div>
-  
-        <div class="popup-body">
-          <!-- Track Name Editing -->
-          <div class="popup-section">
-            <label for="tracker-name">{{ $t('TrackersettingsPopup-TrackerName') }}</label>
-            <input type="text" id="tracker-name" v-model="trackerName" class="popup-input" />
-          </div>
-  
-          <!-- Mode Toggle -->
-          <div class="popup-section">
-            <h3>{{ $t('TrackersettingsPopup-TrackingMode') }}</h3>
-            <div class="mode-toggle">
-              <button :class="{ active: !isLongTimeTracking }" @click="setRealTimeTracking">
-                {{ $t('TrackersettingsPopup-RealTimeTracking') }}
-              </button>
-              <button :class="{ active: isLongTimeTracking }" @click="setLongTimeTracking">
-                {{ $t('TrackersettingsPopup-LongTimeTracking') }}
-              </button>
+        <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+            <div class="popup-header">
+                <h2>{{ $t('TrackersettingsPopup-EditTrackerSettings') }}</h2>
+                <button class="close-btn" @click="closePopup">✖</button>
             </div>
-          </div>
-  
-          <!-- Battery Data Checkbox -->
-          <div class="popup-section">
-            <label>
-              <input type="checkbox" v-model="sendBatteryData" />
-              {{ $t('TrackersettingsPopup-SendBatteryData') }}
-            </label>
-          </div>
-  
-          <!-- Humidity Data Checkbox -->
-          <div class="popup-section">
-            <label>
-              <input type="checkbox" v-model="sendTemperatureData" />
-              {{ $t('TrackersettingsPopup-SendHumidityData') }}
-            </label>
-          </div>
-  
-          <!-- Frequency Slider for Real-Time Mode -->
-          <div class="popup-section" v-if="!isLongTimeTracking">
-            <h3>{{ $t('TrackersettingsPopup-RealTimeFrequency') }}</h3>
-            <input
-              type="range"
-              class="frequency-slider"
-              v-model.number="selectedRealTimeStep"
-              :min="0"
-              :max="realTimeSteps.length - 1"
-              step="1"
-            />
-            <p>{{ formattedRealTimeInterval }}</p>
-          </div>
-  
-          <!-- Frequency Slider for Long-Time Mode -->
-          <div class="popup-section" v-else>
-            <h3>{{ $t('TrackersettingsPopup-LongTimeFrequency') }}</h3>
-            <input
-              type="range"
-              class="frequency-slider"
-              v-model.number="trackingInterval"
-              min="1"
-              max="24"
-              step="1"
-            />
-            <p>{{ trackingInterval }} {{ $t('TrackersettingsPopup-Hours') }}</p>
-          </div>
+
+            <div class="popup-body">
+                <!-- Track Name Editing -->
+                <div class="popup-section">
+                    <label for="tracker-name">{{ $t('TrackersettingsPopup-TrackerName') }}</label>
+                    <input type="text" id="tracker-name" v-model="trackerName" class="popup-input" />
+                </div>
+
+                <!-- Mode Toggle -->
+                <div class="popup-section">
+                    <h3>{{ $t('TrackersettingsPopup-TrackingMode') }}</h3>
+                    <div class="mode-toggle">
+                        <button :class="{ active: !isLongTimeTracking }" @click="setRealTimeTracking">
+                            {{ $t('TrackersettingsPopup-RealTimeTracking') }}
+                        </button>
+                        <button :class="{ active: isLongTimeTracking }" @click="setLongTimeTracking">
+                            {{ $t('TrackersettingsPopup-LongTimeTracking') }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Battery Data Checkbox -->
+                <div class="popup-section">
+                    <label>
+                        <input type="checkbox" v-model="sendBatteryData" />
+                        {{ $t('TrackersettingsPopup-SendBatteryData') }}
+                    </label>
+                </div>
+
+                <!-- Humidity Data Checkbox -->
+                <div class="popup-section">
+                    <label>
+                        <input type="checkbox" v-model="sendTemperatureData" />
+                        {{ $t('TrackersettingsPopup-SendHumidityData') }}
+                    </label>
+                </div>
+
+                <!-- Frequency Slider for Real-Time Mode -->
+                <div class="popup-section" v-if="!isLongTimeTracking">
+                    <h3>{{ $t('TrackersettingsPopup-RealTimeFrequency') }}</h3>
+                    <input type="range" class="frequency-slider" v-model.number="selectedRealTimeStep" :min="0"
+                        :max="realTimeSteps.length - 1" step="1" />
+                    <p>{{ formattedRealTimeInterval }}</p>
+                </div>
+
+                <!-- Frequency Slider for Long-Time Mode -->
+                <div class="popup-section" v-else>
+                    <h3>{{ $t('TrackersettingsPopup-LongTimeFrequency') }}</h3>
+                    <input type="range" class="frequency-slider" v-model.number="trackingInterval" min="1" max="24"
+                        step="1" />
+                    <p>{{ trackingInterval }} {{ $t('TrackersettingsPopup-Hours') }}</p>
+                </div>
+            </div>
+
+            <div class="popup-footer">
+
+                <button class="popup-save-btn" @click="deleteTracker">
+                    {{ $t('TrackersettingsPopup-Remove') }}
+                </button>
+
+
+                <button class="popup-save-btn" @click="saveChanges">
+                    {{ $t('TrackersettingsPopup-Save') }}
+                </button>
+            </div>
         </div>
-  
-        <div class="popup-footer">
-          <button class="popup-save-btn" @click="saveChanges">
-            {{ $t('TrackersettingsPopup-Save') }}
-          </button>
-        </div>
-      </div>
     </div>
-  </template>
+</template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -150,7 +144,23 @@ const setRealTimeTracking = () => {
 const setLongTimeTracking = () => {
     isLongTimeTracking.value = true;
 };
+const deleteTracker = async () => {
+    try {
+        if (!props.selectedTrackerId) throw new Error('No tracker ID provided');
 
+        // Call your DELETE route
+        await api.delete(`http://localhost:3500/api/tracker/${props.selectedTrackerId}`);
+
+        // Optionally emit an event so the parent can remove this tracker from its list 
+        // or refresh the trackers. For example:
+        emit('trackerDeleted', props.selectedTrackerId);
+
+        // Close the popup
+        props.closePopup();
+    } catch (error) {
+        console.error('Failed to delete tracker:', error);
+    }
+};
 const saveChanges = async () => {
     try {
         if (!props.selectedTrackerId) {
