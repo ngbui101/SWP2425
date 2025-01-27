@@ -20,7 +20,7 @@ import 'shepherd.js/dist/css/shepherd.css';  // Import Shepherd CSS
 
 /* Custom styles for Shepherd tour */
 .shepherd-element {
-  background-color: #00543D !important;
+  background-color: #3ff5e6 !important;
   /* Same background as navbar */
   color: #ffffff !important;
   /* White font */
@@ -30,7 +30,7 @@ import 'shepherd.js/dist/css/shepherd.css';  // Import Shepherd CSS
   /* Optional rounded corners */
   padding: 15px !important;
   /* Custom padding */
-  border: 1px solid #000000 !important;
+  border: 1px solid #ffffff !important;
   margin-top: 12px;
 }
 
@@ -42,14 +42,14 @@ import 'shepherd.js/dist/css/shepherd.css';  // Import Shepherd CSS
 
 .shepherd-text {
   font-size: 16px;
-  color: #ffffff !important;
+  color: #000000 !important;
 }
 
 /* Custom styles for Shepherd buttons */
 .shepherd-button {
   background-color: #ffffff !important;
   /* White button */
-  color: #00543D !important;
+  color: #000000 !important;
   /* Navbar color text */
   font-family: 'Poppins', sans-serif !important;
   border-radius: 4px;
@@ -57,7 +57,7 @@ import 'shepherd.js/dist/css/shepherd.css';  // Import Shepherd CSS
 }
 
 .shepherd-button:hover {
-  background-color: #00402E !important;
+  background-color: #99eed6 !important;
   /* Darker shade on hover */
 }
 
