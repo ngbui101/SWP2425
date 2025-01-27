@@ -4,7 +4,7 @@
             <!-- Left Info Container -->
             <div class="tracker-info-card">
                 <div class="card-body">
-                    <h2 class="card-title">{{ $t('RouteDetails') }}</h2>
+                    <h2 class="card-title-route">{{ $t('RouteDetails') }}</h2>
 
                     <!-- Timer and Start/Stop Buttons -->
                     <div class="controls-container">
@@ -128,6 +128,13 @@ onMounted(async () => {
 
 
 <style scoped>
+.card-title-route {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffae00;
+    text-align: center;
+}
+
 .container {
     display: flex;
     flex-direction: column;
