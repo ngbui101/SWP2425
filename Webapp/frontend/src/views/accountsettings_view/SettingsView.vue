@@ -35,10 +35,10 @@
                 :placeholder="$t('SETTINGSVIEW-current_password')" required>
               <label for="newPassword" class="form-label">{{ $t('SETTINGSVIEW-new_password') }}</label>
               <input v-model="newPassword" id="newPassword" type="password" class="form-input"
-                placeholder="New Password" required>
+                :placeholder="$t('SETTINGSVIEW-new_password')" required>
               <label for="confirmNewPassword" class="form-label">{{ $t('SETTINGSVIEW-confirm_new_password') }}</label>
               <input v-model="confirmNewPassword" id="confirmNewPassword" type="password" class="form-input"
-                placeholder="Confirm New Password" required>
+                :placeholder="$t('SETTINGSVIEW-confirm_new_password')" required>
               <button type="submit" class="form-submit-button">{{ $t('SETTINGSVIEW-save') }}</button>
             </form>
           </div>
@@ -109,7 +109,8 @@
                 {{ $t('SETTINGSVIEW-email_motion_alert') }}
               </label>
 
-              <button type="submit" class="form-submit-button" :class="{ 'saved': isSaved }"  @click="handleSave" > {{ $t('SETTINGSVIEW-save') }}</button>
+              <button type="submit" class="form-submit-button" :class="{ 'saved': isSaved }" @click="handleSave"> {{
+                $t('SETTINGSVIEW-save') }}</button>
             </form>
           </div>
 
@@ -180,7 +181,7 @@ const updateEmail = async () => {
   try {
     await authStore.updateEmail(newEmail.value);
     alert("Email updated successfully!");
-      // Setze die Schaltfläche auf den "gespeichert"-Status
+    // Setze die Schaltfläche auf den "gespeichert"-Status
     isSaved.value = true;
 
     // Optional: Zustand nach 3 Sekunden zurücksetzen
