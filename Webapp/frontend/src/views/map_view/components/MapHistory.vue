@@ -480,13 +480,13 @@ const buildHistory = async () => {
 
     // Validate that both timestamps are selected
     if (!fromTimestamp.value || !toTimestamp.value) {
-        errorMessage.value = "You have to select a start- and endpoint first";
+        errorMessage.value = $t("MapHistory-ErrorStartEndRequired");
         return;
     }
 
     // Validate that the start date is not later than the end date
     if (new Date(fromTimestamp.value) > new Date(toTimestamp.value)) {
-        errorMessage.value = "The starting point of the history cannot be later than the endpoint";
+        errorMessage.value = $t("MapHistory-ErrorStartAfterEnd");
         return;
     }
 
