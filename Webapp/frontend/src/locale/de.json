@@ -205,6 +205,8 @@
     "MapHistory-ToTimestamp": "zu Zeitstempel",
     "MapHistory-End": "Ende",
     "MapHistory-UsePinforeveryMeasurement": "Pin für jede Messung verwenden",
+    "MapHistory-ErrorStartEndRequired": "Sie müssen einen Start- und Endpunkt auswählen",
+    "MapHistory-ErrorStartAfterEnd": "Der Startpunkt der Historie darf nicht später als der Endpunkt sein",
     "LoggedInAs": "Angemeldet als",
     "Mode": "Modus",
     "ApplyFilters": "Filter anwenden",

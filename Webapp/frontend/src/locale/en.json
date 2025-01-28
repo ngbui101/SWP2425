@@ -194,6 +194,8 @@
   "MapHistory-ToTimestamp": "To Timestamp",
   "MapHistory-End": "End",
   "MapHistory-UsePinforeveryMeasurement": "Use Pin for every Measurement",
+  "MapHistory-ErrorStartEndRequired": "You have to select a start- and endpoint first",
+  "MapHistory-ErrorStartAfterEnd": "The starting point of the history cannot be later than the endpoint",
   "LoggedInAs": "Logged in as",
   "Mode": "Mode",
   "ApplyFilters": "Apply Filters",
