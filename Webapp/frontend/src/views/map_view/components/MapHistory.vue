@@ -43,12 +43,12 @@
                             <select id="to-timestamp-dropdown"
                                 :class="['tracker-dropdown', !toTimestamp && errorMessage ? 'error-dropdown' : '']"
                                 v-model="toTimestamp" @change="updateTimestampRange">
-                                <option v-for="measurement in selectedTrackerMeasurements" :key="measurement._id"
+                                <option v-for="measurement in filteredToTimestamps" :key="measurement._id"
                                     :value="measurement.createdAt">
                                     {{ new Date(measurement.createdAt).toLocaleString() }}
                                 </option>
                             </select>
-                            <DatePicker v-model="toDate" type="date" :disabled-date="disableUnavailableDates"
+                            <DatePicker v-model="toDate" type="date" :disabled-date="disableUnavailableDatesForToDate"
                                 @change="handleToDateChange" :clearable="false" :placeholder="$t('MapHistory-End')" />
                         </div>
                     </label>
@@ -201,14 +201,35 @@ let markers = [];
 let path = null;
 let accuracyCircle = null;
 
+const disableUnavailableDatesForToDate = (date) => {
+    // Get all unique valid dates from measurements
+    const validDates = new Set(
+        selectedTrackerMeasurements.value.map((m) => {
+            const mDate = new Date(m.createdAt);
+            return mDate.toDateString(); // Normalize date format
+        })
+    );
 
+    // Disable dates that:
+    // 1. Are earlier than `FromDate`
+    // 2. Do not exist in the list of valid measurement dates
+    return (
+        (fromDate.value && date.getTime() < fromDate.value.getTime()) || // Earlier than `FromDate`
+        !validDates.has(date.toDateString()) // Not a valid measurement date
+    );
+};
 
-// Disable unavailable dates in date picker
 const disableUnavailableDates = (date) => {
-    if (fromDate.value) {
-        return date.getTime() <= fromDate.value.getTime(); // Disable dates before "from date"
-    }
-    return false;
+    // Get all unique dates from `selectedTrackerMeasurements`
+    const validDates = new Set(
+        selectedTrackerMeasurements.value.map((m) => {
+            const mDate = new Date(m.createdAt);
+            return mDate.toDateString(); // Normalize date format to compare
+        })
+    );
+
+    // Disable the date if it's not in the valid dates set
+    return !validDates.has(date.toDateString());
 };
 
 
@@ -218,59 +239,59 @@ const updateTimestampRange = () => {
 };
 // Automatically set the earliest timestamp for the selected date in the FROM dropdown
 const handleFromDateChange = (date) => {
-    fromDate.value = new Date(date.setHours(0, 0, 0, 0));
+    fromDate.value = new Date(date.setHours(0, 0, 0, 0)); // Start of the day
 
+    // Find the first measurement on the selected `fromDate`
     const measurementsOnDate = selectedTrackerMeasurements.value.filter((m) => {
         const mDate = new Date(m.createdAt);
-        return (
-            mDate.getFullYear() === fromDate.value.getFullYear() &&
-            mDate.getMonth() === fromDate.value.getMonth() &&
-            mDate.getDate() === fromDate.value.getDate()
-        );
+        return mDate.toDateString() === fromDate.value.toDateString();
     });
 
     if (measurementsOnDate.length > 0) {
         fromTimestamp.value = measurementsOnDate[0].createdAt;
 
-        // Reset "toTimestamp" if it is no longer valid
+        // Reset `toTimestamp` if it's invalid
         if (toTimestamp.value && new Date(toTimestamp.value) <= new Date(fromTimestamp.value)) {
             toTimestamp.value = null;
         }
+    } else {
+        fromTimestamp.value = null; // Reset if no measurements are found
     }
 };
+
+
 
 
 const handleToDateChange = (date) => {
-    const selectedDate = new Date(date);
-    selectedDate.setHours(23, 59, 59, 999); // Set to end of the day (23:59)
-    toDate.value = selectedDate;
+    toDate.value = new Date(date.setHours(23, 59, 59, 999)); // Set to the end of the day
 
-    // Filter measurements to find those on the selected date
     const measurementsOnDate = selectedTrackerMeasurements.value.filter((m) => {
         const mDate = new Date(m.createdAt);
-        return mDate.getFullYear() === selectedDate.getFullYear() &&
-            mDate.getMonth() === selectedDate.getMonth() &&
-            mDate.getDate() === selectedDate.getDate();
+        return (
+            mDate.getFullYear() === toDate.value.getFullYear() &&
+            mDate.getMonth() === toDate.value.getMonth() &&
+            mDate.getDate() === toDate.value.getDate()
+        );
     });
 
     if (measurementsOnDate.length > 0) {
-        // Set `toTimestamp` to the latest timestamp on the selected date
+        // Set `toTimestamp` to the latest timestamp on the selected day
         toTimestamp.value = measurementsOnDate[measurementsOnDate.length - 1].createdAt;
+    } else {
+        toTimestamp.value = null; // Reset if no valid measurements are found
     }
-    updateTimestampRange();
 };
 
 
-
-// Computed property for the map history title
-const mapHistoryTitle = computed(() => {
-    if (fromTimestamp.value && toTimestamp.value) {
-        return `Map history from ${formatTimestamp(fromTimestamp.value)} to ${formatTimestamp(toTimestamp.value)}`;
-    } else if (fromTimestamp.value) {
-        return `Map history from ${formatTimestamp(fromTimestamp.value)}`;
-    } else {
-        return "Map history";
+watch(fromTimestamp, () => {
+    // Ensure `toTimestamp` is valid when `fromTimestamp` changes
+    if (toTimestamp.value && new Date(toTimestamp.value) <= new Date(fromTimestamp.value)) {
+        toTimestamp.value = null; // Reset if invalid
     }
+});
+
+watch(toTimestamp, () => {
+    // Additional logic can be added if needed for `toTimestamp`
 });
 
 // Fetch trackers and their measurements
@@ -297,19 +318,16 @@ const fetchTrackersForUser = async () => {
     }
 };
 const filteredToTimestamps = computed(() => {
+    // Ensure that only timestamps newer than `fromTimestamp` are shown
     if (!fromTimestamp.value) {
-        // Show all measurements if no "from timestamp" is selected
-        return selectedTrackerMeasurements.value;
+        return selectedTrackerMeasurements.value; // Show all if no `fromTimestamp` is selected
     }
+
     return selectedTrackerMeasurements.value.filter(
         (measurement) => new Date(measurement.createdAt) > new Date(fromTimestamp.value)
     );
 });
-watch(fromTimestamp, (newFromTimestamp) => {
-    if (toTimestamp.value && new Date(toTimestamp.value) <= new Date(newFromTimestamp)) {
-        toTimestamp.value = null; // Reset toTimestamp if invalid
-    }
-});
+
 
 
 // Update measurements for selected tracker and filter out invalid coordinates
@@ -402,18 +420,30 @@ const drawPinsWithGroupedInfoWindow = (measurements) => {
 
 // Function to draw pins for only the first and last measurements
 const drawPinsForFirstAndLast = (measurements) => {
-    markers.forEach(marker => marker.setMap(null)); // Clear previous markers
-    markers = []; // Reset markers array
+    // Clear previous markers
+    markers.forEach(marker => marker.setMap(null));
+    markers = [];
 
     measurements.forEach((m, index) => {
-        // Draw numbered pins for the first and last measurements only
+        // Only draw pins for the first and last measurements
         if (index === 0 || index === measurements.length - 1) {
+            const color = modeColors.value[m.mode] || "#000000"; // Default to black if mode is undefined
+
             const marker = new google.maps.Marker({
                 position: { lat: m.latitude, lng: m.longitude },
                 map,
-                label: `${index + 1}`,
-                title: `Point ${index + 1}`
+                label: `${index + 1}`, // Add index as a label
+                title: `Point ${index + 1}`,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: color,
+                    fillOpacity: 1,
+                    strokeColor: "#000000",
+                    strokeWeight: 1,
+                    scale: 8,
+                },
             });
+
             markers.push(marker);
         }
     });
@@ -495,6 +525,7 @@ const buildHistory = async () => {
     if (usePinForEveryMeasurement.value) {
         drawPinsWithGroupedInfoWindow(measurements);
     } else {
+        // Even when the checkbox is unchecked, use colored pins for the first and last measurements
         drawPinsForFirstAndLast(measurements);
     }
 
@@ -544,6 +575,13 @@ onMounted(async () => {
         initializeMap();
     });
 
+});
+
+watch(fromDate, (newFromDate) => {
+    if (toDate.value && new Date(toDate.value) < newFromDate) {
+        toDate.value = null; // Reset `toDate` if it's no longer valid
+        toTimestamp.value = null; // Reset the timestamp too
+    }
 });
 
 watch(selectedTracker, updateSelectedTrackerMeasurements);
