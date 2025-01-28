@@ -70,20 +70,26 @@
                     <button class="build-history-button" ref="mapHistoryTour6" @click="buildHistory">{{
                         $t("BuildHistory") }}</button>
 
-                    <!-- Scrollable List of Selected Measurements within the card, only visible after clicking "Build History" -->
+                    <!-- Scrollable List of Selected Measurements within the card -->
                     <div v-if="showMeasurementsList && filteredMeasurementsForHistory.length > 0"
                         class="measurements-list">
+                        <!-- Header Row -->
                         <div class="measurements-list-header">
+                            <span>#</span>
                             <span>{{ $t("Timestamp") }}</span>
-                            <span>Position</span>
+                            <span>{{ $t("Mode") }}</span>
+                            <span>{{ $t("Position") }}</span>
                             <span>Lat</span>
                             <span>Long</span>
                         </div>
+                        <!-- Content Rows -->
                         <div class="measurements-list-content">
-                            <div v-for="measurement in filteredMeasurementsForHistory" :key="measurement._id"
+                            <div v-for="(measurement, index) in filteredMeasurementsForHistory" :key="measurement._id"
                                 class="measurement-item">
-                                <!-- Format timestamp to show "day.month hour:minute" -->
+                                <!-- Display Index, Timestamp, Mode, Address, Lat, Long -->
+                                <span>{{ index + 1 }}</span>
                                 <span>{{ formatTimestamp(measurement.createdAt) }}</span>
+                                <span>{{ measurement.mode }}</span>
                                 <span>{{ measurement.address }}</span>
                                 <span>{{ measurement.latitude.toFixed(4) }}</span>
                                 <span>{{ measurement.longitude.toFixed(4) }}</span>
@@ -639,6 +645,7 @@ watch(selectedTracker, updateSelectedTrackerMeasurements);
     margin-top: 20px;
     max-height: 180px;
     overflow-y: auto;
+    /* Allow vertical scrolling */
     overflow-x: auto;
     /* Allow horizontal scrolling */
     border: 1px solid #ddd;
@@ -649,10 +656,9 @@ watch(selectedTracker, updateSelectedTrackerMeasurements);
 .measurements-list-header,
 .measurement-item {
     display: grid;
-    grid-template-columns: 2fr 3fr 1fr 1fr;
-    /* Adjusted for spacing */
+    grid-template-columns: 50px 180px 100px 300px 100px 100px;
+    /* Define column widths */
     padding: 5px 15px;
-    /* More space */
     font-size: 0.9rem;
     column-gap: 10px;
     /* Add gap between columns */
@@ -674,7 +680,7 @@ watch(selectedTracker, updateSelectedTrackerMeasurements);
 
 .measurements-list-content {
     max-height: 140px;
-    /* Limit height for scrolling */
+    /* Limit height for vertical scrolling */
     overflow-y: auto;
 }
 </style>
