@@ -1,5 +1,6 @@
 <template>
     <div :class="['container', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+
         <div class="mapview-container">
             <div v-if="trackers.length === 0" class="overlay">
                 <p class="overlay-text">No trackers available. Please add a tracker.</p>
@@ -111,6 +112,14 @@
 
                 <!-- Grey Overlay for dark mode -->
                 <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
+                <div v-if="isLoading" class="map-loading-overlay">
+                    <div class="loading-content">
+                        <div class="spinner"></div>
+                        <p>{{ $t("MapHistory-LoadingMessage") }}</p>
+                        <button class="cancel-button" @click="cancelBuildHistory">{{ $t("MapHistory-CancelButton")
+                            }}</button>
+                    </div>
+                </div>
             </div>
             <!-- Legend Section -->
             <div class="legend" ref="mapHistoryTour8">
@@ -143,6 +152,7 @@ import axios from 'axios';
 import { useAuthStore } from "@/stores/auth";
 import DatePicker from 'vue-datepicker-next';
 import './styles_maphistory.css';
+
 import 'vue-datepicker-next/index.css';
 import {
     mapHistoryTour1,
@@ -154,6 +164,9 @@ import {
     mapHistoryTour7,
     mapHistoryTour8
 } from '@/routes/tourRefs.js';
+
+const isLoading = ref(false);
+let abortController = null;
 
 const fromTimestamp = ref(null);
 const toTimestamp = ref(null);
@@ -454,11 +467,11 @@ const drawPinsForFirstAndLast = (measurements) => {
         }
     });
 };
-const getReverseGeocodingAddress = async (lat, lng) => {
+const getReverseGeocodingAddress = async (lat, lng, signal) => {
     const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
 
     try {
-        const response = await axios.get(geocodingUrl);
+        const response = await axios.get(geocodingUrl, { signal });
         if (response.data && response.data.address) {
             const address = response.data.address;
 
@@ -469,6 +482,10 @@ const getReverseGeocodingAddress = async (lat, lng) => {
             return 'Unknown Location';
         }
     } catch (error) {
+        if (axios.isCancel(error)) {
+            console.log('Reverse geocoding request canceled');
+            throw new Error('Operation canceled by the user.');
+        }
         console.error('Failed to perform reverse geocoding:', error);
         return 'Unknown Location';
     }
@@ -476,68 +493,102 @@ const getReverseGeocodingAddress = async (lat, lng) => {
 
 // Build history action with validation and error handling
 const buildHistory = async () => {
+    // Initialize AbortController
+    abortController = new AbortController();
+    const { signal } = abortController;
+
+    // Start loading
+    isLoading.value = true;
+
     const tracker = trackers.value.find(t => t._id === selectedTracker.value);
 
-    // Validate that both timestamps are selected
-    if (!fromTimestamp.value || !toTimestamp.value) {
-        errorMessage.value = $t("MapHistory-ErrorStartEndRequired");
-        return;
+    try {
+        // Validate that both timestamps are selected
+        if (!fromTimestamp.value || !toTimestamp.value) {
+            errorMessage.value = $t("MapHistory-ErrorStartEndRequired");
+            return;
+        }
+
+        // Validate that the start date is not later than the end date
+        if (new Date(fromTimestamp.value) > new Date(toTimestamp.value)) {
+            errorMessage.value = $t("MapHistory-ErrorStartAfterEnd");
+            return;
+        }
+
+        errorMessage.value = ''; // Clear error if all validations pass
+
+        const measurements = tracker.measurements
+            .filter(m =>
+                new Date(m.createdAt) >= new Date(fromTimestamp.value) &&
+                new Date(m.createdAt) <= new Date(toTimestamp.value)
+            )
+            .map(m => ({
+                ...m,
+                latitude: parseFloat(m.latitude),
+                longitude: parseFloat(m.longitude),
+            }))
+            .filter(m => !isNaN(m.latitude) && !isNaN(m.longitude)) // Filter out NaN values
+            .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+        // Fetch reverse geocoding addresses for each filtered measurement
+        for (const measurement of measurements) {
+            // Check if the request has been aborted
+            if (signal.aborted) throw new Error('Operation canceled by the user.');
+
+            measurement.address = await getReverseGeocodingAddress(measurement.latitude, measurement.longitude);
+
+            // Optional: Add a small delay to simulate processing time and allow cancellation
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+
+        // After all addresses are retrieved, update the filteredMeasurementsForHistory list and display it
+        filteredMeasurementsForHistory.value = measurements;
+        showMeasurementsList.value = true;
+
+        // Map drawing logic remains the same
+        markers.forEach(marker => marker.setMap(null));
+        if (path) path.setMap(null);
+
+        const pathCoordinates = measurements.map(m => ({ lat: m.latitude, lng: m.longitude }));
+        path = new google.maps.Polyline({
+            path: pathCoordinates,
+            geodesic: true,
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+        });
+        path.setMap(map);
+
+        if (usePinForEveryMeasurement.value) {
+            drawPinsWithGroupedInfoWindow(measurements);
+        } else {
+            // Even when the checkbox is unchecked, use colored pins for the first and last measurements
+            drawPinsForFirstAndLast(measurements);
+        }
+
+        const bounds = new google.maps.LatLngBounds();
+        pathCoordinates.forEach(coord => bounds.extend(coord));
+        map.fitBounds(bounds);
+    } catch (error) {
+        if (error.message === 'Operation canceled by the user.') {
+            console.log('Build history was canceled.');
+            errorMessage.value = $t("MapHistory-Canceled");
+        } else {
+            console.error('Error building history:', error);
+            errorMessage.value = $t("MapHistory-BuildError");
+        }
+    } finally {
+        // Stop loading
+        isLoading.value = false;
+        abortController = null; // Reset the controller
     }
+};
 
-    // Validate that the start date is not later than the end date
-    if (new Date(fromTimestamp.value) > new Date(toTimestamp.value)) {
-        errorMessage.value = $t("MapHistory-ErrorStartAfterEnd");
-        return;
+// Cancel buildHistory method
+const cancelBuildHistory = () => {
+    if (abortController) {
+        abortController.abort();
     }
-
-    errorMessage.value = ''; // Clear error if all validations pass
-
-    const measurements = tracker.measurements
-        .filter(m =>
-            new Date(m.createdAt) >= new Date(fromTimestamp.value) &&
-            new Date(m.createdAt) <= new Date(toTimestamp.value)
-        )
-        .map(m => ({
-            ...m,
-            latitude: parseFloat(m.latitude),
-            longitude: parseFloat(m.longitude),
-        }))
-        .filter(m => !isNaN(m.latitude) && !isNaN(m.longitude)) // Filter out NaN values
-        .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-    // Fetch reverse geocoding addresses for each filtered measurement
-    for (const measurement of measurements) {
-        measurement.address = await getReverseGeocodingAddress(measurement.latitude, measurement.longitude);
-    }
-
-    // After all addresses are retrieved, update the filteredMeasurementsForHistory list and display it
-    filteredMeasurementsForHistory.value = measurements;
-    showMeasurementsList.value = true;
-
-    // Map drawing logic remains the same
-    markers.forEach(marker => marker.setMap(null));
-    if (path) path.setMap(null);
-
-    const pathCoordinates = measurements.map(m => ({ lat: m.latitude, lng: m.longitude }));
-    path = new google.maps.Polyline({
-        path: pathCoordinates,
-        geodesic: true,
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2,
-    });
-    path.setMap(map);
-
-    if (usePinForEveryMeasurement.value) {
-        drawPinsWithGroupedInfoWindow(measurements);
-    } else {
-        // Even when the checkbox is unchecked, use colored pins for the first and last measurements
-        drawPinsForFirstAndLast(measurements);
-    }
-
-    const bounds = new google.maps.LatLngBounds();
-    pathCoordinates.forEach(coord => bounds.extend(coord));
-    map.fitBounds(bounds);
 };
 
 // Initialize the map
@@ -594,6 +645,38 @@ watch(selectedTracker, updateSelectedTrackerMeasurements);
 </script>
 
 <style scoped>
+.cancel-button {
+    padding: 10px 20px;
+    background-color: #C19A6B;
+    /* Match filters-button background */
+    color: #1f1f1f;
+    /* Match filters-button text color */
+    border: none;
+    border-radius: 18px;
+    /* Match filters-button border-radius */
+    cursor: pointer;
+    font-size: 0.9rem;
+    /* Consistent font size */
+    transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: #8f6b3f;
+    /* Darker shade on hover */
+}
+
+/* Adjustments for Dark Mode */
+.dark-mode .cancel-button {
+    background-color: #E69543;
+    /* Match dark-mode filters-button background */
+    color: #1f1f1f;
+}
+
+.dark-mode .cancel-button:hover {
+    background-color: #bd7227;
+    /* Darker shade on hover for dark mode */
+}
+
 .timestamp-selection {
     display: flex;
     align-items: center;
@@ -682,5 +765,69 @@ watch(selectedTracker, updateSelectedTrackerMeasurements);
     max-height: 140px;
     /* Limit height for vertical scrolling */
     overflow-y: auto;
+}
+
+.map-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    /* Ensure it sits above the map but below global overlays */
+    flex-direction: column;
+    /* Stack text and button vertically */
+    gap: 20px;
+    /* Space between spinner, text, and button */
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    /* Space between spinner, text, and button */
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    /* Ensure it sits above other elements */
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    /* Light grey */
+    border-top: 8px solid #3498db;
+    /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+/* Spinner Animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>
