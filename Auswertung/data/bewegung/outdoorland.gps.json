@@ -1,0 +1,8380 @@
+[{
+  "_id": {
+    "$oid": "679a58a3b974b8d3ae1dd260"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39664,
+  "longitude": 7.33315,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 4.76,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:34:42.845Z",
+  "updatedAt": "2025-01-29T16:34:42.845Z"
+},
+{
+  "_id": {
+    "$oid": "679a58a7b974b8d3ae1dd261"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39664,
+  "longitude": 7.33315,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.41,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:34:46.603Z",
+  "updatedAt": "2025-01-29T16:34:46.603Z"
+},
+{
+  "_id": {
+    "$oid": "679a58aab974b8d3ae1dd262"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39664,
+  "longitude": 7.33315,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 3.94,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:34:50.203Z",
+  "updatedAt": "2025-01-29T16:34:50.203Z"
+},
+{
+  "_id": {
+    "$oid": "679a58afb974b8d3ae1dd263"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39663,
+  "longitude": 7.33314,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.88,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:34:54.682Z",
+  "updatedAt": "2025-01-29T16:34:54.682Z"
+},
+{
+  "_id": {
+    "$oid": "679a58b3b974b8d3ae1dd264"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39664,
+  "longitude": 7.33313,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 6.21,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:34:58.685Z",
+  "updatedAt": "2025-01-29T16:34:58.685Z"
+},
+{
+  "_id": {
+    "$oid": "679a58bbb974b8d3ae1dd265"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39664,
+  "longitude": 7.33311,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.4,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:07.086Z",
+  "updatedAt": "2025-01-29T16:35:07.086Z"
+},
+{
+  "_id": {
+    "$oid": "679a58bfb974b8d3ae1dd266"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39664,
+  "longitude": 7.33309,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:10.922Z",
+  "updatedAt": "2025-01-29T16:35:10.922Z"
+},
+{
+  "_id": {
+    "$oid": "679a58c3b974b8d3ae1dd267"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39663,
+  "longitude": 7.33306,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.31,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:14.522Z",
+  "updatedAt": "2025-01-29T16:35:14.522Z"
+},
+{
+  "_id": {
+    "$oid": "679a58c8b974b8d3ae1dd268"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39662,
+  "longitude": 7.33302,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.2,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:19.416Z",
+  "updatedAt": "2025-01-29T16:35:19.416Z"
+},
+{
+  "_id": {
+    "$oid": "679a58cdb974b8d3ae1dd269"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39661,
+  "longitude": 7.33294,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.69,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:25.321Z",
+  "updatedAt": "2025-01-29T16:35:25.321Z"
+},
+{
+  "_id": {
+    "$oid": "679a58d1b974b8d3ae1dd26a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39659,
+  "longitude": 7.33285,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:28.842Z",
+  "updatedAt": "2025-01-29T16:35:28.842Z"
+},
+{
+  "_id": {
+    "$oid": "679a58d5b974b8d3ae1dd26b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39657,
+  "longitude": 7.33279,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.08,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:32.603Z",
+  "updatedAt": "2025-01-29T16:35:32.603Z"
+},
+{
+  "_id": {
+    "$oid": "679a58d8b974b8d3ae1dd26c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39658,
+  "longitude": 7.33271,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.67,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:36.204Z",
+  "updatedAt": "2025-01-29T16:35:36.204Z"
+},
+{
+  "_id": {
+    "$oid": "679a58ddb974b8d3ae1dd26d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39658,
+  "longitude": 7.33265,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.79,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:40.365Z",
+  "updatedAt": "2025-01-29T16:35:40.365Z"
+},
+{
+  "_id": {
+    "$oid": "679a58e0b974b8d3ae1dd26e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39656,
+  "longitude": 7.33255,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.22,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:44.127Z",
+  "updatedAt": "2025-01-29T16:35:44.127Z"
+},
+{
+  "_id": {
+    "$oid": "679a58e4b974b8d3ae1dd26f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39655,
+  "longitude": 7.33251,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.07,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:48.123Z",
+  "updatedAt": "2025-01-29T16:35:48.123Z"
+},
+{
+  "_id": {
+    "$oid": "679a58e9b974b8d3ae1dd270"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39652,
+  "longitude": 7.33244,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.46,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:52.128Z",
+  "updatedAt": "2025-01-29T16:35:52.128Z"
+},
+{
+  "_id": {
+    "$oid": "679a58ecb974b8d3ae1dd271"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39651,
+  "longitude": 7.33238,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.4,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:55.642Z",
+  "updatedAt": "2025-01-29T16:35:55.642Z"
+},
+{
+  "_id": {
+    "$oid": "679a58efb974b8d3ae1dd272"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39649,
+  "longitude": 7.3323,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.93,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:35:59.247Z",
+  "updatedAt": "2025-01-29T16:35:59.247Z"
+},
+{
+  "_id": {
+    "$oid": "679a58f8b974b8d3ae1dd273"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39649,
+  "longitude": 7.33225,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.46,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:07.726Z",
+  "updatedAt": "2025-01-29T16:36:07.726Z"
+},
+{
+  "_id": {
+    "$oid": "679a58fcb974b8d3ae1dd274"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39652,
+  "longitude": 7.33211,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:11.403Z",
+  "updatedAt": "2025-01-29T16:36:11.403Z"
+},
+{
+  "_id": {
+    "$oid": "679a58ffb974b8d3ae1dd275"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39653,
+  "longitude": 7.33205,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.74,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:15.002Z",
+  "updatedAt": "2025-01-29T16:36:15.002Z"
+},
+{
+  "_id": {
+    "$oid": "679a5908b974b8d3ae1dd276"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39654,
+  "longitude": 7.332,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.35,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:24.045Z",
+  "updatedAt": "2025-01-29T16:36:24.045Z"
+},
+{
+  "_id": {
+    "$oid": "679a590cb974b8d3ae1dd277"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39655,
+  "longitude": 7.33186,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:27.560Z",
+  "updatedAt": "2025-01-29T16:36:27.560Z"
+},
+{
+  "_id": {
+    "$oid": "679a590fb974b8d3ae1dd278"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39654,
+  "longitude": 7.33181,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.2,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:31.408Z",
+  "updatedAt": "2025-01-29T16:36:31.408Z"
+},
+{
+  "_id": {
+    "$oid": "679a5918b974b8d3ae1dd279"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39652,
+  "longitude": 7.33177,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:40.363Z",
+  "updatedAt": "2025-01-29T16:36:40.363Z"
+},
+{
+  "_id": {
+    "$oid": "679a591db974b8d3ae1dd27a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39649,
+  "longitude": 7.33165,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.83,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:44.599Z",
+  "updatedAt": "2025-01-29T16:36:44.599Z"
+},
+{
+  "_id": {
+    "$oid": "679a5929b974b8d3ae1dd27b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39646,
+  "longitude": 7.33159,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.26,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:36:57.320Z",
+  "updatedAt": "2025-01-29T16:36:57.320Z"
+},
+{
+  "_id": {
+    "$oid": "679a592db974b8d3ae1dd27c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39641,
+  "longitude": 7.33133,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.53,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:00.842Z",
+  "updatedAt": "2025-01-29T16:37:00.842Z"
+},
+{
+  "_id": {
+    "$oid": "679a5931b974b8d3ae1dd27d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3964,
+  "longitude": 7.33126,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.04,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:05.009Z",
+  "updatedAt": "2025-01-29T16:37:05.009Z"
+},
+{
+  "_id": {
+    "$oid": "679a5937b974b8d3ae1dd27e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39636,
+  "longitude": 7.33119,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.17,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:10.682Z",
+  "updatedAt": "2025-01-29T16:37:10.682Z"
+},
+{
+  "_id": {
+    "$oid": "679a593bb974b8d3ae1dd27f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39632,
+  "longitude": 7.33107,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.94,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:15.243Z",
+  "updatedAt": "2025-01-29T16:37:15.243Z"
+},
+{
+  "_id": {
+    "$oid": "679a5941b974b8d3ae1dd280"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3963,
+  "longitude": 7.33103,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.37,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:20.205Z",
+  "updatedAt": "2025-01-29T16:37:20.205Z"
+},
+{
+  "_id": {
+    "$oid": "679a5945b974b8d3ae1dd281"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39628,
+  "longitude": 7.331,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.6,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:24.922Z",
+  "updatedAt": "2025-01-29T16:37:24.922Z"
+},
+{
+  "_id": {
+    "$oid": "679a5949b974b8d3ae1dd282"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39626,
+  "longitude": 7.33095,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.87,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:29.004Z",
+  "updatedAt": "2025-01-29T16:37:29.004Z"
+},
+{
+  "_id": {
+    "$oid": "679a594db974b8d3ae1dd283"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39624,
+  "longitude": 7.33089,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.57,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:32.763Z",
+  "updatedAt": "2025-01-29T16:37:32.763Z"
+},
+{
+  "_id": {
+    "$oid": "679a5955b974b8d3ae1dd284"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39624,
+  "longitude": 7.33085,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.38,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:41.166Z",
+  "updatedAt": "2025-01-29T16:37:41.166Z"
+},
+{
+  "_id": {
+    "$oid": "679a5959b974b8d3ae1dd285"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3962,
+  "longitude": 7.33077,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.37,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:44.763Z",
+  "updatedAt": "2025-01-29T16:37:44.763Z"
+},
+{
+  "_id": {
+    "$oid": "679a595cb974b8d3ae1dd286"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39619,
+  "longitude": 7.33073,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.03,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:48.361Z",
+  "updatedAt": "2025-01-29T16:37:48.361Z"
+},
+{
+  "_id": {
+    "$oid": "679a5960b974b8d3ae1dd287"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39617,
+  "longitude": 7.33066,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.4,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:51.883Z",
+  "updatedAt": "2025-01-29T16:37:51.883Z"
+},
+{
+  "_id": {
+    "$oid": "679a5963b974b8d3ae1dd288"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39616,
+  "longitude": 7.3306,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.83,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:55.402Z",
+  "updatedAt": "2025-01-29T16:37:55.402Z"
+},
+{
+  "_id": {
+    "$oid": "679a5967b974b8d3ae1dd289"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39615,
+  "longitude": 7.33053,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.16,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:37:59.249Z",
+  "updatedAt": "2025-01-29T16:37:59.249Z"
+},
+{
+  "_id": {
+    "$oid": "679a596cb974b8d3ae1dd28a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39613,
+  "longitude": 7.33047,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.5,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:03.804Z",
+  "updatedAt": "2025-01-29T16:38:03.804Z"
+},
+{
+  "_id": {
+    "$oid": "679a5970b974b8d3ae1dd28b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3961,
+  "longitude": 7.3304,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.19,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:07.563Z",
+  "updatedAt": "2025-01-29T16:38:07.563Z"
+},
+{
+  "_id": {
+    "$oid": "679a5974b974b8d3ae1dd28c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39606,
+  "longitude": 7.33035,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.56,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:11.644Z",
+  "updatedAt": "2025-01-29T16:38:11.644Z"
+},
+{
+  "_id": {
+    "$oid": "679a5978b974b8d3ae1dd28d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39604,
+  "longitude": 7.33027,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.66,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:16.359Z",
+  "updatedAt": "2025-01-29T16:38:16.359Z"
+},
+{
+  "_id": {
+    "$oid": "679a597db974b8d3ae1dd28e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.396,
+  "longitude": 7.33019,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.37,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:20.446Z",
+  "updatedAt": "2025-01-29T16:38:20.446Z"
+},
+{
+  "_id": {
+    "$oid": "679a5980b974b8d3ae1dd28f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39599,
+  "longitude": 7.33012,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 5.77,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:24.280Z",
+  "updatedAt": "2025-01-29T16:38:24.280Z"
+},
+{
+  "_id": {
+    "$oid": "679a5986b974b8d3ae1dd290"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39597,
+  "longitude": 7.33003,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.09,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:29.725Z",
+  "updatedAt": "2025-01-29T16:38:29.725Z"
+},
+{
+  "_id": {
+    "$oid": "679a598ab974b8d3ae1dd291"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39595,
+  "longitude": 7.32995,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.83,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:33.482Z",
+  "updatedAt": "2025-01-29T16:38:33.482Z"
+},
+{
+  "_id": {
+    "$oid": "679a598db974b8d3ae1dd292"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39594,
+  "longitude": 7.32989,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:37.319Z",
+  "updatedAt": "2025-01-29T16:38:37.319Z"
+},
+{
+  "_id": {
+    "$oid": "679a5991b974b8d3ae1dd293"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39594,
+  "longitude": 7.32987,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 5.01,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:41.244Z",
+  "updatedAt": "2025-01-29T16:38:41.244Z"
+},
+{
+  "_id": {
+    "$oid": "679a5995b974b8d3ae1dd294"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39593,
+  "longitude": 7.32982,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.26,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:45.082Z",
+  "updatedAt": "2025-01-29T16:38:45.082Z"
+},
+{
+  "_id": {
+    "$oid": "679a5999b974b8d3ae1dd295"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39592,
+  "longitude": 7.32978,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.38,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:48.843Z",
+  "updatedAt": "2025-01-29T16:38:48.843Z"
+},
+{
+  "_id": {
+    "$oid": "679a599eb974b8d3ae1dd296"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39591,
+  "longitude": 7.32972,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.19,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:53.885Z",
+  "updatedAt": "2025-01-29T16:38:53.885Z"
+},
+{
+  "_id": {
+    "$oid": "679a59a2b974b8d3ae1dd297"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39589,
+  "longitude": 7.32963,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.66,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:38:57.487Z",
+  "updatedAt": "2025-01-29T16:38:57.487Z"
+},
+{
+  "_id": {
+    "$oid": "679a59a5b974b8d3ae1dd298"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39587,
+  "longitude": 7.32958,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.06,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:01.081Z",
+  "updatedAt": "2025-01-29T16:39:01.081Z"
+},
+{
+  "_id": {
+    "$oid": "679a59a9b974b8d3ae1dd299"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39586,
+  "longitude": 7.32956,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 5.08,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:05.080Z",
+  "updatedAt": "2025-01-29T16:39:05.080Z"
+},
+{
+  "_id": {
+    "$oid": "679a59adb974b8d3ae1dd29a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39583,
+  "longitude": 7.32949,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.16,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:09.242Z",
+  "updatedAt": "2025-01-29T16:39:09.242Z"
+},
+{
+  "_id": {
+    "$oid": "679a59b2b974b8d3ae1dd29b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3958,
+  "longitude": 7.32943,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.38,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:13.482Z",
+  "updatedAt": "2025-01-29T16:39:13.482Z"
+},
+{
+  "_id": {
+    "$oid": "679a59b6b974b8d3ae1dd29c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39576,
+  "longitude": 7.32935,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 5.28,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:18.122Z",
+  "updatedAt": "2025-01-29T16:39:18.122Z"
+},
+{
+  "_id": {
+    "$oid": "679a59bab974b8d3ae1dd29d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39575,
+  "longitude": 7.32928,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 6.87,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:21.964Z",
+  "updatedAt": "2025-01-29T16:39:21.964Z"
+},
+{
+  "_id": {
+    "$oid": "679a59c0b974b8d3ae1dd29e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39574,
+  "longitude": 7.32922,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.96,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:28.122Z",
+  "updatedAt": "2025-01-29T16:39:28.122Z"
+},
+{
+  "_id": {
+    "$oid": "679a59c9b974b8d3ae1dd29f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3957,
+  "longitude": 7.32912,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.87,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:36.687Z",
+  "updatedAt": "2025-01-29T16:39:36.687Z"
+},
+{
+  "_id": {
+    "$oid": "679a59ccb974b8d3ae1dd2a0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39563,
+  "longitude": 7.329,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.31,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:40.287Z",
+  "updatedAt": "2025-01-29T16:39:40.287Z"
+},
+{
+  "_id": {
+    "$oid": "679a59d2b974b8d3ae1dd2a1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39561,
+  "longitude": 7.32895,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:46.449Z",
+  "updatedAt": "2025-01-29T16:39:46.449Z"
+},
+{
+  "_id": {
+    "$oid": "679a59d6b974b8d3ae1dd2a2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39561,
+  "longitude": 7.32885,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.78,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:50.279Z",
+  "updatedAt": "2025-01-29T16:39:50.279Z"
+},
+{
+  "_id": {
+    "$oid": "679a59dab974b8d3ae1dd2a3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39559,
+  "longitude": 7.32879,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 5.51,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:53.815Z",
+  "updatedAt": "2025-01-29T16:39:53.815Z"
+},
+{
+  "_id": {
+    "$oid": "679a59deb974b8d3ae1dd2a4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39558,
+  "longitude": 7.32875,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.98,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:39:57.883Z",
+  "updatedAt": "2025-01-29T16:39:57.883Z"
+},
+{
+  "_id": {
+    "$oid": "679a59e6b974b8d3ae1dd2a5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39556,
+  "longitude": 7.32869,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 4.64,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:06.447Z",
+  "updatedAt": "2025-01-29T16:40:06.447Z"
+},
+{
+  "_id": {
+    "$oid": "679a59eab974b8d3ae1dd2a6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39551,
+  "longitude": 7.32857,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.62,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:10.205Z",
+  "updatedAt": "2025-01-29T16:40:10.205Z"
+},
+{
+  "_id": {
+    "$oid": "679a59eeb974b8d3ae1dd2a7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39549,
+  "longitude": 7.32853,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 5.27,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:14.120Z",
+  "updatedAt": "2025-01-29T16:40:14.120Z"
+},
+{
+  "_id": {
+    "$oid": "679a59f2b974b8d3ae1dd2a8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39547,
+  "longitude": 7.32847,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.28,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:17.722Z",
+  "updatedAt": "2025-01-29T16:40:17.722Z"
+},
+{
+  "_id": {
+    "$oid": "679a59f5b974b8d3ae1dd2a9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39547,
+  "longitude": 7.32841,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 4.19,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:21.323Z",
+  "updatedAt": "2025-01-29T16:40:21.323Z"
+},
+{
+  "_id": {
+    "$oid": "679a59fab974b8d3ae1dd2aa"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39547,
+  "longitude": 7.32837,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.53,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:25.991Z",
+  "updatedAt": "2025-01-29T16:40:25.991Z"
+},
+{
+  "_id": {
+    "$oid": "679a59feb974b8d3ae1dd2ab"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39546,
+  "longitude": 7.32831,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 6.02,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:29.883Z",
+  "updatedAt": "2025-01-29T16:40:29.883Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a02b974b8d3ae1dd2ac"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39546,
+  "longitude": 7.32827,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 5.29,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:34.520Z",
+  "updatedAt": "2025-01-29T16:40:34.520Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a06b974b8d3ae1dd2ad"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39543,
+  "longitude": 7.32818,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 6.28,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:38.367Z",
+  "updatedAt": "2025-01-29T16:40:38.367Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a0bb974b8d3ae1dd2ae"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3954,
+  "longitude": 7.32813,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 7.17,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:42.521Z",
+  "updatedAt": "2025-01-29T16:40:42.521Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a0eb974b8d3ae1dd2af"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39538,
+  "longitude": 7.32808,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 6.87,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:46.366Z",
+  "updatedAt": "2025-01-29T16:40:46.366Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a12b974b8d3ae1dd2b0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39536,
+  "longitude": 7.328,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 5.61,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:50.203Z",
+  "updatedAt": "2025-01-29T16:40:50.203Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a16b974b8d3ae1dd2b1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39534,
+  "longitude": 7.32794,
+  "hdop": 1.1,
+  "nsat": 5,
+  "accuracy": 5.16,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:54.043Z",
+  "updatedAt": "2025-01-29T16:40:54.043Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a1bb974b8d3ae1dd2b2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39533,
+  "longitude": 7.32786,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 5.13,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:40:59.162Z",
+  "updatedAt": "2025-01-29T16:40:59.162Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a20b974b8d3ae1dd2b3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3953,
+  "longitude": 7.32776,
+  "hdop": 0.9,
+  "nsat": 7,
+  "accuracy": 4.09,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:04.122Z",
+  "updatedAt": "2025-01-29T16:41:04.122Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a24b974b8d3ae1dd2b4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39527,
+  "longitude": 7.32766,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:07.564Z",
+  "updatedAt": "2025-01-29T16:41:07.564Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a27b974b8d3ae1dd2b5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39524,
+  "longitude": 7.3276,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.93,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:11.403Z",
+  "updatedAt": "2025-01-29T16:41:11.403Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a2db974b8d3ae1dd2b6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39522,
+  "longitude": 7.32753,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.66,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:17.324Z",
+  "updatedAt": "2025-01-29T16:41:17.324Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a32b974b8d3ae1dd2b7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39518,
+  "longitude": 7.32744,
+  "hdop": 1,
+  "nsat": 6,
+  "accuracy": 4.26,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:21.489Z",
+  "updatedAt": "2025-01-29T16:41:21.489Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a35b974b8d3ae1dd2b8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39515,
+  "longitude": 7.32737,
+  "hdop": 1.1,
+  "nsat": 5,
+  "accuracy": 9.98,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:25.083Z",
+  "updatedAt": "2025-01-29T16:41:25.083Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a3ab974b8d3ae1dd2b9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39514,
+  "longitude": 7.32733,
+  "hdop": 1.4,
+  "nsat": 5,
+  "accuracy": 10.29,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:29.967Z",
+  "updatedAt": "2025-01-29T16:41:29.967Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a3db974b8d3ae1dd2ba"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39512,
+  "longitude": 7.32727,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 9.73,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:33.482Z",
+  "updatedAt": "2025-01-29T16:41:33.482Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a43b974b8d3ae1dd2bb"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39509,
+  "longitude": 7.32719,
+  "hdop": 1,
+  "nsat": 4,
+  "accuracy": 9.89,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:39.485Z",
+  "updatedAt": "2025-01-29T16:41:39.485Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a48b974b8d3ae1dd2bc"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39505,
+  "longitude": 7.3271,
+  "hdop": 1,
+  "nsat": 4,
+  "accuracy": 9.95,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:44.447Z",
+  "updatedAt": "2025-01-29T16:41:44.447Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a4db974b8d3ae1dd2bd"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39502,
+  "longitude": 7.32701,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 9.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:48.601Z",
+  "updatedAt": "2025-01-29T16:41:48.601Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a50b974b8d3ae1dd2be"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.395,
+  "longitude": 7.32694,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.92,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:52.226Z",
+  "updatedAt": "2025-01-29T16:41:52.226Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a56b974b8d3ae1dd2bf"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.395,
+  "longitude": 7.32692,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 10.05,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:41:57.007Z",
+  "updatedAt": "2025-01-29T16:41:57.007Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a59b974b8d3ae1dd2c0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39498,
+  "longitude": 7.32684,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.17,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:00.839Z",
+  "updatedAt": "2025-01-29T16:42:00.839Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a5db974b8d3ae1dd2c1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39496,
+  "longitude": 7.32676,
+  "hdop": 1.1,
+  "nsat": 5,
+  "accuracy": 10.39,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:04.768Z",
+  "updatedAt": "2025-01-29T16:42:04.768Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a63b974b8d3ae1dd2c2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39495,
+  "longitude": 7.3267,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.33,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:10.847Z",
+  "updatedAt": "2025-01-29T16:42:10.847Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a67b974b8d3ae1dd2c3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39492,
+  "longitude": 7.32661,
+  "hdop": 0.9,
+  "nsat": 7,
+  "accuracy": 9.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:14.683Z",
+  "updatedAt": "2025-01-29T16:42:14.683Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a6cb974b8d3ae1dd2c4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3949,
+  "longitude": 7.32653,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 9.46,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:20.133Z",
+  "updatedAt": "2025-01-29T16:42:20.133Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a70b974b8d3ae1dd2c5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39488,
+  "longitude": 7.32647,
+  "hdop": 1,
+  "nsat": 6,
+  "accuracy": 9.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:23.964Z",
+  "updatedAt": "2025-01-29T16:42:23.964Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a74b974b8d3ae1dd2c6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39486,
+  "longitude": 7.3264,
+  "hdop": 1.3,
+  "nsat": 4,
+  "accuracy": 10.22,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:27.802Z",
+  "updatedAt": "2025-01-29T16:42:27.802Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a78b974b8d3ae1dd2c7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39484,
+  "longitude": 7.32635,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.31,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:31.722Z",
+  "updatedAt": "2025-01-29T16:42:31.722Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a7db974b8d3ae1dd2c8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39482,
+  "longitude": 7.32634,
+  "hdop": 1,
+  "nsat": 4,
+  "accuracy": 10.56,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:37.169Z",
+  "updatedAt": "2025-01-29T16:42:37.169Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a81b974b8d3ae1dd2c9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39479,
+  "longitude": 7.32624,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.43,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:40.686Z",
+  "updatedAt": "2025-01-29T16:42:40.686Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a84b974b8d3ae1dd2ca"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39478,
+  "longitude": 7.3262,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 10.35,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:44.290Z",
+  "updatedAt": "2025-01-29T16:42:44.290Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a89b974b8d3ae1dd2cb"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39476,
+  "longitude": 7.32611,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 10.25,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:48.441Z",
+  "updatedAt": "2025-01-29T16:42:48.441Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a8eb974b8d3ae1dd2cc"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39475,
+  "longitude": 7.32607,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 10.17,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:54.295Z",
+  "updatedAt": "2025-01-29T16:42:54.295Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a92b974b8d3ae1dd2cd"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39472,
+  "longitude": 7.32594,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.22,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:42:57.801Z",
+  "updatedAt": "2025-01-29T16:42:57.801Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a95b974b8d3ae1dd2ce"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3947,
+  "longitude": 7.3259,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:01.406Z",
+  "updatedAt": "2025-01-29T16:43:01.406Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a9ab974b8d3ae1dd2cf"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39468,
+  "longitude": 7.32582,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.12,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:05.642Z",
+  "updatedAt": "2025-01-29T16:43:05.642Z"
+},
+{
+  "_id": {
+    "$oid": "679a5a9db974b8d3ae1dd2d0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39466,
+  "longitude": 7.32576,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.11,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:09.248Z",
+  "updatedAt": "2025-01-29T16:43:09.248Z"
+},
+{
+  "_id": {
+    "$oid": "679a5aa2b974b8d3ae1dd2d1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39464,
+  "longitude": 7.32573,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.72,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:13.570Z",
+  "updatedAt": "2025-01-29T16:43:13.570Z"
+},
+{
+  "_id": {
+    "$oid": "679a5aa5b974b8d3ae1dd2d2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39464,
+  "longitude": 7.32571,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:17.405Z",
+  "updatedAt": "2025-01-29T16:43:17.405Z"
+},
+{
+  "_id": {
+    "$oid": "679a5aa9b974b8d3ae1dd2d3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39461,
+  "longitude": 7.32563,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 4.88,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:21.081Z",
+  "updatedAt": "2025-01-29T16:43:21.081Z"
+},
+{
+  "_id": {
+    "$oid": "679a5aadb974b8d3ae1dd2d4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39459,
+  "longitude": 7.32557,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.34,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:24.684Z",
+  "updatedAt": "2025-01-29T16:43:24.684Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ab1b974b8d3ae1dd2d5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39456,
+  "longitude": 7.32552,
+  "hdop": 1.1,
+  "nsat": 5,
+  "accuracy": 4.71,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:29.253Z",
+  "updatedAt": "2025-01-29T16:43:29.253Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ab6b974b8d3ae1dd2d6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39453,
+  "longitude": 7.32544,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 4.64,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:34.442Z",
+  "updatedAt": "2025-01-29T16:43:34.442Z"
+},
+{
+  "_id": {
+    "$oid": "679a5abab974b8d3ae1dd2d7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39447,
+  "longitude": 7.32531,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.48,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:38.359Z",
+  "updatedAt": "2025-01-29T16:43:38.359Z"
+},
+{
+  "_id": {
+    "$oid": "679a5abeb974b8d3ae1dd2d8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39447,
+  "longitude": 7.32527,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:41.881Z",
+  "updatedAt": "2025-01-29T16:43:41.881Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ac3b974b8d3ae1dd2d9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39445,
+  "longitude": 7.32523,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 4.92,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:46.603Z",
+  "updatedAt": "2025-01-29T16:43:46.603Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ac6b974b8d3ae1dd2da"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39441,
+  "longitude": 7.32513,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.42,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:50.202Z",
+  "updatedAt": "2025-01-29T16:43:50.202Z"
+},
+{
+  "_id": {
+    "$oid": "679a5acbb974b8d3ae1dd2db"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39438,
+  "longitude": 7.32508,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.01,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:43:54.846Z",
+  "updatedAt": "2025-01-29T16:43:54.846Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ad1b974b8d3ae1dd2dc"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39433,
+  "longitude": 7.32498,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:01.000Z",
+  "updatedAt": "2025-01-29T16:44:01.000Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ad4b974b8d3ae1dd2dd"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39433,
+  "longitude": 7.32496,
+  "hdop": 0.9,
+  "nsat": 7,
+  "accuracy": 4.92,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:04.523Z",
+  "updatedAt": "2025-01-29T16:44:04.523Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ad8b974b8d3ae1dd2de"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39432,
+  "longitude": 7.32494,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 4.76,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:08.041Z",
+  "updatedAt": "2025-01-29T16:44:08.041Z"
+},
+{
+  "_id": {
+    "$oid": "679a5adcb974b8d3ae1dd2df"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39431,
+  "longitude": 7.32489,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.13,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:11.884Z",
+  "updatedAt": "2025-01-29T16:44:11.884Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ae0b974b8d3ae1dd2e0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39428,
+  "longitude": 7.32481,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.17,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:15.964Z",
+  "updatedAt": "2025-01-29T16:44:15.964Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ae4b974b8d3ae1dd2e1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39425,
+  "longitude": 7.32474,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 10.15,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:19.802Z",
+  "updatedAt": "2025-01-29T16:44:19.802Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ae8b974b8d3ae1dd2e2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39423,
+  "longitude": 7.32467,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:23.643Z",
+  "updatedAt": "2025-01-29T16:44:23.643Z"
+},
+{
+  "_id": {
+    "$oid": "679a5aecb974b8d3ae1dd2e3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3942,
+  "longitude": 7.32458,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.22,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:27.767Z",
+  "updatedAt": "2025-01-29T16:44:27.767Z"
+},
+{
+  "_id": {
+    "$oid": "679a5af0b974b8d3ae1dd2e4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39419,
+  "longitude": 7.32452,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.04,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:31.963Z",
+  "updatedAt": "2025-01-29T16:44:31.963Z"
+},
+{
+  "_id": {
+    "$oid": "679a5af3b974b8d3ae1dd2e5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39416,
+  "longitude": 7.32447,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.05,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:35.482Z",
+  "updatedAt": "2025-01-29T16:44:35.482Z"
+},
+{
+  "_id": {
+    "$oid": "679a5af7b974b8d3ae1dd2e6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39413,
+  "longitude": 7.32441,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.03,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:39.241Z",
+  "updatedAt": "2025-01-29T16:44:39.241Z"
+},
+{
+  "_id": {
+    "$oid": "679a5afbb974b8d3ae1dd2e7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39411,
+  "longitude": 7.3244,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 10.16,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:42.764Z",
+  "updatedAt": "2025-01-29T16:44:42.764Z"
+},
+{
+  "_id": {
+    "$oid": "679a5affb974b8d3ae1dd2e8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39408,
+  "longitude": 7.32432,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.01,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:46.600Z",
+  "updatedAt": "2025-01-29T16:44:46.600Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b04b974b8d3ae1dd2e9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39406,
+  "longitude": 7.32429,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:51.726Z",
+  "updatedAt": "2025-01-29T16:44:51.726Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b08b974b8d3ae1dd2ea"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39403,
+  "longitude": 7.32418,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.47,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:55.403Z",
+  "updatedAt": "2025-01-29T16:44:55.403Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b0cb974b8d3ae1dd2eb"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39399,
+  "longitude": 7.32411,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.52,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:44:59.884Z",
+  "updatedAt": "2025-01-29T16:44:59.884Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b10b974b8d3ae1dd2ec"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39396,
+  "longitude": 7.32403,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 10.27,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:04.053Z",
+  "updatedAt": "2025-01-29T16:45:04.053Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b14b974b8d3ae1dd2ed"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39393,
+  "longitude": 7.32397,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 9.41,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:07.563Z",
+  "updatedAt": "2025-01-29T16:45:07.563Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b17b974b8d3ae1dd2ee"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3939,
+  "longitude": 7.32394,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 9.27,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:11.326Z",
+  "updatedAt": "2025-01-29T16:45:11.326Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b1bb974b8d3ae1dd2ef"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39388,
+  "longitude": 7.32389,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 3.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:15.405Z",
+  "updatedAt": "2025-01-29T16:45:15.405Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b20b974b8d3ae1dd2f0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39386,
+  "longitude": 7.32383,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.12,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:19.643Z",
+  "updatedAt": "2025-01-29T16:45:19.643Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b25b974b8d3ae1dd2f1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39384,
+  "longitude": 7.32379,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.88,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:24.762Z",
+  "updatedAt": "2025-01-29T16:45:24.762Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b29b974b8d3ae1dd2f2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39382,
+  "longitude": 7.32375,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:28.761Z",
+  "updatedAt": "2025-01-29T16:45:28.761Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b2db974b8d3ae1dd2f3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39382,
+  "longitude": 7.32373,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.12,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:32.761Z",
+  "updatedAt": "2025-01-29T16:45:32.761Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b31b974b8d3ae1dd2f4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3938,
+  "longitude": 7.32368,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.68,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:36.603Z",
+  "updatedAt": "2025-01-29T16:45:36.603Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b34b974b8d3ae1dd2f5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39376,
+  "longitude": 7.32363,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.99,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:40.365Z",
+  "updatedAt": "2025-01-29T16:45:40.365Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b39b974b8d3ae1dd2f6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39376,
+  "longitude": 7.32363,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.07,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:45.008Z",
+  "updatedAt": "2025-01-29T16:45:45.008Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b3db974b8d3ae1dd2f7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39372,
+  "longitude": 7.3236,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.67,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:48.521Z",
+  "updatedAt": "2025-01-29T16:45:48.521Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b41b974b8d3ae1dd2f8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39369,
+  "longitude": 7.32354,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 6.76,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:52.605Z",
+  "updatedAt": "2025-01-29T16:45:52.605Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b44b974b8d3ae1dd2f9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39365,
+  "longitude": 7.3235,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.75,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:45:56.447Z",
+  "updatedAt": "2025-01-29T16:45:56.447Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b48b974b8d3ae1dd2fa"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39361,
+  "longitude": 7.32345,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 6.05,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:00.282Z",
+  "updatedAt": "2025-01-29T16:46:00.282Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b4cb974b8d3ae1dd2fb"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39359,
+  "longitude": 7.32344,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 5.45,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:04.124Z",
+  "updatedAt": "2025-01-29T16:46:04.124Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b50b974b8d3ae1dd2fc"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39357,
+  "longitude": 7.3234,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.65,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:08.210Z",
+  "updatedAt": "2025-01-29T16:46:08.210Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b57b974b8d3ae1dd2fd"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39354,
+  "longitude": 7.32334,
+  "hdop": 0.6,
+  "nsat": 11,
+  "accuracy": 4.92,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:14.287Z",
+  "updatedAt": "2025-01-29T16:46:14.287Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b5ab974b8d3ae1dd2fe"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39348,
+  "longitude": 7.32326,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.75,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:17.812Z",
+  "updatedAt": "2025-01-29T16:46:17.812Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b60b974b8d3ae1dd2ff"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39345,
+  "longitude": 7.32322,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.93,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:24.045Z",
+  "updatedAt": "2025-01-29T16:46:24.045Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b64b974b8d3ae1dd300"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39341,
+  "longitude": 7.3231,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:27.963Z",
+  "updatedAt": "2025-01-29T16:46:27.963Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b68b974b8d3ae1dd301"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39337,
+  "longitude": 7.32305,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.87,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:32.204Z",
+  "updatedAt": "2025-01-29T16:46:32.204Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b6cb974b8d3ae1dd302"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39335,
+  "longitude": 7.32302,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 5.92,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:35.722Z",
+  "updatedAt": "2025-01-29T16:46:35.722Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b6fb974b8d3ae1dd303"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39333,
+  "longitude": 7.323,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 6.63,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:39.322Z",
+  "updatedAt": "2025-01-29T16:46:39.322Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b73b974b8d3ae1dd304"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39332,
+  "longitude": 7.32298,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.36,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:43.161Z",
+  "updatedAt": "2025-01-29T16:46:43.161Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b77b974b8d3ae1dd305"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3933,
+  "longitude": 7.32295,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.57,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:47.400Z",
+  "updatedAt": "2025-01-29T16:46:47.400Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b7bb974b8d3ae1dd306"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39328,
+  "longitude": 7.32292,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.49,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:51.008Z",
+  "updatedAt": "2025-01-29T16:46:51.008Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b7fb974b8d3ae1dd307"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39326,
+  "longitude": 7.32289,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.58,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:54.604Z",
+  "updatedAt": "2025-01-29T16:46:54.604Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b83b974b8d3ae1dd308"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39323,
+  "longitude": 7.32285,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.64,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:46:58.203Z",
+  "updatedAt": "2025-01-29T16:46:58.203Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b87b974b8d3ae1dd309"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39319,
+  "longitude": 7.32279,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.77,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:02.602Z",
+  "updatedAt": "2025-01-29T16:47:02.602Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b8ab974b8d3ae1dd30a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39314,
+  "longitude": 7.32272,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.19,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:06.203Z",
+  "updatedAt": "2025-01-29T16:47:06.203Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b8fb974b8d3ae1dd30b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39311,
+  "longitude": 7.32269,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:10.688Z",
+  "updatedAt": "2025-01-29T16:47:10.688Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b93b974b8d3ae1dd30c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39307,
+  "longitude": 7.32264,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.02,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:14.681Z",
+  "updatedAt": "2025-01-29T16:47:14.681Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b9bb974b8d3ae1dd30d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39304,
+  "longitude": 7.32258,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.73,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:23.083Z",
+  "updatedAt": "2025-01-29T16:47:23.083Z"
+},
+{
+  "_id": {
+    "$oid": "679a5b9fb974b8d3ae1dd30e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39298,
+  "longitude": 7.32245,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.19,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:26.606Z",
+  "updatedAt": "2025-01-29T16:47:26.606Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ba3b974b8d3ae1dd30f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39293,
+  "longitude": 7.32238,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.5,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:30.522Z",
+  "updatedAt": "2025-01-29T16:47:30.522Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ba7b974b8d3ae1dd310"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39289,
+  "longitude": 7.32234,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.56,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:34.680Z",
+  "updatedAt": "2025-01-29T16:47:34.680Z"
+},
+{
+  "_id": {
+    "$oid": "679a5baab974b8d3ae1dd311"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39285,
+  "longitude": 7.32229,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.63,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:38.441Z",
+  "updatedAt": "2025-01-29T16:47:38.441Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bb0b974b8d3ae1dd312"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39281,
+  "longitude": 7.32224,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.51,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:44.445Z",
+  "updatedAt": "2025-01-29T16:47:44.445Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bb6b974b8d3ae1dd313"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39277,
+  "longitude": 7.32219,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.39,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:50.123Z",
+  "updatedAt": "2025-01-29T16:47:50.123Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bbab974b8d3ae1dd314"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39273,
+  "longitude": 7.32215,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.42,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:53.642Z",
+  "updatedAt": "2025-01-29T16:47:53.642Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bbdb974b8d3ae1dd315"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39272,
+  "longitude": 7.32213,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.4,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:47:57.401Z",
+  "updatedAt": "2025-01-29T16:47:57.401Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bc1b974b8d3ae1dd316"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39268,
+  "longitude": 7.32211,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:01.242Z",
+  "updatedAt": "2025-01-29T16:48:01.242Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bc7b974b8d3ae1dd317"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39265,
+  "longitude": 7.32207,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.94,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:07.165Z",
+  "updatedAt": "2025-01-29T16:48:07.165Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bcbb974b8d3ae1dd318"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39259,
+  "longitude": 7.32202,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.48,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:10.685Z",
+  "updatedAt": "2025-01-29T16:48:10.685Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bceb974b8d3ae1dd319"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39256,
+  "longitude": 7.32197,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.77,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:14.362Z",
+  "updatedAt": "2025-01-29T16:48:14.362Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bd4b974b8d3ae1dd31a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39253,
+  "longitude": 7.32194,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:20.202Z",
+  "updatedAt": "2025-01-29T16:48:20.202Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bd8b974b8d3ae1dd31b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39248,
+  "longitude": 7.3219,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.81,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:23.722Z",
+  "updatedAt": "2025-01-29T16:48:23.722Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bdcb974b8d3ae1dd31c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39245,
+  "longitude": 7.32186,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.29,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:27.807Z",
+  "updatedAt": "2025-01-29T16:48:27.807Z"
+},
+{
+  "_id": {
+    "$oid": "679a5be0b974b8d3ae1dd31d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39243,
+  "longitude": 7.32183,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.87,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:31.723Z",
+  "updatedAt": "2025-01-29T16:48:31.723Z"
+},
+{
+  "_id": {
+    "$oid": "679a5be4b974b8d3ae1dd31e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39239,
+  "longitude": 7.32178,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.33,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:36.361Z",
+  "updatedAt": "2025-01-29T16:48:36.361Z"
+},
+{
+  "_id": {
+    "$oid": "679a5be8b974b8d3ae1dd31f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39235,
+  "longitude": 7.32172,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.8,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:40.206Z",
+  "updatedAt": "2025-01-29T16:48:40.206Z"
+},
+{
+  "_id": {
+    "$oid": "679a5becb974b8d3ae1dd320"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39232,
+  "longitude": 7.32169,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.88,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:44.121Z",
+  "updatedAt": "2025-01-29T16:48:44.121Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bf0b974b8d3ae1dd321"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3923,
+  "longitude": 7.32164,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.6,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:47.962Z",
+  "updatedAt": "2025-01-29T16:48:47.962Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bf5b974b8d3ae1dd322"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39226,
+  "longitude": 7.3216,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.77,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:52.768Z",
+  "updatedAt": "2025-01-29T16:48:52.768Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bf9b974b8d3ae1dd323"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39222,
+  "longitude": 7.32154,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.44,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:48:56.608Z",
+  "updatedAt": "2025-01-29T16:48:56.608Z"
+},
+{
+  "_id": {
+    "$oid": "679a5bfeb974b8d3ae1dd324"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39221,
+  "longitude": 7.3215,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.01,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:01.487Z",
+  "updatedAt": "2025-01-29T16:49:01.487Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c01b974b8d3ae1dd325"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39218,
+  "longitude": 7.32144,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:05.242Z",
+  "updatedAt": "2025-01-29T16:49:05.242Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c05b974b8d3ae1dd326"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39216,
+  "longitude": 7.32136,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.11,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:09.006Z",
+  "updatedAt": "2025-01-29T16:49:09.006Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c09b974b8d3ae1dd327"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39213,
+  "longitude": 7.32132,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.15,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:12.521Z",
+  "updatedAt": "2025-01-29T16:49:12.521Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c0eb974b8d3ae1dd328"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39209,
+  "longitude": 7.32126,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.66,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:17.481Z",
+  "updatedAt": "2025-01-29T16:49:17.481Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c11b974b8d3ae1dd329"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39206,
+  "longitude": 7.32121,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.89,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:21.163Z",
+  "updatedAt": "2025-01-29T16:49:21.163Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c15b974b8d3ae1dd32a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39205,
+  "longitude": 7.32121,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.32,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:24.688Z",
+  "updatedAt": "2025-01-29T16:49:24.688Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c18b974b8d3ae1dd32b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39203,
+  "longitude": 7.32119,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.08,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:28.285Z",
+  "updatedAt": "2025-01-29T16:49:28.285Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c25b974b8d3ae1dd32c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.392,
+  "longitude": 7.32117,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.03,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:41.162Z",
+  "updatedAt": "2025-01-29T16:49:41.162Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c29b974b8d3ae1dd32d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3919,
+  "longitude": 7.32104,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.57,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:45.324Z",
+  "updatedAt": "2025-01-29T16:49:45.324Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c32b974b8d3ae1dd32e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39186,
+  "longitude": 7.32099,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 5.58,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:53.962Z",
+  "updatedAt": "2025-01-29T16:49:53.962Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c35b974b8d3ae1dd32f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39179,
+  "longitude": 7.32092,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.57,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:49:57.482Z",
+  "updatedAt": "2025-01-29T16:49:57.482Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c39b974b8d3ae1dd330"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39175,
+  "longitude": 7.32089,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.95,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:01.084Z",
+  "updatedAt": "2025-01-29T16:50:01.084Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c3db974b8d3ae1dd331"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39172,
+  "longitude": 7.32086,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.33,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:04.922Z",
+  "updatedAt": "2025-01-29T16:50:04.922Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c4ab974b8d3ae1dd332"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39169,
+  "longitude": 7.32083,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 4.76,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:17.801Z",
+  "updatedAt": "2025-01-29T16:50:17.801Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c4fb974b8d3ae1dd333"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39177,
+  "longitude": 7.32101,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 7.83,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:23.400Z",
+  "updatedAt": "2025-01-29T16:50:23.400Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c54b974b8d3ae1dd334"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39181,
+  "longitude": 7.32109,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.04,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:28.126Z",
+  "updatedAt": "2025-01-29T16:50:28.126Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c58b974b8d3ae1dd335"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39183,
+  "longitude": 7.32115,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.59,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:31.882Z",
+  "updatedAt": "2025-01-29T16:50:31.882Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c5db974b8d3ae1dd336"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39188,
+  "longitude": 7.32117,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.22,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:36.440Z",
+  "updatedAt": "2025-01-29T16:50:36.440Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c60b974b8d3ae1dd337"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39193,
+  "longitude": 7.32122,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 6.32,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:40.361Z",
+  "updatedAt": "2025-01-29T16:50:40.361Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c65b974b8d3ae1dd338"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39196,
+  "longitude": 7.32127,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.15,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:44.761Z",
+  "updatedAt": "2025-01-29T16:50:44.761Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c69b974b8d3ae1dd339"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39197,
+  "longitude": 7.32132,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.46,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:48.843Z",
+  "updatedAt": "2025-01-29T16:50:48.843Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c6db974b8d3ae1dd33a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39196,
+  "longitude": 7.32135,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.36,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:52.763Z",
+  "updatedAt": "2025-01-29T16:50:52.763Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c71b974b8d3ae1dd33b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39197,
+  "longitude": 7.32137,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.14,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:50:56.760Z",
+  "updatedAt": "2025-01-29T16:50:56.760Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c74b974b8d3ae1dd33c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39199,
+  "longitude": 7.3214,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 8.01,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:00.443Z",
+  "updatedAt": "2025-01-29T16:51:00.443Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c78b974b8d3ae1dd33d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39202,
+  "longitude": 7.32143,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.63,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:04.280Z",
+  "updatedAt": "2025-01-29T16:51:04.280Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c7db974b8d3ae1dd33e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39205,
+  "longitude": 7.32147,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.65,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:09.169Z",
+  "updatedAt": "2025-01-29T16:51:09.169Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c81b974b8d3ae1dd33f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3921,
+  "longitude": 7.32149,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.87,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:13.083Z",
+  "updatedAt": "2025-01-29T16:51:13.083Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c86b974b8d3ae1dd340"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39212,
+  "longitude": 7.32153,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:17.560Z",
+  "updatedAt": "2025-01-29T16:51:17.560Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c89b974b8d3ae1dd341"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39215,
+  "longitude": 7.32157,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.59,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:21.167Z",
+  "updatedAt": "2025-01-29T16:51:21.167Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c8db974b8d3ae1dd342"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39217,
+  "longitude": 7.32161,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.79,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:25.324Z",
+  "updatedAt": "2025-01-29T16:51:25.324Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c93b974b8d3ae1dd343"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39222,
+  "longitude": 7.32167,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.93,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:31.321Z",
+  "updatedAt": "2025-01-29T16:51:31.321Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c97b974b8d3ae1dd344"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39227,
+  "longitude": 7.32174,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.96,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:34.840Z",
+  "updatedAt": "2025-01-29T16:51:34.840Z"
+},
+{
+  "_id": {
+    "$oid": "679a5c9bb974b8d3ae1dd345"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39229,
+  "longitude": 7.32177,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.96,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:38.686Z",
+  "updatedAt": "2025-01-29T16:51:38.686Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ca1b974b8d3ae1dd346"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39232,
+  "longitude": 7.32178,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.17,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:44.604Z",
+  "updatedAt": "2025-01-29T16:51:44.604Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ca6b974b8d3ae1dd347"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39235,
+  "longitude": 7.32185,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:50.441Z",
+  "updatedAt": "2025-01-29T16:51:50.441Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cacb974b8d3ae1dd348"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3924,
+  "longitude": 7.3219,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.41,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:55.480Z",
+  "updatedAt": "2025-01-29T16:51:55.480Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cafb974b8d3ae1dd349"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39244,
+  "longitude": 7.32194,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.62,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:51:59.322Z",
+  "updatedAt": "2025-01-29T16:51:59.322Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cb3b974b8d3ae1dd34a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39247,
+  "longitude": 7.32199,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.36,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:02.761Z",
+  "updatedAt": "2025-01-29T16:52:02.761Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cb7b974b8d3ae1dd34b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39249,
+  "longitude": 7.32202,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.25,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:06.610Z",
+  "updatedAt": "2025-01-29T16:52:06.610Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cbbb974b8d3ae1dd34c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39253,
+  "longitude": 7.32204,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.02,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:10.603Z",
+  "updatedAt": "2025-01-29T16:52:10.603Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cbfb974b8d3ae1dd34d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39256,
+  "longitude": 7.32209,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.24,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:14.765Z",
+  "updatedAt": "2025-01-29T16:52:14.765Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cc7b974b8d3ae1dd34e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39257,
+  "longitude": 7.32216,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:23.086Z",
+  "updatedAt": "2025-01-29T16:52:23.086Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ccbb974b8d3ae1dd34f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39263,
+  "longitude": 7.32225,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.53,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:27.245Z",
+  "updatedAt": "2025-01-29T16:52:27.245Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ccfb974b8d3ae1dd350"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39269,
+  "longitude": 7.32232,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.66,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:30.760Z",
+  "updatedAt": "2025-01-29T16:52:30.760Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cd2b974b8d3ae1dd351"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39272,
+  "longitude": 7.32236,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 6.32,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:34.361Z",
+  "updatedAt": "2025-01-29T16:52:34.361Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cd7b974b8d3ae1dd352"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39274,
+  "longitude": 7.3224,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.46,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:39.083Z",
+  "updatedAt": "2025-01-29T16:52:39.083Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cdbb974b8d3ae1dd353"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39277,
+  "longitude": 7.32242,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.43,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:43.402Z",
+  "updatedAt": "2025-01-29T16:52:43.402Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ce0b974b8d3ae1dd354"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3928,
+  "longitude": 7.32247,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.94,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:48.042Z",
+  "updatedAt": "2025-01-29T16:52:48.042Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ce5b974b8d3ae1dd355"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39284,
+  "longitude": 7.32253,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.99,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:52.762Z",
+  "updatedAt": "2025-01-29T16:52:52.762Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ce9b974b8d3ae1dd356"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3929,
+  "longitude": 7.32259,
+  "hdop": 0.7,
+  "nsat": 10,
+  "accuracy": 5.22,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:52:57.241Z",
+  "updatedAt": "2025-01-29T16:52:57.241Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cedb974b8d3ae1dd357"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39292,
+  "longitude": 7.32264,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.61,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:00.763Z",
+  "updatedAt": "2025-01-29T16:53:00.763Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cf1b974b8d3ae1dd358"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39296,
+  "longitude": 7.32267,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.4,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:04.697Z",
+  "updatedAt": "2025-01-29T16:53:04.697Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cf4b974b8d3ae1dd359"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39298,
+  "longitude": 7.32271,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.68,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:08.283Z",
+  "updatedAt": "2025-01-29T16:53:08.283Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cf9b974b8d3ae1dd35a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39301,
+  "longitude": 7.32274,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 6.91,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:13.005Z",
+  "updatedAt": "2025-01-29T16:53:13.005Z"
+},
+{
+  "_id": {
+    "$oid": "679a5cfdb974b8d3ae1dd35b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39305,
+  "longitude": 7.32279,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:17.321Z",
+  "updatedAt": "2025-01-29T16:53:17.321Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d01b974b8d3ae1dd35c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3931,
+  "longitude": 7.32285,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.98,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:20.843Z",
+  "updatedAt": "2025-01-29T16:53:20.843Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d05b974b8d3ae1dd35d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39313,
+  "longitude": 7.32289,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.45,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:24.681Z",
+  "updatedAt": "2025-01-29T16:53:24.681Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d08b974b8d3ae1dd35e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39314,
+  "longitude": 7.32295,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.45,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:28.526Z",
+  "updatedAt": "2025-01-29T16:53:28.526Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d0cb974b8d3ae1dd35f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39318,
+  "longitude": 7.32299,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.68,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:32.042Z",
+  "updatedAt": "2025-01-29T16:53:32.042Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d10b974b8d3ae1dd360"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3932,
+  "longitude": 7.32304,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 6.49,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:35.587Z",
+  "updatedAt": "2025-01-29T16:53:35.587Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d14b974b8d3ae1dd361"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39323,
+  "longitude": 7.32311,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 5.78,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:39.968Z",
+  "updatedAt": "2025-01-29T16:53:39.968Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d19b974b8d3ae1dd362"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39327,
+  "longitude": 7.32317,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.81,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:44.682Z",
+  "updatedAt": "2025-01-29T16:53:44.682Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d1eb974b8d3ae1dd363"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39333,
+  "longitude": 7.32321,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.97,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:50.520Z",
+  "updatedAt": "2025-01-29T16:53:50.520Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d22b974b8d3ae1dd364"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39338,
+  "longitude": 7.32327,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 7.72,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:54.121Z",
+  "updatedAt": "2025-01-29T16:53:54.121Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d27b974b8d3ae1dd365"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3934,
+  "longitude": 7.3233,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 7.36,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:53:58.685Z",
+  "updatedAt": "2025-01-29T16:53:58.685Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d2ab974b8d3ae1dd366"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39342,
+  "longitude": 7.32337,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.38,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:02.443Z",
+  "updatedAt": "2025-01-29T16:54:02.443Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d2eb974b8d3ae1dd367"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39343,
+  "longitude": 7.32343,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.52,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:06.045Z",
+  "updatedAt": "2025-01-29T16:54:06.045Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d32b974b8d3ae1dd368"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39345,
+  "longitude": 7.32346,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.98,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:09.967Z",
+  "updatedAt": "2025-01-29T16:54:09.967Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d37b974b8d3ae1dd369"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3935,
+  "longitude": 7.32353,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 6.16,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:14.764Z",
+  "updatedAt": "2025-01-29T16:54:14.764Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d3bb974b8d3ae1dd36a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39356,
+  "longitude": 7.32362,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 6.57,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:18.602Z",
+  "updatedAt": "2025-01-29T16:54:18.602Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d3fb974b8d3ae1dd36b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39358,
+  "longitude": 7.32366,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 6.47,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:22.922Z",
+  "updatedAt": "2025-01-29T16:54:22.922Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d42b974b8d3ae1dd36c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3936,
+  "longitude": 7.32368,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 6.95,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:26.439Z",
+  "updatedAt": "2025-01-29T16:54:26.439Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d46b974b8d3ae1dd36d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39362,
+  "longitude": 7.32373,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.88,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:30.361Z",
+  "updatedAt": "2025-01-29T16:54:30.361Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d4bb974b8d3ae1dd36e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39367,
+  "longitude": 7.3238,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 7.46,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:34.762Z",
+  "updatedAt": "2025-01-29T16:54:34.762Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d4eb974b8d3ae1dd36f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39372,
+  "longitude": 7.32386,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 6.67,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:38.364Z",
+  "updatedAt": "2025-01-29T16:54:38.364Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d52b974b8d3ae1dd370"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39375,
+  "longitude": 7.32388,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 7.36,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:54:42.207Z",
+  "updatedAt": "2025-01-29T16:54:42.207Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d91b974b8d3ae1dd371"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39433,
+  "longitude": 7.32474,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 13.18,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:55:45.402Z",
+  "updatedAt": "2025-01-29T16:55:45.402Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d95b974b8d3ae1dd372"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39432,
+  "longitude": 7.32483,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 8.63,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:55:48.921Z",
+  "updatedAt": "2025-01-29T16:55:48.921Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d98b974b8d3ae1dd373"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39432,
+  "longitude": 7.32488,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 5.91,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:55:52.528Z",
+  "updatedAt": "2025-01-29T16:55:52.528Z"
+},
+{
+  "_id": {
+    "$oid": "679a5d9cb974b8d3ae1dd374"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39435,
+  "longitude": 7.32491,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 4.95,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:55:56.281Z",
+  "updatedAt": "2025-01-29T16:55:56.281Z"
+},
+{
+  "_id": {
+    "$oid": "679a5da0b974b8d3ae1dd375"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39434,
+  "longitude": 7.325,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 3.74,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:55:59.818Z",
+  "updatedAt": "2025-01-29T16:55:59.818Z"
+},
+{
+  "_id": {
+    "$oid": "679a5da3b974b8d3ae1dd376"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39435,
+  "longitude": 7.32504,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 3.66,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:03.491Z",
+  "updatedAt": "2025-01-29T16:56:03.491Z"
+},
+{
+  "_id": {
+    "$oid": "679a5da7b974b8d3ae1dd377"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39438,
+  "longitude": 7.32508,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 3.75,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:07.160Z",
+  "updatedAt": "2025-01-29T16:56:07.160Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dabb974b8d3ae1dd378"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3944,
+  "longitude": 7.32511,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 3.55,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:10.681Z",
+  "updatedAt": "2025-01-29T16:56:10.681Z"
+},
+{
+  "_id": {
+    "$oid": "679a5daeb974b8d3ae1dd379"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39444,
+  "longitude": 7.32515,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 3.88,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:14.200Z",
+  "updatedAt": "2025-01-29T16:56:14.200Z"
+},
+{
+  "_id": {
+    "$oid": "679a5db3b974b8d3ae1dd37a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39445,
+  "longitude": 7.32518,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 4.3,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:17.883Z",
+  "updatedAt": "2025-01-29T16:56:17.883Z"
+},
+{
+  "_id": {
+    "$oid": "679a5db6b974b8d3ae1dd37b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39448,
+  "longitude": 7.32523,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 5.39,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:21.727Z",
+  "updatedAt": "2025-01-29T16:56:21.727Z"
+},
+{
+  "_id": {
+    "$oid": "679a5db9b974b8d3ae1dd37c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39449,
+  "longitude": 7.3253,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 5.39,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:25.399Z",
+  "updatedAt": "2025-01-29T16:56:25.399Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dbdb974b8d3ae1dd37d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39451,
+  "longitude": 7.32536,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 5.25,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:28.919Z",
+  "updatedAt": "2025-01-29T16:56:28.919Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dc0b974b8d3ae1dd37e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39454,
+  "longitude": 7.32541,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 5.64,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:32.438Z",
+  "updatedAt": "2025-01-29T16:56:32.438Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dc4b974b8d3ae1dd37f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39453,
+  "longitude": 7.32548,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 6.71,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:35.972Z",
+  "updatedAt": "2025-01-29T16:56:35.972Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dc8b974b8d3ae1dd380"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39455,
+  "longitude": 7.32552,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 6.02,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:39.574Z",
+  "updatedAt": "2025-01-29T16:56:39.574Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dcbb974b8d3ae1dd381"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39457,
+  "longitude": 7.32557,
+  "hdop": 1,
+  "nsat": 5,
+  "accuracy": 6.38,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:43.318Z",
+  "updatedAt": "2025-01-29T16:56:43.318Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dcfb974b8d3ae1dd382"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3946,
+  "longitude": 7.32562,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.64,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:46.938Z",
+  "updatedAt": "2025-01-29T16:56:46.938Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dd3b974b8d3ae1dd383"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39462,
+  "longitude": 7.32565,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.63,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:50.767Z",
+  "updatedAt": "2025-01-29T16:56:50.767Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dd7b974b8d3ae1dd384"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39464,
+  "longitude": 7.32569,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.81,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:54.519Z",
+  "updatedAt": "2025-01-29T16:56:54.519Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ddab974b8d3ae1dd385"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39467,
+  "longitude": 7.32572,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 11.2,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:56:58.039Z",
+  "updatedAt": "2025-01-29T16:56:58.039Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ddeb974b8d3ae1dd386"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39469,
+  "longitude": 7.32576,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.06,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:01.558Z",
+  "updatedAt": "2025-01-29T16:57:01.558Z"
+},
+{
+  "_id": {
+    "$oid": "679a5de1b974b8d3ae1dd387"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39471,
+  "longitude": 7.32583,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.05,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:05.169Z",
+  "updatedAt": "2025-01-29T16:57:05.169Z"
+},
+{
+  "_id": {
+    "$oid": "679a5de5b974b8d3ae1dd388"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39472,
+  "longitude": 7.32595,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.71,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:09.006Z",
+  "updatedAt": "2025-01-29T16:57:09.006Z"
+},
+{
+  "_id": {
+    "$oid": "679a5de9b974b8d3ae1dd389"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39473,
+  "longitude": 7.326,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.94,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:12.849Z",
+  "updatedAt": "2025-01-29T16:57:12.849Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dedb974b8d3ae1dd38a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39475,
+  "longitude": 7.32607,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.31,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:16.599Z",
+  "updatedAt": "2025-01-29T16:57:16.599Z"
+},
+{
+  "_id": {
+    "$oid": "679a5df0b974b8d3ae1dd38b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39476,
+  "longitude": 7.32616,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.24,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:20.206Z",
+  "updatedAt": "2025-01-29T16:57:20.206Z"
+},
+{
+  "_id": {
+    "$oid": "679a5df4b974b8d3ae1dd38c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39477,
+  "longitude": 7.32622,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.23,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:23.964Z",
+  "updatedAt": "2025-01-29T16:57:23.964Z"
+},
+{
+  "_id": {
+    "$oid": "679a5df8b974b8d3ae1dd38d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39478,
+  "longitude": 7.32627,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.73,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:27.569Z",
+  "updatedAt": "2025-01-29T16:57:27.569Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dfbb974b8d3ae1dd38e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39479,
+  "longitude": 7.32636,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.87,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:31.320Z",
+  "updatedAt": "2025-01-29T16:57:31.320Z"
+},
+{
+  "_id": {
+    "$oid": "679a5dffb974b8d3ae1dd38f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39479,
+  "longitude": 7.32646,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:35.005Z",
+  "updatedAt": "2025-01-29T16:57:35.005Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e03b974b8d3ae1dd390"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39481,
+  "longitude": 7.32648,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.81,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:38.783Z",
+  "updatedAt": "2025-01-29T16:57:38.783Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e07b974b8d3ae1dd391"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39483,
+  "longitude": 7.32652,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 9.58,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:42.525Z",
+  "updatedAt": "2025-01-29T16:57:42.525Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e0ab974b8d3ae1dd392"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39487,
+  "longitude": 7.32658,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.76,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:46.123Z",
+  "updatedAt": "2025-01-29T16:57:46.123Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e0eb974b8d3ae1dd393"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39489,
+  "longitude": 7.32667,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.63,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:49.964Z",
+  "updatedAt": "2025-01-29T16:57:49.964Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e12b974b8d3ae1dd394"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39491,
+  "longitude": 7.32672,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.53,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:53.721Z",
+  "updatedAt": "2025-01-29T16:57:53.721Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e15b974b8d3ae1dd395"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39493,
+  "longitude": 7.32677,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.27,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:57:57.560Z",
+  "updatedAt": "2025-01-29T16:57:57.560Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e19b974b8d3ae1dd396"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39495,
+  "longitude": 7.32682,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 9.65,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:01.079Z",
+  "updatedAt": "2025-01-29T16:58:01.079Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e1db974b8d3ae1dd397"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39495,
+  "longitude": 7.32689,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 9.89,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:04.629Z",
+  "updatedAt": "2025-01-29T16:58:04.629Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e21b974b8d3ae1dd398"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39498,
+  "longitude": 7.32697,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.59,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:08.552Z",
+  "updatedAt": "2025-01-29T16:58:08.552Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e24b974b8d3ae1dd399"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.395,
+  "longitude": 7.32702,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.36,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:12.363Z",
+  "updatedAt": "2025-01-29T16:58:12.363Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e28b974b8d3ae1dd39a"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39501,
+  "longitude": 7.32709,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 9.96,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:16.119Z",
+  "updatedAt": "2025-01-29T16:58:16.119Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e2cb974b8d3ae1dd39b"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39502,
+  "longitude": 7.32714,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.1,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:19.746Z",
+  "updatedAt": "2025-01-29T16:58:19.746Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e30b974b8d3ae1dd39c"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39504,
+  "longitude": 7.3272,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.33,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:23.565Z",
+  "updatedAt": "2025-01-29T16:58:23.565Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e33b974b8d3ae1dd39d"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39507,
+  "longitude": 7.32725,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.43,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:27.406Z",
+  "updatedAt": "2025-01-29T16:58:27.406Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e37b974b8d3ae1dd39e"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39508,
+  "longitude": 7.32732,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.32,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:31.163Z",
+  "updatedAt": "2025-01-29T16:58:31.163Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e3bb974b8d3ae1dd39f"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39509,
+  "longitude": 7.32736,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.26,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:34.923Z",
+  "updatedAt": "2025-01-29T16:58:34.923Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e3fb974b8d3ae1dd3a0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3951,
+  "longitude": 7.32744,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.41,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:38.600Z",
+  "updatedAt": "2025-01-29T16:58:38.600Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e43b974b8d3ae1dd3a1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39512,
+  "longitude": 7.32748,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.45,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:42.446Z",
+  "updatedAt": "2025-01-29T16:58:42.446Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e46b974b8d3ae1dd3a2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39516,
+  "longitude": 7.32754,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.19,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:46.291Z",
+  "updatedAt": "2025-01-29T16:58:46.291Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e4ab974b8d3ae1dd3a3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39519,
+  "longitude": 7.3276,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.78,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:50.038Z",
+  "updatedAt": "2025-01-29T16:58:50.038Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e4eb974b8d3ae1dd3a4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39522,
+  "longitude": 7.32763,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 11.62,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:53.559Z",
+  "updatedAt": "2025-01-29T16:58:53.559Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e51b974b8d3ae1dd3a5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39522,
+  "longitude": 7.32771,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.71,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:58:57.169Z",
+  "updatedAt": "2025-01-29T16:58:57.169Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e55b974b8d3ae1dd3a6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39524,
+  "longitude": 7.32778,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.92,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:01.014Z",
+  "updatedAt": "2025-01-29T16:59:01.014Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e59b974b8d3ae1dd3a7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39525,
+  "longitude": 7.32783,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.17,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:04.850Z",
+  "updatedAt": "2025-01-29T16:59:04.850Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e5db974b8d3ae1dd3a8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39527,
+  "longitude": 7.32788,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 9.98,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:08.599Z",
+  "updatedAt": "2025-01-29T16:59:08.599Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e60b974b8d3ae1dd3a9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3953,
+  "longitude": 7.32793,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.23,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:12.438Z",
+  "updatedAt": "2025-01-29T16:59:12.438Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e64b974b8d3ae1dd3aa"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39532,
+  "longitude": 7.32799,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.39,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:15.962Z",
+  "updatedAt": "2025-01-29T16:59:15.962Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e68b974b8d3ae1dd3ab"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39532,
+  "longitude": 7.32805,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 11.3,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:19.568Z",
+  "updatedAt": "2025-01-29T16:59:19.568Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e6bb974b8d3ae1dd3ac"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39531,
+  "longitude": 7.32811,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 11.16,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:23.334Z",
+  "updatedAt": "2025-01-29T16:59:23.334Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e6fb974b8d3ae1dd3ad"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39533,
+  "longitude": 7.32816,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 11.52,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:27.011Z",
+  "updatedAt": "2025-01-29T16:59:27.011Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e73b974b8d3ae1dd3ae"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39534,
+  "longitude": 7.32818,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 12.89,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:30.702Z",
+  "updatedAt": "2025-01-29T16:59:30.702Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e76b974b8d3ae1dd3af"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3954,
+  "longitude": 7.32822,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 11.23,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:34.286Z",
+  "updatedAt": "2025-01-29T16:59:34.286Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e7ab974b8d3ae1dd3b0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39545,
+  "longitude": 7.32823,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 11.41,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:38.044Z",
+  "updatedAt": "2025-01-29T16:59:38.044Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e7eb974b8d3ae1dd3b1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39545,
+  "longitude": 7.32827,
+  "hdop": 0.9,
+  "nsat": 6,
+  "accuracy": 10.33,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:41.660Z",
+  "updatedAt": "2025-01-29T16:59:41.660Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e81b974b8d3ae1dd3b2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39546,
+  "longitude": 7.32835,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.72,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:45.400Z",
+  "updatedAt": "2025-01-29T16:59:45.400Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e85b974b8d3ae1dd3b3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39545,
+  "longitude": 7.32843,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.29,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:48.927Z",
+  "updatedAt": "2025-01-29T16:59:48.927Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e89b974b8d3ae1dd3b4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39545,
+  "longitude": 7.3285,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.09,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:52.609Z",
+  "updatedAt": "2025-01-29T16:59:52.609Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e8cb974b8d3ae1dd3b5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39547,
+  "longitude": 7.32859,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.78,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T16:59:56.439Z",
+  "updatedAt": "2025-01-29T16:59:56.439Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e90b974b8d3ae1dd3b6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39548,
+  "longitude": 7.32868,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.96,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:00.119Z",
+  "updatedAt": "2025-01-29T17:00:00.119Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e94b974b8d3ae1dd3b7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39552,
+  "longitude": 7.32875,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 10.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:03.728Z",
+  "updatedAt": "2025-01-29T17:00:03.728Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e97b974b8d3ae1dd3b8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39554,
+  "longitude": 7.32881,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 9.89,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:07.478Z",
+  "updatedAt": "2025-01-29T17:00:07.478Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e9bb974b8d3ae1dd3b9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39557,
+  "longitude": 7.32888,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.04,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:11.014Z",
+  "updatedAt": "2025-01-29T17:00:11.014Z"
+},
+{
+  "_id": {
+    "$oid": "679a5e9fb974b8d3ae1dd3ba"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39558,
+  "longitude": 7.32893,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 9.59,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:14.761Z",
+  "updatedAt": "2025-01-29T17:00:14.761Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ea2b974b8d3ae1dd3bb"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39561,
+  "longitude": 7.32899,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 9.68,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:18.361Z",
+  "updatedAt": "2025-01-29T17:00:18.361Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ea6b974b8d3ae1dd3bc"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39563,
+  "longitude": 7.32905,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 9.64,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:22.036Z",
+  "updatedAt": "2025-01-29T17:00:22.036Z"
+},
+{
+  "_id": {
+    "$oid": "679a5eabb974b8d3ae1dd3bd"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39564,
+  "longitude": 7.3291,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 9.34,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:25.726Z",
+  "updatedAt": "2025-01-29T17:00:25.726Z"
+},
+{
+  "_id": {
+    "$oid": "679a5eaeb974b8d3ae1dd3be"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39566,
+  "longitude": 7.32921,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 9.5,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:30.051Z",
+  "updatedAt": "2025-01-29T17:00:30.051Z"
+},
+{
+  "_id": {
+    "$oid": "679a5eb2b974b8d3ae1dd3bf"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39568,
+  "longitude": 7.32926,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.03,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:33.734Z",
+  "updatedAt": "2025-01-29T17:00:33.734Z"
+},
+{
+  "_id": {
+    "$oid": "679a5eb5b974b8d3ae1dd3c0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3957,
+  "longitude": 7.32931,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 9.89,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:37.244Z",
+  "updatedAt": "2025-01-29T17:00:37.244Z"
+},
+{
+  "_id": {
+    "$oid": "679a5eb9b974b8d3ae1dd3c1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39573,
+  "longitude": 7.32937,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 9.56,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:41.255Z",
+  "updatedAt": "2025-01-29T17:00:41.255Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ebdb974b8d3ae1dd3c2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39575,
+  "longitude": 7.32943,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 9.67,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:45.160Z",
+  "updatedAt": "2025-01-29T17:00:45.160Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ec1b974b8d3ae1dd3c3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39576,
+  "longitude": 7.3295,
+  "hdop": 0.8,
+  "nsat": 6,
+  "accuracy": 10.14,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:48.845Z",
+  "updatedAt": "2025-01-29T17:00:48.845Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ec5b974b8d3ae1dd3c4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39575,
+  "longitude": 7.32957,
+  "hdop": 0.9,
+  "nsat": 5,
+  "accuracy": 10.79,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:52.684Z",
+  "updatedAt": "2025-01-29T17:00:52.684Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ec9b974b8d3ae1dd3c5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39579,
+  "longitude": 7.32963,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 10.63,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:00:56.607Z",
+  "updatedAt": "2025-01-29T17:00:56.607Z"
+},
+{
+  "_id": {
+    "$oid": "679a5eccb974b8d3ae1dd3c6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39581,
+  "longitude": 7.32968,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 10.96,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:00.446Z",
+  "updatedAt": "2025-01-29T17:01:00.446Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ed0b974b8d3ae1dd3c7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39581,
+  "longitude": 7.32974,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 12.62,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:04.215Z",
+  "updatedAt": "2025-01-29T17:01:04.215Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ed5b974b8d3ae1dd3c8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39584,
+  "longitude": 7.32981,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 15.29,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:08.676Z",
+  "updatedAt": "2025-01-29T17:01:08.676Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ed9b974b8d3ae1dd3c9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39589,
+  "longitude": 7.32988,
+  "hdop": 0.7,
+  "nsat": 7,
+  "accuracy": 14.59,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:12.545Z",
+  "updatedAt": "2025-01-29T17:01:12.545Z"
+},
+{
+  "_id": {
+    "$oid": "679a5eddb974b8d3ae1dd3ca"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39589,
+  "longitude": 7.32995,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 13.61,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:16.519Z",
+  "updatedAt": "2025-01-29T17:01:16.519Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ee0b974b8d3ae1dd3cb"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39588,
+  "longitude": 7.33002,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 14.07,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:20.215Z",
+  "updatedAt": "2025-01-29T17:01:20.215Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ee4b974b8d3ae1dd3cc"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39584,
+  "longitude": 7.3301,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 12.17,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:24.444Z",
+  "updatedAt": "2025-01-29T17:01:24.444Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ee8b974b8d3ae1dd3cd"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39582,
+  "longitude": 7.33015,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 11.59,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:28.279Z",
+  "updatedAt": "2025-01-29T17:01:28.279Z"
+},
+{
+  "_id": {
+    "$oid": "679a5eecb974b8d3ae1dd3ce"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3958,
+  "longitude": 7.33021,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 11.92,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:32.286Z",
+  "updatedAt": "2025-01-29T17:01:32.286Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ef0b974b8d3ae1dd3cf"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39581,
+  "longitude": 7.33024,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 10.83,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:36.118Z",
+  "updatedAt": "2025-01-29T17:01:36.118Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ef4b974b8d3ae1dd3d0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39582,
+  "longitude": 7.33031,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 11.3,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:39.643Z",
+  "updatedAt": "2025-01-29T17:01:39.643Z"
+},
+{
+  "_id": {
+    "$oid": "679a5ef7b974b8d3ae1dd3d1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39583,
+  "longitude": 7.33039,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 11.37,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:43.247Z",
+  "updatedAt": "2025-01-29T17:01:43.247Z"
+},
+{
+  "_id": {
+    "$oid": "679a5efbb974b8d3ae1dd3d2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39587,
+  "longitude": 7.33047,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 11.27,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:46.849Z",
+  "updatedAt": "2025-01-29T17:01:46.849Z"
+},
+{
+  "_id": {
+    "$oid": "679a5efeb974b8d3ae1dd3d3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39589,
+  "longitude": 7.33055,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 10.78,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:50.441Z",
+  "updatedAt": "2025-01-29T17:01:50.441Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f02b974b8d3ae1dd3d4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39593,
+  "longitude": 7.33062,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 10.96,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:54.134Z",
+  "updatedAt": "2025-01-29T17:01:54.134Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f06b974b8d3ae1dd3d5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39596,
+  "longitude": 7.33067,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 10.6,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:01:57.651Z",
+  "updatedAt": "2025-01-29T17:01:57.651Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f09b974b8d3ae1dd3d6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39597,
+  "longitude": 7.33075,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 10.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:01.248Z",
+  "updatedAt": "2025-01-29T17:02:01.248Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f0db974b8d3ae1dd3d7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39599,
+  "longitude": 7.33079,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 11.04,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:04.794Z",
+  "updatedAt": "2025-01-29T17:02:04.794Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f10b974b8d3ae1dd3d8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39604,
+  "longitude": 7.33088,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 10.62,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:08.369Z",
+  "updatedAt": "2025-01-29T17:02:08.369Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f14b974b8d3ae1dd3d9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3961,
+  "longitude": 7.33096,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 9.69,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:11.960Z",
+  "updatedAt": "2025-01-29T17:02:11.960Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f18b974b8d3ae1dd3da"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39614,
+  "longitude": 7.33101,
+  "hdop": 0.8,
+  "nsat": 7,
+  "accuracy": 9.69,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:15.565Z",
+  "updatedAt": "2025-01-29T17:02:15.565Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f1bb974b8d3ae1dd3db"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39618,
+  "longitude": 7.33106,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 9.75,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:19.498Z",
+  "updatedAt": "2025-01-29T17:02:19.498Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f1fb974b8d3ae1dd3dc"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39621,
+  "longitude": 7.33114,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.46,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:23.159Z",
+  "updatedAt": "2025-01-29T17:02:23.159Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f23b974b8d3ae1dd3dd"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39624,
+  "longitude": 7.3312,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 3.55,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:26.712Z",
+  "updatedAt": "2025-01-29T17:02:26.712Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f27b974b8d3ae1dd3de"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39626,
+  "longitude": 7.33124,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 4.04,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:30.611Z",
+  "updatedAt": "2025-01-29T17:02:30.611Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f2ab974b8d3ae1dd3df"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39628,
+  "longitude": 7.33129,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:34.446Z",
+  "updatedAt": "2025-01-29T17:02:34.446Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f2eb974b8d3ae1dd3e0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3963,
+  "longitude": 7.33134,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 3.83,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:38.118Z",
+  "updatedAt": "2025-01-29T17:02:38.118Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f32b974b8d3ae1dd3e1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39632,
+  "longitude": 7.33138,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:41.811Z",
+  "updatedAt": "2025-01-29T17:02:41.811Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f36b974b8d3ae1dd3e2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39634,
+  "longitude": 7.33144,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:45.728Z",
+  "updatedAt": "2025-01-29T17:02:45.728Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f3ab974b8d3ae1dd3e3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39634,
+  "longitude": 7.33147,
+  "hdop": 0.8,
+  "nsat": 8,
+  "accuracy": 3.98,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:49.562Z",
+  "updatedAt": "2025-01-29T17:02:49.562Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f3db974b8d3ae1dd3e4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39637,
+  "longitude": 7.33153,
+  "hdop": 0.7,
+  "nsat": 8,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:53.329Z",
+  "updatedAt": "2025-01-29T17:02:53.329Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f41b974b8d3ae1dd3e5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3964,
+  "longitude": 7.33161,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:02:57.078Z",
+  "updatedAt": "2025-01-29T17:02:57.078Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f45b974b8d3ae1dd3e6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39641,
+  "longitude": 7.33166,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:00.757Z",
+  "updatedAt": "2025-01-29T17:03:00.757Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f49b974b8d3ae1dd3e7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39644,
+  "longitude": 7.33173,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.56,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:04.526Z",
+  "updatedAt": "2025-01-29T17:03:04.526Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f4db974b8d3ae1dd3e8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39647,
+  "longitude": 7.33179,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.3,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:08.771Z",
+  "updatedAt": "2025-01-29T17:03:08.771Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f51b974b8d3ae1dd3e9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3965,
+  "longitude": 7.33185,
+  "hdop": 0.6,
+  "nsat": 10,
+  "accuracy": 3.77,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:12.609Z",
+  "updatedAt": "2025-01-29T17:03:12.609Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f54b974b8d3ae1dd3ea"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39653,
+  "longitude": 7.33193,
+  "hdop": 0.6,
+  "nsat": 10,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:16.448Z",
+  "updatedAt": "2025-01-29T17:03:16.448Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f58b974b8d3ae1dd3eb"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39654,
+  "longitude": 7.332,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:20.129Z",
+  "updatedAt": "2025-01-29T17:03:20.129Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f5cb974b8d3ae1dd3ec"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39653,
+  "longitude": 7.33205,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:23.639Z",
+  "updatedAt": "2025-01-29T17:03:23.639Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f5fb974b8d3ae1dd3ed"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39651,
+  "longitude": 7.33213,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:27.159Z",
+  "updatedAt": "2025-01-29T17:03:27.159Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f63b974b8d3ae1dd3ee"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3965,
+  "longitude": 7.33218,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:30.772Z",
+  "updatedAt": "2025-01-29T17:03:30.772Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f66b974b8d3ae1dd3ef"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39648,
+  "longitude": 7.33224,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:34.443Z",
+  "updatedAt": "2025-01-29T17:03:34.443Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f6ab974b8d3ae1dd3f0"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39648,
+  "longitude": 7.3323,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.26,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:38.440Z",
+  "updatedAt": "2025-01-29T17:03:38.440Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f6eb974b8d3ae1dd3f1"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39648,
+  "longitude": 7.33236,
+  "hdop": 0.6,
+  "nsat": 10,
+  "accuracy": 4.13,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:42.047Z",
+  "updatedAt": "2025-01-29T17:03:42.047Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f72b974b8d3ae1dd3f2"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39648,
+  "longitude": 7.33239,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.25,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:45.808Z",
+  "updatedAt": "2025-01-29T17:03:45.808Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f76b974b8d3ae1dd3f3"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39649,
+  "longitude": 7.33246,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.91,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:49.719Z",
+  "updatedAt": "2025-01-29T17:03:49.719Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f7ab974b8d3ae1dd3f4"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39652,
+  "longitude": 7.33252,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:53.562Z",
+  "updatedAt": "2025-01-29T17:03:53.562Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f7eb974b8d3ae1dd3f5"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39655,
+  "longitude": 7.33258,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:03:57.725Z",
+  "updatedAt": "2025-01-29T17:03:57.725Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f81b974b8d3ae1dd3f6"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39657,
+  "longitude": 7.33264,
+  "hdop": 0.6,
+  "nsat": 10,
+  "accuracy": 3.86,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:01.402Z",
+  "updatedAt": "2025-01-29T17:04:01.402Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f86b974b8d3ae1dd3f7"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39658,
+  "longitude": 7.33272,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.19,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:05.159Z",
+  "updatedAt": "2025-01-29T17:04:05.159Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f89b974b8d3ae1dd3f8"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39658,
+  "longitude": 7.33275,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.64,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:09.010Z",
+  "updatedAt": "2025-01-29T17:04:09.010Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f8db974b8d3ae1dd3f9"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39659,
+  "longitude": 7.33279,
+  "hdop": 0.6,
+  "nsat": 10,
+  "accuracy": 4.64,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:12.850Z",
+  "updatedAt": "2025-01-29T17:04:12.850Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f91b974b8d3ae1dd3fa"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39659,
+  "longitude": 7.33283,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.72,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:16.522Z",
+  "updatedAt": "2025-01-29T17:04:16.522Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f95b974b8d3ae1dd3fb"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.3966,
+  "longitude": 7.33288,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.56,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:20.524Z",
+  "updatedAt": "2025-01-29T17:04:20.524Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f99b974b8d3ae1dd3fc"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39661,
+  "longitude": 7.33296,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.03,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:24.598Z",
+  "updatedAt": "2025-01-29T17:04:24.598Z"
+},
+{
+  "_id": {
+    "$oid": "679a5f9db974b8d3ae1dd3fd"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39661,
+  "longitude": 7.33302,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 5.7,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:28.519Z",
+  "updatedAt": "2025-01-29T17:04:28.519Z"
+},
+{
+  "_id": {
+    "$oid": "679a5fa0b974b8d3ae1dd3fe"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39662,
+  "longitude": 7.33308,
+  "hdop": 0.6,
+  "nsat": 10,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:32.279Z",
+  "updatedAt": "2025-01-29T17:04:32.279Z"
+},
+{
+  "_id": {
+    "$oid": "679a5fa4b974b8d3ae1dd3ff"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39663,
+  "longitude": 7.33316,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 3.54,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:36.199Z",
+  "updatedAt": "2025-01-29T17:04:36.199Z"
+},
+{
+  "_id": {
+    "$oid": "679a5fa8b974b8d3ae1dd400"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39664,
+  "longitude": 7.33322,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.05,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:40.051Z",
+  "updatedAt": "2025-01-29T17:04:40.051Z"
+},
+{
+  "_id": {
+    "$oid": "679a5facb974b8d3ae1dd401"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39666,
+  "longitude": 7.33326,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.53,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:43.742Z",
+  "updatedAt": "2025-01-29T17:04:43.742Z"
+},
+{
+  "_id": {
+    "$oid": "679a5fb0b974b8d3ae1dd402"
+  },
+  "imei": "862315069444254",
+  "mode": "GPS",
+  "latitude": 51.39669,
+  "longitude": 7.33331,
+  "hdop": 0.7,
+  "nsat": 9,
+  "accuracy": 4.37,
+  "speed": null,
+  "timeToGetFirstFix": 7992,
+  "fixCount": null,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T17:04:47.565Z",
+  "updatedAt": "2025-01-29T17:04:47.565Z"
+}]
