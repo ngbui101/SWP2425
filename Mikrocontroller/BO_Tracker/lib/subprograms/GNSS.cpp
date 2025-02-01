@@ -302,7 +302,7 @@ bool GNSS::updatePosition()
     last_position->toJson(gnss);
     gnss["TTFF"] = TTFF;
     gnss["Step"] = getStepCounterOutput();
-    PowerDownGNSS();
+    // PowerDownGNSS();
     return true;
 }
 
