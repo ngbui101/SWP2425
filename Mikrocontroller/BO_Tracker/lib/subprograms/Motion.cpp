@@ -93,13 +93,16 @@ void _Motion::initialize(MA456_RANGE range, MBA456_ODR odr, MA456_BW bw, MA456_P
     }
 
     bma4_set_accel_enable(BMA4_ENABLE, &accel);
+
+    // calibrateSensor(10, &accel);
 }
 
-void _Motion::stepCounterEnable(MA456_PLATFORM_CONF conf, bool cmd)
+bool _Motion::stepCounterEnable(MA456_PLATFORM_CONF conf, bool cmd)
 {
     bma456_reset_step_counter(&accel);
     bma456_select_platform(conf, &accel);
     bma456_feature_enable(BMA456_STEP_CNTR, cmd, &accel);
+    return true;
 }
 
 void _Motion::getAcceleration(float *x, float *y, float *z)
@@ -111,12 +114,18 @@ void _Motion::getAcceleration(float *x, float *y, float *z)
     *x = (float)sens_data.x * devRange / 32768;
     *y = (float)sens_data.y * devRange / 32768;
     *z = (float)sens_data.z * devRange / 32768;
+
+    // *x = ((float)sens_data.x - x_offset) * devRange / 32768;
+    // *y = ((float)sens_data.y - y_offset) * devRange / 32768;
+    // *z = ((float)sens_data.z - z_offset) * devRange / 32768;
 }
 
 void _Motion::getDynamicAcceleration(float *dynamic_acceleration)
 {
     struct bma4_accel sens_data;
-    float x, y, z;
+    float x = 0;
+    float y = 0;
+    float z = 0;
     // Rohdaten auslesen
     bma4_read_accel_xyz(&sens_data, &accel);
 
@@ -124,12 +133,13 @@ void _Motion::getDynamicAcceleration(float *dynamic_acceleration)
     const float mg_to_ms2 = 9.81 / 1000;
 
     // Umrechnung in mg
+
     x = (float)sens_data.x * devRange / 32768;
     y = (float)sens_data.y * devRange / 32768;
     z = (float)sens_data.z * devRange / 32768;
 
-    *dynamic_acceleration = (std::sqrt((x * x) + (y * y) + (z * z)) * mg_to_ms2) - 9.81;
-    *dynamic_acceleration = (*dynamic_acceleration < 0.2) ? 0 : *dynamic_acceleration;
+    *dynamic_acceleration = (std::sqrt((x * x) + (y * y) + (z * z)) * mg_to_ms2) - 9.82;
+    *dynamic_acceleration = ((*dynamic_acceleration < 0.2) && (*dynamic_acceleration > -0.2)) ? 0 : *dynamic_acceleration;
 }
 
 int32_t _Motion::getTemperature(void)
@@ -190,7 +200,7 @@ bool _Motion::waitForMotion()
     /* Check if sig-motion interrupt is received */
     if ((rslt == BMA4_OK) && (int_status & BMA456_WAKEUP_INT))
     {
-        blink();
+        // blink();
         return true;
     }
     return false;
@@ -212,13 +222,6 @@ bool _Motion::checkForMotionInMillis(unsigned long time, float threshold)
         float xx0 = x - x0;
         float yy0 = y - y0;
         float zz0 = z - z0;
-        // Serial.print("xx0: ");
-        // Serial.println(xx0);
-        // Serial.print("yy0: ");
-        // Serial.println(yy0);
-        // Serial.print("zz0: ");
-        // Serial.println(zz0);
-
         float magnitude = sqrt(xx0 * xx0 + yy0 * yy0 + zz0 * zz0);
 
         x0 = x;
@@ -233,22 +236,34 @@ bool _Motion::checkForMotionInMillis(unsigned long time, float threshold)
     return (avgMagnitude > threshold);
 }
 
-bool _Motion::isMovementAboveThreshold(float threshold)
-{
-    float x, y, z;
-    getAcceleration(&x, &y, &z);
-
-    // Berechnung des Betrags der Beschleunigung aus den drei Achsen
-    float magnitude = sqrt((x * x) + (y * y) + (z * z));
-
-    // Wenn der Betrag die Grenze überschreitet, geben wir true zurück
-    return (magnitude > threshold);
-}
-
 void _Motion::blink()
 {
 
     digitalWrite(LED_BUILTIN, HIGH);
     delay(1000);
     digitalWrite(LED_BUILTIN, LOW);
+}
+
+float _Motion::getAcceleration()
+{
+    // int count = 0;
+    // unsigned long start_time = millis();
+    // unsigned long sum = 0;
+    // while(millis() - start_time < 1000)
+    // {
+    //     float accel = 0;
+    //     getDynamicAcceleration(&accel);
+    //     sum += accel;
+    //     count++;
+    //     delay(10);
+    // }
+    float accel = 0;
+    getDynamicAcceleration(&accel);
+    delay(100);
+    return accel;
+}
+
+bool _Motion::noMotion()
+{
+    return (getAcceleration() == 0);
 }

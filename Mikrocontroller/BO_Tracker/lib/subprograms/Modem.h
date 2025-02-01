@@ -16,12 +16,14 @@ protected:
     char modemIMEI[20]; 
     bool funkModuleEnable = false;
     bool connect = false;
+    JsonDocument &docInput;
+    
     // Cell *cells[6] = {nullptr};
     CellFIFO cells_queue;
     
 public:
     // Konstruktor (nur zwei Streams)
-    Modem(Stream &atSerial, Stream &dSerial);
+    Modem(Stream &atSerial, Stream &dSerial, JsonDocument &docInput);
 
     // Methoden
     bool startModem();         // Initialisiert das Modem
@@ -42,12 +44,11 @@ public:
 
     bool fillCellsQueue();
 
-    _BG96_Module getModem();
+    bool handleCellInfosMode();
 
-    bool setMode(char *payload);
+    _BG96_Module getModem();
 private:
     int MAX_CELLS = 6;
-    unsigned long lastScanTime = 0;
 };
 
 #endif  // __MODEM_H_
