@@ -89,7 +89,7 @@ class _BG96_GNSS : public _BG96_MQTT
 
     bool GetGNSSPositionInformation(char *position);
 
-    bool GetGnssJsonPositionInformation(JsonDocument &json, unsigned long starttime); 
+    // bool GetGnssJsonPositionInformation(JsonDocument &json, unsigned long starttime); 
     bool TurnOffGNSS();
 
     bool GetGNSSNMEASentences(NMEA_Type_t type, char *sentences);
@@ -127,8 +127,7 @@ class _BG96_GNSS : public _BG96_MQTT
     bool InitAGPS(const char *supurl, const char *apn);
 
    private:
-    unsigned long currentTime;
-    unsigned long TTFF = 0;
+    
    ///GPSOneXTRA Update Liste
     const char* xtra_links[3] = {
         "http://xtrapath1.izatcloud.net/xtra2.bin",

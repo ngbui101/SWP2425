@@ -10,18 +10,20 @@ void PowerSavingMode::start()
     if (tracker.wakeUp())
     {
         // Serial.println("Wake Up");
-        // Serial.println("Setup");
-        if (!tracker.turnOnFunctionality())
+        bool useMQTT = false;
+        if (!tracker.turnOnFunctionality(useMQTT))
+        {
             return;
-        // delay(5000);
-        // Serial.println("SendData");
-        // tracker.blink();
-        if (!tracker.sendAndWaitResponseHTTP())
+        }
+        if (!tracker.sendAndWaitResponseHTTP(trackerModes.maxRealTime))
         {
             tracker.handleErrors();
             return;
         }
         trackerModes.wakeUp = false;
+
+        // Serial.print("\nZaeler: ");
+        // Serial.println(zaehler++);
     }
     else
     {
@@ -30,23 +32,6 @@ void PowerSavingMode::start()
             // Serial.println("TurnOffModem");
             tracker.turnOffModem();
         }
-        // Serial.println("GoTo Sleep");
-        tracker.deepSleepWithAlarm(trackerModes.period - 10 * 1000ul);
+        tracker.deepSleepWithAlarm(trackerModes.period);
     }
 }
-
-// bool PowerSavingMode::setup()
-// {
-//     return tracker.turnOnFunctionality();
-// }
-
-// Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
-// bool PowerSavingMode::sendData()
-// {
-//     if (!tracker.sendAndWaitResponseHTTP())
-//     {
-
-//         return false;
-//     }
-//     return true;
-// }

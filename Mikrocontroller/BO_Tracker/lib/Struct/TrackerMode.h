@@ -1,47 +1,26 @@
 // TrackerMode.h
 #define TRACKER_MODE_H_
 
-struct TrackerModes {
+struct TrackerModes
+{
     // Mode
     bool GnssMode = false;
-    bool CellInfosMode = true;
-    bool BatteryMode = true;
-    bool TemperatureMode = true;
+    bool CellInfosMode = false;
+    bool BatteryMode = false;
+    bool TemperatureMode = false;
     bool NmeaMode = false;
     bool GeoFenMode = false;
-    // bool RequestMode = true;
-    // bool Modem_Off = false;
+    // bool MotionMode = false;
     unsigned long period = 60000UL;
     unsigned long maxRealTime = 120001UL;
     bool realtime = false;
+    // char RAT[8] = "lte";
+    // char  RAT[8] = "gsm";
+    char RAT[8] = "nbiot";
+
     // GeoFencing
-    float geoLatitude = 0;
-    float geoLongitude = 0;
-    unsigned int geoRadius = 0;
 
     bool wakeUp = true;
-
-    // void resetModes() {
-    //     GnssMode = false;
-    //     CellInfosMode = true;
-    //     BatteryMode = true;
-    //     TemperatureMode = true;
-    //     NmeaMode = false;
-    //     GeoFenMode = false;
-    //     // RequestMode = true;
-    //     period = 60000UL;
-    //     geoLatitude = 0;
-    //     geoLongitude = 0;
-    //     geoRadius = 0;
-    // }
-
-    // void updateRequestMode(){
-    //     if(GnssMode || CellInfosMode || TemperatureMode || NmeaMode || BatteryMode){
-    //         RequestMode = false;
-    //     } else {
-    //         RequestMode = true;
-    //     }
-    // }
 };
 
 extern TrackerModes trackerModes;
