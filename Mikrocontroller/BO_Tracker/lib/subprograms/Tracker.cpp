@@ -174,6 +174,9 @@ bool Tracker::turnOnFunctionality(bool useMQTT)
 
     // Modem einschalten (falls noch nicht verfügbar)
     success &= isModemAvailable() || turnOnModem();
+
+    // GNSS nur einschalten, wenn trackerModes.GnssMode == true
+    // (bzw. wenn es nicht already enabled ist)
     success &= !trackerModes.GnssMode || isGnssModuleEnable() || TurnOnGNSS();
 
     // success &= !trackerModes.MotionMode || enable_step_counter || stepCounterEnable();
@@ -194,6 +197,7 @@ bool Tracker::turnOnFunctionality(bool useMQTT)
 
     // Fehlerbehandlung
     handleErrors();
+
     return success;
 }
 
