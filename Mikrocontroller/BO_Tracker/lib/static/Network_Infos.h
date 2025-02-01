@@ -8,8 +8,6 @@ const char APN[] = "iot.1nce.net";
 const char LOGIN[] = "";
 const char PASSWORD[] = "";
 
-// const char RAT[] = "gsm";
-// const char RAT[] = "nbiot";
 const bool useMQTT = false;
 const unsigned int PDPIndex = 1;
 
