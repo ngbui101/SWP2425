@@ -1145,10 +1145,7 @@ int _BG96_Common::ScanCells(Cell *cells[])
     Cell *servingcell = nullptr;
     int act_operator;
     // Determine scan mode based on 'rat'
-    if (!DeactivateDevAPN(1))
-    {
-        return 0;
-    }
+
     if (!checkForNetwork())
     {
         return 0;
@@ -1165,6 +1162,10 @@ int _BG96_Common::ScanCells(Cell *cells[])
 
     if (strcmp(servingcell->getRat(), "cat-m") == 0)
     {
+        if (!DeactivateDevAPN(1))
+        {
+            return 0;
+        }
         Net_Type_t act = LTE_CAT_M1; // LTE network type
         // --- LTE Scanning ---
         // List of operators to scan
@@ -1207,50 +1208,57 @@ int _BG96_Common::ScanCells(Cell *cells[])
             }
             else if (!telekom)
             {
-                DevOperatorNetwork(mode, format, "26201", act, WRITE_MODE);
-            }else{
+                act_operator = 26201;
+            }
+            else
+            {
+                mode = 0;
+                DevOperatorNetwork(mode, format, act_operator, act, WRITE_MODE);
                 break;
             }
-            
-            if (!checkForNetwork())
-            {
-                continue;
-            }
 
-            Cell *cell = ReportCellInformation("servingcell");
-            if (cell != nullptr)
+            DevOperatorNetwork(mode, format, act_operator, act, WRITE_MODE);
+
+            if (checkForNetworkWithDENIED())
             {
-                cells[cellCount++] = cell;
-                act_operator = cell->getOperator();
+                Cell *cell = ReportCellServingcell();
+                if (cell != nullptr)
+                {
+                    cells[cellCount++] = cell;
+                    // act_operator = cell->getOperator();
+                }
             }
-            // Serial.println(act_operator);
+        }
+
+        if (!TurnOnInternet(1))
+        {
+            return 0;
         }
     }
     // char error_code[16];
     else if (strcmp(servingcell->getRat(), "cat-nb") == 0)
     {
-        
     }
     else if (strcmp(servingcell->getRat(), "gsm") == 0)
     {
         const int puff_length = max_cells - 1;
         Cell *puff_array[puff_length] = {nullptr};
         ReportNeighbourCellInformation(puff_array, puff_length);
-    
-        for(Cell *neighbourCell : puff_array)
-        {   
-            if(neighbourCell != nullptr){
+
+        for (Cell *neighbourCell : puff_array)
+        {
+            if (neighbourCell != nullptr)
+            {
                 cells[cellCount++] = neighbourCell;
             }
         }
-    }else{
-        return 0;
     }
-    // Serial.println("Fertig ScanCells");
-    if (!TurnOnInternet(1))
+    else
     {
         return 0;
     }
+    // Serial.println("Fertig ScanCells");
+
     return cellCount; // Return the total number of cells found
 }
 bool _BG96_Common::FactoryReset()

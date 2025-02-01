@@ -29,7 +29,6 @@ void PowerSavingMode::start()
     {
         if (tracker.isModemAvailable())
         {
-            // Serial.println("TurnOffModem");
             tracker.turnOffModem();
         }
         tracker.deepSleepWithAlarm(trackerModes.period);
