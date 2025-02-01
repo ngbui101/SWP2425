@@ -35,5 +35,5 @@ void loop()
   {
     longtimeTracker.start();
   }
-  delay(100);
+  // delay(100);
 }

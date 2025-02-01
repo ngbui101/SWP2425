@@ -2,7 +2,7 @@
 
 // Konstruktor ruft den Basisklassen-Konstruktor (GNSS) auf
 Tracker::Tracker(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
-    : MQTT_AWS(atSerial, dSerial, doc)
+    : GNSS(atSerial, dSerial, doc)
 {
 }
 Tracker::~Tracker() {}
@@ -14,6 +14,7 @@ bool Tracker::InitModule()
     {
         return initHTTP() && InitGNSS();
     }
+    handleErrors();
     return false;
 }
 
@@ -52,12 +53,16 @@ bool Tracker::responseValid(char *payload)
 }
 
 bool Tracker::modeHandle()
-{
-    // if (modeRequest)
-    // {
-    //     docInput["RequestMode"] = true;
-    //     modeRequest = false;
-    // }
+{   
+    if (trackerModes.CellInfosMode && !handleCellInfosMode())
+    {
+        return false;
+    }
+    if (trackerModes.GnssMode && !handleGNSSMode(POWERSAVING_DISABLE))
+    {
+        return false;
+    }
+
     if (trackerModes.TemperatureMode)
     {
         docInput["Temperature"] = readTemperature();
@@ -70,16 +75,6 @@ bool Tracker::modeHandle()
         docInput["BatteryPercentage"] = calculateBatteryPercentage();
     }
 
-    // Zellinformationen erfassen
-    if (trackerModes.CellInfosMode && !handleCellInfosMode())
-    {
-        return false;
-    }
-    if (trackerModes.GnssMode)
-    {
-        handleGNSSMode();
-    }
-
     docInput["IMEI"] = modemIMEI;
     docInput["frequenz"] = trackerModes.period;
     // docInput["Timestamp"] = getDateTime();
@@ -87,66 +82,10 @@ bool Tracker::modeHandle()
     return true;
 }
 
-// bool Tracker::sendAndCheck()
-// {
-//     char response[1028];
-
-//     while (abs(millis() - pub_time) > trackerModes.period - 1000)
-//     {
-//         if (!modeHandle() || !publishData("/pub"))
-//         {
-//             return false;
-//         }
-//         pub_time = millis();
-//         // delay(300);
-//     }
-//     Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(response, 2);
-//     // Serial.print("ret:");
-//     // Serial.println(ret);
-//     // Serial.println("response");
-//     // Serial.println(response);
-
-//     switch (ret)
-//     {
-//     case MQTT_RECV_DATA_EVENT:
-//         setMode(response);
-//         return false;
-//     case MQTT_STATUS_EVENT:
-//         if (handleMQTTStatusEventClose(response)){
-//             mqtt_available = false;
-//             return false;
-//         }
-//         break;
-//     default:
-//         break;
-//     }
-//     return true;
-// }
-// bool Tracker::sendAndCheck()
-// {
-//     bool keepRunning = false;
-
-//     // Serial.println("sendAndWaitResponseHTTP");
-//     /////
-//     keepRunning = sendAndWaitResponseHTTP(); /// isMQTTAvaliable() ? pubAndsubMQTT() : sendAndWaitResponseHTTP();
-
-//     if (!trackerModes.realtime)
-//     {
-//         return false;
-//     }
-//     while (abs(millis() - pub_time) <= trackerModes.period - 1000)
-//     {
-//         // delay(1000);
-//         // Serial.println("less than interval");
-//     }
-
-//     return keepRunning;
-// }
-
 bool Tracker::pubAndsubMQTT(unsigned long interval)
 {
     char response[1028];
-    pub_time = millis();
+    // pub_time = millis();
     Mqtt_Event_t event = waitForResponse(response);
     switch (event)
     {
@@ -163,13 +102,16 @@ bool Tracker::pubAndsubMQTT(unsigned long interval)
 
     if (!modeHandle())
     {
-        pub_time = millis();
         return false;
     }
+
+    measure_time = millis();
+
     if (!publishData("/pub"))
-    {
+    {   
         return false;
     }
+    delay(100);
     return true;
 }
 
@@ -194,21 +136,9 @@ bool Tracker::sendAndWaitResponseHTTP(unsigned long interval)
         }
     }
 
-    // if (!modeHandle())
-    // {
-    //     return false;
-    // }
-    // else
-    // {
-    //     measure_time = millis();
-    //     if (!serializeJsonPretty(docInput, payload))
-    //     {
-    //         return false;
-    //     }
-    // }
     if (!sendAndReadResponse(payload, response))
     {
-        Serial.println("Fehler bei: sendAndReadResponse");
+        // Serial.println("Fehler bei: sendAndReadResponse");
         return false;
     }
     docInput.clear();
@@ -237,37 +167,11 @@ int Tracker::getRunningErrorCount()
     return runningLogger.getErrorCount();
 }
 
-bool Tracker::turnOffModem()
-{
-    if (!_BG96.PowerOffModule())
-    {
-        return false;
-    };
-    funkModuleEnable = false;
-    connect = false;
-    getFirstFix = false;
-    gpsModuleEnable = false;
-    urlSetted = false;
-    mqtt_available = false;
-
-    return true;
-}
-
-bool Tracker::resetModem()
-{
-    if (!turnOffModem() && !turnOnModem())
-    {
-        Serial.print("Reset: ");
-        Serial.println(countReset);
-        countReset++;
-        return true;
-    }
-    return false;
-}
 bool Tracker::turnOnFunctionality(bool useMQTT)
 {
     bool success = true;
-    start_time = millis();
+    measure_time = -999999; //measure_time zurücksetzen
+
     // Modem einschalten (falls noch nicht verfügbar)
     success &= isModemAvailable() || turnOnModem();
 
@@ -275,6 +179,7 @@ bool Tracker::turnOnFunctionality(bool useMQTT)
     // (bzw. wenn es nicht already enabled ist)
     success &= !trackerModes.GnssMode || isGnssModuleEnable() || TurnOnGNSS();
 
+    // success &= !trackerModes.MotionMode || enable_step_counter || stepCounterEnable();
     // Netzwerkverbindung herstellen
     success &= isConnected() || startConnect();
 
@@ -287,7 +192,7 @@ bool Tracker::turnOnFunctionality(bool useMQTT)
     else
     {
         // Ansonsten HTTP verwenden
-        success &= isMQTTAvaliable() || startMQTT();
+        success &= mqtt_available || startMQTT();
     }
 
     // Fehlerbehandlung
@@ -320,17 +225,6 @@ bool Tracker::handleCellInfosMode()
     return true;
 }
 
-bool Tracker::retryIn1Hour()
-{
-    countReset = 0;
-    deepSleep(3600 * 1000);
-    return true;
-}
-
-int Tracker::getResetCount()
-{
-    return this->countReset;
-}
 
 bool Tracker::handleErrors()
 {
@@ -347,8 +241,89 @@ bool Tracker::handleErrors()
     return true;
 }
 
-bool Tracker::handleIniTErrors()
+bool Tracker::setMode(char *payload)
 {
+    JsonDocument docOutput;
+    DeserializationError error = deserializeJson(docOutput, payload);
 
+    if (error == DeserializationError::Ok)
+    {
+        if (docOutput["GnssMode"].is<boolean>())
+        {
+            trackerModes.GnssMode = docOutput["GnssMode"];
+        }
+        if (docOutput["CellInfosMode"].is<boolean>())
+        {
+            trackerModes.CellInfosMode = docOutput["CellInfosMode"];
+        }
+        if (docOutput["BatteryMode"].is<boolean>())
+        {
+            trackerModes.BatteryMode = docOutput["BatteryMode"];
+        }
+        if (docOutput["TemperatureMode"].is<boolean>())
+        {
+            trackerModes.TemperatureMode = docOutput["TemperatureMode"];
+        }
+        // if (docOutput["MotionMode"].is<boolean>()){
+        //     trackerModes.MotionMode = docOutput["MotionMode"];
+        // }
+        if (docOutput["NmeaMode"].is<boolean>())
+        {
+            trackerModes.NmeaMode = docOutput["NmeaMode"];
+        }
+        // Frequenz aktualisieren
+        if (docOutput["frequenz"].is<unsigned long>())
+        {
+            unsigned long newFrequenz = docOutput["frequenz"];
+            if (newFrequenz > 0)
+            {
+                trackerModes.period = newFrequenz;
+                if(trackerModes.period < trackerModes.maxRealTime){
+                    stepCounterEnable();
+                    trackerModes.realtime = true;
+                }else{
+                    trackerModes.realtime = false;
+                }
+            }
+        }
+    }
+    else
+    {
+        runningLogger.logError("Deserialization");
+        return false;
+    }
+    docOutput.clear();
     return true;
 }
+
+bool Tracker::pingServer()
+{
+    char send_data[64];
+    char recv_data[258];
+    JsonDocument ping;
+    ping["IMEI"]= modemIMEI;
+    if(!serializeJsonPretty(ping, send_data)){
+        return false;
+    }
+    // strcpy(send_data, PING);
+    memset(recv_data, 0, sizeof(recv_data));
+
+    if (sendAndReadResponse(send_data, recv_data) && setMode(recv_data))
+    {   
+        return true;
+    }
+    runningLogger.logError("pingServer");
+    connect = false;
+    return false;
+}
+
+bool Tracker::resetModem()
+{
+    if (turnOffModem() && turnOnModem())
+    {
+        countReset++;
+        return true;
+    }
+    return false;
+}
+
