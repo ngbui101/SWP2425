@@ -1,7 +1,7 @@
 #include "HTTP.h"
 
-HTTP::HTTP(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
-    : Modem(atSerial, dSerial, doc)
+HTTP::HTTP(Stream &atSerial, Stream &dSerial)
+    : Modem(atSerial, dSerial)
 {
 }
 
@@ -22,7 +22,6 @@ bool HTTP::setHTTPURL(const char *url)
     if (!_BG96.HTTPURL(url, WRITE_MODE))
     {
         initLogger.logError("HTTP_Set_URL");
-        urlSetted = false;
         return false;
     }
     urlSetted = true;
@@ -32,8 +31,7 @@ bool HTTP::setHTTPURL(const char *url)
 bool HTTP::sendPostRequest(char *payload)
 {
     if (!_BG96.HTTPPOST(payload, 80))
-    {
-        urlSetted = false;
+    {   
         runningLogger.logError("HTTPPOST");
         return false;
     }
@@ -43,8 +41,7 @@ bool HTTP::sendPostRequest(char *payload)
 bool HTTP::readResponse(char *recv_data)
 {
     if (!_BG96.HTTPRead(recv_data, 80))
-    {
-        urlSetted = false;
+    {   
         runningLogger.logError("HTTPRead");
         return false;
     }
@@ -55,7 +52,6 @@ bool HTTP::sendAndReadResponse(char *payload, char *recv_data){
     return (sendPostRequest(payload) && readResponse(recv_data));
 }
 
-bool HTTP::isUrlSetted()
-{
+bool HTTP::isUrlSetted(){
     return urlSetted;
 }

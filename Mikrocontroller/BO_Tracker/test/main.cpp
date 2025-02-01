@@ -6,56 +6,16 @@
 JsonDocument docOutput;
 
 Tracker tracker(ATSerial, DSerial, docOutput);
-_Motion motion_sensor;
-float x, y, z;
+
 void setup(void)
 {
-    DSerial.begin(115200);
-    while (DSerial.read() >= 0)
-        ;
+    Serial.begin(115200);
+    Serial.println("BMA456 Step Counter");
 
-    ATSerial.begin(115200);
-    while (ATSerial.read() >= 0)
-        ;
-    delay(1000);
-    // Serial.println("BMA456 Step Counter");
-    delay(1000);
-
-    tracker.startModem();
-    motion_sensor.initialize();
-    motion_sensor.stepCounterEnable();
+    tracker.firstStart();
 }
 
 void loop(void)
 {
-    // Serial.print("Accerleration");
-    // float acc = 0;
-    // motion_sensor.getDynamicAcceleration(&acc);
-    // Serial.println(acc);
-    // Serial.print("Acc: ");
-    // Serial.println(motion_sensor.getAcceleration());
-    // Serial.print("Step");
-    // Serial.println(motion_sensor.getStepCounterOutput());
-    // delay(100);
-    // motion_sensor.getAcceleration(&x, &y, &z);
-    // motion_sensor.getAcceleration(&x,&y,&z);
-    // Serial.print("X: ");
-    // Serial.print(x);
-    // Serial.print(", Y: ");
-    // Serial.print(y);
-    // Serial.print(", Z: ");
-    // Serial.println(z);
-    // delay(1000);
-    if (ATSerial.available())
-    {
-        char at = ATSerial.read();
-        DSerial.write(at);
-    }
-
-    if (DSerial.available())
-    {
-        char d = DSerial.read();
-        ATSerial.write(d);
-        DSerial.write(d);
-    }
+    
 }

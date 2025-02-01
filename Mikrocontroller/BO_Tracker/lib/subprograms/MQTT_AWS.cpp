@@ -2,7 +2,7 @@
 
 // Konstruktor der MQTT_AWS-Klasse
 MQTT_AWS::MQTT_AWS(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
-    : HTTP(atSerial, dSerial, doc)
+    : GNSS(atSerial, dSerial, doc)
 {
 }
 
@@ -13,7 +13,7 @@ bool MQTT_AWS::initMQTT()
     strcpy(mqtt_base_topic, "tracker/");
     strcat(mqtt_base_topic, modemIMEI);
 
-    if (!_BG96.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 180, SERVER_STORE_SUBSCRIPTIONS))
+    if (!_BG96.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 150, SERVER_STORE_SUBSCRIPTIONS))
     {
         initLogger.logError("MQTT:Set_Parameters");
     }
@@ -45,6 +45,7 @@ bool MQTT_AWS::startMQTT()
     {
         initLogger.logError("MQTT:OpenNetwork");
     }
+    DSerial.println("MQTT-Netzwerk erfolgreich geöffnet!");
 
     if (!_BG96.SetMQTTMessageTimeout(MQTTIndex, 10, 5, 1))
     {
@@ -81,8 +82,8 @@ bool MQTT_AWS::publishData(const char *subtopic)
 
     int res = _BG96.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_topic, false, payload);
 
-    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK)// || res == PACKET_RETRANSMISSION)
-    {   
+    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK) // || res == PACKET_RETRANSMISSION)
+    {
         docInput.clear();
         return true;
     }
@@ -115,6 +116,10 @@ bool MQTT_AWS::closeMQTTClient()
         return false;
     mqtt_available = false;
     return true;
+}
+bool MQTT_AWS::isMQTTAvaliable()
+{
+    return this->mqtt_available;
 }
 
 Mqtt_Event_t MQTT_AWS::waitForResponse(char *response)

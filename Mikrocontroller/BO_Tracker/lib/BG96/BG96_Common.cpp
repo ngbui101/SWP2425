@@ -40,12 +40,11 @@ _BG96_Common::_BG96_Common(Stream &atserial, Stream &dserial) : _BG96_Serial(ats
  */
 bool _BG96_Common::TurnOnModule()
 {
-    delay(3000);
-    digitalWrite(ENABLE_PWR, HIGH);
+    digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf LOW setzen
+    delay(2000);
     digitalWrite(POWKEY_PIN, HIGH);
-    /// Maximal 30 (s)
-    while ((readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE))
-        ;
+    delay(2000);
+    digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf HIGH setzen
     return true;
 }
 
@@ -58,32 +57,32 @@ bool _BG96_Common::TurnOnModule()
  *
  * @return true, wenn die Initialisierung erfolgreich war, sonst false.
  */
-bool _BG96_Common::FirstStart()
+bool _BG96_Common::InitModule()
 {
     pinMode(ENABLE_PWR, OUTPUT);
     pinMode(RESET_PIN, OUTPUT);
-    pinMode(POWKEY_PIN, OUTPUT);
-    return true;
-}
-
-bool _BG96_Common::InitModule()
-{
     digitalWrite(RESET_PIN, LOW);
-    digitalWrite(ENABLE_PWR, LOW);
-    digitalWrite(POWKEY_PIN, LOW);
-
-    if (!TurnOnModule())
-    {
-        return false;
-    }
+    pinMode(POWKEY_PIN, OUTPUT);
+    PowerOnModule();
+    TurnOnModule();
+    // Serial.println("Initialized");
+    // ResetModule();
+    while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
+        ;
 
     return true;
 }
 
 bool _BG96_Common::PowerOffModule()
 {
-    digitalWrite(POWKEY_PIN, LOW);
     digitalWrite(ENABLE_PWR, LOW);
+    digitalWrite(POWKEY_PIN, LOW);
+
+    return true;
+}
+bool _BG96_Common::PowerOnModule()
+{
+    digitalWrite(ENABLE_PWR, HIGH);
     return true;
 }
 
@@ -514,7 +513,7 @@ Cmd_Response_t _BG96_Common::ScanOperatorNetwork(char *net)
  * @param status Der Modus der Operation (READ_MODE zum Lesen, WRITE_MODE zum Schreiben).
  * @return Cmd_Response_t Der Status der Antwort (SUCCESS_RESPONSE, FIAL_RESPONSE, UNKNOWN_RESPONSE, TIMEOUT_RESPONSE).
  */
-Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int &format, unsigned int oper, Net_Type_t &act, Cmd_Status_t status)
+Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int &format, const char *oper, Net_Type_t &act, Cmd_Status_t status)
 {
     char cmd[16];
     Cmd_Response_t oper_status = UNKNOWN_RESPONSE;
@@ -560,11 +559,10 @@ Cmd_Response_t _BG96_Common::DevOperatorNetwork(unsigned int &mode, unsigned int
         char buf[32];
         if (mode != 0)
         {
-            sprintf(buf, "=%d,%d,\"%d\",%d", mode, format, oper, act);
+            sprintf(buf, "=%d,%d,\"%s\",%d", mode, format, oper, act);
         }
         else
-            sprintf(buf, "=%d,%d", mode, 0);
-
+            sprintf(buf, "=%d", mode);
         strcat(cmd, buf);
         oper_status = sendAndSearch(cmd, RESPONSE_OK, RESPONSE_ERROR, 30);
     }
@@ -842,11 +840,11 @@ time_t _BG96_Common::parseTimestamp(const char *timestamp)
 }
 
 // Adjusted method signature
-Cell *_BG96_Common::ReportCellServingcell()
+Cell *_BG96_Common::ReportCellInformation(const char *celltype)
 {
     // Prepare and send the command
     char cmd[32];
-    snprintf(cmd, sizeof(cmd), "%s=\"%s\"", QUECCELL_ENGINEERING_MODE, "servingcell");
+    snprintf(cmd, sizeof(cmd), "%s=\"%s\"", QUECCELL_ENGINEERING_MODE, celltype);
 
     if (sendAndSearch(cmd, RESPONSE_OK, 2))
     {
@@ -856,13 +854,9 @@ Cell *_BG96_Common::ReportCellServingcell()
         {
             start_buf += strlen("+QENG: ");
             char *end_buf = searchStrBuffer(RESPONSE_CRLF_OK);
-            if (end_buf == nullptr)
-                return nullptr;
-
             *end_buf = '\0';
-            char infos[252];
-            strncpy(infos, start_buf, sizeof(infos) - 1);
-            infos[sizeof(infos) - 1] = '\0';
+            char infos[512]; // Adjust size if needed
+            strcpy(infos, start_buf);
 
             // Initialize variables
             char cellType[16], state[8], rat[8], duplex_mode[16];
@@ -947,10 +941,7 @@ Cell *_BG96_Common::ReportCellServingcell()
                     if (token == NULL)
                         return nullptr;
                     int mcc = atoi(token);
-                    if (mcc == 65535)
-                    {
-                        return nullptr;
-                    }
+
                     // Parse mnc
                     token = strtok_r(NULL, ",", &rest);
                     if (token == NULL)
@@ -983,6 +974,36 @@ Cell *_BG96_Common::ReportCellServingcell()
                         return nullptr;
                     int rsrp = atoi(token);
 
+                    // Parse rsrq
+                    // token = strtok_r(NULL, ",", &rest);
+                    // if (token == NULL)
+                    //     return nullptr;
+                    // // int rsrq = atoi(token);
+
+                    // // Parse rssi
+                    // token = strtok_r(NULL, ",", &rest);
+                    // if (token == NULL)
+                    //     return nullptr;
+                    // // int rssi = atoi(token);
+
+                    // // Parse sinr
+                    // token = strtok_r(NULL, ",", &rest);
+                    // if (token == NULL)
+                    //     return nullptr;
+                    // // int sinr = atoi(token);
+
+                    // // Parse srxlev (may be "-" or a number)
+                    // token = strtok_r(NULL, ",", &rest);
+                    // if (token == NULL)
+                    //     return nullptr;
+                    // srxlev kann "-" oder eine Zahl sein, wir können es hier ignorieren oder nach Bedarf verwenden
+
+                    // Optional: Parse cqi (falls vorhanden)
+                    // token = strtok_r(NULL, ",", &rest);
+
+                    // int signal = rsrp;
+
+                    // Create and return Cell object
                     return new Cell(rat, mcc, mnc, tac, cellid, rsrp);
                 }
                 else
@@ -1097,10 +1118,10 @@ bool _BG96_Common::ResetFunctionality()
         return false;
     while (readResponseAndSearch(RESPONSE_READY, 3) != SUCCESS_RESPONSE)
         ;
-    // delay(300);
+    delay(300);
     return true;
 }
-bool _BG96_Common::ConfigNetworks(char *rat)
+bool _BG96_Common::ConfigNetworks(const char *rat)
 {
     SetDevFunctionality(MINIMUM_FUNCTIONALITY);
     LTENetworkCategoryConfig(2);       // LTE Cat M1 and Cat NB1
@@ -1155,7 +1176,7 @@ int _BG96_Common::ScanCells(Cell *cells[])
     }
     else
     {
-        servingcell = ReportCellServingcell();
+        servingcell = ReportCellInformation("servingcell");
         if (servingcell != nullptr)
         {
             cells[cellCount++] = servingcell;
@@ -1173,7 +1194,7 @@ int _BG96_Common::ScanCells(Cell *cells[])
         bool vodafone = false;
         bool o2 = false;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             if (act_operator == 26201)
             {
@@ -1199,11 +1220,11 @@ int _BG96_Common::ScanCells(Cell *cells[])
             unsigned int format = 2; // Numeric format
             if (!o2)
             {
-                act_operator = 26203;
+                DevOperatorNetwork(mode, format, "26203", act, WRITE_MODE);
             }
             else if (!vodafone)
             {
-                act_operator = 26202;
+                DevOperatorNetwork(mode, format, "26202", act, WRITE_MODE);
             }
             else if (!telekom)
             {
@@ -1279,35 +1300,14 @@ bool _BG96_Common::checkForNetwork()
     unsigned long start_time = millis();
     while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
     {
-        unsigned long loop_start = millis();
         i_status = DevNetRegistrationStatus();
-        if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
+        if (millis() - start_time >= 90 * 1000UL) // Timeout nach 90 Sekunden
         {
             // // if(ResetModule())
             // Serial.println("Fail to register!!!");
             return false;
         }
-        while ((millis() - loop_start) < 3000)
-            ;
-    }
-    return true;
-}
-bool _BG96_Common::checkForNetworkWithDENIED()
-{
-    Net_Status_t i_status = NOT_REGISTERED;
-    unsigned long start_time = millis();
-    while (i_status != REGISTERED && i_status != REGISTERED_ROAMING && i_status != REGISTRATION_DENIED)
-    {
-        unsigned long l_start = millis();
-        i_status = DevNetRegistrationStatus();
-        if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
-        {
-            // // if(ResetModule())
-            // Serial.println("Fail to register!!!");
-            return false;
-        }
-        while (millis() - l_start < 3000) // warte 3s
-            ;
+        delay(3000);
     }
     return true;
 }
@@ -1326,32 +1326,41 @@ bool _BG96_Common::TurnOnInternet(unsigned int pdp_index)
     {
         return false;
     }
-
     start_time = millis();
-    while (millis() - start_time <= 30 * 1000UL)
+    while (millis() - start_time <= 150 * 1000UL) // Timeout nach 150 Sekunden
     {
+        AttachPS(true);
+
         init_status = ActivateDevAPN(pdp_index);
-        unsigned long l_time = millis();
+
         if (init_status == SUCCESS_RESPONSE)
         {
             char i_ip[16];
             if (GetDevAPNIPAddress(pdp_index, i_ip))
             {
+                // sprintf(err_code, "\r\nAPN OK: The IP address is %s\r\n", i_ip);
+                // Serial.println("Get APN OK");
                 return true;
             }
             else
             {
+                // e_str = "\r\nAPN ERROR: Failed to retrieve IP address!\r\n";
+                // strcpy(err_code, e_str);
                 return false;
             }
             return true;
         }
         else if (init_status == TIMEOUT_RESPONSE)
         {
+            // e_str = "\r\nAPN ERROR: APN activation timeout. Please reset your device!\r\n";
+            // strcpy(err_code, e_str);
+            // if(ResetModule())
             return false;
         }
-        while ((millis() - l_time) < 3000)
-            ; // delay 3s
     }
+    // Falls die APN-Aktivierung fehlschlägt
+    // e_str = "\r\nAPN ERROR: Failed to activate APN!\r\n";
+    // strcpy(err_code, e_str);
     return false;
 }
 
@@ -1370,14 +1379,14 @@ bool _BG96_Common::GetDevAPNIPAddress(unsigned int pdp_index, char *ip)
         {
             strcpy(ip, sta_buf + 1);
         }
-        else
+        else // Komma nicht gefunden
         {
             sta_buf = searchChrBuffer('"');
             if (sta_buf)
             {
                 strcpy(ip, sta_buf + 2);
             }
-            else
+            else // Doppeltes Anführungszeichen nicht gefunden
             {
                 return false;
             }

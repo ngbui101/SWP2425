@@ -1,9 +1,9 @@
 #ifndef __TRACKER_H_
 #define __TRACKER_H_
 
-#include "GNSS.h"
+#include "MQTT_AWS.h"
 
-class Tracker : public GNSS {
+class Tracker : public MQTT_AWS {
 
 public:
     // Konstruktor
@@ -15,11 +15,15 @@ public:
 
     void firstStart();
 
+    bool setMode(char *payload);
+
     bool modeHandle();
 
-    bool pubAndsubMQTT(unsigned long interval);
+    bool sendAndCheck();
 
-    bool sendAndWaitResponseHTTP(unsigned long interval);
+    bool pubAndsubMQTT();
+
+    bool sendAndWaitResponseHTTP();
 
     bool responseValid(char *payload);
 
@@ -29,25 +33,30 @@ public:
 
     int checkForError();
 
-    bool turnOnFunctionality(bool useMQTT);
+    bool turnOffModem();
+
+    bool resetModem();
+
+    bool turnOnFunctionality();
 
     bool wakeUp();
 
     bool handleCellInfosMode();
 
+    bool retryIn1Hour();
+
+    int getResetCount();
+
     bool handleErrors();
-
-    bool setMode(char *payload);
-
-    bool pingServer();
-
-    bool resetModem();
-
+    
+    bool handleIniTErrors();
 private:
- 
-    long measure_time = -99999;
+    unsigned long pub_time = 0;
+
     int countReset = 0;
-  
+    // bool cellscanning = false;
+    // bool init = false;
+    // bool modeRequest = true;
 };
 
 #endif  // __TRACKER_H_

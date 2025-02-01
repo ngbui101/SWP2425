@@ -58,6 +58,8 @@ public:
 
     bool PowerOffModule();
 
+    bool PowerOnModule();
+
     bool TurnOnModule();
 
     bool InitModule();
@@ -94,7 +96,7 @@ public:
 
     Cmd_Response_t ScanOperatorNetwork(char *net);
 
-    Cmd_Response_t DevOperatorNetwork(unsigned int &mode, unsigned int &format, unsigned int oper, Net_Type_t &act, Cmd_Status_t status);
+    Cmd_Response_t DevOperatorNetwork(unsigned int &mode, unsigned int &format, const char *oper, Net_Type_t &act, Cmd_Status_t status);
 
     bool GetDevNetworkInformation(char *type, char *oper, char *band, char *channel);
 
@@ -110,14 +112,14 @@ public:
 
     time_t parseTimestamp(const char *timestamp);
 
-    Cell *ReportCellServingcell();
+    Cell *ReportCellInformation(const char *celltype);
 
     int ReportNeighbourCellInformation(Cell *cells[], int max_cells);
     bool LTENetworkCategoryConfig(int mode);
 
     bool BandConfig(const char *gsmbandval, const char *catm1bandval, const char *catnb1bandval);
 
-    bool ConfigNetworks(char *rat);
+    bool ConfigNetworks(const char *rat);
 
     bool ResetFunctionality();
 
@@ -136,11 +138,10 @@ public:
     bool TurnOnInternet(unsigned int pdp_index);
 
     bool AttachPS(bool enable);
-    bool FirstStart();
+
     bool FactoryReset();
     bool SaveSetting();
     bool checkForNetwork();
-    bool checkForNetworkWithDENIED();
 
 private:
     char currenttime[64];

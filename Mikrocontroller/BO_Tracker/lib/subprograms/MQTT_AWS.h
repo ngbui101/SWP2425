@@ -1,7 +1,7 @@
 #ifndef __MQTT_AWS_H_
 #define __MQTT_AWS_H_
 
-#include "HTTP.h"
+#include "GNSS.h"
 typedef enum mqtt_event
 {
     MQTT_CLIENT_CLOSED = -1,
@@ -9,7 +9,7 @@ typedef enum mqtt_event
     MQTT_RESPONSE = 1,
 } Mqtt_Event_t;
 
-class MQTT_AWS : public HTTP
+class MQTT_AWS : public GNSS
 {
 protected:
     char mqtt_base_topic[32];
@@ -28,7 +28,8 @@ public:
     Mqtt_Event_t waitForResponse(char *response);
 
     bool closeMQTTClient();
-
+    // Behandelt Statusereignisse des MQTT-Clients
+    bool isMQTTAvaliable();
 };
 
 #endif // __MQTT_AWS_H_

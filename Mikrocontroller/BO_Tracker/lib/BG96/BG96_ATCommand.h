@@ -124,5 +124,5 @@ const char GNSS_AGPS_SUPURL[] = "+QGPSSUPLURL";
 // Queccell AT Commands
 const char QUECCELL_ENGINEERING_MODE[] = "+QENG";
 const char QUECCELL_AVAILABLE_NETWORK[] = "+QCOPS";
-const char PING[] = "{\"Ping\":\"\"}";
+
 #endif
