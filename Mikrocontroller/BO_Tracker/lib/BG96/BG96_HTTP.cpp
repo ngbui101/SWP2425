@@ -255,7 +255,7 @@ bool _BG96_HTTP::HTTPPOST(char *post_data, unsigned int timeout)
 
     // 1) Sende Kommando und warte auf CONNECT oder ERROR
     //    Wartezeit hier beispielhaft 10s. Ggf. anpassen.
-    if (!sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, timeout)) {
+    if (!sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, timeout/2)) {
         // Falls weder CONNECT noch ERROR kam, Abbruch.
         // errorCode kann man noch spezifisch setzen (z.B. -1)
         return false;
