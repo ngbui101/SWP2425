@@ -6,7 +6,7 @@
 
 class HTTP : public Modem {
 public:
-    HTTP(Stream &atSerial, Stream &dSerial);
+    HTTP(Stream &atSerial, Stream &dSerial, JsonDocument &docInput);
     ~HTTP();
 
     bool initHTTP();

@@ -1,7 +1,7 @@
 #include "HTTP.h"
 
-HTTP::HTTP(Stream &atSerial, Stream &dSerial)
-    : Modem(atSerial, dSerial)
+HTTP::HTTP(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
+    : Modem(atSerial, dSerial, doc)
 {
 }
 
@@ -54,27 +54,6 @@ bool HTTP::readResponse(char *recv_data)
 bool HTTP::sendAndReadResponse(char *payload, char *recv_data)
 {
     return (sendPostRequest(payload) && readResponse(recv_data));
-}
-
-bool HTTP::pingServer()
-{
-    char send_data[64];
-    char recv_data[258];
-    JsonDocument ping;
-    ping["IMEI"]= modemIMEI;
-    if(!serializeJsonPretty(ping, send_data)){
-        return false;
-    }
-    // strcpy(send_data, PING);
-    memset(recv_data, 0, sizeof(recv_data));
-
-    if (sendAndReadResponse(send_data, recv_data) && setMode(recv_data))
-    {   
-        return true;
-    }
-    runningLogger.logError("pingServer");
-    connect = false;
-    return false;
 }
 
 bool HTTP::isUrlSetted()
