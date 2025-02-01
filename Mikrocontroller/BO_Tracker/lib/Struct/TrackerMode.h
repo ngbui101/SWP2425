@@ -14,9 +14,9 @@ struct TrackerModes
     unsigned long period = 60000UL;
     unsigned long maxRealTime = 120001UL;
     bool realtime = false;
-    // char RAT[8] = "lte";
+    char RAT[8] = "lte";
     // char  RAT[8] = "gsm";
-    char RAT[8] = "nbiot";
+    // char RAT[8] = "nbiot";
 
     // GeoFencing
 
