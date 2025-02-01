@@ -1,35 +1,31 @@
 <template>
     <div :class="['route-view', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
-      <!-- Toolbar with Toggle Bar for New/Routes view -->
-      <div class="toolbar">
-        <div
-          class="toggle-container"
-          @mousedown="startDragging($event)"
-          @mouseup="stopDragging"
-          @mouseleave="stopDragging"
-          @mousemove="handleDragging($event)"
-        >
-          <!-- Sliding background div -->
-          <div class="slider" :class="{ 'slide-left': currentView === 'new', 'slide-right': currentView === 'routes' }"></div>
-  
-          <!-- New Route View Toggle (Left) -->
-          <label @click="setView('new')" :class="{ active: currentView === 'new' }">
-            {{ $t('RouteView-New') }}
-          </label>
-  
-          <!-- Route History View Toggle (Right) -->
-          <label @click="setView('routes')" :class="{ active: currentView === 'routes' }">
-            {{ $t('RouteView-Saved') }}
-          </label>
+        <!-- Toolbar with Toggle Bar for New/Routes view -->
+        <div class="toolbar">
+            <div class="toggle-container" @mousedown="startDragging($event)" @mouseup="stopDragging"
+                @mouseleave="stopDragging" @mousemove="handleDragging($event)">
+                <!-- Sliding background div -->
+                <div class="slider"
+                    :class="{ 'slide-left': currentView === 'new', 'slide-right': currentView === 'routes' }"></div>
+
+                <!-- New Route View Toggle (Left) -->
+                <label @click="setView('new')" :class="{ active: currentView === 'new' }">
+                    {{ $t('RouteView-New') }}
+                </label>
+
+                <!-- Route History View Toggle (Right) -->
+                <label @click="setView('routes')" :class="{ active: currentView === 'routes' }">
+                    {{ $t('RouteView-Saved') }}
+                </label>
+            </div>
         </div>
-      </div>
-  
-      <!-- Conditional rendering based on selected view -->
-      <NewRoute v-if="currentView === 'new'" />
-      <RouteHistory v-if="currentView === 'routes'" />
+
+        <!-- Conditional rendering based on selected view -->
+        <NewRoute v-if="currentView === 'new'" />
+        <RouteHistory v-if="currentView === 'routes'" />
     </div>
-  </template>
-  
+</template>
+
 
 <script setup>
 import { ref, computed } from 'vue';

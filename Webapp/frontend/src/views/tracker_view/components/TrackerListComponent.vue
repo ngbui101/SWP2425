@@ -1,45 +1,50 @@
 <template>
     <div :class="(user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : ''">
-        <table v-if="trackers.length > 0" class="tracker-table">
-            <thead>
-                <tr>
-                    <th>{{ $t('TrackerList-name') }}</th>
-                    <th>{{ $t('TrackerList-mode') }}</th>
-                    <th>{{ $t('TrackerList-location') }}</th>
-                    <th>{{ $t('TrackerList-latitude') }}</th>
-                    <th>{{ $t('TrackerList-longitude') }}</th>
-                    <th>{{ $t('TrackerList-temperature') }}</th>
-                    <th>{{ $t('TrackerList-humidity') }}</th>
-                    <th>{{ $t('TrackerList-battery') }}</th>
-                    <th>{{ $t('TrackerList-deviceId') }}</th>
-                    <th>{{ $t('TrackerList-actions') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="tracker in trackers" :key="tracker._id">
-                    <td @dblclick="startEditingName(tracker)">
-                        <span v-if="!tracker.isEditingName">{{ tracker.name }}</span>
-                        <input v-else type="text" v-model="tracker.editingName" class="name-input"
-                            @blur="saveTrackerName(tracker)" @keydown.enter="saveTrackerName(tracker)" maxlength="18"
-                            spellcheck="false" />
-                    </td>
-                    <td>{{ tracker.modeLabel }}</td>
-                    <td>{{ tracker.location }}</td>
-                    <td>{{ tracker.detailsWithTimestamps?.latitude?.value || 'N/A' }}</td>
-                    <td>{{ tracker.detailsWithTimestamps?.longitude?.value || 'N/A' }}</td>
-                    <td>{{ tracker.detailsWithTimestamps?.temperature?.value || 'N/A' }}</td>
-                    <td>{{ tracker.detailsWithTimestamps?.humidity?.value || 'N/A' }}</td>
-                    <td>{{ tracker.detailsWithTimestamps?.battery?.value || 'N/A' }}</td>
-                    <td>{{ tracker.imei || 'N/A' }}</td>
-                    <td>
-                        <i class="fas fa-info-circle info-icon" @click="openInfoPopup(tracker)"></i>
-                        <i class="fas fa-cog settings-icon" @click="openSettingsPopup(tracker)"></i>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table v-if="trackers.length > 0" class="tracker-table">
+                <thead>
+                    <tr>
+                        <th>{{ $t('TrackerList-name') }}</th>
+                        <th>{{ $t('TrackerList-mode') }}</th>
+                        <th>{{ $t('TrackerList-measurementType') }}</th>
+                        <th>{{ $t('TrackerList-accuracy') }}</th>
+                        <th>{{ $t('TrackerList-location') }}</th>
+                        <th>{{ $t('TrackerList-latitude') }}</th>
+                        <th>{{ $t('TrackerList-longitude') }}</th>
+                        <th>{{ $t('TrackerList-temperature') }}</th>
+                        <th>{{ $t('TrackerList-humidity') }}</th>
+                        <th>{{ $t('TrackerList-battery') }}</th>
+                        <th>{{ $t('TrackerList-deviceId') }}</th>
+                        <th>{{ $t('TrackerList-actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="tracker in trackers" :key="tracker._id">
+                        <td @dblclick="startEditingName(tracker)">
+                            <span v-if="!tracker.isEditingName">{{ tracker.name }}</span>
+                            <input v-else type="text" v-model="tracker.editingName" class="name-input"
+                                @blur="saveTrackerName(tracker)" @keydown.enter="saveTrackerName(tracker)"
+                                maxlength="18" spellcheck="false" />
+                        </td>
+                        <td>{{ tracker.modeLabel }}</td>
+                        <td>{{ tracker.detailsWithTimestamps?.mode?.value || 'N/A' }}</td>
+                        <td>{{ tracker.detailsWithTimestamps?.accuracy?.value || 'N/A' }} m</td>
+                        <td>{{ tracker.location }}</td>
+                        <td>{{ tracker.detailsWithTimestamps?.latitude?.value || 'N/A' }}</td>
+                        <td>{{ tracker.detailsWithTimestamps?.longitude?.value || 'N/A' }}</td>
+                        <td>{{ tracker.detailsWithTimestamps?.temperature?.value || 'N/A' }}</td>
+                        <td>{{ tracker.detailsWithTimestamps?.humidity?.value || 'N/A' }}</td>
+                        <td>{{ tracker.detailsWithTimestamps?.battery?.value || 'N/A' }}</td>
+                        <td>{{ tracker.imei || 'N/A' }}</td>
+                        <td>
+                            <i class="fas fa-info-circle info-icon" @click="openInfoPopup(tracker)"></i>
+                            <i class="fas fa-cog settings-icon" @click="openSettingsPopup(tracker)"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <!-- Add Tracker Button below the table -->
         <div class="add-tracker-wrapper">
             <button class="add-tracker-btn" @click="openAddTrackerPopup"
                 :class="{ 'scaling-effect': trackers.length === 0 }">
@@ -47,17 +52,14 @@
             </button>
         </div>
 
-        <!-- Tracker Settings Popup -->
         <TrackerSettingsPopup v-if="showSettingsPopup" :selectedTrackerId="selectedTracker?._id"
             :trackerNameInitial="selectedTracker?.name" :trackerModeInitial="selectedTracker?.mode"
             :sendingFrequencyInitial="selectedTracker?.frequency" :template="user.settings?.template"
             :closePopup="closePopup" @updateTracker="handleUpdatedTracker" />
 
-        <!-- Tracker Detail Popup -->
         <TrackerDetailPopup v-if="showInfoPopup" :tracker="selectedTracker" :template="user.settings?.template"
             :closePopup="closeInfoPopup" />
 
-        <!-- Add Tracker Popup -->
         <AddTrackerPopup v-if="showAddTrackerPopup" :template="user.settings?.template"
             :closePopup="closeAddTrackerPopup" @tracker-added="handleTrackerAdded" />
     </div>
@@ -117,6 +119,8 @@ const fetchTrackersWithMeasurements = async () => {
                 tracker.detailsWithTimestamps = {
                     latitude: { value: 'N/A', timestamp: null },
                     longitude: { value: 'N/A', timestamp: null },
+                    accuracy: { value: 'N/A', timestamp: null },
+                    mode: { value: 'N/A', timestamp: null },
                     temperature: { value: 'N/A', timestamp: null },
                     humidity: { value: 'N/A', timestamp: null },
                     battery: { value: 'N/A', timestamp: null },
@@ -124,22 +128,28 @@ const fetchTrackersWithMeasurements = async () => {
 
                 for (const measurement of measurements) {
                     const measurementDate = new Date(measurement.createdAt);
-                    if (measurement.latitude && !isNaN(measurement.latitude)) {
+
+                    if (measurement.latitude && measurement.longitude && measurement.accuracy !== undefined) {
                         if (!tracker.detailsWithTimestamps.latitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.latitude.timestamp)) {
                             tracker.detailsWithTimestamps.latitude = {
                                 value: measurement.latitude,
                                 timestamp: measurementDate.toLocaleString(),
                             };
-                        }
-                    }
-                    if (measurement.longitude && !isNaN(measurement.longitude)) {
-                        if (!tracker.detailsWithTimestamps.longitude.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.longitude.timestamp)) {
                             tracker.detailsWithTimestamps.longitude = {
                                 value: measurement.longitude,
                                 timestamp: measurementDate.toLocaleString(),
                             };
+                            tracker.detailsWithTimestamps.accuracy = {
+                                value: measurement.accuracy,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
+                            tracker.detailsWithTimestamps.mode = {
+                                value: measurement.mode,
+                                timestamp: measurementDate.toLocaleString(),
+                            };
                         }
                     }
+
                     if (measurement.temperature) {
                         if (!tracker.detailsWithTimestamps.temperature.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.temperature.timestamp)) {
                             tracker.detailsWithTimestamps.temperature = {
@@ -148,6 +158,7 @@ const fetchTrackersWithMeasurements = async () => {
                             };
                         }
                     }
+
                     if (measurement.humidity) {
                         if (!tracker.detailsWithTimestamps.humidity.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.humidity.timestamp)) {
                             tracker.detailsWithTimestamps.humidity = {
@@ -156,6 +167,7 @@ const fetchTrackersWithMeasurements = async () => {
                             };
                         }
                     }
+
                     if (measurement.battery) {
                         if (!tracker.detailsWithTimestamps.battery.timestamp || measurementDate > new Date(tracker.detailsWithTimestamps.battery.timestamp)) {
                             tracker.detailsWithTimestamps.battery = {
@@ -166,10 +178,15 @@ const fetchTrackersWithMeasurements = async () => {
                     }
                 }
 
-                tracker.location =
-                    tracker.detailsWithTimestamps.latitude.value !== 'N/A' && tracker.detailsWithTimestamps.longitude.value !== 'N/A'
-                        ? await getReverseGeocodingAddress(tracker.detailsWithTimestamps.latitude.value, tracker.detailsWithTimestamps.longitude.value)
-                        : 'Unknown Location';
+                if (tracker.detailsWithTimestamps.latitude.value !== 'N/A' && tracker.detailsWithTimestamps.longitude.value !== 'N/A') {
+                    tracker.location = await getReverseGeocodingAddress(
+                        tracker.detailsWithTimestamps.latitude.value,
+                        tracker.detailsWithTimestamps.longitude.value,
+                        tracker.detailsWithTimestamps.accuracy.value // Pass accuracy
+                    );
+                } else {
+                    tracker.location = 'Unknown Location';
+                }
             } catch (error) {
                 console.warn(`Error fetching data for tracker ${tracker._id}:`, error);
                 tracker.detailsWithTimestamps = null;
@@ -185,10 +202,40 @@ const fetchTrackersWithMeasurements = async () => {
     }
 };
 
-const getReverseGeocodingAddress = async (lat, lng) => {
+const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
+    const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
+
     try {
-        const response = await useApiPrivate().get(`http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`);
-        return response.data.address || 'Unknown Location';
+        console.log("Reverse geocoding inputs:", { lat, lng, accuracy });
+
+        const response = await useApiPrivate().get(geocodingUrl);
+
+        const fullAddress = response.data?.address || 'Unknown Location';
+        console.log("Full Address:", fullAddress);
+
+        if (fullAddress.includes('+')) {
+            const addressParts = fullAddress.split(',');
+            const cityPart = addressParts[addressParts.length - 2]?.trim() || "Unknown City";
+            const countryPart = addressParts[addressParts.length - 1]?.trim() || "Unknown Country";
+
+            return `${cityPart}, ${countryPart}`;
+        }
+
+        const addressParts = fullAddress.split(',');
+        const lastPart = addressParts[addressParts.length - 1]?.trim();
+        const secondLastPart = addressParts[addressParts.length - 2]?.trim();
+        const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/);
+
+        const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
+        const city = zipAndCity ? zipAndCity[2] : "Unknown City";
+
+        if (accuracy <= 50) {
+            return fullAddress;
+        } else if (zipAndCity) {
+            return `${zip}, ${city}`;
+        } else {
+            return `${city}, ${lastPart}`;
+        }
     } catch (error) {
         console.error(`Failed to get reverse geocoding address for coordinates [${lat}, ${lng}]:`, error);
         return 'Unknown Location';
@@ -255,19 +302,24 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Styles for the tracker table and components */
+.table-container {
+    overflow-x: auto;
+    margin: 0 auto;
+}
+
 .tracker-table {
     width: 100%;
     border-collapse: collapse;
     background-color: #f1e4cc;
+    min-width: 800px;
 }
 
 .tracker-table th,
 .tracker-table td {
-    padding: 15px 20px;
+    padding: 10px 15px;
     border-bottom: 1px solid #ddd;
     text-align: center;
-    font-size: 1rem;
+    font-size: 0.9rem;
     border: 1px solid #00543D;
 }
 
@@ -288,18 +340,9 @@ onMounted(() => {
 
 .settings-icon,
 .info-icon {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     cursor: pointer;
-    margin-left: 8px;
-}
-
-.info-icon {
-    color: #0062cc;
-}
-
-.settings-icon:hover,
-.info-icon:hover {
-    transform: scale(1.3);
+    margin-left: 5px;
 }
 
 .add-tracker-wrapper {
@@ -311,11 +354,11 @@ onMounted(() => {
 .add-tracker-btn {
     background-color: #851515;
     color: #ddd;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9rem;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -323,38 +366,78 @@ onMounted(() => {
     transform: scale(1.1);
 }
 
-/* Dark mode styles */
+/* Dark mode styles for tracker table */
 .dark-mode .tracker-table {
     background-color: #2e2e2e;
+    /* Dark background for the table */
+    color: #ddd;
+    /* Light text color */
 }
 
 .dark-mode .tracker-table th {
     background-color: #333;
-    color: #ddd;
+    /* Slightly lighter dark for the header */
+    color: #f1e4cc;
+    /* Bright text for header */
     border-color: #555;
+    /* Subtle border for header */
 }
 
 .dark-mode .tracker-table td {
     background-color: #3a3a3a;
+    /* Darker rows for contrast */
     color: #ccc;
+    /* Neutral light text color */
     border-color: #555;
+    /* Subtle border between cells */
 }
 
 .dark-mode .tracker-table tr:nth-child(even) {
     background-color: #444;
+    /* Slightly lighter for striped rows */
 }
 
 .dark-mode .tracker-table tr:hover {
     background-color: #555;
+    /* Hover effect for rows */
 }
 
+/* Dark mode for action icons */
 .dark-mode .settings-icon,
 .dark-mode .info-icon {
     color: #E69543;
+    /* Highlighted icons */
 }
 
+/* Dark mode for add tracker button */
 .dark-mode .add-tracker-btn {
     background-color: #E69543;
+    /* Highlighted button */
     color: #1f1f1f;
+    /* Contrasting text */
+    border: 1px solid #555;
+    /* Border to blend with dark mode */
+}
+
+.dark-mode .add-tracker-btn:hover {
+    background-color: #f1e4cc;
+    /* Lighter hover effect */
+    color: #333;
+    /* Text color on hover */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+
+    .tracker-table th,
+    .tracker-table td {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+
+    .add-tracker-btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
 }
 </style>

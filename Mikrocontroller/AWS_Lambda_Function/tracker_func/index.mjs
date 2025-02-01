@@ -73,16 +73,16 @@ export const handler = async (event) => {
     const client = new MongoClient(mongoURI);
 
     const data = {
-        IMEI: event.IMEI,
-        Timestamp: event.Timestamp,
-        Cells: event.cells,
-        Temperature: event.Temperature,
-        Humidity: event.Humidity,
-        BatteryPercentage: event.BatteryPercentage,
-        Gnss: event.gnss,
-        GSA: event.GSA,
-        GSV: event.GSV,
-        frequenz: event.frequenz
+        IMEI: requestData.IMEI,
+        Timestamp: requestData.Timestamp,
+        Cells: requestData.cells,
+        Temperature: requestData.Temperature,
+        Humidity: requestData.Humidity,
+        BatteryPercentage: requestData.BatteryPercentage,
+        Gnss: requestData.gnss,
+        GSA: requestData.GSA,
+        GSV: requestData.GSV,
+        frequenz: requestData.frequenz
     };
 
     if (!isValidTimestamp(data.Timestamp)) {

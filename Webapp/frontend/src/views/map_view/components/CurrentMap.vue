@@ -12,7 +12,7 @@
       <div v-if="trackers.length > 0" class="tracker-info-card">
         <div class="card-body">
           <!-- Select Tracker with Filters Button -->
-          <div class="tracker-container">
+          <div class="tracker-container" ref="mapTour1">
             <label for="tracker-dropdown" class="dropdown-label">
               {{ $t('CurrentMap-select_tracker') }}:
               <select id="tracker-dropdown" class="tracker-dropdown" v-model="selectedTracker" @change="selectTracker">
@@ -21,33 +21,42 @@
                 </option>
               </select>
             </label>
-            <button class="filters-button" @click="openTrackerFilters">Filters</button>
+
           </div>
 
           <!-- Select Timestamp with Filters Button -->
-          <div class="timestamp-container">
+          <div class="timestamp-container" ref="mapTour2">
             <label for="timestamp-dropdown" class="dropdown-label">
-              {{ $t('CurrentMap-select_timestamp')}}:
+              {{ $t('CurrentMap-select_timestamp') }}:
               <select id="timestamp-dropdown" class="tracker-dropdown" v-model="selectedTimestamp"
                 @change="updateSelectedMeasurement">
-                <option v-for="measurement in filteredMeasurements" :key="measurement._id" :value="measurement._id">
+                <option v-for="(measurement, index) in filteredMeasurements" :key="measurement._id"
+                  :value="measurement._id" :class="{ 'newest-timestamp': index === 0 }">
                   {{ new Date(measurement.createdAt).toLocaleString() }}
                 </option>
               </select>
             </label>
-            <button class="filters-button" @click="openTimestampFilters">Filters</button>
+            <button class="filters-button" ref="mapTour3" @click="openTimestampFilters">{{ $t("Filters") }}</button>
           </div>
+
 
           <div class="grid-container">
             <!-- Mode Information -->
             <div class="grid-item-full mode-item">
-              <strong>{{ $t('TrackerCard-mode')}}:</strong> {{ trackerModeLabel }}
+              <strong ref="mapTour4">{{ $t('TrackerCard-mode') }}:</strong> {{ trackerModeLabel }}
 
 
               <!-- Switch Mode Button -->
-              <button class="switch-mode-button shimmering-button" @click="openChangeModePopup">{{ $t('CurrentMap-change_mode')}}</button>
+              <button class="switch-mode-button shimmering-button" ref="mapTour5" @click="openChangeModePopup">{{
+                $t('CurrentMap-change_mode') }}</button>
               <ChangeModePopup v-if="isChangeModePopupOpen" :template="user.settings?.template"
-                :selectedTrackerId="selectedTracker" :closePopup="closeChangeModePopup" />
+                :selectedTrackerId="selectedTracker" :closePopup="closeChangeModePopup"
+                @mode-changed="refreshTrackerMode" />
+            </div>
+            <!-- Measurement Type -->
+            <div class="grid-item">
+              <strong ref="mapTour6">{{ $t('TrackerList-measurementType') }}: &nbsp;</strong>
+              {{ selectedMeasurement.mode || 'N/A' }}
             </div>
 
             <!-- Battery Status -->
@@ -67,27 +76,29 @@
 
             <!-- Latitude and Longitude -->
             <div class="grid-item">
-              <strong>Latitude:&nbsp; </strong> {{ selectedMeasurement.latitude || 'N/A' }}
+              <strong>{{ $t("Latitude") }}:&nbsp; </strong> {{ selectedMeasurement.latitude || 'N/A' }}
             </div>
             <div class="grid-item">
-              <strong>Longitude:&nbsp;</strong> {{ selectedMeasurement.longitude || 'N/A' }}
+              <strong>{{ $t("Longitude") }}:&nbsp;</strong> {{ selectedMeasurement.longitude || 'N/A' }}
             </div>
 
             <!-- Temperature -->
             <div v-if="selectedMeasurement.temperature !== undefined" class="grid-item">
-              <strong>{{ $t('TrackerList-temperature')}}:&nbsp;</strong> {{ selectedMeasurement.temperature }} °C
+              <strong>{{ $t('TrackerList-temperature') }}:&nbsp;</strong> {{ selectedMeasurement.temperature }} °C
             </div>
             <!-- Humidity -->
             <div v-if="selectedMeasurement.humidity !== undefined" class="grid-item">
-              <strong>{{ $t('TrackerList-humidity')}}:&nbsp;</strong> {{ selectedMeasurement.humidity }} %
+              <strong>{{ $t('TrackerList-humidity') }}:&nbsp;</strong> {{ selectedMeasurement.humidity }} %
             </div>
 
+
             <!-- Add/Remove Geofence button -->
-            <!-- Add/Remove Geofence button -->
-            <div class="grid-item-full no-background button-row">
-              <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">{{ $t('CurrentMap-add_geofence')}}</button>
-              <button v-else @click="removeGeofence" class="remove-geofence-button">{{ $t('CurrentMap-remove_geofence')}}</button>
-               <!-- <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button> -->
+            <div class="grid-item-full no-background button-row" ref="mapTour7">
+              <button v-if="!geofenceActive" @click="addGeofence" class="geofence-button">{{
+                $t('CurrentMap-add_geofence') }}</button>
+              <button v-else @click="removeGeofence" class="remove-geofence-button">{{
+                $t('CurrentMap-remove_geofence') }}</button>
+              <!-- <button @click="addMotionSensor" class="geofence-button">{{ $t('CurrentMap-add_motion_sensor') }}</button> -->
             </div>
 
           </div>
@@ -104,10 +115,10 @@
     </div>
 
     <!-- Map Card -->
-    <div v-if="trackers.length > 0" class="card">
+    <div v-if="trackers.length > 0" class="card" ref="mapTour8">
       <div class="card-header">
         <div class="timestamp">
-          <strong>Position Timestamp: </strong>
+          <strong>{{ $t("CurrentMap-PositionTimestamp") }}: </strong>
           <span :class="[(user.settings?.template ?? 'default') === 'dark' ? 'date-dark' : 'date-normal']">
             {{ selectedMeasurement.createdAt ? new Date(selectedMeasurement.createdAt).toLocaleString() : 'N/A' }}
           </span>
@@ -116,7 +127,7 @@
           <p class="location-text">{{ selectedTrackerLocation }}</p>
         </div>
         <div class="tracker-mode">
-          {{ $t('TrackerCard-mode')}}: {{ trackerModeLabel }}
+          {{ $t('TrackerCard-measurementType') }}: {{ measurementModeLabel }}
 
         </div>
       </div>
@@ -128,28 +139,29 @@
         <!-- Grey Overlay for dark mode -->
         <div v-if="(user.settings?.template ?? 'default') === 'dark'" class="map-overlay"></div>
       </div>
-      <div class="legend">
-  <span :style="{ color: modeColors.green }">
-    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-green')}}: {{ modeAccuracy.green }}
-  </span>
-  <span :style="{ color: modeColors.yellow }">
-    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-yellow')}}: {{ modeAccuracy.yellow }}
-  </span>
-  <span :style="{ color: modeColors.red }">
-    <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-red')}}: {{ modeAccuracy.red }}
-  </span>
-  <span
-    :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }">
-    {{ $t('CurrentMap-current_accuracy')}}:
-    <strong>
-      {{
-        selectedMeasurement.accuracy
-          ? Math.round(selectedMeasurement.accuracy * 10) / 10 + 'm'
-          : 'N/A'
-      }}
-    </strong>
-  </span>
-</div>
+      <div class="legend" ref="mapTour9">
+        <span :style="{ color: modeColors.green }" class="legend-item">
+          <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-green') }}: {{ modeAccuracy.green }}&nbsp;&nbsp;
+        </span>
+        <span :style="{ color: modeColors.yellow }" class="legend-item">
+          <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-yellow') }}: {{ modeAccuracy.yellow }}&nbsp;&nbsp;
+        </span>
+        <span :style="{ color: modeColors.red }" class="legend-item">
+          <i class="fas fa-map-pin"></i> {{ $t('CurrentMap-red') }}: {{ modeAccuracy.red }}&nbsp;&nbsp;
+        </span>
+        <span :style="{ color: (user.settings?.template ?? 'default') === 'dark' ? '#E69543' : '#851515' }"
+          class="legend-item">
+          {{ $t('CurrentMap-current_accuracy') }}:
+          <strong>
+            {{
+              selectedMeasurement.accuracy
+                ? Math.round(selectedMeasurement.accuracy * 10) / 10 + 'm'
+                : 'N/A'
+            }}
+          </strong>
+        </span>
+      </div>
+
 
 
 
@@ -160,9 +172,7 @@
 
     </div>
 
-    <!-- Conditionally render the Tracker Filter Popup -->
-    <TrackerFilterPopup v-if="isTrackerFilterPopupOpen" :template="user.settings?.template"
-      :filters="user.settings.trackerFilters" :closePopup="closeTrackerFilters" :applyFilters="applyTrackerFilters" />
+
 
     <!-- Conditionally render the Timestamp Filter Popup -->
     <TimestampFilterPopup v-if="isTimestampFilterPopupOpen" :template="user.settings?.template"
@@ -176,16 +186,21 @@
 </template>
 
 <script setup>
+
 import './styles_currentmap.css';
 import { ref, computed, onMounted, watch } from 'vue';
 import { useShepherd } from 'vue-shepherd'
 import axios from 'axios';
-import TrackerFilterPopup from './TrackerFilterPopup.vue';
+import { mapTour1, mapTour2, mapTour3, mapTour4, mapTour5, mapTour6, mapTour7, mapTour8, mapTour9 } from '@/routes/tourRefs.js';
 import TimestampFilterPopup from './TimestampFilterPopup.vue';
 import { useAuthStore } from "@/stores/auth";
 import ChangeModePopup from './ChangeModePopup.vue';
+import { useRouter } from 'vue-router';
 
-const isTrackerFilterPopupOpen = ref(false);
+
+
+
+const router = useRouter();
 const isTimestampFilterPopupOpen = ref(false);
 
 const isChangeModePopupOpen = ref(false);
@@ -196,15 +211,8 @@ const openChangeModePopup = () => {
 const closeChangeModePopup = () => {
   isChangeModePopupOpen.value = false;
 };
-// Method to open the Tracker Filter popup
-const openTrackerFilters = () => {
-  isTrackerFilterPopupOpen.value = true;
-};
 
-// Method to close the Tracker Filter popup
-const closeTrackerFilters = () => {
-  isTrackerFilterPopupOpen.value = false;
-};
+
 
 // Method to open the Timestamp Filter popup
 const openTimestampFilters = () => {
@@ -216,24 +224,20 @@ const closeTimestampFilters = () => {
   isTimestampFilterPopupOpen.value = false;
 };
 
-// Method to apply Tracker filters
-const applyTrackerFilters = (filters) => {
 
-  // Handle the filtering logic here
-};
 
 // Method to apply Timestamp filters
 const applyTimestampFilters = (filters) => {
-  // Update the timestamp filters in the parent component
+  console.log('Applied Filters in Parent:', filters); // Debugging line
   user.value.settings.timestampFilters = filters;
 };
-
 
 const authStore = useAuthStore();
 const el = ref(null);
 const tour = useShepherd({
   useModalOverlay: true
 });
+const timestamps = ref([]); // Reactive array to store timestamps
 
 const trackers = ref([]);
 const selectedTracker = ref(null);
@@ -249,6 +253,12 @@ let marker = null;
 let geofenceCircle = null; // Declare geofence circle
 let isGoogleMapsLoaded = ref(false);
 
+const refreshTrackerMode = async () => {
+
+  await fetchTrackersForUser();
+
+};
+
 const modeAccuracy = computed(() => {
   if (selectedMeasurement.value?.mode === "GPS") {
     return {
@@ -257,6 +267,18 @@ const modeAccuracy = computed(() => {
       red: ">50m",
     };
   } else if (selectedMeasurement.value?.mode === "LTE") {
+    return {
+      green: "0-100m",
+      yellow: "101-500m",
+      red: ">500m",
+    };
+  } else if (selectedMeasurement.value?.mode === "NBIOT") {
+    return {
+      green: "0-100m",
+      yellow: "101-500m",
+      red: ">500m",
+    };
+  } else if (selectedMeasurement.value?.mode === "GSM") {
     return {
       green: "0-100m",
       yellow: "101-500m",
@@ -277,11 +299,27 @@ const modeColors = computed(() => ({
 }));
 
 
+const measurementModeLabel = computed(() => {
+  // Return the mode if available, otherwise "N/A"
+  return selectedMeasurement.value?.mode || "N/A";
+});
+
+
 const trackerModeLabel = computed(() => {
-  if (selectedMeasurement.value && selectedMeasurement.value.mode) {
-    return selectedMeasurement.value.mode === "GPS" ? "Real-Time Tracking" : "Long-Time Tracking";
+  // Find the currently selected tracker
+  const tracker = trackers.value.find(t => t._id === selectedTracker.value);
+  if (!tracker || !tracker.modeDetails) {
+    return "N/A";
   }
-  return "N/A"; // Default if no measurement or mode is set
+
+  // Decide whether it’s real-time or long-time based on the DB fields
+  if (tracker.modeDetails.GnssMode) {
+    return "Real-Time Tracking";
+  } else if (tracker.modeDetails.CellInfosMode) {
+    return "Long-Time Tracking";
+  } else {
+    return "N/A";
+  }
 });
 
 
@@ -298,56 +336,66 @@ const trackerMode = computed(() => {
 
 // Fetch trackers and measurements for the user
 const fetchTrackersForUser = async () => {
-  // Access the auth store
-
   try {
-    // Retrieve the access token from the auth store
     const token = authStore.accessToken;
+    const config = { headers: { Authorization: `Bearer ${token}` } };
 
-    // Set up the configuration for Axios to include the Authorization header
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    };
-
-    // Fetch trackers for the authenticated user
     const response = await axios.get('http://localhost:3500/api/tracker/user/', config);
     trackers.value = response.data;
 
-
-
-    // Fetch measurements for each tracker
     for (const tracker of trackers.value) {
-
-      const modeResponse = await axios.get(`http://localhost:3500/api/mode/${tracker._id}`, config);
-      tracker.modeDetails = modeResponse.data; // Store the mode details
-
       const measurementsResponse = await axios.get(
         `http://localhost:3500/api/position/tracker/${tracker._id}`,
         config
       );
-      // Filter measurements to include only LTE or GPS modes
+
       tracker.measurements = measurementsResponse.data.filter(
-        (measurement) => measurement.mode === 'LTE' || measurement.mode === 'GPS'
+        (measurement) => ['LTE', 'GPS', 'NBIOT', 'GSM'].includes(measurement.mode)
       );
 
+      const modeResponse = await axios.get(
+        `http://localhost:3500/api/mode/${tracker._id}`,
+        config
+      );
+      tracker.modeDetails = modeResponse.data;
 
-      const geofenceResponse = await axios.get(`http://localhost:3500/api/geofence/${tracker.geofence}`, config);
-      tracker.geofenceDetails = geofenceResponse.data; // Store geofence details
-      // Set the first tracker as the selected tracker, if not already set
+      if (tracker.geofence) {
+        try {
+          const geofenceResponse = await axios.get(
+            `http://localhost:3500/api/geofence/${tracker.geofence}`,
+            config
+          );
+          // store it in `tracker.geofenceDetails`
+          tracker.geofenceDetails = geofenceResponse.data;
+          // e.g. { _id: '670ae0a8e16cf95d8e5eae61', radius: 2500, active: true, latitude: "51.44", longitude: "7.34" }
+        } catch (err) {
+          console.error('Failed to fetch geofence for tracker', tracker._id, err);
+          tracker.geofenceDetails = null;
+        }
+      } else {
+        // If no geofence ID is present, set it to null or empty
+        tracker.geofenceDetails = null;
+      }
+
       if (!selectedTracker.value) {
         selectedTracker.value = tracker._id;
         selectedTrackerName.value = tracker.name;
       }
+
+      // Add measurements to timestamps array
+      timestamps.value = tracker.measurements.map((measurement) => ({
+        id: measurement._id,
+        trackerId: tracker._id,
+        timestamp: new Date(measurement.createdAt).toLocaleString(),
+      }));
     }
 
-    // Update the selected tracker's measurements
     updateSelectedTrackerMeasurements(true);
   } catch (error) {
     console.error('Failed to fetch trackers or measurements:', error);
   }
 };
+
 
 const applyGeofenceRadius = async () => {
   if (!selectedMeasurement.value) {
@@ -469,21 +517,27 @@ const initializeMap = () => {
     lng: Number(selectedMeasurement.value.longitude),
   };
   const accuracy = Number(selectedMeasurement.value.accuracy);
+  const mode = selectedMeasurement.value.mode;
 
-  // Determine the pin color based on accuracy and mode
+  // Determine the pin color based on mode-specific accuracy thresholds
   let backgroundColor;
-  if (selectedMeasurement.value.mode === "GPS") {
-    backgroundColor = accuracy <= 25
-      ? modeColors.value.green
-      : accuracy <= 50
-        ? modeColors.value.yellow
-        : modeColors.value.red;
-  } else if (selectedMeasurement.value.mode === "LTE") {
-    backgroundColor = accuracy <= 100
-      ? modeColors.value.green
-      : accuracy <= 500
-        ? modeColors.value.yellow
-        : modeColors.value.red;
+
+  if (mode === "GPS") {
+    if (accuracy <= 25) {
+      backgroundColor = modeColors.value.green; // High accuracy
+    } else if (accuracy <= 50) {
+      backgroundColor = modeColors.value.yellow; // Moderate accuracy
+    } else {
+      backgroundColor = modeColors.value.red; // Low accuracy
+    }
+  } else if (["LTE", "GSM", "NBIOT"].includes(mode)) {
+    if (accuracy <= 100) {
+      backgroundColor = modeColors.value.green; // High accuracy
+    } else if (accuracy <= 500) {
+      backgroundColor = modeColors.value.yellow; // Moderate accuracy
+    } else {
+      backgroundColor = modeColors.value.red; // Low accuracy
+    }
   } else {
     backgroundColor = "#000000"; // Default for unknown mode
   }
@@ -518,10 +572,10 @@ const initializeMap = () => {
       accuracyCircle = new google.maps.Circle({
         map,
         center: position,
-        radius: accuracy, // Set radius based on accuracy
-        fillColor: "#0000FF", // Blue color for accuracy circle
+        radius: accuracy,
+        fillColor: backgroundColor,
         fillOpacity: 0.2,
-        strokeColor: "#0000FF",
+        strokeColor: backgroundColor,
         strokeOpacity: 0.5,
         strokeWeight: 1,
       });
@@ -547,14 +601,15 @@ const initializeMap = () => {
       map,
       center: position,
       radius: accuracy,
-      fillColor: "#0000FF", // Blue color for accuracy circle
+      fillColor: '#0000FF',
       fillOpacity: 0.2,
-      strokeColor: "#0000FF",
+      strokeColor: '#0000FF',
       strokeOpacity: 0.5,
       strokeWeight: 1,
     });
   }
 };
+
 
 
 const drawGeofenceCircle = (latitude, longitude, radius) => {
@@ -635,33 +690,51 @@ const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
   const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
 
   try {
+    // Log the inputs for debugging
+
+
     const response = await axios.get(geocodingUrl);
-    console.log("Geocoding API response:", response.data); // Log the response for debugging
 
-    if (response.data?.address) {
-      const fullAddress = response.data.address;
+    // Log the API response for debugging
 
-      // Extract zip and city from the address
-      const addressParts = fullAddress.split(','); // Split the address into parts
-      const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
-      const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
-      const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Regex to match 'zip city'
 
-      const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
-      const city = zipAndCity ? zipAndCity[2] : "Unknown City";
+    const fullAddress = response.data?.address || "Unknown Location";
 
-      if (accuracy <= 25) {
-        // Full address for high accuracy
-        selectedTrackerLocation.value = fullAddress;
-      } else {
-        // Only zip and city for lower accuracy
-        selectedTrackerLocation.value = `${zip}, ${city}`;
-      }
+
+    // Handle cases where the address contains a Plus Code
+    if (fullAddress.includes('+')) {
+
+      const addressParts = fullAddress.split(',');
+      const cityPart = addressParts[addressParts.length - 2]?.trim() || "Unknown City";
+      const countryPart = addressParts[addressParts.length - 1]?.trim() || "Unknown Country";
+
+      const approximateLocation = `${cityPart}, ${countryPart}`;
+
+      selectedTrackerLocation.value = approximateLocation;
+      return;
+    }
+
+    // Extract zip and city from the address
+    const addressParts = fullAddress.split(',');
+    const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
+    const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
+    const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Match 'zip city'
+
+    const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
+    const city = zipAndCity ? zipAndCity[2] : "Unknown City";
+
+
+
+    // Decide address display based on accuracy
+    if (accuracy <= 25) {
+      // Full address for high accuracy
+      selectedTrackerLocation.value = fullAddress;
     } else {
-      selectedTrackerLocation.value = 'Unknown Location';
+      // Only zip and city for lower accuracy
+      selectedTrackerLocation.value = `${zip}, ${city}`;
     }
   } catch (error) {
-    console.error('Failed to perform reverse geocoding:', error);
+    console.error(`Failed to get reverse geocoding address for coordinates [${lat}, ${lng}]:`, error);
     selectedTrackerLocation.value = 'Unknown Location';
   }
 };
@@ -692,11 +765,16 @@ const loadGoogleMapsScript = () => {
 const user = computed(() => authStore.userDetail);
 // On component mount, fetch trackers and measurements
 onMounted(async () => {
+  // Step 1: Load user data and Google Maps script
   await authStore.getUser();
-  await loadGoogleMapsScript();  // Wait for Google Maps to load
+  await loadGoogleMapsScript(); // Wait for Google Maps to load
   await fetchTrackersForUser();
-  updateGeofenceState(); // Now safe to call since Google Maps is loaded
+
+  const currentRouteName = router.currentRoute.value.name;
+  console.log('Current route name:', currentRouteName);
+  updateGeofenceState(); // Ensure geofence state updates correctly
 });
+
 
 // Watch for changes in selected tracker and update measurements
 watch(selectedTracker, updateSelectedTrackerMeasurements);
@@ -712,21 +790,35 @@ const filteredTrackers = computed(() => {
     return modeFilter.includes(tracker.mode);
   });
 });
+
 const filteredMeasurements = computed(() => {
   const validPositionFilter = user.value.settings.timestampFilters?.validPosition ?? false;
   const modeFilters = user.value.settings.timestampFilters?.mode || [];
 
+
+
   return selectedTrackerMeasurements.value.filter((measurement) => {
+
+
     // Filter by valid position
     if (validPositionFilter && (isNaN(measurement.latitude) || isNaN(measurement.longitude))) {
       return false;
     }
 
     // Filter by mode
-    const measurementMode = measurement.mode === 'LTE' ? 'LT' : measurement.mode === 'GPS' ? 'RT' : null;
+    const measurementMode =
+      measurement.mode === 'LTE' ? 'LT' :
+        measurement.mode === 'GPS' ? 'RT' :
+          measurement.mode === 'NBIOT' ? 'NBIOT' :
+            measurement.mode === 'GSM' ? 'GSM' :
+              null;
+
+
+
     return modeFilters.length === 0 || modeFilters.includes(measurementMode);
   });
 });
+
 
 
 
@@ -735,4 +827,10 @@ const filteredMeasurements = computed(() => {
 
 
 <style scoped>
+.newest-timestamp {
+  background-color: #d4edda;
+  /* Light green background */
+  color: #155724;
+  /* Dark green text color for better contrast */
+}
 </style>

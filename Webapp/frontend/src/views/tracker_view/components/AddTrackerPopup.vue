@@ -2,35 +2,40 @@
     <div class="popup-overlay" @click.self="closePopup">
         <div class="popup-card" :class="[(template ?? 'default') === 'dark' ? 'dark-mode' : '']">
             <div class="popup-header">
+                <!-- i18n for title -->
                 <h2>{{ $t('AddTrackerPopup-AddNewTracker') }}</h2>
+                <!-- i18n not typically used for an icon, but if you need tooltip, 
+               you can do :aria-label="$t('AddTrackerPopup-Close')" -->
                 <button class="close-btn" @click="closePopup">✖</button>
             </div>
 
             <div class="popup-body">
                 <!-- Tracker Name Input -->
                 <div class="popup-section">
-                    <label for="tracker-name">Tracker Name</label>
+                    <label for="tracker-name">{{ $t('AddTrackerPopup-TrackerName') }}</label>
                     <input type="text" id="tracker-name" v-model="trackerName" class="popup-input"
-                        placeholder="Any name, you can rename it later" />
+                        :placeholder="$t('AddTrackerPopup-TrackerNamePlaceholder')" />
                 </div>
 
                 <!-- IMEI Input -->
                 <div class="popup-section">
-                    <label for="tracker-imei">IMEI</label>
+                    <label for="tracker-imei">{{ $t('AddTrackerPopup-IMEI') }}</label>
                     <input type="text" id="tracker-imei" v-model="trackerImei" class="popup-input"
-                        placeholder="IMEI of your tracker" />
+                        :placeholder="$t('AddTrackerPopup-IMEIPlaceholder')" />
                 </div>
 
                 <!-- PIN Input -->
                 <div class="popup-section">
-                    <label for="tracker-pin">PIN</label>
+                    <label for="tracker-pin">{{ $t('AddTrackerPopup-PIN') }}</label>
                     <input type="text" id="tracker-pin" v-model="trackerPin" class="popup-input"
-                        placeholder="Enter the valid PIN" />
+                        :placeholder="$t('AddTrackerPopup-PINPlaceholder')" />
                 </div>
             </div>
 
             <div class="popup-footer">
-                <button class="popup-save-btn" @click="saveChanges">{{ $t('AddTrackerPopup-Save') }}</button>
+                <button class="popup-save-btn" @click="saveChanges">
+                    {{ $t('AddTrackerPopup-Save') }}
+                </button>
             </div>
         </div>
     </div>
@@ -38,20 +43,17 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useApi, useApiPrivate } from "@/composables/useApi";
+import { useApiPrivate } from "@/composables/useApi";
 
-// Define props to accept data passed from the parent
 const props = defineProps({
-    template: String,           // Template value for dark mode
-    closePopup: Function        // Function to close the popup
+    template: String,
+    closePopup: Function
 });
 
-// Reactive variables for tracker name, IMEI, and PIN
 const trackerName = ref('');
 const trackerImei = ref('');
-const trackerPin = ref(''); // New PIN field
+const trackerPin = ref('');
 
-// Save tracker to backend using a PUT request
 const saveChanges = async () => {
     try {
         const api = useApiPrivate();
@@ -62,8 +64,6 @@ const saveChanges = async () => {
         });
 
         if (response.data && response.data.tracker) {
-
-
             props.closePopup();
             trackerName.value = '';
             trackerImei.value = '';
@@ -77,7 +77,6 @@ const saveChanges = async () => {
         alert('Failed to create tracker. Please try again.');
     }
 };
-
 </script>
 
 <style scoped>

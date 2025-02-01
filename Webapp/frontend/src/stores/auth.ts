@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useApi, useApiPrivate } from "../composables/useApi";
-
+import {ref} from 'vue';
+export const currentView = ref('current');
 export interface User {
     _id: string;
     username: string;

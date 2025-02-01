@@ -8,13 +8,13 @@
           <li class="nav-item">
             <a href="#" @click.prevent="goToHome">{{ $t('Nav-Map') }}</a>
           </li>
-          <!-- 
+
           <li class="nav-item">
             <a href="#" @click.prevent="goToRoutes">{{ $t('Nav-Route') }}</a>
           </li>
-          -->
+
           <li class="nav-item">
-            <a ref="tour2" href="#" @click.prevent="goToTrackers">{{ $t('Nav-Tracker') }}</a>
+            <a href="#" @click.prevent="goToTrackers">{{ $t('Nav-Tracker') }}</a>
           </li>
 
           <li class="nav-item">
@@ -25,7 +25,7 @@
           <li class="nav-item help-dropdown">
             <span class="help-link">{{ $t('Nav-Help') }}</span>
             <ul class="dropdown-menu">
-              <li @click.prevent="startTour">{{ $t('Nav-Tour') }}</li>
+              <li @click.prevent="startTourHandler">{{ $t('Nav-Tour') }}</li>
               <li @click.prevent="contactSupport">{{ $t('Nav-Contact') }}</li>
             </ul>
           </li>
@@ -45,11 +45,11 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { computed, onMounted } from 'vue';
-
-import { useAuthStore } from '@/stores/auth';
+import { defineEmits } from 'vue';
+import { currentView, useAuthStore } from '@/stores/auth';
 import { useTour } from '@/routes/TourController.js';  // Import useTour
-import { tour2 } from '@/routes/tourRefs.js';
-import { tour3 } from '@/routes/tourRefs.js';
+import { useI18n } from 'vue-i18n';
+const emit = defineEmits(['startMapTour']);
 const router = useRouter();
 const authStore = useAuthStore();
 const user = computed(() => authStore.userDetail);
@@ -57,7 +57,7 @@ onMounted(async () => {
   await authStore.getUser();
 });
 
-
+const { t } = useI18n();
 // Navigation functions
 const goToHome = () => {
   router.push({ name: 'main' }); // Replace with your home route
@@ -71,11 +71,11 @@ const goToTrackers = () => {
   router.push({ name: 'trackers' }); // Replace with your trackers route
 };
 
-// Start the tour when "Tour" is clicked
-const startTour = () => {
-  useTour(router);  // Start the tour without passing a DOM element here
-};
+const { startTour } = useTour(router, t); // Destructure startTour from useTour
 
+const startTourHandler = () => {
+  startTour(currentView.value); // Call the actual startTour function
+};
 const contactSupport = () => {
   router.push({ name: 'contact' }); // Replace with your contact route
 };
@@ -316,6 +316,4 @@ const logout = async () => {
 
 
 }
-
-
 </style>

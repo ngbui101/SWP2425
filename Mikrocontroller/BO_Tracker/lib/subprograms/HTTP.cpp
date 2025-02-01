@@ -51,8 +51,7 @@ bool HTTP::readResponse(char *recv_data)
     return true;
 }
 
-bool HTTP::sendAndReadResponse(char *payload, char *recv_data)
-{
+bool HTTP::sendAndReadResponse(char *payload, char *recv_data){
     return (sendPostRequest(payload) && readResponse(recv_data));
 }
 

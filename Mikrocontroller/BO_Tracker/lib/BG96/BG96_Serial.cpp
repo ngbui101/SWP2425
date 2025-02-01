@@ -295,10 +295,8 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const c
     unsigned int recv_len = 0;
     errorCode = -1;
     cleanBuffer();
-    while (millis() - start_time < timeout * 1000UL)
-    {
-        if (serialAvailable())
-        {
+    while(millis() - start_time < timeout * 1000UL){
+        if (serialAvailable()){
             recv_len += readResponseByteToBuffer();
             if (searchStrBuffer(test_str))
             {
@@ -337,54 +335,7 @@ Cmd_Response_t _BG96_Serial::readResponseAndSearch(const char *test_str, const c
         return TIMEOUT_RESPONSE;
     }
 }
-Cmd_Response_t _BG96_Serial::waitForMQTTURC(unsigned int timeoutSeconds)
-{
-    // Hier hinterlegst du die exakten URCs,
-    // wie sie der BG96 im MQTT-Kontext ausgibt.
-    // Beispiel:
 
-    unsigned long start_time = millis();
-    unsigned int recv_len = 0;
-
-    // Leere ggf. deinen internen Empfangs-Puffer, z. B. rxBuffer
-    cleanBuffer();
-
-    // Warte bis zu timeoutSeconds * 1000 ms
-    while (millis() - start_time < (unsigned long)timeoutSeconds * 1000UL)
-    {
-        // Sobald Daten auf der seriellen Schnittstelle vorliegen:
-        if (serialAvailable())
-        {
-            // Lese byteweise und füge sie in rxBuffer ein
-            recv_len += readResponseByteToBuffer();
-            // Prüfe, ob +QMTRECV: gefunden wurde
-            if (searchStrBuffer(MQTT_RECV_DATA))
-            {
-                // => Dann gib SUCCESS_RESPONSE zurück
-                return SUCCESS_RESPONSE;
-            }
-            // Prüfe, ob +QMTPUB: gefunden wurde
-            else if (searchStrBuffer(MQTT_STATUS))
-            {
-                // => Dann gib FIAL_RESPONSE zurück
-                return FIAL_RESPONSE;
-            }
-        }
-    }
-
-    // Wenn wir hier ankommen, ist die Zeit abgelaufen (Timeout)
-    // Falls wir Daten hatten (recv_len > 0), aber keines der beiden
-    // gesuchten Muster gefunden haben, könnte man UNKNOWN_RESPONSE
-    // zurückgeben. Hier unterscheiden wir explizit:
-    if (recv_len > 0)
-    {
-        return UNKNOWN_RESPONSE; // Daten da, aber nicht die richtigen URCs
-    }
-    else
-    {
-        return TIMEOUT_RESPONSE; // Gar keine Daten
-    }
-}
 /**
  * @brief Sendet einen AT-Befehl und sucht in der Antwort nach einem bestimmten Zeichen innerhalb eines Timeouts.
  *

@@ -31,14 +31,14 @@ const SettingsSchema = new Schema({
   trackerFilters: {
     mode: {
       type: [String],  // Array of strings to store selected modes
-      enum: ['RT', 'LT'],  // Allowed values: Real-Time ('RT') and Long-Time ('LT')
+      enum: ['RT', 'LT', 'GSM', 'NBIOT'],  // Allowed values: Real-Time ('RT') and Long-Time ('LT')
       default: []  // Default to an empty array, meaning no filter applied
     }
   },
-  timestampFilters: {
+  timestampFilters: { 
     mode: {
       type: [String],  // Array of strings to store selected modes
-      enum: ['RT', 'LT'],  // Allowed values: Real-Time ('RT') and Long-Time ('LT')
+      enum: ['RT', 'LT','GSM', 'NBIOT'],  // Allowed values: Real-Time ('RT') and Long-Time ('LT')
       default: []  // Default to an empty array, meaning no filter applied
     },
     validPosition: {

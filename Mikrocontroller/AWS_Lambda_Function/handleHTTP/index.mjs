@@ -50,25 +50,10 @@ export const handler = async (event) => {
     const mongoURI = process.env.MONGO_URI;
     const client = new MongoClient(mongoURI);
 
-    let requestData;
     // Body parsen
-    if (!event.body) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify('Missing request body'),
-        };
-    }
-
-    // 2) Versuch, das JSON zu parsen
-    try {
-        requestData = JSON.parse(event.body);
-    } catch (err) {
-        console.error('Error parsing JSON:', err);
-        return {
-            statusCode: 400,
-            body: JSON.stringify('Invalid JSON payload'),
-        };
-    }
+    const requestData = typeof event.body === 'string'
+        ? JSON.parse(event.body)
+        : event;
 
     // Relevante Felder aus dem Request
     const data = {
@@ -201,7 +186,13 @@ export const handler = async (event) => {
         });
 
         // Ergebnis an den Client zurück
-        
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                valid: true,
+                dataHandlerResponse: resultFromDataHandler
+            })
+        };
 
     } catch (error) {
         console.error('Error in ModeHandler:', error);
@@ -212,10 +203,4 @@ export const handler = async (event) => {
     } finally {
         await client.close();
     }
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
-            valid: true
-        })
-    };
 };

@@ -14,7 +14,7 @@
                 <label @click="setView('current')" :class="{ active: currentView === 'current' }">
                     {{ $t('MapView-Current') }}
                 </label>
-                
+
 
                 <!-- Map History View Toggle (Right) -->
                 <label @click="setView('history')" :class="{ active: currentView === 'history' }">
@@ -34,11 +34,16 @@
 import { ref, computed } from 'vue';
 import CurrentMap from './components/CurrentMap.vue';
 import MapHistory from './components/MapHistory.vue';
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore, currentView } from "@/stores/auth";
+import { onMounted } from 'vue';
+onMounted(async () => {
 
-const currentView = ref('current'); // Default view is now current
+
+    currentView.value = 'current';
+});
+
 let isDragging = ref(false); // Indicates if the slider is being dragged
-let sliderPosition = ref(100); // Default slider starts at Current Map (leftmost)
+let sliderPosition = ref(100);
 let draggingDirection = ref(''); // Tracks the drag direction
 
 // Fetch user from the auth store

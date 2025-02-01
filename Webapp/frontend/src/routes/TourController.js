@@ -1,157 +1,135 @@
 import { useShepherd } from 'vue-shepherd';
-import { tour1, tour2, tour3 } from '@/routes/tourRefs.js'; // Import the shared refs
+import * as tourRefs from '@/routes/tourRefs.js';
 
-export function useTour(router) {
-  const totalSteps = 3; // Define the total number of steps
+const {
+  mapTour1,
+  mapTour2,
+  mapTour3,
+  mapTour4,
+  mapTour5,
+  mapTour6,
+  mapTour7,
+  mapTour8,
+  mapTour9,
+  mapTour10,
+  mapHistoryTour1,
+  mapHistoryTour2,
+  mapHistoryTour3,
+  mapHistoryTour4,
+  mapHistoryTour5,
+  mapHistoryTour6,
+  mapHistoryTour7,
+  mapHistoryTour8,
+  mapHistoryTour9,
+  mapHistoryTour10,
+  trackerCardTour1,
+  trackerCardTour2,
+  trackerCardTour3,
+  trackerCardTour4,
+  trackerCardTour5,
+  trackerCardTour6,
+  trackerCardTour7,
+  trackerCardTour8,
+  trackerCardTour9,
+  trackerCardTour10,
+  trackerListTour1,
+  trackerListTour2,
+  trackerListTour3,
+  trackerListTour4,
+  trackerListTour5,
+  trackerListTour6,
+  trackerListTour7,
+  trackerListTour8,
+  trackerListTour9,
+  trackerListTour10,
+} = tourRefs;
 
-  const tour = useShepherd({
-    defaultStepOptions: {
-      cancelIcon: { enabled: true },
-      scrollTo: { behavior: 'smooth', block: 'center' },
-      highlightClass: 'shepherd-highlight', // Custom highlight class
-    },
-    useModalOverlay: true,
-  });
-
-  // Utility function to wait for an element to exist in the DOM
-  function waitForElement(ref, timeout = 5000) {
-    return new Promise((resolve, reject) => {
-      const startTime = Date.now();
-      const interval = setInterval(() => {
-        if (ref.value) {
-          clearInterval(interval);
-          resolve();
-        } else if (Date.now() - startTime > timeout) {
-          clearInterval(interval);
-          reject(new Error('Element not found within the timeout period'));
-        }
-      }, 100);
+export function useTour(router, t) {
+  const createTour = (steps) => {
+    const tour = useShepherd({
+      defaultStepOptions: {
+        cancelIcon: { enabled: true },
+        scrollTo: { behavior: 'smooth', block: 'center' },
+        highlightClass: 'shepherd-highlight',
+      },
+      useModalOverlay: true,
     });
-  }
 
-  // Function to restart the tour and jump to a specific step
-  async function restartTourAtStep(stepIndex) {
-    tour.cancel(); // Cancel any existing tour instance
-    await tour.start(); // Restart the tour
-    for (let i = 0; i < stepIndex; i++) {
-      tour.next(); // Move to the desired step
+    steps.forEach((step, index) => {
+      if (step.ref?.value) {
+        tour.addStep({
+          id: step.id,
+          attachTo: { element: step.ref.value, on: 'bottom' },
+          text: step.text,
+          highlightClass: 'shepherd-highlight',
+          buttons: [
+            ...(index > 0 ? [{ text: 'Previous', action: tour.back }] : []),
+            ...(index < steps.length - 1 ? [{ text: 'Next', action: tour.next }] : []),
+            { text: 'Close', action: tour.cancel },
+          ],
+        });
+      } else {
+        console.warn(`Element for ${step.id} is not available.`);
+      }
+    });
+
+    return tour;
+  };
+
+  const createCurrentMapTour = () => createTour([
+    { id: 'map-tour-1', ref: mapTour1, text: `<p>${t('Tour.CurrentMap.step1')}</p>` },
+    { id: 'map-tour-2', ref: mapTour2, text: `<p>${t('Tour.CurrentMap.step2')}</p>` },
+    { id: 'map-tour-3', ref: mapTour3, text: `<p>${t('Tour.CurrentMap.step3')}</p>` },
+    { id: 'map-tour-4', ref: mapTour4, text: `<p>${t('Tour.CurrentMap.step4')}</p>` },
+    { id: 'map-tour-5', ref: mapTour5, text: `<p>${t('Tour.CurrentMap.step5')}</p>` },
+    { id: 'map-tour-6', ref: mapTour6, text: `<p>${t('Tour.CurrentMap.step6')}</p>` },
+    { id: 'map-tour-7', ref: mapTour7, text: `<p>${t('Tour.CurrentMap.step7')}</p>` },
+    { id: 'map-tour-8', ref: mapTour8, text: `<p>${t('Tour.CurrentMap.step8')}</p>` },
+    { id: 'map-tour-9', ref: mapTour9, text: `<p>${t('Tour.CurrentMap.step9')}</p>` },
+    { id: 'map-tour-10', ref: mapTour10, text: `<p>${t('Tour.CurrentMap.step10')}</p>` },
+  ]);
+  
+  const createMapHistoryTour = () => createTour([
+    { id: 'history-tour-1', ref: mapHistoryTour1, text: `<p>${t('Tour.MapHistory.step1')}</p>` },
+    { id: 'history-tour-2', ref: mapHistoryTour2, text: `<p>${t('Tour.MapHistory.step2')}</p>` },
+    { id: 'history-tour-3', ref: mapHistoryTour3, text: `<p>${t('Tour.MapHistory.step3')}</p>` },
+    { id: 'history-tour-4', ref: mapHistoryTour4, text: `<p>${t('Tour.MapHistory.step4')}</p>` },
+    { id: 'history-tour-5', ref: mapHistoryTour5, text: `<p>${t('Tour.MapHistory.step5')}</p>` },
+    { id: 'history-tour-6', ref: mapHistoryTour6, text: `<p>${t('Tour.MapHistory.step6')}</p>` },
+    { id: 'history-tour-7', ref: mapHistoryTour7, text: `<p>${t('Tour.MapHistory.step7')}</p>` },
+    { id: 'history-tour-8', ref: mapHistoryTour8, text: `<p>${t('Tour.MapHistory.step8')}</p>` },
+    { id: 'history-tour-9', ref: mapHistoryTour9, text: `<p>${t('Tour.MapHistory.step9')}</p>` },
+    { id: 'history-tour-10', ref: mapHistoryTour10, text: `<p>${t('Tour.MapHistory.step10')}</p>` },
+  ]);
+  
+  const createTrackerCardTour = () => createTour([
+    { id: 'tracker-card-tour-1', ref: trackerCardTour1, text: `<p>${t('Tour.TrackerCard.step1')}</p>` },
+    { id: 'tracker-card-tour-2', ref: trackerCardTour2, text: `<p>${t('Tour.TrackerCard.step2')}</p>` },
+    // Add more steps similarly...
+  ]);
+
+  const createTrackerListTour = () => createTour([
+    { id: 'tracker-list-tour-1', ref: trackerListTour1, text: '<p>Step 1 for Tracker List</p>' },
+    // Add more steps for trackerListTour2 to trackerListTour10...
+  ]);
+
+  const startTour = (currentView) => {
+    if (currentView === 'current') {
+      const tour = createCurrentMapTour();
+      tour.start();
+    } else if (currentView === 'history') {
+      const tour = createMapHistoryTour();
+      tour.start();
+    } else if (currentView === 'card') {
+      const tour = createTrackerCardTour();
+      tour.start();
+    } else if (currentView === 'list') {
+      const tour = createTrackerListTour();
+      tour.start();
+    } else {
+      console.warn(`No tour defined for view: ${currentView}`);
     }
-  }
+  };
 
-  // Add the first step
-  if (tour1.value) {
-    tour.addStep({
-      id: 'logo-step',
-      attachTo: {
-        element: tour1.value,
-        on: 'bottom',
-      },
-      text: `
-        <div>
-          <p>Welcome to BO-Tracker</p>
-          <p>In this guided tour, we will guide you through the application and highlight all the important things.</p>
-          <p>You can always close this tour by clicking the close button and pick it up another time, watch previous steps, or skip to the next step.</p>
-          <p>If you have any questions, feel free to contact us.</p>
-          <p>Your BO-Tracker team</p>
-        </div>
-        <footer style="text-align: center; margin-top: 10px;">1/${totalSteps}</footer>  <!-- Pagination footer -->
-      `,
-      buttons: [
-        {
-          text: 'Next', // Next button for moving to the second step
-          action: tour.next,
-        },
-        {
-          text: 'Close',
-          action: tour.cancel,
-        },
-      ],
-      highlightClass: 'shepherd-highlight', // Custom highlight class
-    });
-  } else {
-    console.warn('tour1 element is not available for the tour.');
-  }
-
-  // Add the second step
-  if (tour2.value) {
-    tour.addStep({
-      id: 'second-step',
-      attachTo: {
-        element: tour2.value,
-        on: 'bottom',
-      },
-      text: `
-        <div>
-          <p>Let's start by adding your tracker to this application.</p>
-        </div>
-        <footer style="text-align: center; margin-top: 10px;">2/${totalSteps}</footer>  <!-- Pagination footer -->
-      `,
-      buttons: [
-        {
-          text: 'Previous',
-          action: tour.back,
-        },
-        {
-          text: 'Next',
-          action: async () => {
-            try {
-              await router.push({ name: 'trackers' }); // Navigate to /trackers
-              await waitForElement(tour3, 5000); // Wait for the element to exist (timeout set to 5000ms)
-              await restartTourAtStep(2); // Restart the tour and move to step 3
-            } catch (error) {
-              console.error('Error during navigation or waiting for the element:', error);
-              alert('The required element for the tour is not available. Please try restarting the tour.');
-              tour.cancel(); // Cancel the tour if an error occurs
-            }
-          },
-        },
-        {
-          text: 'Close',
-          action: tour.cancel,
-        },
-      ],
-      highlightClass: 'shepherd-highlight',
-    });
-  } else {
-    console.warn('tour2 element is not available for the tour.');
-  }
-
-  // Add the third step
-  if (tour3.value) {
-    tour.addStep({
-      id: 'third-step',
-      attachTo: {
-        element: tour3.value,
-        on: 'bottom',
-      },
-      text: `
-        <div>
-          <p>This button allows you to add your tracker to this application. You can give it any name you want. Use the IMEI and PIN that you find on the backside of your packaging.</p>
-        </div>
-        <footer style="text-align: center; margin-top: 10px;">3/${totalSteps}</footer>  <!-- Pagination footer -->
-      `,
-      buttons: [
-        {
-          text: 'Previous', // Previous button for going back to the first step
-          action: tour.back,
-        },
-        {
-          text: 'Next', // Next button for further steps (if any)
-          action: () => {
-            tour.next(); // Continue to the next step in the tour
-          },
-        },
-        {
-          text: 'Close',
-          action: tour.cancel,
-        },
-      ],
-      highlightClass: 'shepherd-highlight', // Custom highlight class
-    });
-  } else {
-    console.warn('tour3 element is not available for the tour.');
-  }
-
-  // Start the tour
-  tour.start();
+  return { startTour };
 }
