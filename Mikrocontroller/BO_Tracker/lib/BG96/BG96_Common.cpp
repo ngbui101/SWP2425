@@ -43,9 +43,9 @@ bool _BG96_Common::TurnOnModule()
     delay(3000);
     digitalWrite(ENABLE_PWR, HIGH);
     digitalWrite(POWKEY_PIN, HIGH);
-    while (readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE)
+    /// Maximal 30 (s)
+    while ((readResponseAndSearchChr(RESPONSE_READY[0], 3) != SUCCESS_RESPONSE))
         ;
-    // digitalWrite(POWKEY_PIN, LOW); // Powkey-Pin auf HIGH setzen
     return true;
 }
 
@@ -63,7 +63,7 @@ bool _BG96_Common::FirstStart()
     pinMode(ENABLE_PWR, OUTPUT);
     pinMode(RESET_PIN, OUTPUT);
     pinMode(POWKEY_PIN, OUTPUT);
-    return InitModule();
+    return true;
 }
 
 bool _BG96_Common::InitModule()
@@ -947,7 +947,8 @@ Cell *_BG96_Common::ReportCellServingcell()
                     if (token == NULL)
                         return nullptr;
                     int mcc = atoi(token);
-                    if(mcc == 65535){
+                    if (mcc == 65535)
+                    {
                         return nullptr;
                     }
                     // Parse mnc
@@ -1285,8 +1286,8 @@ bool _BG96_Common::checkForNetwork()
     Net_Status_t i_status = NOT_REGISTERED;
     unsigned long start_time = millis();
     while (i_status != REGISTERED && i_status != REGISTERED_ROAMING)
-    {   
-        unsigned long loop_start= millis();
+    {
+        unsigned long loop_start = millis();
         i_status = DevNetRegistrationStatus();
         if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
         {
@@ -1294,7 +1295,8 @@ bool _BG96_Common::checkForNetwork()
             // Serial.println("Fail to register!!!");
             return false;
         }
-        while((millis() - loop_start) < 3000);
+        while ((millis() - loop_start) < 3000)
+            ;
     }
     return true;
 }
@@ -1304,6 +1306,7 @@ bool _BG96_Common::checkForNetworkWithDENIED()
     unsigned long start_time = millis();
     while (i_status != REGISTERED && i_status != REGISTERED_ROAMING && i_status != REGISTRATION_DENIED)
     {
+        unsigned long l_start = millis();
         i_status = DevNetRegistrationStatus();
         if (millis() - start_time >= 30 * 1000UL) // Timeout nach 90 Sekunden
         {
@@ -1311,7 +1314,8 @@ bool _BG96_Common::checkForNetworkWithDENIED()
             // Serial.println("Fail to register!!!");
             return false;
         }
-        delay(3000);
+        while (millis() - l_start < 3000) // warte 3s
+            ;
     }
     return true;
 }
@@ -1330,41 +1334,32 @@ bool _BG96_Common::TurnOnInternet(unsigned int pdp_index)
     {
         return false;
     }
+
     start_time = millis();
-    while (millis() - start_time <= 30 * 1000UL) // Timeout nach 150 Sekunden
+    while (millis() - start_time <= 30 * 1000UL)
     {
-        // AttachPS(true);
-
         init_status = ActivateDevAPN(pdp_index);
-
+        unsigned long l_time = millis();
         if (init_status == SUCCESS_RESPONSE)
         {
             char i_ip[16];
             if (GetDevAPNIPAddress(pdp_index, i_ip))
             {
-                // sprintf(err_code, "\r\nAPN OK: The IP address is %s\r\n", i_ip);
-                // Serial.println("Get APN OK");
                 return true;
             }
             else
             {
-                // e_str = "\r\nAPN ERROR: Failed to retrieve IP address!\r\n";
-                // strcpy(err_code, e_str);
                 return false;
             }
             return true;
         }
         else if (init_status == TIMEOUT_RESPONSE)
         {
-            // e_str = "\r\nAPN ERROR: APN activation timeout. Please reset your device!\r\n";
-            // strcpy(err_code, e_str);
-            // if(ResetModule())
             return false;
         }
+        while ((millis() - l_time) < 3000)
+            ; // delay 3s
     }
-    // Falls die APN-Aktivierung fehlschlägt
-    // e_str = "\r\nAPN ERROR: Failed to activate APN!\r\n";
-    // strcpy(err_code, e_str);
     return false;
 }
 
