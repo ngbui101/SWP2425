@@ -108,8 +108,14 @@ public:
     bool isMovementAboveThreshold(float threshold);
 
     bool isMovementAboveThresholdFor10S(float threshold);
+
+    void getDynamicAcceleration(float *x, float *y, float *z, float *dynamic_acceleration);
 private:
     float devRange;
+    float x_offset = 0; 
+    float y_offset = 0; 
+    float z_offset = 0;
+    int num_samples = 10;
     struct bma4_dev accel;
     struct bma4_accel_config accel_conf;
 };

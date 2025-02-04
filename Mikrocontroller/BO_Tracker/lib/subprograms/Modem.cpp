@@ -1,8 +1,8 @@
 #include "Modem.h"
 
 // Konstruktor der Klasse Modem
-Modem::Modem(Stream &atSerial, Stream &dSerial)
-    : _Board(dSerial), _BG96(atSerial, dSerial)
+Modem::Modem(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
+    : _Board(dSerial), _BG96(atSerial, dSerial), docInput(doc)
 {
 }
 
@@ -10,7 +10,7 @@ Modem::Modem(Stream &atSerial, Stream &dSerial)
 // Initialisiert das Modem (ohne Netzwerkkonfiguration)
 bool Modem::startModem()
 {
-    if (turnOnModem())
+    if (_BG96.FirstStart() && turnOnModem())
     {
         _BG96.SetDevOutputformat(true); // Set output format
         _BG96.SetDevCommandEcho(false); // Disable command echo
@@ -31,7 +31,7 @@ bool Modem::initModem()
         return false;
     }
 
-    _BG96.ConfigNetworks(RAT);
+    _BG96.ConfigNetworks(trackerModes.RAT);
     char imei_tmp[64];
 
     if (_BG96.GetDevIMEI(imei_tmp))
@@ -52,7 +52,7 @@ bool Modem::initModem()
         initLogger.logError("APN");
         return false;
     }
-
+    connect = true;
     // _BG96.ScanCells(RAT, cells); // Uncomment if needed
 
     return true;
@@ -72,6 +72,8 @@ bool Modem::turnOnModem()
 {
     if (!_BG96.InitModule())
     {
+        initLogger.logError("TurnOnModem");
+        funkModuleEnable = false;
         return false;
     }
     // setCurrentTimeToRTC();
@@ -95,6 +97,7 @@ bool Modem::startConnect()
     if (!_BG96.TurnOnInternet(PDPIndex))
     {
         runningLogger.logError("TurnOnInternet");
+        connect = false;
         return false;
     }
     connect = true;
@@ -106,36 +109,44 @@ bool Modem::isConnected()
     return connect;
 }
 
-void Modem::fillWithZero(Cell* arr[], int length, int maxSize) {
-    if (length >= maxSize) return;  // Keine Auffüllung notwendig, wenn das Array bereits voll ist
+void Modem::fillWithZero(Cell *arr[], int length, int maxSize)
+{
+    if (length >= maxSize)
+        return; // Keine Auffüllung notwendig, wenn das Array bereits voll ist
 
     // Erstelle eine Dummy-Cell mit `CellID = 0`
-    for (int i = length; i < maxSize; i++) {
-        arr[i] = new Cell("FILLER", 0, 0, 0, 0, 0);  // Dynamische Erstellung einer Platzhalter-Zelle
+    for (int i = length; i < maxSize; i++)
+    {
+        arr[i] = new Cell("FILLER", 0, 0, 0, 0, 0); // Dynamische Erstellung einer Platzhalter-Zelle
     }
 }
 
-bool Modem::sortBySignal(Cell* arr[], int length) {
-    if (arr == nullptr || length <= 1) {
-        return false;  // Keine Sortierung notwendig oder ungültiger Array-Zeiger
+bool Modem::sortBySignal(Cell *arr[], int length)
+{
+    if (arr == nullptr || length <= 1)
+    {
+        return false; // Keine Sortierung notwendig oder ungültiger Array-Zeiger
     }
 
     // Bubble-Sort-Algorithmus (absteigend nach Signalstärke)
-    for (int i = 0; i < length - 1; i++) {
-        for (int j = 0; j < length - i - 1; j++) {
-            if (arr[j]->getSignal() < arr[j + 1]->getSignal()) {
-                Cell* temp = arr[j];
+    for (int i = 0; i < length - 1; i++)
+    {
+        for (int j = 0; j < length - i - 1; j++)
+        {
+            if (arr[j]->getSignal() < arr[j + 1]->getSignal())
+            {
+                Cell *temp = arr[j];
                 arr[j] = arr[j + 1];
                 arr[j + 1] = temp;
             }
         }
     }
 
-    return true;  // Sortierung abgeschlossen
+    return true; // Sortierung abgeschlossen
 }
 
-
-bool Modem::fillCellsQueue(){
+bool Modem::fillCellsQueue()
+{
     int MAX_CELLS = 6;
     Cell *cells[MAX_CELLS] = {nullptr};
 
@@ -144,14 +155,35 @@ bool Modem::fillCellsQueue(){
     // Serial.println(countCell);
     if (countCell == 0)
         return false;
-    if(countCell > 1){
-        sortBySignal(cells,countCell);
+    if (countCell > 1)
+    {
+        sortBySignal(cells, countCell);
     }
 
-    fillWithZero(cells,countCell, MAX_CELLS);
+    fillWithZero(cells, countCell, MAX_CELLS);
 
     cells_queue.addAll(cells);
 
     // Serial.println("cells_queue OK");
     return true;
 }
+
+bool Modem::handleCellInfosMode()
+{
+    // _BG96.ScanCells(RAT, cells);
+
+    JsonArray cellsArray = docInput["cells"].to<JsonArray>();
+
+    if (!fillCellsQueue())
+    {
+        runningLogger.logError("FillCells");
+        return false;
+    };
+
+    cells_queue.addCellsToJsonArray(&cellsArray);
+
+    // Serial.println("handleCellInfosMode()");
+
+    return true;
+}
+

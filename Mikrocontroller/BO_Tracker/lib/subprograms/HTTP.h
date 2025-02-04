@@ -6,7 +6,7 @@
 
 class HTTP : public Modem {
 public:
-    HTTP(Stream &atSerial, Stream &dSerial);
+    HTTP(Stream &atSerial, Stream &dSerial, JsonDocument &docInput);
     ~HTTP();
 
     bool initHTTP();
@@ -15,6 +15,8 @@ public:
     bool readResponse(char *recv_data);
     bool sendAndReadResponse(char* payload,char *recv_data);
     bool isUrlSetted();
+    bool pingServer();
+    
 protected:
     bool urlSetted = false;
 };
