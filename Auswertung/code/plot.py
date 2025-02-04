@@ -92,7 +92,7 @@ def plot_coordinates(dataset, title):
     plt.figure(figsize=(10, 6))
 
     # Plot der Longitude und Latitude als Scatter Plot
-    plt.scatter(dataset['Longitude'], dataset['Latitude'], c='blue', marker='o', label='Gemessene Punkte', s=10)
+    #plt.scatter(dataset['Longitude'], dataset['Latitude'], c='blue', marker='o', label='Gemessene Punkte', s=10)
     plt.plot(dataset['Longitude'], dataset['Latitude'], c='orange', linestyle='-', linewidth=1, label="")
 
     # Titel und Gitter hinzufügen
@@ -128,12 +128,12 @@ def plot_two_datasets(set1, set2, set1_label, set2_label, title):
     plt.figure(figsize=(10, 6))
 
     # Plot der ersten Route
-    plt.plot(set1['Longitude'], set1['Latitude'], c='orange', linestyle='-', linewidth=2, label=set1_label)
-    #plt.scatter(set1['Longitude'], set1['Latitude'], c='blue', linewidths=2, marker='o', label=f'Messdaten {set1_label}', s=10)
+    #plt.plot(set1['Longitude'], set1['Latitude'], c='orange', linestyle='-', linewidth=2, label=set1_label)
+    plt.scatter(set1['Longitude'], set1['Latitude'], c='red', linewidths=2, marker='o', label=f'{set1_label}', s=10)
 
     # Plot der zweiten Route
-    plt.plot(set2['Longitude'], set2['Latitude'], c='green', linestyle='-', linewidth=2, label=set2_label)
-    #plt.scatter(set2['Longitude'], set2['Latitude'], c='green', marker='o', label=f'Messdaten {set2_label}', s=10)
+    plt.plot(set2['Longitude'], set2['Latitude'], c='green', linestyle='-', linewidth=1, label=set2_label)
+    plt.scatter(set2['Longitude'],set2['Latitude'], c='blue', marker='o', label=f'Messdaten {set2_label}', s=10)
 
     # Titel hinzufügen
     plt.title(title)
@@ -149,57 +149,12 @@ def plot_two_datasets(set1, set2, set1_label, set2_label, title):
     plt.grid(True)
 
     # Legende
-    plt.legend(loc='upper left')
+    plt.legend(loc='lower left')
 
     # Diagramm anzeigen
     plt.tight_layout()
     plt.show()
-def plot_specific_measurements(interpolated_df1, interpolated_df2, start_idx, end_idx, label2):
-    """
-    Plottet spezifische Messungen aus einem gegebenen Bereich und verbindet Punkte.
-    :param interpolated_df1: Interpolierte Koordinaten des ersten Datensatzes (z.B. ground truth)
-    :param interpolated_df2: Interpolierte Koordinaten des zweiten Datensatzes (z.B. gemessene Daten)
-    :param start_idx: Startindex der Messungen
-    :param end_idx: Endindex der Messungen
-    """
-    # Beschränkung auf den spezifischen Bereich
-    selected_df1 = interpolated_df1.iloc[start_idx:end_idx+1]
-    selected_df2 = interpolated_df2.iloc[start_idx:end_idx+1]
 
-    plt.figure(figsize=(10, 6))
-
-    # Plot der ersten Koordinaten (Referenz)
-    plt.scatter(selected_df1['Longitude'], selected_df1['Latitude'], c='blue', label='Interpolierte Groundtruth', s=10)
-    plt.plot(selected_df1['Longitude'], selected_df1['Latitude'], c='blue', linestyle='-', alpha=0.6)
-
-    # Plot der zweiten Koordinaten (Messungen)
-    plt.scatter(selected_df2['Longitude'], selected_df2['Latitude'], c='orange', label=f'Interpolierte {label2}', s=10)
-    plt.plot(selected_df2['Longitude'], selected_df2['Latitude'], c='orange', linestyle='-', alpha=0.6)
-
-    # Verbindungslinien zwischen den Punkten
-    for i in range(len(selected_df1)):
-        lon1, lat1 = selected_df1.iloc[i]['Longitude'], selected_df1.iloc[i]['Latitude']
-        lon2, lat2 = selected_df2.iloc[i]['Longitude'], selected_df2.iloc[i]['Latitude']
-        plt.plot([lon1, lon2], [lat1, lat2], c='gray', linestyle='--', linewidth=0.7)
-
-    # Titel hinzufügen
-    plt.title(f'Vergleich der interpolierten Groundtruth und der {label2}')
-
-    # Entfernen der Achsenticks und -beschriftungen
-    plt.xticks([])  # Keine Ticks auf der X-Achse
-    plt.yticks([])  # Keine Ticks auf der Y-Achse
-    plt.xlabel('')  # Keine X-Achsenbeschriftung
-    plt.ylabel('')  # Keine Y-Achsenbeschriftung
-
-    # Legende
-    plt.legend(loc='best')
-
-    # Gitter hinzufügen
-    plt.grid(True)
-
-    # Diagramm anzeigen
-    plt.tight_layout()
-    plt.show()
 def plot_error_histogram_gps(errors, title):
     
     # Zahlen runden
@@ -264,10 +219,11 @@ def plot_error_histogram_other(errors, title, group_size=100):
     plt.tight_layout()  # Platz für die Achsenbeschriftung schaffen
     plt.show()
 
+
 #####################cdfs bewegung########################
 
 gps_stadt  = read.read_gps_data('../data/bewegung/outdoorstadt.gps.json')
-gps_land  = read.read_gps_data('../data/bewegung/outdoorland.gps.json')
+gps_land  = read.read_gps_data('../data/bewegung/gpsland2.json')
 lte_stadt  = read.read_gsm_lte_data('../data/bewegung/outdoorstadt.lte.json')
 
 gt_stadt = read.read_groundtruth('../data/bewegung/outdoorstadt_groundtruth.csv')
@@ -401,8 +357,123 @@ plot_error_histogram_other(lte_keller_error, "FEHLER HISTOGRAMM LTE KELLER")
 plot_error_histogram_other(lte_wohnung_error, "FEHLER HISTOGRAMM LTE WOHNUNG")
 """
 #############routen###################
-plot_two_datasets(gsm_atb, gsm_atb_gt, "GSM", "Groundtruth", "VERGLEICH GSM MESSDATEN UND GROUNDTRUTH AUTOBAHN")
+#plot_two_datasets(gsm_atb, gsm_atb_gt, "GSM", "Groundtruth", "VERGLEICH GSM MESSDATEN UND GROUNDTRUTH AUTOBAHN")
+############more cdfs#################
+"""
+gpshof = read.read_gps_data('../data/stationaer/gpshof.json')
+gpshoferror = eval.get_gps_errors(gpshof)
+plot_single_cdf(gpshoferror, "CDF GPS STATIONAER HOF")
+plot_error_histogram_gps(gpshoferror, "FEHLER HISTOGRAMM GPS HOF")
+"""
 
+gpswohnung = read.read_gps_data('../data/stationaer/gpswohnung.json')
+gpswohnungerror = eval.get_gps_errors(gpswohnung)
+#plot_single_cdf(gpswohnungerror, "CDF GPS STATIONAER WOHNUNG")
+#plot_error_histogram_other(gpswohnungerror, "FEHLER HISTOGRAMM GPS WOHNUNG")
+
+
+
+
+gsmstadt = read.read_gsm_lte_data('../data/bewegung/gsmstadt.json')
+gssgt = read.read_groundtruth('../data/bewegung/gsmstadt.csv')
+gsmstadterror = eval.calc_error_gsm_lte_moving(gsmstadt, gssgt)
+#plot_single_cdf(gsmstadterror, "CDF GSM MOBIL STADT")
+#plot_error_histogram_other(gsmstadterror, "FEHLER HISTOGRAMM GSM STADT")
+
+gsmland = read.read_gsm_lte_data('../data/bewegung/gsmland.json')
+gsmltegps_gt = read.read_groundtruth('../data/bewegung/gsmltegps.csv')
+
+gsmlanderror = eval.calc_error_gsm_lte_moving(gsmland, gsmltegps_gt)
+#plot_single_cdf(gsmlanderror, 'CDF GSM MOBIL LAND')
+#plot_error_histogram_other(gsmlanderror, "FEHLER HISTOGRAMM GSM LAND")
+
+
+
+lteland = read.read_gsm_lte_data('../data/bewegung/lteland.json')
+ltelanderror = eval.calc_error_gsm_lte_moving(lteland, gsmltegps_gt)
+ltelanderror = ltelanderror[:9]
+print(len(ltelanderror))
+#plot_single_cdf(ltelanderror, 'CDF LTE MOBIL LAND')
+#plot_error_histogram_other(ltelanderror, "FEHLER HISTOGRAMM LTE LAND")
+
+"""
+nbiot = read.read_gsm_lte_data('../data/nbiot/nbiot.json')
+####moving nicht möglich, da keine daten gesendet#####also stationär######
+nbiote = eval.calc_error_gsm_lte_stationary(gt_wohnung, nbiot)
+#plot_single_cdf(nbiote, "CDF NBIOT STATIONÄR WOHNUNG")
+plot_error_histogram_other(nbiote, "FEHLER HISTOGRAMM NBIOT WOHNUNG")
+"""
+"""
+walking_gsm_error = [gsmstadterror, gsmlanderror,]
+walking_gsm_errors_labels = ["GSM Stadt", "GSM Land"]
+plot_multiple_cdfs(walking_gsm_error, walking_gsm_errors_labels, "VERGLEICH CDF GSM MOBIL FÜR STADT/LAND")
+
+walking_lte_error = [lte_stadt_error, ltelanderror,]
+walking_lte_errors_labels = ["LTE Stadt", "LTE Land"]
+
+mobileerrors = [gsmstadterror, gsmlanderror,lte_stadt_error, ltelanderror]
+mobileelabels = ["GSM Stadt", "GSM Land", "LTE Stadt", "LTE Land"]
+plot_multiple_cdfs(mobileerrors, mobileelabels, "VERGLEICH CDF GSM/LTE MOBIL FÜR STADT/LAND")
+
+
+walkginge = [gsmlanderror, ltelanderror]
+mobileelabels= ["GSM Land", "LTE Land"]
+plot_multiple_cdfs(walkginge, mobileelabels, "VERGLEICH CDF GSM/LTE MOBIL FÜR Land")
+
+gpserorrs2 = [gps_stadt_error, gps_land_error, gps1_error, gps2_error]
+gpserorrs2labels= ["GPS STADT", "GPS LAND", "GPS AUTOBAHN 1", "GPS AUTOBAHN2"]
+plot_multiple_cdfs(gpserorrs2, gpserorrs2labels, title="VERGLEICH CDF GPS FÜR STADT/LAND/AUTOBAHN")
+
+
+plot_error_histogram_gps(gps_land_error, "FEHLER HISTOGRAMM GPS LAND")
+
+allmovementerr= [gps1_error, gps2_error, gsm_atb_error,lte_atb_error]
+ee = ["GPS1 AUTOBAHN", "GPS2 AUTOBAHN","GSM AUTOBAHN", "LTE AUTOBAHN" ]
+plot_multiple_cdfs(allmovementerr, ee, "VERGLEICH CDF GPS/GSM/LTE FÜR AUTOBAHN")
+"""
+
+
+"""
+stadt = read.read_groundtruth('../data/bewegung/stadtgt.csv')
+plot_coordinates(stadt, "GROUNDTRUTH STADT")
+plot_two_datasets(stadt, gsmstadt, "GROUNDTRUTH STADT", "GSM", "VERGLEICH GROUNDTRUTH STADT UND GSM")
+plot_two_datasets(stadt, lte_stadt, "GROUNDTRUTH STADT", "LTE", "VERGLEICH GROUNDTRUTH STADT UND LTE")
+plot_two_datasets(stadt, gps_stadt, "GROUNDTRUTH STADT", "GPS", "VERGLEICH GROUNDTRUTH STADT UND GPS")
+"""
+"""
+lteab = read.read_groundtruth('../data/autobahn/autobahn.lte.groundtruth.csv')
+gsmab = read.read_groundtruth('../data/autobahn/autobahn.gsm.groundtruth.csv')
+gps1ab = read.read_groundtruth('../data/autobahn/autobahn.gps1.groundtruth.csv')
+gps2ab = read.read_groundtruth('../data/autobahn/autobahn.gps2.groundtruth.csv')
+
+
+plot_two_datasets(gps1ab, gps1, "GROUNDTRUTH AUTOBAHN 1", "GPS", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GPS 1")
+plot_two_datasets(gps2ab, gps2, "GROUNDTRUTH AUTOBAHN 2", "GPS", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GPS 2")
+
+plot_two_datasets(gsmab, gsm_atb, "GROUNDTRUTH AUTOBAHN", "GSM", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GSM")
+plot_two_datasets(lteab, lte, "GROUNDTRUTH AUTOBAHN", "LTE", "VERGLEICH GROUNDTRUTH AUTOBAHN UND LTE")
+"""
+gpshof = read.read_gps_data('../data/stationaer/gpshof.json')
+
+"""
+plot_two_datasets(gt_hof, gsm_hof, "GROUNDTRUTH HOF", "GSM", "VERGLEICH GROUNDTRUTH HOF UND GSM")
+plot_two_datasets(gt_hof, lte_hof, "GROUNDTRUTH HOF", "LTE", "VERGLEICH GROUNDTRUTH HOF UND LTE")
+plot_two_datasets(gt_hof, gpshof, "GROUNDTRUTH HOF", "GPS", "VERGLEICH GROUNDTRUTH HOF UND GPS")
+"""
+"""
+gpswo = read.read_gps_data('../data/stationaer/gpswohnung.json')
+plot_two_datasets(gt_wohnung, gsm_wohnung, "GROUNDTRUTH WOHNUNG", "GSM", "VERGLEICH GROUNDTRUTH WOHNUNG UND GSM")
+plot_two_datasets(gt_wohnung, lte_wohnung, "GROUNDTRUTH WOHNUNG", "LTE", "VERGLEICH GROUNDTRUTH WOHNUNG UND LTE")
+plot_two_datasets(gt_wohnung, gpswo, "GROUNDTRUTH WOHNUNG", "GPS", "VERGLEICH GROUNDTRUTH WOHNUNG UND GPS")
+"""
+#plot_two_datasets(gt_keller, gsm_keller, "GROUNDTRUTH KELLER", "GSM", "VERGLEICH GROUNDTRUTH KELLER UND GSM")
+#plot_two_datasets(gt_keller, lte_keller, "GROUNDTRUTH KELLER", "LTE", "VERGLEICH GROUNDTRUTH KELLER UND LTE")
+#plot_two_datasets(gt_keller, gpswo, "GROUNDTRUTH KELLER", "GPS", "VERGLEICH GROUNDTRUTH KELLER UND GPS")
+
+print(gps_stadt)
+plot_gps_data(gps_land)
+
+plot_other_data()
 
 
 
