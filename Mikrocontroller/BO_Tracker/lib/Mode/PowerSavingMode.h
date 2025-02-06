@@ -7,7 +7,7 @@ class PowerSavingMode
 {
 private:
     Tracker &tracker;
-    // int zaehler = 0;
+    int zaehler = 0;
 
 public:
     PowerSavingMode(Tracker &trackerObj);

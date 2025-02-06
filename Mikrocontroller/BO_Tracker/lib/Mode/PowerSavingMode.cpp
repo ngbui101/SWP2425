@@ -6,10 +6,11 @@ PowerSavingMode::PowerSavingMode(Tracker &trackerObj)
 }
 
 void PowerSavingMode::start()
-{
+{   
+    Serial.println("Start PowerSavingMode");
     if (tracker.wakeUp())
     {
-        // Serial.println("Wake Up");
+        Serial.println("Wake Up");
         bool useMQTT = false;
         if (!tracker.turnOnFunctionality(useMQTT))
         {
@@ -22,8 +23,8 @@ void PowerSavingMode::start()
         }
         trackerModes.wakeUp = false;
 
-        // Serial.print("\nZaeler: ");
-        // Serial.println(zaehler++);
+        Serial.print("\nZaeler: ");
+        Serial.println(zaehler++);
     }
     else
     {
