@@ -12,9 +12,9 @@ bool _Lowpower::deepSleep(unsigned long millis)
 {
     millis = (millis <= minSleepTime) ? minSleepTime : maxSleepTime;
 
-    // LowPower.deepSleep(millis);
-    Serial.println("Simulate Deep Sleep");
-    delay(millis / 10);
+    LowPower.deepSleep(millis);
+    // Serial.println("Simulate Deep Sleep");
+    // delay(millis / 10);
     return true;
 }
 
