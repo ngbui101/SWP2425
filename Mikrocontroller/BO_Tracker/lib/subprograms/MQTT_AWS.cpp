@@ -2,7 +2,7 @@
 
 // Konstruktor der MQTT_AWS-Klasse
 MQTT_AWS::MQTT_AWS(Stream &atSerial, Stream &dSerial, JsonDocument &doc)
-    : GNSS(atSerial, dSerial, doc)
+    : HTTP(atSerial, dSerial, doc)
 {
 }
 
@@ -13,7 +13,7 @@ bool MQTT_AWS::initMQTT()
     strcpy(mqtt_base_topic, "tracker/");
     strcat(mqtt_base_topic, modemIMEI);
 
-    if (!_BG96.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 150, SERVER_STORE_SUBSCRIPTIONS))
+    if (!_BG96.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 180, SERVER_STORE_SUBSCRIPTIONS))
     {
         initLogger.logError("MQTT:Set_Parameters");
     }
@@ -30,31 +30,36 @@ bool MQTT_AWS::startMQTT()
     if (!_BG96.InitSSL(SSLIndex, aws_root_ca_pem, certificate_pem_crt, private_pem_key, ssl_error))
     {
         initLogger.logError("MQTT:InitSSL");
+        return false;
     }
 
     if (!_BG96.SetMQTTEnableSSL(MQTTIndex, SSLIndex, true))
     {
         initLogger.logError("MQTT:SetSSL");
+        return false;
     }
     if (!_BG96.SetMQTTConfigureParameters(MQTTIndex, PDPIndex, version, 150, SERVER_STORE_SUBSCRIPTIONS))
     {
         initLogger.logError("MQTT:Set_Parameters");
+        return false;
     }
 
     if (_BG96.OpenMQTTNetwork(MQTTIndex, MQTTServer, MQTTPort) != 0)
     {
         initLogger.logError("MQTT:OpenNetwork");
+        return false;
     }
-    DSerial.println("MQTT-Netzwerk erfolgreich geöffnet!");
 
     if (!_BG96.SetMQTTMessageTimeout(MQTTIndex, 10, 5, 1))
     {
         initLogger.logError("MQTT:MessageTimeOut");
+        return false;
     }
 
     if (_BG96.CreateMQTTClient(MQTTIndex, MQTTClientId, "", "") != 0)
     {
         initLogger.logError("MQTT:CreateClient");
+        return false;
     }
 
     char mqtt_sub_topic[64];
@@ -64,6 +69,7 @@ bool MQTT_AWS::startMQTT()
     if (_BG96.MQTTSubscribeTopic(MQTTIndex, 1, mqtt_sub_topic, MQTT_QoS) != 0)
     {
         initLogger.logError("MQTT:SubscribeTopic");
+        return false;
     }
 
     mqtt_available = true;
@@ -82,8 +88,8 @@ bool MQTT_AWS::publishData(const char *subtopic)
 
     int res = _BG96.MQTTPublishMessages(MQTTIndex, 1, MQTT_QoS, mqtt_topic, false, payload);
 
-    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK) // || res == PACKET_RETRANSMISSION)
-    {
+    if (res == PACKET_SEND_SUCCESS_AND_RECV_ACK)// || res == PACKET_RETRANSMISSION)
+    {   
         docInput.clear();
         return true;
     }
@@ -117,13 +123,10 @@ bool MQTT_AWS::closeMQTTClient()
     mqtt_available = false;
     return true;
 }
-bool MQTT_AWS::isMQTTAvaliable()
-{
-    return this->mqtt_available;
-}
 
 Mqtt_Event_t MQTT_AWS::waitForResponse(char *response)
-{
+{   
+    delay(100);
     Mqtt_URC_Event_t ret = _BG96.WaitCheckMQTTURCEvent(response, 1);
     switch (ret)
     {

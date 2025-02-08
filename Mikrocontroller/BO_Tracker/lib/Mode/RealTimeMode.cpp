@@ -8,14 +8,16 @@ RealTimeMode::RealTimeMode(Tracker &trackerObj)
 void RealTimeMode::start()
 {   
     Serial.println("Real Time Start");
+    // tracker.blink();
     if (!setup())
         return;
     loop();
 }
 
 bool RealTimeMode::setup()
-{
-    return tracker.turnOnFunctionality();
+{   
+    bool useMQTT = false;
+    return tracker.turnOnFunctionality(useMQTT);
 }
 
 // Hauptschleife (z. B. zyklische Abfragen, Publikationen etc.)
@@ -25,7 +27,8 @@ void RealTimeMode::loop()
     while (keepRunning)
     {   
         // Serial.println("keepRunning");
-        keepRunning = tracker.sendAndCheck();
+        // keepRunning = tracker.pubAndsubMQTT(trackerModes.period);
+        keepRunning = tracker.sendAndWaitResponseHTTP(trackerModes.period);
     }
     // Serial.println("Running handleErrors()");
     tracker.handleErrors();

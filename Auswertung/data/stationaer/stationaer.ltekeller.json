@@ -1,0 +1,935 @@
+[{
+  "_id": {
+    "$oid": "6799245712891f320d20478e"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.444606,
+  "longitude": 7.349146,
+  "accuracy": 249.4,
+  "ncells": 4,
+  "avg_signal": -98,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T18:39:16.990Z",
+  "updatedAt": "2025-01-28T18:39:16.990Z"
+},
+{
+  "_id": {
+    "$oid": "679924bc12891f320d20478f"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.444589,
+  "longitude": 7.349242,
+  "accuracy": 249.6,
+  "ncells": 4,
+  "avg_signal": -98.25,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T18:40:59.174Z",
+  "updatedAt": "2025-01-28T18:40:59.174Z"
+},
+{
+  "_id": {
+    "$oid": "679926135a269c82f5870219"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.440041,
+  "longitude": 7.350753,
+  "accuracy": 102.4,
+  "ncells": 2,
+  "avg_signal": -97,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T18:46:41.642Z",
+  "updatedAt": "2025-01-28T18:46:41.642Z"
+},
+{
+  "_id": {
+    "$oid": "679926415a269c82f587021a"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441545,
+  "longitude": 7.348852,
+  "accuracy": 137.2,
+  "ncells": 3,
+  "avg_signal": -92.66666666666667,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T18:47:28.691Z",
+  "updatedAt": "2025-01-28T18:47:28.691Z"
+},
+{
+  "_id": {
+    "$oid": "6799272b5a269c82f587021b"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.44156,
+  "longitude": 7.3486,
+  "accuracy": 140.2,
+  "ncells": 3,
+  "avg_signal": -91.33333333333333,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T18:51:23.273Z",
+  "updatedAt": "2025-01-28T18:51:23.273Z"
+},
+{
+  "_id": {
+    "$oid": "679927715a269c82f587021c"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441578,
+  "longitude": 7.348604,
+  "accuracy": 140.4,
+  "ncells": 3,
+  "avg_signal": -92.33333333333333,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T18:52:32.859Z",
+  "updatedAt": "2025-01-28T18:52:32.859Z"
+},
+{
+  "_id": {
+    "$oid": "679928985a269c82f587021d"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.447985,
+  "longitude": 7.353529,
+  "accuracy": 223.6,
+  "ncells": 3,
+  "avg_signal": -119,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T18:57:28.274Z",
+  "updatedAt": "2025-01-28T18:57:28.274Z"
+},
+{
+  "_id": {
+    "$oid": "6799293d5a269c82f587021e"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.446553,
+  "longitude": 7.351312,
+  "accuracy": 209,
+  "ncells": 4,
+  "avg_signal": -117.5,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:00:13.066Z",
+  "updatedAt": "2025-01-28T19:00:13.066Z"
+},
+{
+  "_id": {
+    "$oid": "67992a295a269c82f587021f"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.44572,
+  "longitude": 7.34981,
+  "accuracy": 226.8,
+  "ncells": 5,
+  "avg_signal": -117.6,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:04:09.382Z",
+  "updatedAt": "2025-01-28T19:04:09.382Z"
+},
+{
+  "_id": {
+    "$oid": "67992b4e5a269c82f5870220"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.44576,
+  "longitude": 7.349918,
+  "accuracy": 225.8,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:09:01.612Z",
+  "updatedAt": "2025-01-28T19:09:01.612Z"
+},
+{
+  "_id": {
+    "$oid": "67992c3a5a269c82f5870221"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445794,
+  "longitude": 7.34997,
+  "accuracy": 225,
+  "ncells": 5,
+  "avg_signal": -117.6,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:12:58.419Z",
+  "updatedAt": "2025-01-28T19:12:58.419Z"
+},
+{
+  "_id": {
+    "$oid": "67992d9a86f6e577eb96e711"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445772,
+  "longitude": 7.349894,
+  "accuracy": 225.6,
+  "ncells": 5,
+  "avg_signal": -118,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:18:47.951Z",
+  "updatedAt": "2025-01-28T19:18:47.951Z"
+},
+{
+  "_id": {
+    "$oid": "67992e8286f6e577eb96e712"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445862,
+  "longitude": 7.349905,
+  "accuracy": 223.6,
+  "ncells": 5,
+  "avg_signal": -117.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:22:42.171Z",
+  "updatedAt": "2025-01-28T19:22:42.171Z"
+},
+{
+  "_id": {
+    "$oid": "67992f6f86f6e577eb96e713"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445661,
+  "longitude": 7.349929,
+  "accuracy": 228,
+  "ncells": 5,
+  "avg_signal": -117,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:26:38.607Z",
+  "updatedAt": "2025-01-28T19:26:38.607Z"
+},
+{
+  "_id": {
+    "$oid": "6799305c86f6e577eb96e714"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445897,
+  "longitude": 7.349787,
+  "accuracy": 222.8,
+  "ncells": 5,
+  "avg_signal": -117.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:30:36.023Z",
+  "updatedAt": "2025-01-28T19:30:36.023Z"
+},
+{
+  "_id": {
+    "$oid": "6799314986f6e577eb96e715"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445794,
+  "longitude": 7.349802,
+  "accuracy": 225,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:34:33.078Z",
+  "updatedAt": "2025-01-28T19:34:33.078Z"
+},
+{
+  "_id": {
+    "$oid": "6799323486f6e577eb96e716"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.44576,
+  "longitude": 7.349918,
+  "accuracy": 225.8,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:38:27.915Z",
+  "updatedAt": "2025-01-28T19:38:27.915Z"
+},
+{
+  "_id": {
+    "$oid": "6799332086f6e577eb96e717"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.44576,
+  "longitude": 7.349918,
+  "accuracy": 225.8,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:42:24.505Z",
+  "updatedAt": "2025-01-28T19:42:24.505Z"
+},
+{
+  "_id": {
+    "$oid": "6799347986f6e577eb96e718"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445916,
+  "longitude": 7.349865,
+  "accuracy": 222.4,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:48:08.302Z",
+  "updatedAt": "2025-01-28T19:48:08.302Z"
+},
+{
+  "_id": {
+    "$oid": "6799356786f6e577eb96e719"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445916,
+  "longitude": 7.349865,
+  "accuracy": 222.4,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:52:06.983Z",
+  "updatedAt": "2025-01-28T19:52:06.983Z"
+},
+{
+  "_id": {
+    "$oid": "679936bf9358782f1e4502e5"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445867,
+  "longitude": 7.34996,
+  "accuracy": 223.4,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T19:57:49.838Z",
+  "updatedAt": "2025-01-28T19:57:49.838Z"
+},
+{
+  "_id": {
+    "$oid": "679937aa9358782f1e4502e6"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445922,
+  "longitude": 7.350046,
+  "accuracy": 222.2,
+  "ncells": 5,
+  "avg_signal": -117.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:01:45.835Z",
+  "updatedAt": "2025-01-28T20:01:45.835Z"
+},
+{
+  "_id": {
+    "$oid": "679938d39358782f1e4502e7"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.4458,
+  "longitude": 7.350023,
+  "accuracy": 225,
+  "ncells": 5,
+  "avg_signal": -117.2,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:06:43.284Z",
+  "updatedAt": "2025-01-28T20:06:43.284Z"
+},
+{
+  "_id": {
+    "$oid": "679939c69358782f1e4502e8"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445902,
+  "longitude": 7.350013,
+  "accuracy": 222.6,
+  "ncells": 5,
+  "avg_signal": -117.6,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:10:45.750Z",
+  "updatedAt": "2025-01-28T20:10:45.750Z"
+},
+{
+  "_id": {
+    "$oid": "67993ab19358782f1e4502e9"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445971,
+  "longitude": 7.349949,
+  "accuracy": 221.2,
+  "ncells": 5,
+  "avg_signal": -117.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:14:40.952Z",
+  "updatedAt": "2025-01-28T20:14:40.952Z"
+},
+{
+  "_id": {
+    "$oid": "67993ba69358782f1e4502ea"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445813,
+  "longitude": 7.350003,
+  "accuracy": 224.6,
+  "ncells": 5,
+  "avg_signal": -117.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:18:46.186Z",
+  "updatedAt": "2025-01-28T20:18:46.186Z"
+},
+{
+  "_id": {
+    "$oid": "67993c909358782f1e4502eb"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445756,
+  "longitude": 7.349906,
+  "accuracy": 226,
+  "ncells": 5,
+  "avg_signal": -117.2,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:22:39.904Z",
+  "updatedAt": "2025-01-28T20:22:39.904Z"
+},
+{
+  "_id": {
+    "$oid": "67993d7e9358782f1e4502ec"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445777,
+  "longitude": 7.349979,
+  "accuracy": 225.4,
+  "ncells": 5,
+  "avg_signal": -116.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:26:37.995Z",
+  "updatedAt": "2025-01-28T20:26:37.995Z"
+},
+{
+  "_id": {
+    "$oid": "67993f49186fcde1042afe64"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445971,
+  "longitude": 7.349949,
+  "accuracy": 221.2,
+  "ncells": 5,
+  "avg_signal": -117.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:34:15.786Z",
+  "updatedAt": "2025-01-28T20:34:15.786Z"
+},
+{
+  "_id": {
+    "$oid": "679940348cfdcddc5da048f3"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445867,
+  "longitude": 7.34996,
+  "accuracy": 223.4,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:38:10.707Z",
+  "updatedAt": "2025-01-28T20:38:10.707Z"
+},
+{
+  "_id": {
+    "$oid": "679941968cfdcddc5da048f4"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445976,
+  "longitude": 7.349993,
+  "accuracy": 221,
+  "ncells": 5,
+  "avg_signal": -117.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:44:05.459Z",
+  "updatedAt": "2025-01-28T20:44:05.459Z"
+},
+{
+  "_id": {
+    "$oid": "679942828cfdcddc5da048f5"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445829,
+  "longitude": 7.349843,
+  "accuracy": 224.2,
+  "ncells": 5,
+  "avg_signal": -117.6,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:48:01.400Z",
+  "updatedAt": "2025-01-28T20:48:01.400Z"
+},
+{
+  "_id": {
+    "$oid": "679943758cfdcddc5da048f6"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.445863,
+  "longitude": 7.349726,
+  "accuracy": 223.6,
+  "ncells": 5,
+  "avg_signal": -117.6,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T20:52:05.428Z",
+  "updatedAt": "2025-01-28T20:52:05.428Z"
+},
+{
+  "_id": {
+    "$oid": "6799616e6f0b109c5277eea7"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441528,
+  "longitude": 7.349103,
+  "accuracy": 134,
+  "ncells": 3,
+  "avg_signal": -115.33333333333333,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T22:59:56.336Z",
+  "updatedAt": "2025-01-28T22:59:56.336Z"
+},
+{
+  "_id": {
+    "$oid": "6799619e6f0b109c5277eea8"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441612,
+  "longitude": 7.348828,
+  "accuracy": 138.2,
+  "ncells": 3,
+  "avg_signal": -114.66666666666667,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:00:45.812Z",
+  "updatedAt": "2025-01-28T23:00:45.812Z"
+},
+{
+  "_id": {
+    "$oid": "679963708c66b309f1dd4306"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.442047,
+  "longitude": 7.347623,
+  "accuracy": 157.6,
+  "ncells": 3,
+  "avg_signal": -117.33333333333333,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:08:30.381Z",
+  "updatedAt": "2025-01-28T23:08:30.381Z"
+},
+{
+  "_id": {
+    "$oid": "679964998c66b309f1dd4307"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441497,
+  "longitude": 7.346366,
+  "accuracy": 166.6,
+  "ncells": 4,
+  "avg_signal": -120,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:13:29.118Z",
+  "updatedAt": "2025-01-28T23:13:29.118Z"
+},
+{
+  "_id": {
+    "$oid": "679965fa8c66b309f1dd4308"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441544,
+  "longitude": 7.346393,
+  "accuracy": 166.8,
+  "ncells": 4,
+  "avg_signal": -119.75,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:19:21.098Z",
+  "updatedAt": "2025-01-28T23:19:21.098Z"
+},
+{
+  "_id": {
+    "$oid": "679966ea8c66b309f1dd4309"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441535,
+  "longitude": 7.346309,
+  "accuracy": 167.6,
+  "ncells": 4,
+  "avg_signal": -119.25,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:23:21.757Z",
+  "updatedAt": "2025-01-28T23:23:21.757Z"
+},
+{
+  "_id": {
+    "$oid": "679967d98c66b309f1dd430a"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441483,
+  "longitude": 7.346348,
+  "accuracy": 166.8,
+  "ncells": 4,
+  "avg_signal": -120,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:27:20.812Z",
+  "updatedAt": "2025-01-28T23:27:20.812Z"
+},
+{
+  "_id": {
+    "$oid": "679968cd8c66b309f1dd430b"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441513,
+  "longitude": 7.346213,
+  "accuracy": 168.6,
+  "ncells": 4,
+  "avg_signal": -118.75,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:31:25.441Z",
+  "updatedAt": "2025-01-28T23:31:25.441Z"
+},
+{
+  "_id": {
+    "$oid": "67996a611b7c871628c1972f"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441418,
+  "longitude": 7.346688,
+  "accuracy": 161.8,
+  "ncells": 4,
+  "avg_signal": -118.5,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:38:07.726Z",
+  "updatedAt": "2025-01-28T23:38:07.726Z"
+},
+{
+  "_id": {
+    "$oid": "67996b4f1b7c871628c19730"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441424,
+  "longitude": 7.346777,
+  "accuracy": 160.8,
+  "ncells": 4,
+  "avg_signal": -119,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:42:06.745Z",
+  "updatedAt": "2025-01-28T23:42:06.745Z"
+},
+{
+  "_id": {
+    "$oid": "67996cb36b106f6af897643d"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441424,
+  "longitude": 7.346777,
+  "accuracy": 160.8,
+  "ncells": 4,
+  "avg_signal": -119,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:48:02.017Z",
+  "updatedAt": "2025-01-28T23:48:02.017Z"
+},
+{
+  "_id": {
+    "$oid": "67996dda6b106f6af897643e"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441316,
+  "longitude": 7.347254,
+  "accuracy": 153.8,
+  "ncells": 4,
+  "avg_signal": -117.75,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:52:58.166Z",
+  "updatedAt": "2025-01-28T23:52:58.166Z"
+},
+{
+  "_id": {
+    "$oid": "67996ec86b106f6af897643f"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441403,
+  "longitude": 7.346834,
+  "accuracy": 159.8,
+  "ncells": 4,
+  "avg_signal": -119.5,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-28T23:56:56.445Z",
+  "updatedAt": "2025-01-28T23:56:56.445Z"
+},
+{
+  "_id": {
+    "$oid": "67996fb76b106f6af8976440"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441765,
+  "longitude": 7.346215,
+  "accuracy": 182.8,
+  "ncells": 5,
+  "avg_signal": -122.2,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:00:55.380Z",
+  "updatedAt": "2025-01-29T00:00:55.380Z"
+},
+{
+  "_id": {
+    "$oid": "679970a26b106f6af8976441"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441758,
+  "longitude": 7.346152,
+  "accuracy": 182.4,
+  "ncells": 5,
+  "avg_signal": -121.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:04:49.805Z",
+  "updatedAt": "2025-01-29T00:04:49.805Z"
+},
+{
+  "_id": {
+    "$oid": "679972398386d377f8816015"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441758,
+  "longitude": 7.346152,
+  "accuracy": 182.4,
+  "ncells": 5,
+  "avg_signal": -121.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:11:35.351Z",
+  "updatedAt": "2025-01-29T00:11:35.351Z"
+},
+{
+  "_id": {
+    "$oid": "67997413b9f8a6c7120983e4"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441753,
+  "longitude": 7.346199,
+  "accuracy": 183,
+  "ncells": 5,
+  "avg_signal": -122.2,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:19:29.071Z",
+  "updatedAt": "2025-01-29T00:19:29.071Z"
+},
+{
+  "_id": {
+    "$oid": "679975025cf74f9440f55732"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441753,
+  "longitude": 7.346199,
+  "accuracy": 183,
+  "ncells": 5,
+  "avg_signal": -122.2,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:23:28.238Z",
+  "updatedAt": "2025-01-29T00:23:28.238Z"
+},
+{
+  "_id": {
+    "$oid": "67997663e17458bc84da737e"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441781,
+  "longitude": 7.346131,
+  "accuracy": 181.8,
+  "ncells": 5,
+  "avg_signal": -121.4,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:29:21.634Z",
+  "updatedAt": "2025-01-29T00:29:21.634Z"
+},
+{
+  "_id": {
+    "$oid": "6799774f9062a29bb1af3642"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441776,
+  "longitude": 7.346177,
+  "accuracy": 182.4,
+  "ncells": 5,
+  "avg_signal": -121.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:33:17.799Z",
+  "updatedAt": "2025-01-29T00:33:17.799Z"
+},
+{
+  "_id": {
+    "$oid": "6799783d9062a29bb1af3643"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.441776,
+  "longitude": 7.346177,
+  "accuracy": 182.4,
+  "ncells": 5,
+  "avg_signal": -121.8,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:37:16.924Z",
+  "updatedAt": "2025-01-29T00:37:16.924Z"
+},
+{
+  "_id": {
+    "$oid": "6799792d9062a29bb1af3644"
+  },
+  "imei": "862315069444254",
+  "mode": "LTE",
+  "latitude": 51.443893,
+  "longitude": 7.346755,
+  "accuracy": 271.2,
+  "ncells": 6,
+  "avg_signal": -122.33333333333333,
+  "tracker": {
+    "$oid": "6754c28d2bfb99a93771258d"
+  },
+  "createdAt": "2025-01-29T00:41:16.554Z",
+  "updatedAt": "2025-01-29T00:41:16.554Z"
+}]

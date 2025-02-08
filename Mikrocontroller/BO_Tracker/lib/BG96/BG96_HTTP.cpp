@@ -211,33 +211,108 @@ bool _BG96_HTTP::HTTPGET(unsigned int timeout)
  * @param timeout Timeout in Sekunden für die HTTP-POST-Anfrage.
  * @return true bei Erfolg, false bei Fehler.
  */
+// bool _BG96_HTTP::HTTPPOST(char *post_data, unsigned int timeout)
+// {
+//     char cmd[32], buf[16];
+//     strcpy(cmd, HTTP_POST_REQUEST);
+//     sprintf(buf, "=%d,%d,%d", strlen(post_data), timeout, timeout);
+//     strcat(cmd, buf);
+//     if(sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, 10)){
+//         if(sendDataAndCheck(post_data, HTTP_POST_REQUEST, RESPONSE_ERROR, timeout)){
+//             unsigned long start_time = millis();
+//             errorCode = -1;
+//             while(millis() - start_time < 200UL){
+//                 if(serialAvailable()){
+//                     readResponseByteToBuffer();
+//                 }
+//             }
+//             char *sta_buf = searchStrBuffer(": ");
+//             char *end_buf = searchChrBuffer(',');
+//             *end_buf = '\0';
+//             if (atoi(sta_buf + 2) == 0) {
+//                 return true;
+//             } else {
+//                 errorCode = atoi(sta_buf + 2);
+//             }
+//         }
+//     }
+//     return false;
+// }
 bool _BG96_HTTP::HTTPPOST(char *post_data, unsigned int timeout)
 {
-    char cmd[32], buf[16];
-    strcpy(cmd, HTTP_POST_REQUEST);
+    // Beispiel: HTTP_POST_REQUEST könnte "AT+QHTTPPOST" sein,
+    // RESPONSE_CONNECT -> z.B. "CONNECT"
+    // RESPONSE_ERROR   -> z.B. "ERROR"
+    // StaBuffer und EndBuffer-Signaturen können von dir abweichen
+    delay(200);
+    char cmd[32];
+    char buf[16];
+
+    // Kommandostring "AT+QHTTPPOST=payloadLen,timeout,timeout"
+    strcpy(cmd, HTTP_POST_REQUEST);            // z.B. "AT+QHTTPPOST"
     sprintf(buf, "=%d,%d,%d", strlen(post_data), timeout, timeout);
     strcat(cmd, buf);
-    if(sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, 10)){
-        if(sendDataAndCheck(post_data, HTTP_POST_REQUEST, RESPONSE_ERROR, timeout)){
-            unsigned long start_time = millis();
-            errorCode = -1;
-            while(millis() - start_time < 200UL){
-                if(serialAvailable()){
-                    readResponseByteToBuffer();
-                }
-            }
-            char *sta_buf = searchStrBuffer(": ");
-            char *end_buf = searchChrBuffer(',');
-            *end_buf = '\0';
-            if (atoi(sta_buf + 2) == 0) {
-                return true;
-            } else {
-                errorCode = atoi(sta_buf + 2);
-            }
+
+    // 1) Sende Kommando und warte auf CONNECT oder ERROR
+    //    Wartezeit hier beispielhaft 10s. Ggf. anpassen.
+    if (!sendAndSearch(cmd, RESPONSE_CONNECT, RESPONSE_ERROR, timeout/2)) {
+        // Falls weder CONNECT noch ERROR kam, Abbruch.
+        // errorCode kann man noch spezifisch setzen (z.B. -1)
+        return false;
+    }
+    // delay(300);
+    // 2) Daten (post_data) senden
+    //    sendDataAndCheck: Wartet auf Antwort (z.B. "...OK" oder "...ERROR")
+    if (!sendDataAndCheck(post_data, HTTP_POST_REQUEST, RESPONSE_ERROR, timeout)) {
+        // Senden der Daten war nicht erfolgreich
+        return false;
+    }
+
+    // 3) Puffer füllen (Lese die Antwort vom BG96), z.B. 500ms statt 200
+    unsigned long start_time = millis();
+    errorCode = -1;
+    while (millis() - start_time < 500UL) {  // 500 ms warten, optional anpassen
+        if (serialAvailable()) {
+            readResponseByteToBuffer();
         }
     }
-    return false;
+
+    // 4) Suche Start- und End-Pointer:
+    //    - sta_buf zeigt auf Zeichen nach ": "
+    //    - end_buf zeigt auf ','
+    char *sta_buf = searchStrBuffer(": ");     // z.B. "QHTTPPOST: 0, ..."
+    if (!sta_buf) {
+        // Falls nicht gefunden, Abbruch
+        errorCode = -2;
+        return false;
+    }
+
+    char *end_buf = searchChrBuffer(',');      // Suche erstes Komma
+    if (!end_buf) {
+        // Falls kein Komma gefunden, Abbruch
+        errorCode = -3;
+        return false;
+    }
+
+    // 5) String an dieser Stelle terminieren
+    *end_buf = '\0';
+
+    // 6) Parse das, was hinter ": " steht.
+    //    Beispiel: "QHTTPPOST: 0" -> sta_buf zeigt auf ": " in "...: 0"
+    //    => sta_buf + 2 zeigt auf '0'
+    int postResult = atoi(sta_buf + 2);
+
+    // 7) Auswertung: Wenn 0 -> OK, sonst Fehlercode
+    if (postResult == 0) {
+        // Erfolg
+        return true;
+    } else {
+        // Fehlercode im BG96-Umfeld
+        errorCode = postResult;
+        return false;
+    }
 }
+
 
 /**
  * @brief Führt eine HTTP-POST-Anfrage aus, bei der eine Datei gesendet wird.
@@ -285,28 +360,107 @@ bool _BG96_HTTP::HTTTPPOSTFile(char *filename, unsigned int timeout)
  * @param timeout Timeout in Sekunden für die Leseanfrage.
  * @return true bei Erfolg, false bei Fehler.
  */
-bool _BG96_HTTP::HTTPRead(char *read_data, unsigned int timeout)
+// bool _BG96_HTTP::HTTPRead(char *read_data, unsigned int timeout)
+// {
+//     char cmd[32], buf[16];
+//     strcpy(cmd, HTTP_READ_RESPONSE);
+//     sprintf(buf, "=%d", timeout);
+//     strcat(cmd, buf);
+//     if(sendAndSearch(cmd, HTTP_READ_RESPONSE, RESPONSE_ERROR, timeout)){
+//         unsigned long start_time = millis();
+//         errorCode = -1;
+//         while(millis() - start_time < 200UL){
+//             if(serialAvailable()){
+//                 readResponseByteToBuffer();
+//             }
+//         }
+//         char *sta_buf = searchStrBuffer(RESPONSE_CONNECT);
+//         char *end_buf = searchStrBuffer("OK\r\n\r\n");
+//         *end_buf = '\0';
+//         strcpy(read_data, sta_buf + strlen(RESPONSE_CONNECT) + 2);
+//         return true;
+//     }
+//     return false;
+// }
+
+bool _BG96_HTTP::HTTPRead(char *read_data,unsigned int timeout)
 {
-    char cmd[32], buf[16];
-    strcpy(cmd, HTTP_READ_RESPONSE);
+    char cmd[32];
+    char buf[16];
+    unsigned int maxLen = 256;
+    // Kommandostring bauen, z.B. "AT+QHTTPREAD=30"
+    strcpy(cmd, HTTP_READ_RESPONSE);             // z.B. "AT+QHTTPREAD"
     sprintf(buf, "=%d", timeout);
     strcat(cmd, buf);
-    if(sendAndSearch(cmd, HTTP_READ_RESPONSE, RESPONSE_ERROR, timeout)){
-        unsigned long start_time = millis();
-        errorCode = -1;
-        while(millis() - start_time < 200UL){
-            if(serialAvailable()){
-                readResponseByteToBuffer();
-            }
-        }
-        char *sta_buf = searchStrBuffer(RESPONSE_CONNECT);
-        char *end_buf = searchStrBuffer("OK\r\n\r\n");
-        *end_buf = '\0';
-        strcpy(read_data, sta_buf + strlen(RESPONSE_CONNECT) + 2);
-        return true;
+
+    // BG96-Kommando abschicken
+    // sendAndSearch(cmd, success, error, wartezeit)
+    // Gibt true zurück, wenn es "success" findet (HTTP_READ_RESPONSE),
+    // sonst false, wenn "error" oder Zeit abgelaufen.
+    if (!sendAndSearch(cmd, HTTP_READ_RESPONSE, RESPONSE_ERROR, timeout)) {
+        // Kein Erfolg beim Senden / keine passende Antwort
+        return false;
     }
-    return false;
+
+    // Warten, bis BG96 alle Daten gesendet hat
+    // -> 200 ms sind teils knapp, je nach Paketgröße und Netzwerk
+    unsigned long start_time = millis();
+    while (millis() - start_time < 500) { // z.B. 500 ms statt 200
+        if (serialAvailable()) {
+            readResponseByteToBuffer();
+        }
+    }
+
+    // Pointer auf BEGIN und ENDE im Puffer suchen
+    // z.B. BEGIN = "\r\nCONNECT\r\n" (RESPONSE_CONNECT)
+    //     ENDE   = "OK\r\n\r\n"
+    char *sta_buf = searchStrBuffer(RESPONSE_CONNECT);
+    if (!sta_buf) {
+        // Falls nicht gefunden, abbrechen
+        errorCode = -2;
+        return false;
+    }
+
+    char *end_buf = searchStrBuffer("OK\r\n\r\n");
+    if (!end_buf) {
+        // Falls kein "OK\r\n\r\n" gefunden, abbrechen
+        errorCode = -3;
+        return false;
+    }
+
+    // Das Ende terminieren
+    *end_buf = '\0';
+
+    // Beispiel: Inhalt beginnt hinter RESPONSE_CONNECT
+    // Oft ist RESPONSE_CONNECT z.B. "\r\nCONNECT\r\n"
+    // Dann will man ab dem Zeichen NACH diesem String kopieren
+    size_t offset = strlen(RESPONSE_CONNECT);
+    // Bei manchen Firmwares ist noch ein \r\n dran, also +2
+    offset += 2;
+
+    // Pointer auf den eigentlichen Daten-Beginn
+    char *startData = sta_buf + offset;
+    if (startData < sta_buf || startData >= end_buf) {
+        // Nur zur Sicherheit prüfen, ob wir nicht über das Ende hinausrutschen
+        errorCode = -4;
+        return false;
+    }
+
+    // Kopiere in read_data, aber achte auf maxLen (falls sehr große Daten!)
+    // Die maximale Länge soll end_buf - startData nicht überschreiten
+    size_t copyLen = end_buf - startData;   // effektive Länge
+    if (copyLen >= maxLen) {
+        copyLen = maxLen - 1;              // Pufferende reservieren für '\0'
+    }
+
+    strncpy(read_data, startData, copyLen);
+    read_data[copyLen] = '\0'; // String terminieren
+
+    // Wenn alles gut ging:
+    errorCode = 0;
+    return true;
 }
+
 
 /**
  * @brief Liest die HTTP-Antwort und speichert sie in einer Datei.
