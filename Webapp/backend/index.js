@@ -87,6 +87,7 @@ app.use('/api/all-trackers', require('../backend/rest/alltrackers'));
 app.use('/api/settings', require('../backend/rest/settings'));
 app.use('/api/mail', require('./rest/mail'));
 app.use('/api/mode', require('../backend/rest/mode'));
+app.use('/api/routes', require('../backend/rest/routes'));
 
 // 404 route handler
 app.all('*', (req, res) => {
