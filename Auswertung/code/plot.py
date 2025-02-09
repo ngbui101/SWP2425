@@ -149,7 +149,7 @@ def plot_two_datasets(set1, set2, set1_label, set2_label, title):
     plt.grid(True)
 
     # Legende
-    plt.legend(loc='lower left')
+    #plt.legend(loc='lower left')
 
     # Diagramm anzeigen
     plt.tight_layout()
@@ -226,12 +226,12 @@ gps_stadt  = read.read_gps_data('../data/bewegung/outdoorstadt.gps.json')
 gps_land  = read.read_gps_data('../data/bewegung/gpsland2.json')
 lte_stadt  = read.read_gsm_lte_data('../data/bewegung/outdoorstadt.lte.json')
 
-gt_stadt = read.read_groundtruth('../data/bewegung/outdoorstadt_groundtruth.csv')
+#gt_stadt = read.read_groundtruth('../data/bewegung/outdoorstadt_groundtruth.csv')
 gt_land = read.read_groundtruth('../data/bewegung/outdoorland_groundtruth.csv')
 
 gps_stadt_error = eval.get_gps_errors(gps_stadt)
 gps_land_error = eval.get_gps_errors(gps_land)
-lte_stadt_error = eval.calc_error_gsm_lte_moving(lte_stadt, gt_stadt)
+#lte_stadt_error = eval.calc_error_gsm_lte_moving(lte_stadt, gt_stadt)
 
 """
 plot_single_cdf(gps_stadt_error, "CDF GPS MOBIL Stadt")
@@ -268,14 +268,15 @@ lte_hof_error = eval.calc_error_gsm_lte_stationary(gt_hof, lte_hof)
 lte_keller_error = eval.calc_error_gsm_lte_stationary(gt_keller, lte_keller)
 lte_wohnung_error = eval.calc_error_gsm_lte_stationary(gt_wohnung, lte_wohnung)
 
-"""
-plot_single_cdf(gsm_hof_error, "CDF GSM STATIONÄR HOF")
-plot_single_cdf(gsm_keller_error, "CDF GSM STATIONÄR KELLER")
+
+#lot_single_cdf(gsm_hof_error, "CDF GSM STATIONÄR HOF")
+#plot_single_cdf(gsm_keller_error, "CDF GSM STATIONÄR KELLER")
 plot_single_cdf(gsm_wohnung_error, "CDF GSM STATIONÄR WOHNUNG")
-plot_single_cdf(lte_hof_error, "CDF LTE STATIONÄR HOF")
-plot_single_cdf(lte_keller_error, "CDF LTE STATIONÄR KELLER")
+#plot_single_cdf(lte_hof_error, "CDF LTE STATIONÄR HOF")
+#plot_single_cdf(lte_keller_error, "CDF LTE STATIONÄR KELLER")
 plot_single_cdf(lte_wohnung_error, "CDF LTE STATIONÄR WOHNUNG")
-"""
+
+
 
 
 gsm_stationär_errors = [gsm_hof_error,gsm_keller_error, gsm_wohnung_error ]
@@ -345,38 +346,39 @@ plot_error_histogram_gps(gps2_error, "FEHLER HISTOGRAMM GPS2 AUTOBAHN")
 """
 
 ###############histgoramme gsm_lte#############
-"""
-plot_error_histogram_other(gsm_atb_error, "FEHLER HISTOGRAMM GSM AUTOBAHN")
-plot_error_histogram_other(lte_atb_error, "FEHLER HISTOGRAMM LTE AUTOBAHN", group_size= 300)
-plot_error_histogram_other(lte_stadt_error, "FEHLER HISTOGRAMM LTE STADT")
-plot_error_histogram_other(gsm_hof_error, "FEHLER HISTOGRAMM GSM HOF")
-plot_error_histogram_other(gsm_keller_error, "FEHLER HISTOGRAMM GSM KELLER")
+
+#plot_error_histogram_other(gsm_atb_error, "FEHLER HISTOGRAMM GSM AUTOBAHN")
+#plot_error_histogram_other(lte_atb_error, "FEHLER HISTOGRAMM LTE AUTOBAHN", group_size= 300)
+#plot_error_histogram_other(lte_stadt_error, "FEHLER HISTOGRAMM LTE STADT")
+#plot_error_histogram_other(gsm_hof_error, "FEHLER HISTOGRAMM GSM HOF")
+#plot_error_histogram_other(gsm_keller_error, "FEHLER HISTOGRAMM GSM KELLER")
 plot_error_histogram_other(gsm_wohnung_error, "FEHLER HISTOGRAMM GSM WOHNUNG")
-plot_error_histogram_other(lte_hof_error, "FEHLER HISTOGRAMM LTE HOF")
-plot_error_histogram_other(lte_keller_error, "FEHLER HISTOGRAMM LTE KELLER")
+#plot_error_histogram_other(lte_hof_error, "FEHLER HISTOGRAMM LTE HOF")
+#plot_error_histogram_other(lte_keller_error, "FEHLER HISTOGRAMM LTE KELLER")
 plot_error_histogram_other(lte_wohnung_error, "FEHLER HISTOGRAMM LTE WOHNUNG")
-"""
+
 #############routen###################
 #plot_two_datasets(gsm_atb, gsm_atb_gt, "GSM", "Groundtruth", "VERGLEICH GSM MESSDATEN UND GROUNDTRUTH AUTOBAHN")
 ############more cdfs#################
-"""
+
 gpshof = read.read_gps_data('../data/stationaer/gpshof.json')
 gpshoferror = eval.get_gps_errors(gpshof)
 plot_single_cdf(gpshoferror, "CDF GPS STATIONAER HOF")
 plot_error_histogram_gps(gpshoferror, "FEHLER HISTOGRAMM GPS HOF")
-"""
+
 
 gpswohnung = read.read_gps_data('../data/stationaer/gpswohnung.json')
 gpswohnungerror = eval.get_gps_errors(gpswohnung)
+plot_two_datasets(gt_wohnung, gpswohnung, "1","2","ver")
 #plot_single_cdf(gpswohnungerror, "CDF GPS STATIONAER WOHNUNG")
 #plot_error_histogram_other(gpswohnungerror, "FEHLER HISTOGRAMM GPS WOHNUNG")
 
 
 
 
-gsmstadt = read.read_gsm_lte_data('../data/bewegung/gsmstadt.json')
-gssgt = read.read_groundtruth('../data/bewegung/gsmstadt.csv')
-gsmstadterror = eval.calc_error_gsm_lte_moving(gsmstadt, gssgt)
+#gsmstadt = read.read_gsm_lte_data('../data/bewegung/gsmstadt.json')
+#gssgt = read.read_groundtruth('../data/bewegung/gsmstadt.csv')
+#gsmstadterror = eval.calc_error_gsm_lte_moving(gsmstadt, gssgt)
 #plot_single_cdf(gsmstadterror, "CDF GSM MOBIL STADT")
 #plot_error_histogram_other(gsmstadterror, "FEHLER HISTOGRAMM GSM STADT")
 
@@ -396,13 +398,16 @@ print(len(ltelanderror))
 #plot_single_cdf(ltelanderror, 'CDF LTE MOBIL LAND')
 #plot_error_histogram_other(ltelanderror, "FEHLER HISTOGRAMM LTE LAND")
 
-"""
+##stadterrors = [gps_stadt_error, gsmstadterror, lte_stadt_error]
+#stadterrors2 = ["GPS STADT", "GSM STADT", "LTE STADT"]
+#plot_multiple_cdfs(stadterrors, stadterrors2, "VERGLEICH CDFS STADT FÜR GPS/GSM/LTE")
+
 nbiot = read.read_gsm_lte_data('../data/nbiot/nbiot.json')
 ####moving nicht möglich, da keine daten gesendet#####also stationär######
 nbiote = eval.calc_error_gsm_lte_stationary(gt_wohnung, nbiot)
 #plot_single_cdf(nbiote, "CDF NBIOT STATIONÄR WOHNUNG")
-plot_error_histogram_other(nbiote, "FEHLER HISTOGRAMM NBIOT WOHNUNG")
-"""
+#plot_error_histogram_other(nbiote, "FEHLER HISTOGRAMM NBIOT WOHNUNG")
+
 """
 walking_gsm_error = [gsmstadterror, gsmlanderror,]
 walking_gsm_errors_labels = ["GSM Stadt", "GSM Land"]
@@ -433,33 +438,38 @@ plot_multiple_cdfs(allmovementerr, ee, "VERGLEICH CDF GPS/GSM/LTE FÜR AUTOBAHN"
 """
 
 
-"""
-stadt = read.read_groundtruth('../data/bewegung/stadtgt.csv')
-plot_coordinates(stadt, "GROUNDTRUTH STADT")
-plot_two_datasets(stadt, gsmstadt, "GROUNDTRUTH STADT", "GSM", "VERGLEICH GROUNDTRUTH STADT UND GSM")
-plot_two_datasets(stadt, lte_stadt, "GROUNDTRUTH STADT", "LTE", "VERGLEICH GROUNDTRUTH STADT UND LTE")
-plot_two_datasets(stadt, gps_stadt, "GROUNDTRUTH STADT", "GPS", "VERGLEICH GROUNDTRUTH STADT UND GPS")
-"""
-"""
+
+#stadt = read.read_groundtruth('../data/bewegung/stadtgt.csv')
+#stadt = read.read_groundtruth('../data/bewegung/outdoorstadt_groundtruth.csv')
+#plot_coordinates(stadt, "GROUNDTRUTH STADT")
+#plot_two_datasets(stadt, gsmstadt, "GROUNDTRUTH STADT", "GSM", "VERGLEICH GROUNDTRUTH STADT UND GSM")
+#plot_two_datasets(stadt, lte_stadt, "GROUNDTRUTH STADT", "LTE", "VERGLEICH GROUNDTRUTH STADT UND LTE")
+#plot_two_datasets(stadt, gps_stadt, "GROUNDTRUTH STADT", "GPS", "VERGLEICH GROUNDTRUTH STADT UND GPS")
+
+
 lteab = read.read_groundtruth('../data/autobahn/autobahn.lte.groundtruth.csv')
 gsmab = read.read_groundtruth('../data/autobahn/autobahn.gsm.groundtruth.csv')
 gps1ab = read.read_groundtruth('../data/autobahn/autobahn.gps1.groundtruth.csv')
-gps2ab = read.read_groundtruth('../data/autobahn/autobahn.gps2.groundtruth.csv')
+#gps2ab = read.read_groundtruth('../data/autobahn/autobahn.gps2.groundtruth.csv')
 
 
-plot_two_datasets(gps1ab, gps1, "GROUNDTRUTH AUTOBAHN 1", "GPS", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GPS 1")
-plot_two_datasets(gps2ab, gps2, "GROUNDTRUTH AUTOBAHN 2", "GPS", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GPS 2")
+#plot_two_datasets(gps1_gt, gps1, "GROUNDTRUTH AUTOBAHN 1", "GPS", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GPS 1")
+#plot_two_datasets(gps2ab, gps2, "GROUNDTRUTH AUTOBAHN 2", "GPS", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GPS 2")
 
-plot_two_datasets(gsmab, gsm_atb, "GROUNDTRUTH AUTOBAHN", "GSM", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GSM")
-plot_two_datasets(lteab, lte, "GROUNDTRUTH AUTOBAHN", "LTE", "VERGLEICH GROUNDTRUTH AUTOBAHN UND LTE")
-"""
+#plot_two_datasets(gsm_atb_gt, gsm_atb, "GROUNDTRUTH AUTOBAHN", "GSM", "VERGLEICH GROUNDTRUTH AUTOBAHN UND GSM")
+#plot_two_datasets(lte_gt, lte, "GROUNDTRUTH AUTOBAHN", "LTE", "VERGLEICH GROUNDTRUTH AUTOBAHN UND LTE")
+
+
+
 gpshof = read.read_gps_data('../data/stationaer/gpshof.json')
 
-"""
-plot_two_datasets(gt_hof, gsm_hof, "GROUNDTRUTH HOF", "GSM", "VERGLEICH GROUNDTRUTH HOF UND GSM")
-plot_two_datasets(gt_hof, lte_hof, "GROUNDTRUTH HOF", "LTE", "VERGLEICH GROUNDTRUTH HOF UND LTE")
-plot_two_datasets(gt_hof, gpshof, "GROUNDTRUTH HOF", "GPS", "VERGLEICH GROUNDTRUTH HOF UND GPS")
-"""
+
+#plot_two_datasets(gt_hof, gsm_hof, "GROUNDTRUTH HOF", "GSM", "VERGLEICH GROUNDTRUTH HOF UND GSM")
+#plot_two_datasets(gt_hof, lte_hof, "GROUNDTRUTH HOF", "LTE", "VERGLEICH GROUNDTRUTH HOF UND LTE")
+#plot_two_datasets(gt_hof, gpshof, "GROUNDTRUTH HOF", "GPS", "VERGLEICH GROUNDTRUTH HOF UND GPS")
+
+#plot_two_datasets(gt_keller, gsm_keller, "GROUNDTRUTH KELLER", "GSM", "VERGLEICH GROUNDTRUTH HOF UND GSM")
+#plot_two_datasets(gt_keller, lte_keller, "GROUNDTRUTH KELLER", "LTE", "VERGLEICH GROUNDTRUTH HOF UND LTE")
 """
 gpswo = read.read_gps_data('../data/stationaer/gpswohnung.json')
 plot_two_datasets(gt_wohnung, gsm_wohnung, "GROUNDTRUTH WOHNUNG", "GSM", "VERGLEICH GROUNDTRUTH WOHNUNG UND GSM")
@@ -471,9 +481,45 @@ plot_two_datasets(gt_wohnung, gpswo, "GROUNDTRUTH WOHNUNG", "GPS", "VERGLEICH GR
 #plot_two_datasets(gt_keller, gpswo, "GROUNDTRUTH KELLER", "GPS", "VERGLEICH GROUNDTRUTH KELLER UND GPS")
 
 print(gps_stadt)
-plot_gps_data(gps_land)
 
-plot_other_data()
+land = read.read_groundtruth('../data/bewegung/gtland_s_gsmlte.csv')
+#plot_two_datasets(land, lteland, "","", "VERGLEICH GROUNDTRUTH LAND UND LTE")
+#plot_two_datasets(land, gsmland,"","",  "VERGLEICH GROUNDTRUTH LAND UND GSM")
+land = read.read_groundtruth('../data/bewegung/gtland_s_gps.csv')
+#plot_two_datasets(land, gps_land, "","", "VERGLEICH GROUNDTRUTH LAND UND GPS")
+
+lte2gt = read.read_groundtruth('../data/bewegung/lte2gt.csv')
+lte_stadt  = read.read_gsm_lte_data('../data/bewegung/ltestadt2.json')
+lte2_w = read.read_gsm_lte_data('../data/bewegung/ltestadt3.json')
+
+
+sets = [gps_land_error, gsmlanderror, ltelanderror]
+sets2 = ["GPS LAND", "GSM LAND", "LTE LAND"]
+#plot_multiple_cdfs(sets, sets2, "VERGLEICH CDFS Land FÜR GPS/GSM/LTE")
+err1 = eval.calc_error_gsm_lte_stationary(lte2gt, lte_stadt)
+
+sets = [gsm_keller_error, lte_keller_error]
+sets2 = ["GSM KELLER",  "LTE KELLER"]
+#plot_multiple_cdfs(sets, sets2, "VERGLEICH CDFS KELLER FÜR GSM/LTE")
+
+
+
+hoferror = [gpshoferror, gsm_hof_error, lte_hof_error]
+hes = ["GPS HOF", "GSM HOF", "LTE HOF"]
+#plot_multiple_cdfs(hoferror, hes, "VERGLEICH CDFS HOF FÜR GPS/GSM/LTE")
+
+#plot_two_datasets(gt_wohnung, gsm_wohnung, "1","1","1")
+#plot_two_datasets(gt_wohnung, lte_wohnung, "1","1","1")
+
+sets = [gpswohnungerror, gsm_wohnung_error, lte_wohnung_error, nbiote]
+sets2 = ["GPS",  "GSM","LTE","NBIOT"]
+#plot_multiple_cdfs(sets, sets2,"VERGLEICH CDFS WOHNUNG FÜR GPS/GSM/LTE/NBIOT")
+plot_single_cdf(nbiote, "CDF STATIONÄR WOHNUNG FÜR NBIOT ")
+
+#plot_single_cdf(err1, "err1")
+#for i in lte_wohnung_error:
+#    err1.append(i)
+#plot_single_cdf(err1, "LTE WOHNUNG")
 
 
 
