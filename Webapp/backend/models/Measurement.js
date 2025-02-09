@@ -11,6 +11,8 @@ const MeasurementSchema = new Schema(
     latitude: {type: String},
     longitude: {type: String},
     temperature: {type: String},
+    step: {type: Number, required: false },
+    speed: {type: Number, required: false },
     cellinfo: {type: String},
     humidity: { type: String},
     battery: {type: String},

@@ -14,15 +14,16 @@ PowerSavingMode longtimeTracker(tracker);
 
 void setup()
 {
-  // DSerial.begin(115200);
-  // while (DSerial.read() >= 0)
-  //   ;
-  // delay(3000);
+  DSerial.begin(115200);
+  while (DSerial.read() >= 0)
+    ;
+  delay(3000);
   ATSerial.begin(115200);
   while (ATSerial.read() >= 0)
     ;
   delay(3000);
   tracker.firstStart();
+  Serial.println("Start First Start!");
 }
 
 void loop()
@@ -35,5 +36,4 @@ void loop()
   {
     longtimeTracker.start();
   }
-  // delay(100);
 }

@@ -53,7 +53,7 @@ bool Tracker::responseValid(char *payload)
 }
 
 bool Tracker::modeHandle()
-{   
+{
     if (trackerModes.CellInfosMode && !handleCellInfosMode())
     {
         return false;
@@ -108,7 +108,7 @@ bool Tracker::pubAndsubMQTT(unsigned long interval)
     measure_time = millis();
 
     if (!publishData("/pub"))
-    {   
+    {
         return false;
     }
     delay(100);
@@ -121,10 +121,14 @@ bool Tracker::sendAndWaitResponseHTTP(unsigned long interval)
     char response[1028];
 
     if ((millis() - measure_time) < interval)
+    {
+        Serial.println("Not in time!");
         return true;
+    }
 
     if (!modeHandle())
     {
+        Serial.println("Error Modehandle");
         return false;
     }
     else
@@ -170,7 +174,7 @@ int Tracker::getRunningErrorCount()
 bool Tracker::turnOnFunctionality(bool useMQTT)
 {
     bool success = true;
-    measure_time = -999999; //measure_time zurücksetzen
+    measure_time = -999999; // measure_time zurücksetzen
 
     // Modem einschalten (falls noch nicht verfügbar)
     success &= isModemAvailable() || turnOnModem();
@@ -225,7 +229,6 @@ bool Tracker::handleCellInfosMode()
     return true;
 }
 
-
 bool Tracker::handleErrors()
 {
     if (countReset > 3)
@@ -278,10 +281,13 @@ bool Tracker::setMode(char *payload)
             if (newFrequenz > 0)
             {
                 trackerModes.period = newFrequenz;
-                if(trackerModes.period < trackerModes.maxRealTime){
+                if (trackerModes.period < trackerModes.maxRealTime)
+                {
                     stepCounterEnable();
                     trackerModes.realtime = true;
-                }else{
+                }
+                else
+                {
                     trackerModes.realtime = false;
                 }
             }
@@ -301,15 +307,16 @@ bool Tracker::pingServer()
     char send_data[64];
     char recv_data[258];
     JsonDocument ping;
-    ping["IMEI"]= modemIMEI;
-    if(!serializeJsonPretty(ping, send_data)){
+    ping["IMEI"] = modemIMEI;
+    if (!serializeJsonPretty(ping, send_data))
+    {
         return false;
     }
     // strcpy(send_data, PING);
     memset(recv_data, 0, sizeof(recv_data));
 
     if (sendAndReadResponse(send_data, recv_data) && setMode(recv_data))
-    {   
+    {
         return true;
     }
     runningLogger.logError("pingServer");
@@ -326,4 +333,3 @@ bool Tracker::resetModem()
     }
     return false;
 }
-

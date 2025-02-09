@@ -55,7 +55,7 @@
     "FOOTER-terms": "Nutzungsbedingungen",
     "FOOTER-privacy_policy": "Datenschutzrichtlinie",
     "Nav-Map": "Karte",
-    "Nav-Route": "Route",
+    "Nav-Route": "Echtzeit-Tracking",
     "Nav-Tracker": "Tracker",
     "Nav-Account": "Konto",
     "Nav-Help": "Hilfe",
@@ -223,6 +223,16 @@
     "Latitude": "Breitengrad",
     "MeasurementDetails": "Messungsetails",
     "ChangeTrackingMode": "Tracking-Modus ändern",
+    "SavedRoutes": "Gespeicherte Routen",
+    "SelectSavedRoute": "Gespeicherte Route auswählen",
+    "TotalTime": "Gesamtzeit",
+    "TotalSteps": "Gesamtschritte",
+
+    "StartRoute": "Route starten",
+    "StopRoute": "Route stoppen",
+    "SaveRoute": "Route speichern",
+    "EnterRouteName": "Routennamen eingeben",
+    
     "Tour": {
         "CurrentMap": {
           "step1": "Aktuellen Tracker auswählen für den Zeitstempel angezeigt werden sollen",
@@ -267,6 +277,15 @@
   "AddTrackerPopup-IMEI": "IMEI",
   "AddTrackerPopup-IMEIPlaceholder": "IMEI Ihres Trackers",
   "AddTrackerPopup-PIN": "PIN",
-  "AddTrackerPopup-PINPlaceholder": "Gültige PIN eingeben"
+  "AddTrackerPopup-PINPlaceholder": "Gültige PIN eingeben",
+      "RouteDetails": "Routendetails",
+    "SelectTracker": "Tracker auswählen",
+    "Start": "Start",
+    "Stop": "Stopp",
+    "Steps": "Schritte",
+    "AvgSpeed": "Durchschnittsgeschwindigkeit",
+    "MaxSpeed": "Höchstgeschwindigkeit",
+    "TotalDistance": "Gesamtdistanz"
   
     }
+    

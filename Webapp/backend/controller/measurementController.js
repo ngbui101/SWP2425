@@ -81,7 +81,9 @@ async function createMeasurement(req, res) {
     temperature,
     cellinfo,
     humidity,
-    battery
+    battery,
+    step, // Include step
+    speed  // Include speed
   } = req.body;
 
   try {
@@ -107,6 +109,8 @@ async function createMeasurement(req, res) {
       cellinfo,
       humidity,
       battery,
+      step,   // Save step in the measurement
+      speed,  // Save speed in the measurement
       tracker: tracker._id // Reference to the Tracker using its ID
     });
 
@@ -121,7 +125,9 @@ async function createMeasurement(req, res) {
       temperature,
       cellinfo,
       humidity,
-      battery
+      battery,
+      step,  // Add step to trackerHistory
+      speed  // Add speed to trackerHistory
     });
     await trackerHistory.save(); // Save the updated tracker history
 

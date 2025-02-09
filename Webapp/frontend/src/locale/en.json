@@ -55,7 +55,7 @@
   "FOOTER-terms": "Terms",
   "FOOTER-privacy_policy": "Privacy Policy",
   "Nav-Map": "Map",
-  "Nav-Route": "Route",
+  "Nav-Route": "Live-Tracking",
   "Nav-Tracker": "Tracker",
   "Nav-Account": "Account",
   "Nav-Help": "Help",
@@ -212,6 +212,16 @@
   "Longitude": "Longitude",
   "MeasurementDetails": "Measurement Details",
   "ChangeTrackingMode": "Change Tracking Mode",
+  "SavedRoutes": "Saved Routes",
+    "SelectSavedRoute": "Select Saved Route",
+    "TotalTime": "Total Time",
+    "TotalSteps": "Total Steps",
+  
+   
+    "StartRoute": "Start Route",
+    "StopRoute": "Stop Route",
+    "SaveRoute": "Save Route",
+    "EnterRouteName": "Enter route name",
   "Tour": {
   "CurrentMap": {
     "step1": "Select the current tracker for which timestamps should be displayed",
@@ -257,6 +267,15 @@
   "AddTrackerPopup-IMEI": "IMEI",
   "AddTrackerPopup-IMEIPlaceholder": "IMEI of your tracker",
   "AddTrackerPopup-PIN": "PIN",
-  "AddTrackerPopup-PINPlaceholder": "Enter the valid PIN"
+  "AddTrackerPopup-PINPlaceholder": "Enter the valid PIN",
+  
+    "RouteDetails": "Route Details",
+    "SelectTracker": "Select Tracker",
+    "Start": "Start",
+    "Stop": "Stop",
+    "Steps": "Steps",
+    "AvgSpeed": "Average Speed",
+    "MaxSpeed": "Max Speed",
+    "TotalDistance": "Total Distance"
 
 }
