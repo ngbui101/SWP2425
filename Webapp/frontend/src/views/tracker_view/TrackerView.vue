@@ -129,9 +129,9 @@ const fetchTrackersForUser = async () => {
                 validMeasurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                 tracker.latestMeasurement = validMeasurements.length > 0 ? validMeasurements[0] : null;
-                tracker.location = tracker.latestMeasurement
-                    ? await getReverseGeocodingAddress(tracker.latestMeasurement.latitude, tracker.latestMeasurement.longitude)
-                    : 'Unknown Location';
+                tracker.location = 'Geocoding API disabled';
+
+
             } catch (measurementError) {
                 // If no measurements, set default values
                 console.warn(`No measurements found for tracker ${tracker._id}`);
@@ -148,13 +148,7 @@ const fetchTrackersForUser = async () => {
 
 // Perform reverse geocoding using your backend API
 const getReverseGeocodingAddress = async (lat, lng) => {
-    try {
-        const response = await axios.get(`http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`);
-        return response.data?.address || 'Unknown Location';
-    } catch (error) {
-        console.error('Failed to perform reverse geocoding:', error);
-        return 'Unknown Location';
-    }
+    return 'Geocoding API disabled';
 };
 
 // Fetch trackers on component mount

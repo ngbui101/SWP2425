@@ -468,28 +468,9 @@ const drawPinsForFirstAndLast = (measurements) => {
     });
 };
 const getReverseGeocodingAddress = async (lat, lng, signal) => {
-    const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
-
-    try {
-        const response = await axios.get(geocodingUrl, { signal });
-        if (response.data && response.data.address) {
-            const address = response.data.address;
-
-            // Extract zip code and city (with support for special characters)
-            const zipCityMatch = address.match(/\b\d{5}\b\s+[A-Za-zÀ-ÖØ-öø-ÿ\s]+/);
-            return zipCityMatch ? zipCityMatch[0] : 'Unknown Location';
-        } else {
-            return 'Unknown Location';
-        }
-    } catch (error) {
-        if (axios.isCancel(error)) {
-            console.log('Reverse geocoding request canceled');
-            throw new Error('Operation canceled by the user.');
-        }
-        console.error('Failed to perform reverse geocoding:', error);
-        return 'Unknown Location';
-    }
+    return 'Geocoding API disabled';
 };
+
 
 // Build history action with validation and error handling
 const buildHistory = async () => {
@@ -535,7 +516,7 @@ const buildHistory = async () => {
             // Check if the request has been aborted
             if (signal.aborted) throw new Error('Operation canceled by the user.');
 
-            measurement.address = await getReverseGeocodingAddress(measurement.latitude, measurement.longitude);
+            measurement.address = 'Geocoding API disabled';
 
             // Optional: Add a small delay to simulate processing time and allow cancellation
             await new Promise(resolve => setTimeout(resolve, 50));

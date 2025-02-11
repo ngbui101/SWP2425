@@ -21,7 +21,7 @@
                         <div v-if="!isRouteActive" class="start-container">
                             <button class="start-button" @click="startRoute" :disabled="!selectedTracker">{{
                                 $t('Start')
-                                }}</button>
+                            }}</button>
                         </div>
                         <div v-else class="stop-container">
                             <p class="timer-text">{{ formattedTime }}</p>
@@ -174,27 +174,30 @@ const showSaveButton = ref(false);  // Track if the save button is displayed
 }; */
 
 const saveRoute = async () => {
-    try {
-        // Generate a test route with dummy positions
-        const testPositions = generateTestRoute();
+    if (routePath.value.length === 0) {
+        alert('No route data to save.');
+        return;
+    }
 
-        // Send route data to backend
+    try {
+        // Prepare route data with actual values
         const routeData = {
-            name: routeName.value || `Test Route - ${new Date().toLocaleString()}`,
-            positions: testPositions,  // Use generated test positions
-            totalTime: 900,            // Assume 15 minutes (900 seconds)
-            steps: 1500,               // Assume 1500 steps
-            avgSpeed: 4.5,             // Assume average speed of 4.5 km/h
-            maxSpeed: 6.0,             // Assume max speed of 6.0 km/h
-            caloriesBurned: 120,       // Assume 120 calories burned
+            name: routeName.value || `Route - ${new Date().toLocaleString()}`,
+            positions: routePath.value,          // Use actual path positions
+            totalTime: timer.value,              // Total route time in seconds
+            steps: stepsWalked.value,            // Total steps walked
+            avgSpeed: avgSpeed.value,            // Average speed (km/h)
+            maxSpeed: maxSpeed.value,            // Maximum speed (km/h)
+            caloriesBurned: calculateCalories(), // Calories burned (you can define a helper function)
         };
 
         const token = authStore.accessToken;
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
+        // Send route data to the backend API
         await axios.post('http://localhost:3500/api/routes', routeData, config);
 
-        alert('Test route saved successfully');
+        alert('Route saved successfully');
 
         // Reset fields and hide the save container
         routeName.value = '';
@@ -203,6 +206,13 @@ const saveRoute = async () => {
         console.error('Failed to save route:', error);
         alert('Error saving route');
     }
+};
+const calculateCalories = () => {
+    const MET = 4.0; // Example MET value for walking
+    const weightKg = 70; // Assume user weight is 70kg (can be made dynamic)
+    const hours = timer.value / 3600;
+
+    return Math.round(MET * weightKg * hours); // Calories burned formula: MET * weight (kg) * hours
 };
 
 // Fetch trackers and their latest measurements

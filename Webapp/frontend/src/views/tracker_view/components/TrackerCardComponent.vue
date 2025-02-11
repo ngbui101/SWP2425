@@ -280,11 +280,7 @@ const fetchTrackersWithMeasurements = async () => {
                     tracker.detailsWithTimestamps.latitude.value !== 'N/A' &&
                     tracker.detailsWithTimestamps.longitude.value !== 'N/A'
                 ) {
-                    tracker.location = await getReverseGeocodingAddress(
-                        tracker.detailsWithTimestamps.latitude.value,
-                        tracker.detailsWithTimestamps.longitude.value,
-                        tracker.detailsWithTimestamps.accuracy.value // pass accuracy
-                    );
+                    tracker.location = tracker.location = 'Geocoding API disabled';
                 } else {
                     tracker.location = 'Unknown Location';
                 }
@@ -304,53 +300,9 @@ const fetchTrackersWithMeasurements = async () => {
 };
 
 const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
-    const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
-
-    try {
-        // Log the latitude, longitude, and accuracy
-
-
-        const response = await useApiPrivate().get(geocodingUrl);
-
-        // Log the API response
-
-
-        const fullAddress = response.data?.address || "Unknown Location";
-
-
-        // Handle cases where the address contains a Plus Code
-        if (fullAddress.includes('+')) {
-
-            const addressParts = fullAddress.split(',');
-            const cityPart = addressParts[addressParts.length - 2]?.trim() || "Unknown City";
-            const countryPart = addressParts[addressParts.length - 1]?.trim() || "Unknown Country";
-
-            const approximateLocation = `${cityPart}, ${countryPart}`;
-
-            return approximateLocation;
-        }
-
-        // Extract zip and city from the address
-        const addressParts = fullAddress.split(',');
-        const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
-        const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
-        const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Match 'zip city'
-
-        const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
-        const city = zipAndCity ? zipAndCity[2] : "Unknown City";
-
-
-
-        // Decide address display based on accuracy
-        const result = accuracy <= 50 ? fullAddress : `${zip}, ${city}`;
-
-
-        return result;
-    } catch (error) {
-        console.error(`Failed to get reverse geocoding address for coordinates [${lat}, ${lng}]:`, error);
-        return 'Unknown Location';
-    }
+    return 'Geocoding API disabled';
 };
+
 
 
 

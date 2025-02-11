@@ -1,5 +1,10 @@
 <template>
   <div :class="['container', (user.settings?.template ?? 'default') === 'dark' ? 'dark-mode' : '']">
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>{{ $t('CurrentMap-loading_measurements') }}</p>
+    </div>
+
     <div class="mapview-container">
       <div v-if="trackers.length === 0" class="overlay">
         <p class="overlay-text">{{ $t('CurrentMap-no_trackers') }}</p>
@@ -199,6 +204,7 @@ import { useRouter } from 'vue-router';
 
 
 
+const isLoading = ref(false);
 
 const router = useRouter();
 const isTimestampFilterPopupOpen = ref(false);
@@ -340,61 +346,20 @@ const fetchTrackersForUser = async () => {
     const token = authStore.accessToken;
     const config = { headers: { Authorization: `Bearer ${token}` } };
 
+    // Fetch only the trackers without measurements initially
     const response = await axios.get('http://localhost:3500/api/tracker/user/', config);
     trackers.value = response.data;
 
-    for (const tracker of trackers.value) {
-      const measurementsResponse = await axios.get(
-        `http://localhost:3500/api/position/tracker/${tracker._id}`,
-        config
-      );
-
-      tracker.measurements = measurementsResponse.data.filter(
-        (measurement) => ['LTE', 'GPS', 'NBIOT', 'GSM'].includes(measurement.mode)
-      );
-
-      const modeResponse = await axios.get(
-        `http://localhost:3500/api/mode/${tracker._id}`,
-        config
-      );
-      tracker.modeDetails = modeResponse.data;
-
-      if (tracker.geofence) {
-        try {
-          const geofenceResponse = await axios.get(
-            `http://localhost:3500/api/geofence/${tracker.geofence}`,
-            config
-          );
-          // store it in `tracker.geofenceDetails`
-          tracker.geofenceDetails = geofenceResponse.data;
-          // e.g. { _id: '670ae0a8e16cf95d8e5eae61', radius: 2500, active: true, latitude: "51.44", longitude: "7.34" }
-        } catch (err) {
-          console.error('Failed to fetch geofence for tracker', tracker._id, err);
-          tracker.geofenceDetails = null;
-        }
-      } else {
-        // If no geofence ID is present, set it to null or empty
-        tracker.geofenceDetails = null;
-      }
-
-      if (!selectedTracker.value) {
-        selectedTracker.value = tracker._id;
-        selectedTrackerName.value = tracker.name;
-      }
-
-      // Add measurements to timestamps array
-      timestamps.value = tracker.measurements.map((measurement) => ({
-        id: measurement._id,
-        trackerId: tracker._id,
-        timestamp: new Date(measurement.createdAt).toLocaleString(),
-      }));
+    // If no tracker is selected, set the first one
+    if (!selectedTracker.value && trackers.value.length > 0) {
+      selectedTracker.value = trackers.value[0]._id;
+      selectedTrackerName.value = trackers.value[0].name;
     }
-
-    updateSelectedTrackerMeasurements(true);
   } catch (error) {
-    console.error('Failed to fetch trackers or measurements:', error);
+    console.error('Failed to fetch trackers:', error);
   }
 };
+
 
 
 const applyGeofenceRadius = async () => {
@@ -432,6 +397,38 @@ const applyGeofenceRadius = async () => {
     console.error('Failed to save geofence settings to server:', error);
   }
 };
+const fetchMeasurementsForSelectedTracker = async () => {
+  if (!selectedTracker.value) return;
+
+  try {
+    isLoading.value = true;  // Start loading
+
+    const token = authStore.accessToken;
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+
+    const measurementsResponse = await axios.get(
+      `http://localhost:3500/api/position/tracker/${selectedTracker.value}`,
+      config
+    );
+
+    const tracker = trackers.value.find(t => t._id === selectedTracker.value);
+    if (tracker) {
+      tracker.measurements = measurementsResponse.data.filter(
+        (measurement) => ['LTE', 'GPS', 'NBIOT', 'GSM'].includes(measurement.mode)
+      );
+
+      selectedTrackerMeasurements.value = tracker.measurements;
+
+      updateSelectedTrackerMeasurements(true);
+    }
+  } catch (error) {
+    console.error('Failed to fetch measurements:', error);
+  } finally {
+    isLoading.value = false;  // End loading
+  }
+};
+
+
 
 
 const updateGeofenceState = () => {
@@ -457,30 +454,25 @@ const updateGeofenceState = () => {
 
 const updateSelectedTrackerMeasurements = (initialLoad = false) => {
   const tracker = trackers.value.find(t => t._id === selectedTracker.value);
-  if (tracker && tracker.measurements.length > 0) {
-    selectedTrackerName.value = tracker.name;
 
-    // Set `selectedTrackerMeasurements` first
+  if (tracker?.measurements?.length > 0) {
     selectedTrackerMeasurements.value = tracker.measurements.sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
 
-    // Use `filteredMeasurements` to find the most recent filtered measurement
     const mostRecentMeasurement = filteredMeasurements.value[0];
     if (mostRecentMeasurement) {
       selectedTimestamp.value = mostRecentMeasurement._id;
-      updateSelectedMeasurement(initialLoad);
-    } else {
-      selectedTimestamp.value = null;
-      selectedMeasurement.value = {}; // Reset if no valid measurement
+      selectedMeasurement.value = mostRecentMeasurement;
+
+      if (initialLoad) {
+        // Only initialize map if measurements are available
+        initializeMap();
+      }
     }
-  } else {
-    // Handle case where no measurements exist
-    selectedTrackerMeasurements.value = [];
-    selectedTimestamp.value = null;
-    selectedMeasurement.value = {};
   }
 };
+
 
 
 // Update selected measurement
@@ -490,7 +482,8 @@ const updateSelectedMeasurement = (initialLoad = false) => {
     const measurement = tracker.measurements.find(m => m._id === selectedTimestamp.value);
     if (measurement) {
       selectedMeasurement.value = measurement;
-      getReverseGeocodingAddress(measurement.latitude, measurement.longitude, measurement.accuracy);
+      selectedTrackerLocation.value = 'Geocoding disabled';
+
 
       if (initialLoad) {
         if (isGoogleMapsLoaded.value) {
@@ -510,7 +503,10 @@ const updateSelectedMeasurement = (initialLoad = false) => {
 let accuracyCircle = null; // Declare a global variable for the accuracy circle
 
 const initializeMap = () => {
-  if (!selectedMeasurement.value || !mapElement.value) return;
+  if (!selectedMeasurement.value || !selectedMeasurement.value.latitude || !selectedMeasurement.value.longitude) {
+    console.warn('No valid measurement data available for map initialization.');
+    return;
+  }
 
   const position = {
     lat: Number(selectedMeasurement.value.latitude),
@@ -677,7 +673,13 @@ const removeGeofence = async () => {
   }
 };
 
-watch(selectedTracker, updateGeofenceState);
+watch(selectedTracker, async (newTrackerId, oldTrackerId) => {
+  if (newTrackerId !== oldTrackerId) {
+    await fetchMeasurementsForSelectedTracker();
+    updateGeofenceState();  // Update geofence state when tracker changes
+  }
+});
+
 watch(geofenceRadius, (newRadius) => {
   if (geofenceCircle) {
     geofenceCircle.setRadius(parseFloat(newRadius));
@@ -687,56 +689,7 @@ watch(geofenceRadius, (newRadius) => {
 
 
 const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
-  const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
-
-  try {
-    // Log the inputs for debugging
-
-
-    const response = await axios.get(geocodingUrl);
-
-    // Log the API response for debugging
-
-
-    const fullAddress = response.data?.address || "Unknown Location";
-
-
-    // Handle cases where the address contains a Plus Code
-    if (fullAddress.includes('+')) {
-
-      const addressParts = fullAddress.split(',');
-      const cityPart = addressParts[addressParts.length - 2]?.trim() || "Unknown City";
-      const countryPart = addressParts[addressParts.length - 1]?.trim() || "Unknown Country";
-
-      const approximateLocation = `${cityPart}, ${countryPart}`;
-
-      selectedTrackerLocation.value = approximateLocation;
-      return;
-    }
-
-    // Extract zip and city from the address
-    const addressParts = fullAddress.split(',');
-    const lastPart = addressParts[addressParts.length - 1]?.trim(); // e.g., 'Germany'
-    const secondLastPart = addressParts[addressParts.length - 2]?.trim(); // e.g., '44793 Bochum'
-    const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/); // Match 'zip city'
-
-    const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
-    const city = zipAndCity ? zipAndCity[2] : "Unknown City";
-
-
-
-    // Decide address display based on accuracy
-    if (accuracy <= 25) {
-      // Full address for high accuracy
-      selectedTrackerLocation.value = fullAddress;
-    } else {
-      // Only zip and city for lower accuracy
-      selectedTrackerLocation.value = `${zip}, ${city}`;
-    }
-  } catch (error) {
-    console.error(`Failed to get reverse geocoding address for coordinates [${lat}, ${lng}]:`, error);
-    selectedTrackerLocation.value = 'Unknown Location';
-  }
+  selectedTrackerLocation.value = 'Geocoding disabled';
 };
 
 
@@ -765,16 +718,15 @@ const loadGoogleMapsScript = () => {
 const user = computed(() => authStore.userDetail);
 // On component mount, fetch trackers and measurements
 onMounted(async () => {
-  // Step 1: Load user data and Google Maps script
   await authStore.getUser();
-  await loadGoogleMapsScript(); // Wait for Google Maps to load
+  await loadGoogleMapsScript();
+
+  // Fetch trackers, then fetch measurements for the selected tracker
   await fetchTrackersForUser();
+  await fetchMeasurementsForSelectedTracker();
 
-  const currentRouteName = router.currentRoute.value.name;
-  console.log('Current route name:', currentRouteName);
-  updateGeofenceState(); // Ensure geofence state updates correctly
+  updateGeofenceState();  // Ensure geofence state updates correctly
 });
-
 
 // Watch for changes in selected tracker and update measurements
 watch(selectedTracker, updateSelectedTrackerMeasurements);
@@ -832,5 +784,37 @@ const filteredMeasurements = computed(() => {
   /* Light green background */
   color: #155724;
   /* Dark green text color for better contrast */
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

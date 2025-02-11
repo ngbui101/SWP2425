@@ -15,7 +15,7 @@ router.get('/tracker/:trackerId', authenticate, measurementController.getMeasure
 
 // Route to delete a measurement by ID
 router.delete('/:id', authenticate, measurementController.deleteMeasurement);
-
+router.get("/tracker/:trackerId/latest", measurementController.getLatestMeasurementByTrackerId);
 // Route to create a new measurement
 router.post('/', authenticate, measurementController.createMeasurement); // Add this line
 

@@ -179,11 +179,8 @@ const fetchTrackersWithMeasurements = async () => {
                 }
 
                 if (tracker.detailsWithTimestamps.latitude.value !== 'N/A' && tracker.detailsWithTimestamps.longitude.value !== 'N/A') {
-                    tracker.location = await getReverseGeocodingAddress(
-                        tracker.detailsWithTimestamps.latitude.value,
-                        tracker.detailsWithTimestamps.longitude.value,
-                        tracker.detailsWithTimestamps.accuracy.value // Pass accuracy
-                    );
+                    tracker.location = tracker.location = 'Geocoding API disabled';
+
                 } else {
                     tracker.location = 'Unknown Location';
                 }
@@ -203,43 +200,7 @@ const fetchTrackersWithMeasurements = async () => {
 };
 
 const getReverseGeocodingAddress = async (lat, lng, accuracy) => {
-    const geocodingUrl = `http://localhost:3500/api/geocode?lat=${lat}&lng=${lng}`;
-
-    try {
-        console.log("Reverse geocoding inputs:", { lat, lng, accuracy });
-
-        const response = await useApiPrivate().get(geocodingUrl);
-
-        const fullAddress = response.data?.address || 'Unknown Location';
-        console.log("Full Address:", fullAddress);
-
-        if (fullAddress.includes('+')) {
-            const addressParts = fullAddress.split(',');
-            const cityPart = addressParts[addressParts.length - 2]?.trim() || "Unknown City";
-            const countryPart = addressParts[addressParts.length - 1]?.trim() || "Unknown Country";
-
-            return `${cityPart}, ${countryPart}`;
-        }
-
-        const addressParts = fullAddress.split(',');
-        const lastPart = addressParts[addressParts.length - 1]?.trim();
-        const secondLastPart = addressParts[addressParts.length - 2]?.trim();
-        const zipAndCity = secondLastPart?.match(/(\d{5})\s(.+)/);
-
-        const zip = zipAndCity ? zipAndCity[1] : "Unknown Zip";
-        const city = zipAndCity ? zipAndCity[2] : "Unknown City";
-
-        if (accuracy <= 50) {
-            return fullAddress;
-        } else if (zipAndCity) {
-            return `${zip}, ${city}`;
-        } else {
-            return `${city}, ${lastPart}`;
-        }
-    } catch (error) {
-        console.error(`Failed to get reverse geocoding address for coordinates [${lat}, ${lng}]:`, error);
-        return 'Unknown Location';
-    }
+    return 'Geocoding API disabled';
 };
 
 const openSettingsPopup = (tracker) => {

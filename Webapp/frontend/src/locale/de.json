@@ -227,7 +227,10 @@
     "SelectSavedRoute": "Gespeicherte Route auswählen",
     "TotalTime": "Gesamtzeit",
     "TotalSteps": "Gesamtschritte",
-
+    
+      "CurrentMap-loading_measurements": "Messungen werden geladen",
+    
+    
     "StartRoute": "Route starten",
     "StopRoute": "Route stoppen",
     "SaveRoute": "Route speichern",
